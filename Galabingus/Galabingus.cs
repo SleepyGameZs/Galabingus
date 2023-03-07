@@ -2,12 +2,20 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
+// Wabungus Corpsungus Duplicatungus
+// 2023, 3, 6
+// Galabingus
+// Creates a GameObject Instance
+
 namespace Galabingus
 {
     public class Galabingus : Game
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+
+        // GameObject Dynamic
+        private dynamic content;
 
         public Galabingus()
         {
@@ -27,7 +35,8 @@ namespace Galabingus
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
+            // Initalize the GameObject Instance and Content Dynamic
+            content = GameObject.Instance.Initialize(Content, GraphicsDevice, _spriteBatch);
         }
 
         protected override void Update(GameTime gameTime)
