@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using System;
 
 // Matthew Rodriguez
-// 2023, 3, 6
+// 2023, 3, 7
 // Collision
 // Empty - Collision that is empty
 // positionOfCollision - Point of the collision
@@ -298,13 +298,13 @@ namespace Galabingus
         /// <summary>
         ///  Updates the Transform for the Collider
         /// </summary>
-        /// <param name="sprite"></param>
-        /// <param name="position"></param>
-        /// <param name="transform"></param>
-        /// <param name="graphicsDevice"></param>
-        /// <param name="spriteBatch"></param>
-        /// <param name="scale"></param>
-        /// <param name="effect"></param>
+        /// <param name="sprite">Sprite for the collider</param>
+        /// <param name="position">Position of the collider</param>
+        /// <param name="transform">Offset, Height and Width</param>
+        /// <param name="graphicsDevice">Any: GraphicsDevice</param>
+        /// <param name="spriteBatch">Any: SpriteBatch</param>
+        /// <param name="scale">Scale of the collider</param>
+        /// <param name="effect">SpriteEffect applied to the collider</param>
         public Collision UpdateTransform(
             Texture2D sprite,
             Vector2 position,

@@ -168,7 +168,7 @@ namespace Galabingus
             // against the width and height of the screen
             // With the third factor a vector of 1 ie the directional vector ie normalized velocity
             this.translationRatio = new Vector2(
-                ((((float)this.Transform.Width) / ((float)this.Transform.Height))) / 2.0f, //+ (((float)Sprite.Width) / ((float)Sprite.Height))) / 2.0f,
+                ((((float)this.Transform.Width) / ((float)this.Transform.Height))) / 2.0f,
                 ((((float)this.Transform.Height) / ((float)this.Transform.Width))) / 2.0f
             );
         }
@@ -181,7 +181,7 @@ namespace Galabingus
             Vector2 translationAjdustedRatio = translationRatio;
             float bufferTime = inputBufferTime;
 
-            // Adjust velocity magnitude for de-acceleration
+            // Adjust velocity magnitude for dirational change
             if (
                 (previousVelocity.Y > 0 && velocity.Y < 0) ||
                 (previousVelocity.X > 0 && velocity.X < 0) ||
@@ -189,7 +189,7 @@ namespace Galabingus
                 (Math.Abs(previousVelocity.Y - velocity.Y) > 1f)
             )
             {
-                // De-acceleration is diagnal
+                // Micro adjust velocity for de-acceleration
                 if ((Math.Abs(velocity.X) > 0.5 && Math.Abs(velocity.Y) > 0.5))
                 {
                     velocity -= velocity * inputBufferTime * 2.0f;
@@ -208,6 +208,17 @@ namespace Galabingus
                 }
             }
 
+            // Ease the transition of velocity when in diagnal
+            if (previousVelocity != velocity)
+            {
+                if ((Math.Abs(previousVelocity.X) > 0 && Math.Abs(previousVelocity.Y) > 0) ||
+                    (Math.Abs(velocity.X) > 0 && Math.Abs(velocity.Y) > 0)
+                )
+                {
+                    velocity += previousVelocity / (3.0f);
+                }
+            }
+
             // Add the acceleration to the velocity
             // Clamp the velocity to zero when too small
             velocity += acceleration;
@@ -220,14 +231,14 @@ namespace Galabingus
                 velocity.Y = 0;
             }
 
-            // Whn dignal change the speed to be 45 to the large side
+            // When not in a change the speed to be 45 to the large side
             if (!(Math.Abs(velocity.X) > 0 && Math.Abs(velocity.Y) > 0))
             {
                 velocity.X = velocity.X / speed.Y * translationRatio.Y;
             }
             else if (Math.Abs(velocity.X) > 0 && Math.Abs(velocity.Y) > 0)
             {
-                // When not diagnal set the proper translation ratio
+                // When in a diagnal set the proper translation ratio
                 // reset the buffer time
                 bufferTime = delayBufferTime;
                 if (translationRatio.X < translationRatio.Y)
@@ -301,7 +312,7 @@ namespace Galabingus
             bool isBullet = false;
             // TODO: Collision check for bullet
 
-            if (intercept.position != new Vector2(-1, -1) && !isBullet)
+            if (intercept.other != null && intercept.position != new Vector2(-1, -1) && !isBullet)
             {
                 Position = intercept.position;
                 this.Collider.Resolved = true;
@@ -365,7 +376,7 @@ namespace Galabingus
                         deAccFrom = Keys.S;
                     }
 
-                    // If we are nottranslating
+                    // If we are not translating
                     if (!(
                         previousKeyboardState.IsKeyDown(Keys.D) ||
                         previousKeyboardState.IsKeyDown(Keys.A) ||
