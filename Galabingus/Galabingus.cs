@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 // Wabungus Corpsungus Duplicatungus
-// 2023, 3, 6
+// 2023, 3, 7
 // Galabingus
 // Creates a GameObject Instance
 
@@ -16,6 +16,9 @@ namespace Galabingus
 
         // GameObject Dynamic
         private dynamic content;
+
+        // Player GameObject
+        private Player player;
 
         public Galabingus()
         {
@@ -37,6 +40,7 @@ namespace Galabingus
 
             // Initalize the GameObject Instance and Content Dynamic
             content = GameObject.Instance.Initialize(Content, GraphicsDevice, _spriteBatch);
+            player = new Player(new Vector2(16.25f, 16.25f), content.player_strip5);
         }
 
         protected override void Update(GameTime gameTime)
@@ -44,17 +48,22 @@ namespace Galabingus
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
-
+            // Update the player
+            player.Update(gameTime);
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            // Change the clear color to transparent and use point rendering for pixel art
+            GraphicsDevice.Clear(Color.Transparent);
+            _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap);
 
-            // TODO: Add your drawing code here
+            // Draw the player
+            player.Draw();
 
+            // End the SpriteBatch draw
+            _spriteBatch.End();
             base.Draw(gameTime);
         }
     }
