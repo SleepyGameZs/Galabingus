@@ -21,6 +21,9 @@ namespace Galabingus
         private List<Bullet> l_obj_activeBullets;
         private List<ushort> l_ush_content;
 
+        // Bullet Total
+        private ushort ush_totalBullets;
+
         // Screen data
         private Vector2 vc2_screenSize;
 
@@ -62,6 +65,8 @@ namespace Galabingus
             l_obj_activeBullets = new List<Bullet>();
             l_ush_content = new List<ushort>();
 
+            ush_totalBullets = 0;
+
             vc2_screenSize = new Vector2(
                 GraphicsDeviceManager.DefaultBackBufferWidth, // Width of screen
                 GraphicsDeviceManager.DefaultBackBufferHeight // Height of screen
@@ -96,6 +101,7 @@ namespace Galabingus
                     break;
             }
 
+            // Add sprite linker to list
             if (l_ush_content.Count == 0)
             {
                 l_ush_content.Add(ush_sprite);
@@ -116,51 +122,47 @@ namespace Galabingus
                 }
             }
 
-            // Add sprite linker to list
-            l_ush_content.Add(ush_sprite);
-
-            l_obj_activeBullets.Add(new Bullet(BT_ability, vc2_position, int_direction, ush_sprite));
+            // Add bullet itself to list
+            l_obj_activeBullets.Add(new Bullet(BT_ability, vc2_position, int_direction, ush_sprite, ush_totalBullets));
+            
+            // Increment count
+            ush_totalBullets++;
 
         }
 
         public void Update(GameTime gameTime)
         {
-            Debug.WriteLine(l_obj_activeBullets.Count);
+            //Debug.WriteLine(sprite);
             for (int i = 0; i < l_obj_activeBullets.Count; i++)
             {
                 // Runs the bullet's update.
-                GameObject.Instance.Content = l_ush_content[i];
                 l_obj_activeBullets[i].Update(gameTime);
 
-                // Checks if the bullet is on the screen, or set to be destroyed.
-                bool bol_bulletOffScreen = l_obj_activeBullets[i].Position.X < 0 &&
-                                            l_obj_activeBullets[i].Position.X > vc2_screenSize.X;
-                if (bol_bulletOffScreen || l_obj_activeBullets[i].Destroy)
+                // Checks if bullet is set to be destroyed.
+                if (l_obj_activeBullets[i].Destroy)
                 {
                     l_obj_activeBullets.RemoveAt(i);
                     i -= 1;
-                    //l_obj_activeBullets[i].Position -= new Vector2(100, 0); -- use for testing
                 }
             }
         }
 
         public void Draw()
         {
-            for (int i = 0; i < l_obj_activeBullets.Count; i++)
+            foreach (Bullet obj_bullet in l_obj_activeBullets)
             {
                 GameObject.Instance.SpriteBatch.Draw(
-                    l_obj_activeBullets[i].Sprite,                          // The sprite-sheet for the player
-                    l_obj_activeBullets[i].Position,                        // The position for the player
-                    l_obj_activeBullets[i].Transform,                       // The scale and bounding box for the animation
-                    l_obj_activeBullets[i].Color,                     // The color for the palyer
-                    0.0f,                            // There cannot be any rotation of the player
-                    Vector2.Zero,                    // Starting render position
-                    l_obj_activeBullets[i].Scale,                      // The scale of the sprite
-                    SpriteEffects.None,              // Which direction the sprite faces
-                    0.0f                             // Layer depth of the player is 0.0
+                    obj_bullet.Sprite,                  // The sprite-sheet for the player
+                    obj_bullet.Position,                // The position for the player
+                    obj_bullet.Transform,               // The scale and bounding box for the animation
+                    obj_bullet.Color,                   // The color for the palyer
+                    0.0f,                               // There cannot be any rotation of the player
+                    Vector2.Zero,                       // Starting render position
+                    obj_bullet.Scale,                   // The scale of the sprite
+                    SpriteEffects.None,                 // Which direction the sprite faces
+                    0.0f                                // Layer depth of the player is 0.0
                 );
             }
-                
         }
 
         #endregion

@@ -511,7 +511,17 @@ namespace Galabingus
         /// </summary>
         public void Shoot()
         {
-            BulletManager.Instance.CreateBullet(BulletType.Normal, Position, 0);
+            float flt_playerShootX = (Transform.Width * this.Scale) / 2;
+            float flt_playerShootY = (Transform.Height * this.Scale) / 2;
+            Vector2 vc2_shootPos = new Vector2(Position.X               // Base player X position
+                                               + flt_playerShootX       // Center horizontally
+                                               + velocity.X,            // Account for possible next movement
+                                               Position.Y               // Base player Y position
+                                               + flt_playerShootY       // Center vertically
+                                               + velocity.Y             // Account for possible next movement
+                                               );
+
+            BulletManager.Instance.CreateBullet(BulletType.Normal, vc2_shootPos, 0);
         }
 
 
