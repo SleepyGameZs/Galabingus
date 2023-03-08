@@ -20,6 +20,8 @@ namespace Galabingus
         // Player GameObject
         private Player player;
 
+        private BulletManager mng_bullet;
+
         public Galabingus()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -41,6 +43,8 @@ namespace Galabingus
             // Initalize the GameObject Instance and Content Dynamic
             content = GameObject.Instance.Initialize(Content, GraphicsDevice, _spriteBatch);
             player = new Player(new Vector2(16.25f, 16.25f), content.player_strip5);
+
+            mng_bullet = BulletManager.Instance;
         }
 
         protected override void Update(GameTime gameTime)
@@ -50,6 +54,10 @@ namespace Galabingus
 
             // Update the player
             player.Update(gameTime);
+
+            // Update the bullets
+            mng_bullet.Update(gameTime);
+
             base.Update(gameTime);
         }
 
@@ -61,6 +69,9 @@ namespace Galabingus
 
             // Draw the player
             player.Draw();
+
+            // Draws bullets
+            mng_bullet.Draw();
 
             // End the SpriteBatch draw
             _spriteBatch.End();

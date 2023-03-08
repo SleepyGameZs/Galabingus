@@ -511,7 +511,7 @@ namespace Galabingus
         /// </summary>
         public void Shoot()
         {
-            // TODO: Player Shooting
+            BulletManager.Instance.CreateBullet(BulletType.Normal, Position, 0);
         }
 
 
