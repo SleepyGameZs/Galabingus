@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Content;
+using System.IO;
 
 namespace Galabingus
 {
@@ -36,7 +37,17 @@ namespace Galabingus
         ContentManager cm;
         SpriteBatch sb;
 
-        int[,] position;
+        //File reading
+        BinaryReader reader;
+
+        #endregion
+
+        #region Properties
+
+        public GameState GS
+        {
+            get { return gameState; }
+        }
 
         #endregion
 
@@ -146,7 +157,6 @@ namespace Galabingus
                 case GameState.Game:
 
                     gr.GraphicsDevice.Clear(Color.DarkBlue);
-
 
                     break;
 

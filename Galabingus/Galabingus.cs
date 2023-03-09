@@ -28,15 +28,13 @@ namespace Galabingus
         private EnemyManager mng_enemy;
 
         // Tile / Enemy Position & Data
-        private List<int[]> l_a4_obj_enemyData;
+        private List<int[]> objectData;
 
         public Galabingus()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
-
-            
         }
 
         protected override void Initialize()
@@ -51,6 +49,8 @@ namespace Galabingus
             //new UI class and loading its content
             userInterface = new UI(_graphics, Content, _spriteBatch);
             userInterface.LoadContent();
+
+
 
             // Set tile / enemy data
             l_a4_obj_enemyData = new List<int[]>();
@@ -107,19 +107,20 @@ namespace Galabingus
             GraphicsDevice.Clear(Color.Transparent);
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap);
 
-            // Draws bullets
-            mng_bullet.Draw();
-
-            // Draws enemies
-            mng_enemy.Draw();
-
-            _spriteBatch.Begin();
-
             //draw the screen
             userInterface.Draw();
 
-            // Draw the player
-            player.Draw();
+            if (!(userInterface.GS == GameState.Menu))
+            {
+                // Draws bullets
+                mng_bullet.Draw();
+
+                // Draws enemies
+                mng_enemy.Draw();
+
+                // Draw the player
+                player.Draw();
+            }
 
             // End the SpriteBatch draw
             _spriteBatch.End();
