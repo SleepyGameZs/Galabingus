@@ -19,6 +19,7 @@ namespace Galabingus
         // GameObject Dynamic
         private dynamic content;
 
+        // UI Object
         private UI userInterface;
 
         // Player GameObject
