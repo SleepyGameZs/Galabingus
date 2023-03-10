@@ -29,6 +29,7 @@ namespace Galabingus
 
         // Tile / Enemy Position & Data
         private List<int[]> objectData;
+        private List<int[]> l_a4_obj_enemyData;
 
         public Galabingus()
         {
