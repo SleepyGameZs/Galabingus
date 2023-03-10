@@ -208,7 +208,7 @@ namespace Galabingus
 
         public List<int[]> LevelReader(Type type)
         {
-            reader = new StreamReader("Content/level1.txt");
+            reader = new StreamReader("Content/level1.level");
 
             if (!reader.EndOfStream)
             {
