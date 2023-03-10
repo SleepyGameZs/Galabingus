@@ -28,7 +28,6 @@ namespace Galabingus
         private EnemyManager mng_enemy;
 
         // Tile / Enemy Position & Data
-        private List<int[]> objectData;
         private List<int[]> l_a4_obj_enemyData;
 
         public Galabingus()
@@ -54,8 +53,11 @@ namespace Galabingus
             userInterface = new UI(_graphics, Content, _spriteBatch);
             userInterface.LoadContent();
 
+            //gets the list of enemies from the file
+            l_a4_obj_enemyData = userInterface.LevelReader(Type.Enemy);
+
             // Set tile / enemy data
-            l_a4_obj_enemyData = new List<int[]>();
+            //l_a4_obj_enemyData = new List<int[]>();
 
             // ROUGH EXAMPLE FORMAT I USED HERE (we can change it, I just wanted to have something testable
             /* [0] -> Is this an enemy? (1 or 0)
@@ -63,8 +65,8 @@ namespace Galabingus
              * [2] -> X Position
              * [3] -> Y Position
              */
-            l_a4_obj_enemyData.Add(new int[] { 1, 0, 100, 100});
-            l_a4_obj_enemyData.Add(new int[] { 1, 0, 100, 200});
+            //l_a4_obj_enemyData.Add(new int[] { 1, 0, 100, 100});
+            //l_a4_obj_enemyData.Add(new int[] { 1, 0, 100, 200});
 
             // NOTE FOR MATT: whenever jay does tiling, you may need some a separate animation system that lets them choose which
             //                tile asset they want to draw, rather than just looping through the whole thing.

@@ -84,6 +84,7 @@ namespace Galabingus
                 EnemyType ET_tempAbility = EnemyType.Normal;
 
                 //check if slot contains an enemy
+                //SHAWN: Delete this if, I did that check for you
                 if (l_obj_enemyData[i][0] == 1)
                 {
                     // Found enemy, setup stats
