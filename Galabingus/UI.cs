@@ -26,6 +26,8 @@ namespace Galabingus
 
         Texture2D playButtonTexture;
 
+        Color clearColor;
+
         Rectangle playButtonRect;
 
         int playButtonScale = 6;
@@ -47,6 +49,18 @@ namespace Galabingus
         public GameState GS
         {
             get { return gameState; }
+        }
+
+        public Color ClearColor
+        {
+            get
+            {
+                return clearColor;
+            }
+            set
+            {
+                clearColor = value;
+            }
         }
 
         #endregion
@@ -145,7 +159,7 @@ namespace Galabingus
             {
                 case GameState.Menu:
 
-                   gr.GraphicsDevice.Clear(Color.DarkViolet);
+                    ClearColor = Color.DarkViolet;
 
                     sb.Draw(
                         playButtonTexture,
@@ -156,7 +170,7 @@ namespace Galabingus
 
                 case GameState.Game:
 
-                    gr.GraphicsDevice.Clear(Color.DarkBlue);
+                    ClearColor = Color.DarkBlue;
 
                     break;
 

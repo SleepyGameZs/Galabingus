@@ -105,7 +105,7 @@ namespace Galabingus
         protected override void Draw(GameTime gameTime)
         {
             // Change the clear color to transparent and use point rendering for pixel art
-            GraphicsDevice.Clear(Color.Transparent);
+            GraphicsDevice.Clear(userInterface.ClearColor);
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap);
 
             //draw the screen
