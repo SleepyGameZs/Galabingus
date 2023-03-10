@@ -46,6 +46,9 @@ namespace Galabingus
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            // Initalize the GameObject Instance and Content Dynamic (Always goes first)
+            content = GameObject.Instance.Initialize(Content, GraphicsDevice, _spriteBatch);
+
             //new UI class and loading its content
             userInterface = new UI(_graphics, Content, _spriteBatch);
             userInterface.LoadContent();
@@ -70,8 +73,7 @@ namespace Galabingus
             // ADDIONALLY: I think I might have messed something up in EnemyManager, because when I tried to give enemies the player
             //             sprite, it instead seemed to set position values for the player object.
 
-            // Initalize the GameObject Instance and Content Dynamic
-            content = GameObject.Instance.Initialize(Content, GraphicsDevice, _spriteBatch);
+            // Create a player
             player = new Player(new Vector2(16.25f, 16.25f), content.player_strip5);
 
             // Create Bullet Manager
@@ -105,7 +107,7 @@ namespace Galabingus
         protected override void Draw(GameTime gameTime)
         {
             // Change the clear color to transparent and use point rendering for pixel art
-            GraphicsDevice.Clear(Color.Transparent);
+            GraphicsDevice.Clear(userInterface.ClearColor);
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap);
 
             //draw the screen
