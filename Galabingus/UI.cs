@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Content;
 using System.IO;
+using System.Collections.Generic;
+using System;
 
 namespace Galabingus
 {
@@ -11,6 +13,12 @@ namespace Galabingus
     {
         Menu,
         Game
+    }
+
+    public enum Type
+    {
+        Enemy,
+        Tile
     }
 
     internal class UI
@@ -38,7 +46,10 @@ namespace Galabingus
         SpriteBatch sb;
 
         //File reading
-        BinaryReader reader;
+        StreamReader reader;
+
+        //Data values
+        List<int[]> objectData;
 
         #endregion
 
@@ -68,6 +79,8 @@ namespace Galabingus
 
             screenWidth = gr.PreferredBackBufferWidth;
             screenHeight = gr.PreferredBackBufferHeight;
+
+            objectData = new List<int[]>();
         }
 
         #endregion
@@ -177,6 +190,37 @@ namespace Galabingus
             {
                 return false;
             }
+        }
+
+        public List<int[]> LevelReader(Type type)
+        {
+            reader = new StreamReader("Content/level1.txt");
+
+            if (!reader.EndOfStream)
+            {
+                string line = reader.ReadLine();
+                string[] s_values = line.Split('|');
+                int[] i_values = new int[s_values.Length];
+
+                for(int i = 0; i < s_values.Length; i++)
+                {
+                    i_values[i] = int.Parse(s_values[i]);
+                }
+
+                objectData.Add(i_values);
+            }
+
+            List<int[]> returnList = new List<int[]>();
+
+            foreach (int[] value in objectData)
+            {
+                if (value[0] == (int)type)
+                {
+                    returnList.Add(value);
+                }
+            }
+
+            return returnList;
         }
 
         #endregion
