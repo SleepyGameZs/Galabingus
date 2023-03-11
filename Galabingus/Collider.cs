@@ -342,6 +342,7 @@ namespace Galabingus
                 return Collision.Empty;
             }
 
+            /*
             // Go through all collider instances to check for a collision and determine what colliders are active
             for (ushort colliderIndex = 0; colliderIndex < GameObject.Instance.Colliders.Count; colliderIndex++)
             {
@@ -429,7 +430,7 @@ namespace Galabingus
                     }
                 }
             }
-
+            */
             // No collision
             return new Collision(
                 GameObject.Instance,

@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
@@ -69,12 +70,12 @@ namespace Galabingus
             get
             {
                 GameObject.Instance.Content = ush_contentName;
-                return GameObject.Instance[Vector2.Zero][ush_bulletNumber];
+                return GetPosition(ush_bulletNumber);
             }
             set
             {
                 GameObject.Instance.Content = ush_contentName;
-                GameObject.Instance[Vector2.Zero][ush_bulletNumber] = value;
+                SetPosition(ush_bulletNumber, value);
             }
         }
 
@@ -83,12 +84,12 @@ namespace Galabingus
         /// specific type of thing to access, an bulletNumber as the index inside that list of bullets
         /// This allows one to access this bullet's stored sprite for this bullet
         /// </summary>
-        public new Texture2D Sprite
+        public Texture2D Sprite
         {
             get
             {
                 GameObject.Instance.Content = ush_contentName;
-                return GameObject.Instance.Sprite;
+                return GetSprite(ush_bulletNumber);
             }
         }
 
@@ -103,12 +104,12 @@ namespace Galabingus
             get
             {
                 GameObject.Instance.Content = ush_contentName;
-                return GameObject.Instance[Rectangle.Empty][ush_bulletNumber];
+                return GetTransform(ush_bulletNumber);
             }
             set
             {
                 GameObject.Instance.Content = ush_contentName;
-                GameObject.Instance[Rectangle.Empty][ush_bulletNumber] = value;
+                SetTransform(ush_bulletNumber, value);
             }
         }
 
@@ -117,17 +118,17 @@ namespace Galabingus
         /// specific type of thing to access, an bulletNumber as the index inside that list of bullets
         /// This allows one to access this bullet's sprite scale, so that it can be easily resized
         /// </summary>
-        public new float Scale
+        public float Scale
         {
             get
             {
                 GameObject.Instance.Content = ush_contentName;
-                return GameObject.Instance.Scale;
+                return GetScale(ush_bulletNumber);
             }
             set
             {
                 GameObject.Instance.Content = ush_contentName;
-                GameObject.Instance.Scale = value;
+                SetScale(ush_bulletNumber, value);
             }
         }
 
@@ -136,12 +137,12 @@ namespace Galabingus
             get
             {
                 GameObject.Instance.Content = ush_contentName;
-                return GameObject.Instance[ush_bulletNumber, Animation.Empty];
+                return GetAnimation(ush_bulletNumber);
             }
             set
             {
                 GameObject.Instance.Content = ush_contentName;
-                GameObject.Instance[ush_bulletNumber, Animation.Empty] = value;
+                SetAnimation(ush_bulletNumber, value);
             }
         }
 
@@ -155,12 +156,12 @@ namespace Galabingus
             get
             {
                 GameObject.Instance.Content = ush_contentName;
-                return GameObject.Instance[Collider.Empty][ush_bulletNumber];
+                return GetCollider(ush_bulletNumber);
             }
             set
             {
                 GameObject.Instance.Content = ush_contentName;
-                GameObject.Instance[Collider.Empty][ush_bulletNumber] = value;
+                SetCollider(ush_bulletNumber, value);
             }
         }
 
@@ -205,8 +206,8 @@ namespace Galabingus
             int_stateTimer = 0;
 
             // Set Position
-            this.Scale = 3;
-            this.Position = new Vector2(vc2_position.X, vc2_position.Y - Transform.Height * this.Scale / 2.0f);
+            this.Scale = 3f;
+            this.Position = new Vector2(vc2_position.X + Transform.Width * Scale / 2.0f, vc2_position.Y - Transform.Height * Scale / 2.0f);
 
             // Convert to radians
             dbl_direction = int_direction * (Math.PI / 180);
@@ -220,7 +221,6 @@ namespace Galabingus
             {
                 case BulletType.Normal:
                     clr_bulletColor = Color.CornflowerBlue;
-
                     break;
 
                 case BulletType.Bouncing:
@@ -271,7 +271,6 @@ namespace Galabingus
             {
                 case BulletType.Normal:
                     this.Position += vc2_velocity * int_speedmulti * 2;
-
                     break;
 
                 case BulletType.Bouncing:

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Dynamic;
+using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -48,18 +49,210 @@ namespace Galabingus
     /// </summary>
     internal class GameObject : DynamicObject
     {
+        private const byte animationConst = 0;
+        private const byte colliderConst = 1;
+        private const byte transformConst = 2;
+        private const byte positionConst = 3;
+        private const byte spritesConst = 4;
+        private const byte scalesConst = 5;
+        private const byte objectEnumsConst = 6;
         private static GameObject allGameObjects = null; // GameObject singleton: contains all instances for all GameObjects
-        private List<List<Animation>> animations;        // Animation content
-        private List<List<Collider>> colliders;          // Collider content
-        private List<List<Rectangle>> transforms;        // Transform content
-        private List<List<Vector2>> positions;           // Position content
-        private List<Texture2D> sprites;                 // Sprite content
-        private List<float> scales;                      // Scale content
-        private List<string> objectEnums;                // Actual content names
+        private static List<Animation> animations = null;              // Animation content
+        private static List<Collider> colliders = null;                // Collider content
+        private static List<Rectangle> transforms = null;              // Transform content
+        private static List<Vector2> positions = null;                 // Position content
+        private static List<Texture2D> sprites = null;                 // Sprite content
+        private static List<float> scales = null;                      // Scale content
+        private static List<string> objectEnums = null;                // Actual content names
+        unsafe private static GameObjectTrie<Animation> animationsI;              // Animation content
+        unsafe private static GameObjectTrie<Collider> collidersI;                // Collider content
+        unsafe private static GameObjectTrie<Rectangle> transformsI;              // Transform content
+        unsafe private static GameObjectTrie<Vector2> positionsI;                 // Position content
+        unsafe private static GameObjectTrie<Texture2D> spritesI;                 // Sprite content
+        unsafe private static GameObjectTrie<float> scalesI;                      // Scale content
+        unsafe private static GameObjectTrie<string> objectEnumsI;                // Actual content names
         private ushort index;                            // The current content index in all of the content arrays
+        private ushort instance;
         private ContentManager contentManager;           // Used to load in the sprite
         private GraphicsDevice graphicsDevice;           // Graphics Device
         private SpriteBatch spriteBatch;                 // Sprite Batch
+        private static List<List<List<ushort>>> trie;
+
+        public struct GameObjectTrie<T>
+        {
+            
+            public object GetPass(ushort layer1Find, ushort layer3Pass)
+            {
+                switch (layer1Find)
+                {
+                    case animationConst:
+                        return GameObjectTrie<Animation>.Get(layer1Find, layer3Pass, GameObject.AnimationsI);
+                    case colliderConst:
+                        return GameObjectTrie<Collider>.Get(layer1Find, layer3Pass, GameObject.CollidersI);
+                    case transformConst:
+                        return GameObjectTrie<Rectangle>.Get(layer1Find, layer3Pass, GameObject.TransformsI);
+                    case positionConst:
+                        return GameObjectTrie<Vector2>.Get(layer1Find, layer3Pass, GameObject.PositionsI);
+                    case spritesConst:
+                        return GameObjectTrie<Texture2D>.Get(layer1Find, layer3Pass, GameObject.SpritesI);
+                    case objectEnumsConst:
+                        return GameObjectTrie<string>.Get(layer1Find, layer3Pass, GameObject.ObjectEnumsI);
+                    case scalesConst:
+                        return GameObjectTrie<float>.Get(layer1Find, layer3Pass, GameObject.ScalesI);
+                    default:
+                        return GameObjectTrie<Texture2D>.Get(layer1Find, layer3Pass, GameObject.SpritesI);
+                }
+            }
+
+            public void SetPass(ushort layer1Pass, ushort layer3Pass, object value)
+            {
+                switch (layer1Pass)
+                {
+                    case animationConst:
+                        GameObjectTrie<Animation>.Set(layer1Pass, layer3Pass, GameObject.AnimationsI, (Animation)value);
+                        break;
+                    case colliderConst:
+                        GameObjectTrie<Collider>.Set(layer1Pass, layer3Pass, GameObject.CollidersI, (Collider)value);
+                        break;
+                    case transformConst:
+                        GameObjectTrie<Rectangle>.Set(layer1Pass, layer3Pass, GameObject.TransformsI, (Rectangle)value);
+                        break;
+                    case positionConst:
+                        GameObjectTrie<Vector2>.Set(layer1Pass, layer3Pass, GameObject.PositionsI, (Vector2)value);
+                        break;
+                    case spritesConst:
+                        GameObjectTrie<Texture2D>.Set(layer1Pass, layer3Pass, GameObject.SpritesI, (Texture2D)value);
+                        break;
+                    case objectEnumsConst:
+                        GameObjectTrie<string>.Set(layer1Pass, layer3Pass, GameObject.ObjectEnumsI, (string)value);
+                        break;
+                    case scalesConst:
+                        GameObjectTrie<float>.Set(layer1Pass, layer3Pass, GameObject.ScalesI, (float)value);
+                        break;
+                    default:
+                        GameObjectTrie<float>.Set(layer1Pass, layer3Pass, GameObject.ScalesI, (float)value);
+                        break;
+                }
+            }
+
+            #nullable disable
+            public static T Get(ushort layer1Find, ushort layer3Find, List<T> data)
+            {
+                if (layer1Find >= Trie.Count)
+                {
+                    for (ushort i = (ushort)Trie.Count; i <= layer1Find; i++)
+                    {
+                        Trie.Add(new List<List<ushort>>());
+                    }
+                }
+                if (GameObject.Instance.Index >= Trie[layer1Find].Count)
+                {
+                    for (ushort i = (ushort)Trie[layer1Find].Count; i <= GameObject.Instance.Index; i++)
+                    {
+                        Trie[layer1Find].Add(new List<ushort>());
+                    }
+                }
+                if (layer3Find >= Trie[layer1Find][GameObject.Instance.Index].Count)
+                {
+                    for (ushort i = (ushort)Trie[layer1Find][GameObject.Instance.Index].Count; i <= layer3Find; i++)
+                    {
+                        Trie[layer1Find][GameObject.Instance.Index].Add((ushort)(data.Count));
+                        data.Add(default(T));
+                    }
+                }
+
+                return data[Trie[layer1Find][GameObject.Instance.Index][layer3Find]];
+            }
+
+            public static ushort Add(ushort layer1Find, List<T> data, T value)
+            {
+                if (layer1Find >= Trie.Count)
+                {
+                    for (ushort i = (ushort)Trie.Count; i <= layer1Find; i++)
+                    {
+                        Trie.Add(new List<List<ushort>>());
+                    }
+                }
+                if (GameObject.Instance.Index >= Trie[layer1Find].Count)
+                {
+                    for (ushort i = (ushort)Trie[layer1Find].Count; i <= GameObject.Instance.Index; i++)
+                    {
+                        Trie[layer1Find].Add(new List<ushort>());
+                    }
+                }
+                Trie[layer1Find][GameObject.Instance.Index].Add((ushort)data.Count);
+                ushort layer3Find = (ushort)(data.Count);
+                data.Add(value);
+                return layer3Find;
+            }
+
+            public static void Set(ushort layer1Find, ushort layer3Find, List<T> data, T value)
+            {
+                if (layer1Find >= Trie.Count)
+                {
+                    for (ushort i = (ushort)Trie.Count; i <= layer1Find; i++)
+                    {
+                        Trie.Add(new List<List<ushort>>());
+                    }
+                }
+                if (GameObject.Instance.Index >= Trie[layer1Find].Count)
+                {
+                    for (ushort i = (ushort)Trie[layer1Find].Count; i <= GameObject.Instance.Index; i++)
+                    {
+                        Trie[layer1Find].Add(new List<ushort>());
+                    }
+                }
+                if (layer3Find >= Trie[layer1Find][GameObject.Instance.Index].Count)
+                {
+                    for (int i = Trie[layer1Find][GameObject.Instance.Index].Count; i <= layer3Find; i++)
+                    {
+                        Trie[layer1Find][GameObject.Instance.Index].Add((ushort)(data.Count));
+                        data.Add(value);
+                    }
+                }
+
+                data[Trie[layer1Find][GameObject.Instance.Index][layer3Find]] = value;
+            }
+
+            public static List<T> GetArray(ushort layer1Find, List<T> data)
+            {
+                if (layer1Find >= Trie.Count)
+                {
+                    for (int i = Trie.Count; i <= layer1Find; i++)
+                    {
+                        Trie.Add(new List<List<ushort>>());
+                    }
+                }
+                if (GameObject.Instance.Index >= Trie[layer1Find].Count)
+                {
+                    for (int i = Trie[layer1Find].Count; i <= GameObject.Instance.Index; i++)
+                    {
+                        Trie[layer1Find].Add(new List<ushort>());
+                    }
+                }
+
+                List<T> result = new List<T>();
+                foreach (int index in Trie[layer1Find][GameObject.Instance.Index])
+                {
+                    result.Add(data[index]);
+                }
+
+                return result;
+            }
+            #nullable enable
+        }
+
+        public ushort InstanceID
+        {
+            get
+            {
+                return instance;
+            }
+            set
+            {
+                instance = value;
+            }
+        }
 
         /// <summary>
         ///  GameObject master storage place
@@ -75,6 +268,276 @@ namespace Galabingus
                 }
                 return allGameObjects;
             }
+        }
+
+        private static List<List<List<ushort>>> Trie
+        {
+            get
+            {
+                if (trie == null)
+                {
+                    trie = new List<List<List<ushort>>>();
+                }
+                return trie;
+            }
+            set
+            {
+                trie = value;
+            }
+        }
+
+        private static List<Texture2D> SpritesI
+        {
+            get
+            {
+                if (sprites == null)
+                {
+                    sprites = new List<Texture2D>();
+                }
+                return sprites;
+            }
+            set
+            {
+                sprites = value;
+            }
+        }
+
+        private static List<float> ScalesI
+        {
+            get
+            {
+                if (scales == null)
+                {
+                    scales = new List<float>();
+                }
+                return scales;
+            }
+            set
+            {
+                scales = value;
+            }
+        }
+
+        private static List<string> ObjectEnumsI
+        {
+            get
+            {
+                if (objectEnums == null)
+                {
+                    objectEnums = new List<string>();
+                }
+                return objectEnums;
+            }
+            set
+            {
+                objectEnums = value;
+            }
+        }
+
+        private static List<Animation> AnimationsI
+        {
+            get
+            {
+                if (animations == null)
+                {
+                    animations = new List<Animation>();
+                }
+                return animations;
+            }
+            set
+            {
+                animations = value;
+            }
+        }
+
+        private static List<Collider> CollidersI
+        {
+            get
+            {
+                if (colliders == null)
+                {
+                    colliders = new List<Collider>();
+                }
+                return colliders;
+            }
+            set
+            {
+                colliders = value;
+            }
+        }
+
+        private static List<Rectangle> TransformsI
+        {
+            get
+            {
+                if (transforms == null)
+                {
+                    transforms = new List<Rectangle>();
+                }
+                return transforms;
+            }
+            set
+            {
+                transforms = value;
+            }
+        }
+
+        private static List<Vector2> PositionsI
+        {
+            get
+            {
+                if (positions == null)
+                {
+                    positions = new List<Vector2>();
+                }
+                return positions;
+            }
+            set
+            {
+                positions = value;
+            }
+        }
+
+        public Texture2D GetSprite(ushort instancePass)
+        {
+            #nullable disable
+            unsafe
+            {
+                return (spritesI).GetPass(spritesConst,instancePass) as Texture2D;
+            }
+            #nullable enable
+        }
+
+        public float GetScale(ushort instancePass)
+        {
+            #nullable disable
+            unsafe
+            {
+                return (float)(scalesI).GetPass(scalesConst, instancePass);
+            }
+            #nullable enable
+        }
+
+        public string GetObjectEnum(ushort instancePass)
+        {
+            #nullable disable
+            unsafe
+            {
+                return (objectEnumsI).GetPass(objectEnumsConst, instancePass) as string;
+            }
+            #nullable enable
+        }
+
+        public Animation GetAnimation(ushort instancePass)
+        {
+            #nullable disable
+            unsafe
+            {
+                return (animationsI).GetPass(animationConst, instancePass) as Animation;
+            }
+            #nullable enable
+        }
+
+        public Collider GetCollider(ushort instancePass)
+        {
+            #nullable disable
+            unsafe
+            {
+                return (collidersI).GetPass(colliderConst, instancePass) as Collider;
+            }
+            #nullable enable
+        }
+
+        public Rectangle GetTransform(ushort instancePass)
+        {
+            #nullable disable
+            unsafe
+            {
+                return (Rectangle)(transformsI).GetPass(transformConst, instancePass);
+            }
+            #nullable enable
+        }
+
+        public Vector2 GetPosition(ushort instancePass)
+        {
+            #nullable disable
+            unsafe
+            {
+                return (Vector2)(positionsI).GetPass(positionConst, instancePass);
+            }
+            #nullable enable
+        }
+
+
+
+        public void SetSprite(ushort instancePass, object value)
+        {
+            #nullable disable
+            unsafe
+            {
+                (spritesI).SetPass(spritesConst, instancePass, value);
+            }
+            #nullable enable
+        }
+
+        public void SetScale(ushort instancePass, object value)
+        {
+            #nullable disable
+            unsafe
+            {
+                (scalesI).SetPass(scalesConst, instancePass, value);
+            }
+            #nullable enable
+        }
+
+        public void SetObjectEnum(ushort instancePass, object value)
+        {
+            #nullable disable
+            unsafe
+            {
+                (objectEnumsI).SetPass(objectEnumsConst, instancePass, value);
+            }
+            #nullable enable
+        }
+
+        public void SetAnimation(ushort instancePass, object value)
+        {
+            #nullable disable
+            unsafe
+            {
+                (animationsI).SetPass(animationConst, instancePass, value);
+            }
+            #nullable enable
+        }
+
+        public void SetCollider(ushort instancePass, object value)
+        {
+            #nullable disable
+            unsafe
+            {
+                (collidersI).SetPass(colliderConst, instancePass, value);
+            }
+            #nullable enable
+        }
+
+        public void SetTransform(ushort instancePass, object value)
+        {
+            #nullable disable
+            unsafe
+            {
+                (transformsI).SetPass(transformConst, instancePass, value);
+            }
+            #nullable enable
+        }
+
+        public void SetPosition(ushort instancePass, object value)
+        {
+            #nullable disable
+            unsafe
+            {
+                (positionsI).SetPass(positionConst, instancePass, value);
+            }
+            #nullable enable
         }
 
         /// <summary>
@@ -130,484 +593,6 @@ namespace Galabingus
         }
 
         /// <summary>
-        ///  Get a specific frame of the transform
-        ///  Sets a specific frame of the transform
-        /// </summary>
-        /// <param name="frame">index to the transformt</param>
-        /// <param name="rectangle">type determinate</param>
-        /// <returns>Rectangle at the given frame</returns>
-        public Rectangle this[ushort frame, Rectangle rectangle]
-        {
-            get
-            {
-                // When the index does not exist expand transforms
-                if (GameObject.Instance.transforms.Count <= index)
-                {
-                    for (int i = GameObject.Instance.transforms.Count; i <= index + 1; i++)
-                    {
-                        GameObject.Instance.transforms.Add(new List<Rectangle>());
-                    }
-                }
-
-                // When the frame does not exist expand the array inside transforms
-                if (GameObject.Instance.transforms[index].Count <= frame)
-                {
-                    for (int i = GameObject.Instance.transforms[index].Count; i <= frame + 1; i++)
-                    {
-                        GameObject.Instance.transforms[index].Add(new Rectangle());
-                    }
-                }
-
-                // return the frame
-                return GameObject.Instance.transforms[index][frame];
-            }
-            set
-            {
-                // When the index does not exist expand transforms
-                if (GameObject.Instance.transforms.Count <= index)
-                {
-                    for (int i = GameObject.Instance.transforms.Count; i <= index + 1; i++)
-                    {
-                        GameObject.Instance.transforms.Add(new List<Rectangle>());
-                    }
-                }
-
-                // When the frame does not exist expand the array inside transforms
-                if (GameObject.Instance.transforms[index].Count <= frame)
-                {
-                    for (int i = GameObject.Instance.transforms[index].Count; i <= frame + 1; i++)
-                    {
-                        GameObject.Instance.transforms[index].Add(new Rectangle());
-                    }
-                }
-
-                // Set the frame
-                GameObject.Instance.transforms[index][frame] = value;
-            }
-        }
-
-        /// <summary>
-        ///  Gets specific instance of a position
-        ///  Sets the specific instance of a position
-        /// </summary>
-        /// <param name="instance">index of the position</param>
-        /// <param name="position">type determinate</param>
-        /// <returns>Position</returns>
-        public Vector2 this[ushort instance, Vector2 position]
-        {
-            get
-            {
-                // When the index does not exist expand positions
-                if (GameObject.Instance.positions.Count <= index)
-                {
-                    for (int i = GameObject.Instance.positions.Count; i <= index + 1; i++)
-                    {
-                        GameObject.Instance.positions.Add(new List<Vector2>());
-                    }
-                }
-
-                // When the instance does not exist expand the array inside positions
-                if (GameObject.Instance.positions[index].Count <= instance)
-                {
-                    for (int i = GameObject.Instance.positions[index].Count; i <= instance + 1; i++)
-                    {
-                        GameObject.Instance.positions[index].Add(new Vector2());
-                    }
-                }
-
-                // Get the instance of the position
-                return GameObject.Instance.positions[index][instance];
-            }
-            set
-            {
-                // When the index does not exist expand positions
-                if (GameObject.Instance.positions.Count <= index)
-                {
-                    for (int i = GameObject.Instance.positions.Count; i <= index + 1; i++)
-                    {
-                        GameObject.Instance.positions.Add(new List<Vector2>());
-                    }
-                }
-
-                // When the instance does not exist expand the array inside positions
-                if (GameObject.Instance.positions[index].Count <= instance)
-                {
-                    for (int i = GameObject.Instance.positions[index].Count; i <= instance + 1; i++)
-                    {
-                        GameObject.Instance.positions[index].Add(new Vector2());
-                    }
-                }
-
-                // Set the specific instance for the position
-                GameObject.Instance.positions[index][instance] = value;
-            }
-        }
-
-        /// <summary>
-        ///  Gets the specific instance of a animation
-        ///  Sets the specific instance of the animation
-        /// </summary>
-        /// <param name="instance">index of animation</param>
-        /// <param name="animation">type discriptor</param>
-        /// <returns></returns>
-        public Animation this[ushort instance, Animation animation]
-        {
-            get
-            {
-                // When the index does not exist expand animations
-                if (GameObject.Instance.animations.Count <= index)
-                {
-                    for (int i = GameObject.Instance.animations.Count; i <= index + 1; i++)
-                    {
-                        GameObject.Instance.animations.Add(new List<Animation>());
-                    }
-                }
-
-                // When the instance does not exist expand the array in animations
-                if (GameObject.Instance.animations[index].Count <= instance)
-                {
-                    for (int i = GameObject.Instance.animations[index].Count; i <= instance + 1; i++)
-                    {
-                        GameObject.Instance.animations[index].Add(new Animation(0, 0, 0));
-                    }
-                }
-
-                // Get the instance of a animation
-                return GameObject.Instance.animations[index][instance];
-            }
-            set
-            {
-                // When the index does not exist expand animations
-                if (GameObject.Instance.animations.Count <= index)
-                {
-                    for (int i = GameObject.Instance.animations.Count; i <= index + 1; i++)
-                    {
-                        GameObject.Instance.animations.Add(new List<Animation>());
-                    }
-                }
-
-                // When the instance does not exist expand the array in animations
-                if (GameObject.Instance.animations[index].Count <= instance)
-                {
-                    for (int i = GameObject.Instance.animations[index].Count; i <= instance + 1; i++)
-                    {
-                        GameObject.Instance.animations[index].Add(new Animation(0, 0, 0));
-                    }
-                }
-
-                // Set the specific instance for animation
-                GameObject.Instance.animations[index][instance] = value;
-            }
-        }
-
-        /// <summary>
-        ///  Gets the specific instance of a collider
-        ///  Sets the specific instance of a collider
-        /// </summary>
-        /// <param name="instance">index of collider</param>
-        /// <param name="collider">type discriptor</param>
-        /// <returns></returns>
-        public Collider this[ushort instance, Collider collider]
-        {
-            get
-            {
-                // When the index does not exist expand colliders
-                if (GameObject.Instance.colliders.Count <= index)
-                {
-                    for (int i = GameObject.Instance.colliders.Count; i <= index + 1; i++)
-                    {
-                        GameObject.Instance.colliders.Add(new List<Collider>());
-                    }
-                }
-
-                // When the instance does not exist expand the array in colliders
-                if (GameObject.Instance.colliders[index].Count <= instance)
-                {
-                    for (int i = GameObject.Instance.colliders[index].Count; i <= instance + 1; i++)
-                    {
-                        GameObject.Instance.colliders[index].Add(new Collider());
-                    }
-                }
-
-                // Get the specific instance of the collider
-                return GameObject.Instance.colliders[index][instance];
-            }
-            set
-            {
-                // When the index does not exist expand colliders
-                if (GameObject.Instance.colliders.Count <= index)
-                {
-                    for (int i = GameObject.Instance.colliders.Count; i <= index + 1; i++)
-                    {
-                        GameObject.Instance.colliders.Add(new List<Collider>());
-                    }
-                }
-
-                // When the instance does not exist expand the array in colliders
-                if (GameObject.Instance.colliders[index].Count <= instance)
-                {
-                    for (int i = GameObject.Instance.colliders[index].Count; i <= instance + 1; i++)
-                    {
-                        GameObject.Instance.colliders[index].Add(new Collider());
-                    }
-                }
-
-                // Set the specific instance for the collider
-                GameObject.Instance.colliders[index][instance] = value;
-            }
-        }
-
-        /// <summary>
-        ///  Gets the array of animations
-        ///  Sets the array of animations
-        /// </summary>
-        /// <param name="type">type discriptor</param>
-        /// <returns>array of animation</returns>
-        public List<Animation> this[Animation type]
-        {
-            get
-            {
-                // When the index does not exist expand animations
-                if (GameObject.Instance.animations.Count <= index)
-                {
-                    for (int i = GameObject.Instance.animations.Count; i <= index + 1; i++)
-                    {
-                        GameObject.Instance.animations.Add(new List<Animation>());
-                    }
-                }
-
-                // Get the animations array
-                return GameObject.Instance.animations[index];
-            }
-            set
-            {
-                // When the index does not exist expand animations
-                if (index >= GameObject.Instance.animations.Count)
-                {
-                    for (int i = GameObject.Instance.animations.Count; i <= index + 1; i++)
-                    {
-                        GameObject.Instance.animations.Add(value);
-                    }
-                }
-                else
-                {
-                    // Set the value of animations
-                    GameObject.Instance.animations[index] = value;
-                }
-            }
-        }
-
-        /// <summary>
-        ///  Gets the collider array
-        ///  Sets the collider array
-        /// </summary>
-        /// <param name="type">type discriptor</param>
-        /// <returns>collider arrray</returns>
-        public List<Collider> this[Collider type]
-        {
-            get
-            {
-                // When the index does not exist expand colliders
-                if (GameObject.Instance.colliders.Count <= index)
-                {
-                    for (int i = GameObject.Instance.colliders.Count; i <= index + 1; i++)
-                    {
-                        GameObject.Instance.colliders.Add(new List<Collider>());
-                    }
-                }
-
-                // Get the colliders array
-                return GameObject.Instance.colliders[index];
-            }
-            set
-            {
-                // When the index does not exist expand colliders
-                if (index >= GameObject.Instance.colliders.Count)
-                {
-                    for (int i = GameObject.Instance.colliders.Count; i <= index + 1; i++)
-                    {
-                        GameObject.Instance.colliders.Add(value);
-                    }
-                }
-                else
-                {
-                    // Set the colliders array
-                    GameObject.Instance.colliders[index] = value;
-                }
-            }
-        }
-
-        /// <summary>
-        ///  Gets the positions array
-        ///  Sets the positions array
-        /// </summary>
-        /// <param name="type">type discriptor</param>
-        /// <returns>positions array</returns>
-        public List<Vector2> this[Vector2 type]
-        {
-            get
-            {
-                // When the index does not exist expand positions
-                if (GameObject.Instance.positions.Count <= index)
-                {
-                    for (int i = GameObject.Instance.positions.Count; i <= index + 1; i++)
-                    {
-                        GameObject.Instance.positions.Add(new List<Vector2>());
-                    }
-                }
-
-                // Get the positions array
-                return GameObject.Instance.positions[index];
-            }
-            set
-            {
-                // When the index does not exist expand positions
-                if (index >= GameObject.Instance.positions.Count)
-                {
-                    for (int i = GameObject.Instance.positions.Count; i <= index + 1; i++)
-                    {
-                        GameObject.Instance.positions.Add(value);
-                    }
-                }
-                else
-                {
-                    // Set the positions array
-                    GameObject.Instance.positions[index] = value;
-                }
-            }
-        }
-
-        /// <summary>
-        ///  Gets the transforms array
-        ///  Sets the transforms array
-        /// </summary>
-        /// <param name="type">type discriptor</param>
-        /// <returns>transforms array</returns>
-        public List<Rectangle> this[Rectangle type]
-        {
-            get
-            {
-                // When the index does not exist expand transforms
-                if (GameObject.Instance.transforms.Count <= index)
-                {
-                    for (int i = GameObject.Instance.transforms.Count; i <= index + 1; i++)
-                    {
-                        GameObject.Instance.transforms.Add(new List<Rectangle>());
-                    }
-                }
-
-                // Get the transforms array
-                return GameObject.Instance.transforms[index];
-            }
-            set
-            {
-                // When the index does not exist expand transforms
-                if (index >= GameObject.Instance.transforms.Count)
-                {
-                    for (int i = GameObject.Instance.transforms.Count; i <= index + 1; i++)
-                    {
-                        GameObject.Instance.transforms.Add(value);
-                    }
-                }
-                else
-                {
-                    // Sets the transforms array
-                    GameObject.Instance.transforms[index] = value;
-                }
-            }
-        }
-
-        /// <summary>
-        ///  Gets the Instances Colliders 
-        ///  Sets the Instances Colliders
-        ///  <!>Warning this effects all instances<!>
-        /// </summary>
-        public List<List<Collider>> Colliders
-        {
-            // Give direct access
-            get
-            {
-                return colliders;
-            }
-            set
-            {
-                colliders = value;
-            }
-        }
-
-        /// <summary>
-        ///  Gets the sprite
-        ///  Sets the sprite
-        /// </summary>
-        public Texture2D Sprite
-        {
-            get
-            {
-                // Gets the sprite
-                return GameObject.Instance.sprites[index];
-            }
-            set
-            {
-                // When the index does not exist expand the sprite array
-                if (index >= GameObject.Instance.sprites.Count)
-                {
-                    for (int i = GameObject.Instance.sprites.Count; i <= index + 1; i++)
-                    {
-                        GameObject.Instance.sprites.Add(value);
-                    }
-                }
-                else
-                {
-                    // Set the sprite
-                    GameObject.Instance.sprites[index] = value;
-                }
-            }
-        }
-
-        /// <summary>
-        ///  Gets the scale
-        ///  Sets the scale
-        /// </summary>
-        public float Scale
-        {
-            get
-            {
-                // Gets the scale
-                return GameObject.Instance.scales[index];
-            }
-            set
-            {
-                // When the index does not exist expand the scale array
-                if (index >= GameObject.Instance.scales.Count)
-                {
-                    for (int i = GameObject.Instance.scales.Count; i <= index + 1; i++)
-                    {
-                        GameObject.Instance.scales.Add(value);
-                    }
-                }
-                else
-                {
-                    // Set the scale
-                    GameObject.Instance.scales[index] = value;
-                }
-            }
-        }
-
-        /// <summary>
-        ///  Creates a empty GameObject for the Instance
-        /// </summary>
-        private GameObject()
-        {
-            animations = new List<List<Animation>>();
-            colliders = new List<List<Collider>>();
-            transforms = new List<List<Rectangle>>();
-            sprites = new List<Texture2D>();
-            positions = new List<List<Vector2>>();
-            scales = new List<float>();
-            objectEnums = new List<string>();
-        }
-
-        /// <summary>
         ///  Generates a index for the instance Content 
         ///  property that cannot be found
         ///  The binder name will be stored at the index
@@ -625,7 +610,7 @@ namespace Galabingus
             ushort index = 0;   // The index of the property
 
             // Search to find the property
-            foreach (string sprite in GameObject.Instance.objectEnums)
+            foreach (string sprite in GameObject.ObjectEnumsI)
             {
                 if (binder.Name == sprite)
                 {
@@ -635,6 +620,7 @@ namespace Galabingus
                 {
                     this.index = index;
                     result = index;
+                    //GameObject.Instance.Content = index;
                     return exist;
                 }
                 index++;
@@ -644,44 +630,17 @@ namespace Galabingus
             if (!exist)
             {
                 exist = true;
-                GameObject.Instance.objectEnums.Add(binder.Name);
+                GameObject.ObjectEnumsI.Add(binder.Name);
             }
             this.index = index;
             result = index;
+            //GameObject.Instance.Content = index;
             return exist;
         }
 
-        /// <summary>
-        ///  Creates a GameObject from the content name
-        ///  the content name must be in the format file_strip(i) where 
-        ///  (i) is the number of sprites in the sprite sheet
-        /// </summary>
-        /// <param name="contentName">content name</param>
-        public GameObject(
-            ushort contentName
-        )
+        private GameObject()
         {
-            GameObject.Instance.Content = contentName;
-            string path = GameObject.Instance.objectEnums[contentName];
-            ushort strip = ushort.Parse(path.Split("strip")[1]);
-            GameObject.Instance.index = contentName;
-            GameObject.Instance.Sprite = GameObject.Instance.contentManager.Load<Texture2D>(path);
-            GameObject.Instance[Animation.Empty].Add(new Animation(GameObject.Instance.Sprite.Width, GameObject.Instance.Sprite.Height, strip));
-            Collider newCollider = new Collider();
-            newCollider.Layer = contentName;
-            GameObject.Instance[Collider.Empty].Add(newCollider);
-            GameObject.Instance[Vector2.Zero].Add(Vector2.Zero);
-            for (int frame = 1; frame <= strip; frame++)
-            {
-                GameObject.Instance[Rectangle.Empty].Add(
-                    new Rectangle(
-                        (GameObject.Instance.Sprite.Width / strip * frame), // Sprite starts at the frame starting position
-                        0,                                                  // Sprite starts at Y = 0
-                        GameObject.Instance.Sprite.Width / strip,           // Width of the sprite
-                        GameObject.Instance.Sprite.Height                   // Height of the sprite
-                   )
-                );
-            }
+            // Does nothing, just is used to create a singleton instance
         }
 
         /// <summary>
@@ -692,32 +651,31 @@ namespace Galabingus
         /// </summary>
         /// <param name="contentName">content name</param>
         /// <param name="instanceNumber">index of the instance</param>
-        public GameObject(
+        unsafe public GameObject(
             ushort contentName,
             ushort instanceNumber
         )
         {
             GameObject.Instance.Content = contentName;
-            string path = GameObject.Instance.objectEnums[contentName];
+            instance = instanceNumber;
+            string path = GameObject.ObjectEnumsI[contentName];
             ushort strip = ushort.Parse(path.Split("strip")[1]);
             GameObject.Instance.index = contentName;
-            GameObject.Instance.Sprite = GameObject.Instance.contentManager.Load<Texture2D>(path);
-            GameObject.Instance[instanceNumber, Animation.Empty] = new Animation(GameObject.Instance.Sprite.Width, GameObject.Instance.Sprite.Height, strip);
+            SetSprite(instanceNumber,GameObject.Instance.contentManager.Load<Texture2D>(path));
+            SetScale(instanceNumber,1.0f);
+            SetAnimation(instanceNumber, new Animation(GetSprite(instanceNumber).Width, GetSprite(instanceNumber).Height, strip));
             Collider newCollider = new Collider();
             newCollider.Layer = contentName;
-            GameObject.Instance[instanceNumber, Collider.Empty] = newCollider;
-            GameObject.Instance[instanceNumber, Vector2.Zero] = Vector2.Zero;
-            for (int frame = 1; frame <= strip; frame++)
-            {
-                GameObject.Instance[Rectangle.Empty].Add(
-                    new Rectangle(
-                        (GameObject.Instance.Sprite.Width / strip * frame), // Sprite starts at the frame starting position
-                        0,                                                  // Sprite starts at Y = 0
-                        GameObject.Instance.Sprite.Width / strip,           // Width of the sprite
-                        GameObject.Instance.Sprite.Height                   // Height of the sprite
-                   )
-                );
-            }
+            SetCollider(instanceNumber, newCollider);
+            SetPosition(instanceNumber, Vector2.Zero);
+            SetTransform(instanceNumber,
+                new Rectangle(
+                    (GetSprite(instanceNumber).Width / strip),         // Sprite starts at the frame starting position
+                    0,                                                 // Sprite starts at Y = 0
+                    GetSprite(instanceNumber).Width / strip,           // Width of the sprite
+                    GetSprite(instanceNumber).Height                   // Height of the sprite
+                )
+            );
         }
 
         /// <summary>

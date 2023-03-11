@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Diagnostics;
 
 // Matthew Rodriguez
 // 2023, 3, 7
@@ -57,24 +58,29 @@ namespace Galabingus
             get
             {
                 GameObject.Instance.Content = contentName;
-                return GameObject.Instance[Vector2.Zero][0];
+                return GetPosition(0);
             }
             set
             {
                 GameObject.Instance.Content = contentName;
-                GameObject.Instance[Vector2.Zero][0] = value;
+                SetPosition(0, value);
             }
         }
 
         /// <summary>
         ///  Player sprite
         /// </summary>
-        public new Texture2D Sprite
+        public Texture2D Sprite
         {
             get
             {
                 GameObject.Instance.Content = contentName;
-                return GameObject.Instance.Sprite;
+                return GetSprite(0);
+            }
+            set
+            {
+                GameObject.Instance.Content = contentName;
+                SetSprite(0, value);
             }
         }
 
@@ -86,29 +92,29 @@ namespace Galabingus
             get
             {
                 GameObject.Instance.Content = contentName;
-                return GameObject.Instance[Rectangle.Empty][0];
+                return GetTransform(0);
             }
             set
             {
                 GameObject.Instance.Content = contentName;
-                GameObject.Instance[Rectangle.Empty][0] = value;
+                SetTransform(0,value);
             }
         }
 
         /// <summary>
         ///  Scale of the palyer sprite
         /// </summary>
-        public new float Scale
+        public float Scale
         {
             get
             {
                 GameObject.Instance.Content = contentName;
-                return GameObject.Instance.Scale;
+                return GetScale(0);
             }
             set
             {
                 GameObject.Instance.Content = contentName;
-                GameObject.Instance.Scale = value;
+                SetScale(0, value);
             }
         }
 
@@ -120,12 +126,12 @@ namespace Galabingus
             get
             {
                 GameObject.Instance.Content = contentName;
-                return GameObject.Instance[Animation.Empty][0];
+                return GetAnimation(0);
             }
             set
             {
                 GameObject.Instance.Content = contentName;
-                GameObject.Instance[Animation.Empty][0] = value;
+                SetAnimation(0, value);
             }
         }
 
@@ -137,12 +143,12 @@ namespace Galabingus
             get
             {
                 GameObject.Instance.Content = contentName;
-                return GameObject.Instance[Collider.Empty][0];
+                return GetCollider(0);
             }
             set
             {
                 GameObject.Instance.Content = contentName;
-                GameObject.Instance[Collider.Empty][0] = value;
+                SetCollider(0, value);
             }
         }
 
@@ -152,7 +158,7 @@ namespace Galabingus
         /// <param name="playerSprite">player sprite image</param>
         /// <param name="speed">player translation speed</param>
         public Player(Vector2 speed, ushort contentName) :
-            base(contentName)
+            base(contentName, 0)
         {
             this.contentName = contentName;
             this.Position = Vector2.Zero;
@@ -163,7 +169,7 @@ namespace Galabingus
             this.totalTime = 0;
             this.inputBufferTime = 0.004f;
             this.delayBufferTime = inputBufferTime / 2.0f;
-            this.Scale = 2.5f;
+            this.Scale = 3f;
             // Ratio is calclated via the shape of the player sprite
             // against the width and height of the screen
             // With the third factor a vector of 1 ie the directional vector ie normalized velocity
@@ -494,6 +500,13 @@ namespace Galabingus
             // When space is pressed trigger shoot
             if (previousKeyboardState.IsKeyDown(Keys.Space) && currentKeyboardState.IsKeyUp(Keys.Space))
             {
+                //GameObject.Instance.Content = GameObject.Instance.Content.tile_strip26;
+                //Texture2D otherSprite = GetSprite(0);
+                //Rectangle otherTransform = GetTransform(0);
+                //Animation otherAnimation = GetAnimation(0);
+                //this.Animation = otherAnimation;
+                //this.Sprite = otherSprite;
+                //this.Transform = otherTransform;
                 Shoot();
             }
 
@@ -530,6 +543,10 @@ namespace Galabingus
         /// </summary>
         public void Draw()
         {
+            //this.Position = new Vector2(0, 0);
+            //Debug.WriteLine(Position.X);
+            //Debug.WriteLine(Position.Y);
+
             GameObject.Instance.SpriteBatch.Draw(
                 Sprite,                          // The sprite-sheet for the player
                 Position,                        // The position for the player

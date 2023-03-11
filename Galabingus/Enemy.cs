@@ -61,12 +61,12 @@ namespace Galabingus
             get
             {
                 GameObject.Instance.Content = ush_contentName;
-                return GameObject.Instance[Vector2.Zero][ush_enemyNumber];
+                return GetPosition(ush_enemyNumber);
             }
             set
             {
                 GameObject.Instance.Content = ush_contentName;
-                GameObject.Instance[Vector2.Zero][ush_enemyNumber] = value;
+                SetPosition(ush_enemyNumber, value);
             }
         }
 
@@ -75,12 +75,12 @@ namespace Galabingus
         /// specific type of thing to access, an bulletNumber as the index inside that list of bullets
         /// This allows one to access this bullet's stored sprite for this bullet
         /// </summary>
-        public new Texture2D Sprite
+        public Texture2D Sprite
         {
             get
             {
                 GameObject.Instance.Content = ush_contentName;
-                return GameObject.Instance.Sprite;
+                return GetSprite(ush_enemyNumber);
             }
         }
 
@@ -95,12 +95,12 @@ namespace Galabingus
             get
             {
                 GameObject.Instance.Content = ush_contentName;
-                return GameObject.Instance[Rectangle.Empty][ush_enemyNumber];
+                return GetTransform(ush_enemyNumber);
             }
             set
             {
                 GameObject.Instance.Content = ush_contentName;
-                GameObject.Instance[Rectangle.Empty][ush_enemyNumber] = value;
+                SetTransform(ush_enemyNumber, value);
             }
         }
 
@@ -109,17 +109,17 @@ namespace Galabingus
         /// specific type of thing to access, an bulletNumber as the index inside that list of bullets
         /// This allows one to access this bullet's sprite scale, so that it can be easily resized
         /// </summary>
-        public new float Scale
+        public float Scale
         {
             get
             {
                 GameObject.Instance.Content = ush_contentName;
-                return GameObject.Instance.Scale;
+                return GetScale(ush_enemyNumber);
             }
             set
             {
                 GameObject.Instance.Content = ush_contentName;
-                GameObject.Instance.Scale = value;
+                SetScale(ush_enemyNumber, value);
             }
         }
 
@@ -128,12 +128,12 @@ namespace Galabingus
             get
             {
                 GameObject.Instance.Content = ush_contentName;
-                return GameObject.Instance[ush_enemyNumber, Animation.Empty];
+                return GetAnimation(ush_enemyNumber);
             }
             set
             {
                 GameObject.Instance.Content = ush_contentName;
-                GameObject.Instance[ush_enemyNumber, Animation.Empty] = value;
+                SetAnimation(ush_enemyNumber, value);
             }
         }
 
@@ -147,12 +147,12 @@ namespace Galabingus
             get
             {
                 GameObject.Instance.Content = ush_contentName;
-                return GameObject.Instance[Collider.Empty][ush_enemyNumber];
+                return GetCollider(ush_enemyNumber);
             }
             set
             {
                 GameObject.Instance.Content = ush_contentName;
-                GameObject.Instance[Collider.Empty][ush_enemyNumber] = value;
+                SetCollider(ush_enemyNumber, value);
             }
         }
 
@@ -185,6 +185,9 @@ namespace Galabingus
 
             // Set Animation
             //this.Sprite = 
+
+            // Set Scale
+            this.Scale = 2.5f;
 
             // Set bullet state & timer
             this.ET_ability = ET_ability;

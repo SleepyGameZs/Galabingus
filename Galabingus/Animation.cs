@@ -189,5 +189,21 @@ namespace Galabingus
                 height
             );
         }
+
+
+        /// <summary>
+        ///  Use this to select a specific sprite in the sprite sheet
+        /// </summary>
+        /// <param name="currentFrame">Specific sprite in the sprite sheet</param>
+        /// <returns>Transform to view this currentFrame</returns>
+        public Rectangle GetFrame(int currentFrame)
+        {
+            return new Rectangle(
+                    (width / spritesInAnimation * currentFrame),
+                    0, +
+                    (int)Math.Round(width / (double)spritesInAnimation),
+                    height
+                );
+        }
     }
 }

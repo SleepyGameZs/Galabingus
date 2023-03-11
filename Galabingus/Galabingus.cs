@@ -117,14 +117,14 @@ namespace Galabingus
 
             if (!(userInterface.GS == GameState.Menu))
             {
-                // Draws bullets
-                mng_bullet.Draw();
-
                 // Draws enemies
                 mng_enemy.Draw();
 
                 // Draw the player
                 player.Draw();
+
+                // Draws bullets
+                mng_bullet.Draw();
             }
 
             // End the SpriteBatch draw
