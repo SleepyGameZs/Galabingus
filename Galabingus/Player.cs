@@ -3,9 +3,11 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Diagnostics;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework.Content;
 
 // Matthew Rodriguez
-// 2023, 3, 7
+// 2023, 3, 13
 // Player
 // PlayerStates - Player translations states
 // Position - position of the player
@@ -36,6 +38,7 @@ namespace Galabingus
     /// </summary>
     internal class Player : GameObject
     {
+        private static Player playerInstance = null; 
         private KeyboardState previousKeyboardState; // Previous KeyboardState (only updates every interval of input buffer time)
         private KeyboardState currentKeyboardState;  // Current KeyboardState (always current keyboard state)
         private Vector2 previousVelocity;            // Holds the previous direction and magnitude of velocity
@@ -49,6 +52,39 @@ namespace Galabingus
         private float delayBufferTime;               // half the actual input buffer time
         private float inputBufferTime;               // input response time
         private ushort contentName;                  // the content index
+        private float health;
+
+        public static Player PlayerInstance
+        {
+            get
+            {
+                return playerInstance;
+            }
+            set
+            {
+                playerInstance = value;
+            }
+        }
+
+        public ushort ContentName
+        {
+            get
+            { 
+                return PlayerInstance.contentName; 
+            }
+        }
+
+        public float Health
+        {
+            get
+            { 
+                return PlayerInstance.health; 
+            }
+            set
+            {
+                PlayerInstance.health = value;
+            }
+        }
 
         /// <summary>
         ///  Position of the player
@@ -57,12 +93,12 @@ namespace Galabingus
         {
             get
             {
-                GameObject.Instance.Content = contentName;
+                GameObject.Instance.Content = PlayerInstance.contentName;
                 return GetPosition(0);
             }
             set
             {
-                GameObject.Instance.Content = contentName;
+                GameObject.Instance.Content = PlayerInstance.contentName;
                 SetPosition(0, value);
             }
         }
@@ -74,12 +110,12 @@ namespace Galabingus
         {
             get
             {
-                GameObject.Instance.Content = contentName;
+                GameObject.Instance.Content = PlayerInstance.contentName;
                 return GetSprite(0);
             }
             set
             {
-                GameObject.Instance.Content = contentName;
+                GameObject.Instance.Content = PlayerInstance.contentName;
                 SetSprite(0, value);
             }
         }
@@ -91,12 +127,12 @@ namespace Galabingus
         {
             get
             {
-                GameObject.Instance.Content = contentName;
+                GameObject.Instance.Content = PlayerInstance.contentName;
                 return GetTransform(0);
             }
             set
             {
-                GameObject.Instance.Content = contentName;
+                GameObject.Instance.Content = PlayerInstance.contentName;
                 SetTransform(0,value);
             }
         }
@@ -108,12 +144,12 @@ namespace Galabingus
         {
             get
             {
-                GameObject.Instance.Content = contentName;
+                GameObject.Instance.Content = PlayerInstance.contentName;
                 return GetScale(0);
             }
             set
             {
-                GameObject.Instance.Content = contentName;
+                GameObject.Instance.Content = PlayerInstance.contentName;
                 SetScale(0, value);
             }
         }
@@ -125,12 +161,12 @@ namespace Galabingus
         {
             get
             {
-                GameObject.Instance.Content = contentName;
+                GameObject.Instance.Content = PlayerInstance.contentName;
                 return GetAnimation(0);
             }
             set
             {
-                GameObject.Instance.Content = contentName;
+                GameObject.Instance.Content = PlayerInstance.contentName;
                 SetAnimation(0, value);
             }
         }
@@ -142,12 +178,12 @@ namespace Galabingus
         {
             get
             {
-                GameObject.Instance.Content = contentName;
+                GameObject.Instance.Content = PlayerInstance.contentName;
                 return GetCollider(0);
             }
             set
             {
-                GameObject.Instance.Content = contentName;
+                GameObject.Instance.Content = PlayerInstance.contentName;
                 SetCollider(0, value);
             }
         }
@@ -160,22 +196,26 @@ namespace Galabingus
         public Player(Vector2 speed, ushort contentName) :
             base(contentName, 0)
         {
-            this.contentName = contentName;
-            this.Position = Vector2.Zero;
-            this.velocity = Vector2.Zero;
-            this.acceleration = Vector2.Zero;
-            this.speed = speed;
-            this.playerState = PlayerStates.Idle;
-            this.totalTime = 0;
-            this.inputBufferTime = 0.004f;
-            this.delayBufferTime = inputBufferTime / 2.0f;
-            this.Scale = 3f;
+            if (PlayerInstance == null)
+            {
+                PlayerInstance = this;
+            }
+            PlayerInstance.contentName = contentName;
+            PlayerInstance.Position = Vector2.Zero;
+            PlayerInstance.velocity = Vector2.Zero;
+            PlayerInstance.acceleration = Vector2.Zero;
+            PlayerInstance.speed = speed;
+            PlayerInstance.playerState = PlayerStates.Idle;
+            PlayerInstance.totalTime = 0;
+            PlayerInstance.inputBufferTime = 0.004f;
+            PlayerInstance.delayBufferTime = inputBufferTime / 2.0f;
+            PlayerInstance.Scale = 3f;
             // Ratio is calclated via the shape of the player sprite
             // against the width and height of the screen
             // With the third factor a vector of 1 ie the directional vector ie normalized velocity
-            this.translationRatio = new Vector2(
-                ((((float)this.Transform.Width) / ((float)this.Transform.Height))) / 2.0f,
-                ((((float)this.Transform.Height) / ((float)this.Transform.Width))) / 2.0f
+            PlayerInstance.translationRatio = new Vector2(
+                ((((float)PlayerInstance.Transform.Width) / ((float)PlayerInstance.Transform.Height))) / 2.0f,
+                ((((float)PlayerInstance.Transform.Height) / ((float)PlayerInstance.Transform.Width))) / 2.0f
             );
         }
 
@@ -257,6 +297,8 @@ namespace Galabingus
                 }
             }
 
+            Vector2 previousPosition = Position;
+
             // Determine if idle
             if (playerState == PlayerStates.Idle || playerState == PlayerStates.None)
             {
@@ -294,39 +336,27 @@ namespace Galabingus
             if (velocity.Length() > 0.005f && velocity.Length() < 0.05f)
             {
                 // Animation is faster
-                this.Animation.AnimationDuration = velocity.Length();
+                PlayerInstance.Animation.AnimationDuration = velocity.Length();
             }
             else
             {
                 // Minimum speed
-                this.Animation.AnimationDuration = 0.05f;
+                PlayerInstance.Animation.AnimationDuration = 0.05f;
             }
 
             // Update the animation and collider
-            this.Transform = this.Animation.Play(gameTime);
-            Collision intercept = this.Collider.UpdateTransform(
-                this.Sprite,                         // Player Sprite
-                this.Position,                       // Player position
-                this.Transform,                      // Player transform for sprite selection
+            PlayerInstance.Transform = PlayerInstance.Animation.Play(gameTime);
+            List<Collision> intercepts = PlayerInstance.Collider.UpdateTransform(
+                PlayerInstance.Sprite,                         // Player Sprite
+                PlayerInstance.Position,                       // Player position
+                PlayerInstance.Transform,                      // Player transform for sprite selection
                 GameObject.Instance.GraphicsDevice,
                 GameObject.Instance.SpriteBatch,
-                this.Scale,                          // Player scale
+                PlayerInstance.Scale,                          // Player scale
                 SpriteEffects.None,
-                contentName                          // Content
+                contentName,                          // Content
+                0
             );
-
-            bool isBullet = false;
-            // TODO: Collision check for bullet
-
-            if (intercept.other != null && intercept.position != new Vector2(-1, -1) && !isBullet)
-            {
-                Position = intercept.position;
-                this.Collider.Resolved = true;
-            }
-            else if (isBullet)
-            {
-                // TODO: take damage
-            }
 
             previousVelocity = velocity;
             totalTime += gameTime.ElapsedGameTime.TotalSeconds;
@@ -390,7 +420,7 @@ namespace Galabingus
                         previousKeyboardState.IsKeyDown(Keys.S)
                     ))
                     {
-                        // Exit this player state
+                        // Exit PlayerInstance player state
                         // force next key update
                         // Instantly update the key
                         totalTime = inputBufferTime;
@@ -502,11 +532,12 @@ namespace Galabingus
             {
                 //GameObject.Instance.Content = GameObject.Instance.Content.tile_strip26;
                 //Texture2D otherSprite = GetSprite(0);
-                //Rectangle otherTransform = GetTransform(0);
+                //Rectangle otherTransform = GetAnimation(0).GetFrame(2);
                 //Animation otherAnimation = GetAnimation(0);
-                //this.Animation = otherAnimation;
-                //this.Sprite = otherSprite;
-                //this.Transform = otherTransform;
+                //PlayerInstance.Animation = otherAnimation;
+                //PlayerInstance.Sprite = otherSprite;
+                //PlayerInstance.Transform = otherTransform;
+                //PlayerInstance.Animation.AnimationDuration = 1000000000;
                 Shoot();
             }
 
@@ -524,8 +555,8 @@ namespace Galabingus
         /// </summary>
         public void Shoot()
         {
-            float flt_playerShootX = (Transform.Width * this.Scale) / 2;
-            float flt_playerShootY = (Transform.Height * this.Scale) / 2;
+            float flt_playerShootX = (Transform.Width * PlayerInstance.Scale) / 2;
+            float flt_playerShootY = (Transform.Height * PlayerInstance.Scale) / 2;
             Vector2 vc2_shootPos = new Vector2(Position.X               // Base player X position
                                                + flt_playerShootX       // Center horizontally
                                                + velocity.X,            // Account for possible next movement
@@ -543,7 +574,7 @@ namespace Galabingus
         /// </summary>
         public void Draw()
         {
-            //this.Position = new Vector2(0, 0);
+            //PlayerInstance.Position = new Vector2(0, 0);
             //Debug.WriteLine(Position.X);
             //Debug.WriteLine(Position.Y);
 
@@ -554,7 +585,7 @@ namespace Galabingus
                 Color.White,                     // The color for the palyer
                 0.0f,                            // There cannot be any rotation of the player
                 Vector2.Zero,                    // Starting render position
-                this.Scale,                      // The scale of the sprite
+                PlayerInstance.Scale,                      // The scale of the sprite
                 SpriteEffects.None,              // Which direction the sprite faces
                 0.0f                             // Layer depth of the player is 0.0
             );
