@@ -1,5 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Security;
+using static System.Formats.Asn1.AsnWriter;
 
 // Matthew Rodriguez
 // 2023, 3, 6
@@ -190,6 +194,74 @@ namespace Galabingus
             );
         }
 
+        /// <summary>
+        ///  Plays the animation, requires gameTime to play
+        /// </summary>
+        /// <param name="gameTime">Game Time</param>
+        /// <returns>
+        ///  Transform of the frame from the animation sprite
+        /// </returns>
+        public Rectangle Play(GameTime gameTime, Vector2 velocity, Vector2 position, Rectangle transform, float scale)
+        {
+            // When offscreen set the transform to empty making the animation non-renderable.
+            if (
+                position.X - transform.Width * scale > GraphicsDeviceManager.DefaultBackBufferWidth ||
+                position.X + transform.Width * scale < 0 ||
+                position.Y - transform.Height * scale > GraphicsDeviceManager.DefaultBackBufferHeight ||
+                position.Y + transform.Height * scale < 0
+            )
+            {
+                return Rectangle.Empty;
+            }
+
+            // On the sub scale adjust spacetime to Lorentz's factor
+            float rapidity = (float)Math.Atanh(Math.Abs(velocity.Length()));
+            rapidity = (rapidity.ToString() == "NaN") ? 0 : rapidity;
+            float dilationFactor1 = (float)(1 - Math.Pow(rapidity, 2));
+            dilationFactor1 = dilationFactor1 > 0 ? dilationFactor1 : 1;
+            float dilationFactor2 = (float)( 1 - (8 * Math.Pow(rapidity, 2) / dilationFactor1 ) );
+            dilationFactor2 = dilationFactor2 > 0 ? dilationFactor2 : -dilationFactor2;
+            float timeDialiation = (float)Math.Sqrt(dilationFactor2);
+            if (timeDialiation < 0.7)
+            {
+                // There should never be a spacetime jump that is greater than what can be perceived
+                timeDialiation = 0.7f;
+            }
+            gameTime.ElapsedGameTime = ((gameTime.ElapsedGameTime * (1 / timeDialiation)) * 0.125f) + (gameTime.ElapsedGameTime * 0.875f);
+
+            // Increase the total anmation time
+            animationTime += gameTime.ElapsedGameTime.TotalSeconds;
+
+            // Check to see if the animation time has ellapsed past the animation duration
+            if (animationTime >= animationDuration)
+            {
+                // If there are more fames in the animation
+                // change the frame to the next frame
+                // otherwise siwtch the frame to the first
+                if (currentFrame + 1 > spritesInAnimation)
+                {
+                    currentFrame = 0;
+                }
+                else
+                {
+                    currentFrame++;
+                }
+
+                // Keep the ellpase offset but make sure
+                // that we are a whole duration back
+                animationTime -= animationDuration;
+            }
+
+            // Return the transform that is formed from the factor of current frame of the width of the sprite
+            // The height is always 0, the x will be the frame offset
+            return new Rectangle(
+                (width / spritesInAnimation * currentFrame),
+                0, +
+                (int)Math.Round(width / (double)spritesInAnimation),
+                height
+            );
+        }
+
 
         /// <summary>
         ///  Use this to select a specific sprite in the sprite sheet
@@ -198,6 +270,7 @@ namespace Galabingus
         /// <returns>Transform to view this currentFrame</returns>
         public Rectangle GetFrame(int currentFrame)
         {
+
             return new Rectangle(
                     (width / spritesInAnimation * currentFrame),
                     0, +

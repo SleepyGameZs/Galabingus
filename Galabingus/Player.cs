@@ -86,6 +86,15 @@ namespace Galabingus
             }
         }
 
+
+        public Vector2 Velocity
+        {
+            get
+            {
+                return velocity;
+            }
+        }
+
         /// <summary>
         ///  Position of the player
         /// </summary>
@@ -210,6 +219,7 @@ namespace Galabingus
             PlayerInstance.inputBufferTime = 0.004f;
             PlayerInstance.delayBufferTime = inputBufferTime / 2.0f;
             PlayerInstance.Scale = 3f;
+            playerInstance.Animation.AnimationDuration = 0.05f;
             // Ratio is calclated via the shape of the player sprite
             // against the width and height of the screen
             // With the third factor a vector of 1 ie the directional vector ie normalized velocity
@@ -329,9 +339,10 @@ namespace Galabingus
             else
             {
                 // When the player is not idle normalize their velocity to extract direction and translate by the speed of the player
-                Position += (velocity == Vector2.Zero ? velocity : Vector2.Normalize(velocity) * speed * translationAjdustedRatio);
+                Position += (velocity == Vector2.Zero ? velocity : Vector2.Normalize(velocity) * (float)gameTime.ElapsedGameTime.TotalSeconds*0.5f * 120 * speed * translationAjdustedRatio);
             }
 
+            /*
             // Adjust the animation speed based upon velocity speed
             if (velocity.Length() > 0.005f && velocity.Length() < 0.05f)
             {
@@ -343,9 +354,10 @@ namespace Galabingus
                 // Minimum speed
                 PlayerInstance.Animation.AnimationDuration = 0.05f;
             }
+            */
 
             // Update the animation and collider
-            PlayerInstance.Transform = PlayerInstance.Animation.Play(gameTime);
+            PlayerInstance.Transform = PlayerInstance.Animation.Play(gameTime, velocity, this.Position, this.Transform, this.Scale);
             List<Collision> intercepts = PlayerInstance.Collider.UpdateTransform(
                 PlayerInstance.Sprite,                         // Player Sprite
                 PlayerInstance.Position,                       // Player position
@@ -589,7 +601,7 @@ namespace Galabingus
             float flt_playerShootY = (Transform.Height * PlayerInstance.Scale) / 2;
             Vector2 vc2_shootPos = new Vector2(Position.X               // Base player X position
                                                + flt_playerShootX       // Center horizontally
-                                               + velocity.X,            // Account for possible next movement
+                                               ,                        // Account for possible next movement
                                                Position.Y               // Base player Y position
                                                + flt_playerShootY       // Center vertically
                                                + velocity.Y             // Account for possible next movement
