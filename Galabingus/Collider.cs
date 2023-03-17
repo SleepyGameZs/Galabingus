@@ -340,6 +340,7 @@ namespace Galabingus
                 (int)(transform.Height * scale)
             );
 
+            //
             // Determine the bounds of the collider
             this.position = position;
             if (position.X - transform.Width * scale > GraphicsDeviceManager.DefaultBackBufferWidth ||
