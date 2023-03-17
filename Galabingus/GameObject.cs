@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 // Matthew Rodriguez
-// 2023, 3, 6
+// 2023, 3, 13
 // GameObject
 // Provides essentails for all game objects
 //
@@ -56,24 +56,24 @@ namespace Galabingus
         private const byte spritesConst = 4;
         private const byte scalesConst = 5;
         private const byte objectEnumsConst = 6;
-        private static GameObject allGameObjects = null; // GameObject singleton: contains all instances for all GameObjects
-        private static List<Animation> animations = null;              // Animation content
-        private static List<Collider> colliders = null;                // Collider content
-        private static List<Rectangle> transforms = null;              // Transform content
-        private static List<Vector2> positions = null;                 // Position content
-        private static List<Texture2D> sprites = null;                 // Sprite content
-        private static List<float> scales = null;                      // Scale content
-        private static List<string> objectEnums = null;                // Actual content names
-        unsafe private static GameObjectTrie<Animation> animationsI;              // Animation content
-        unsafe private static GameObjectTrie<Collider> collidersI;                // Collider content
-        unsafe private static GameObjectTrie<Rectangle> transformsI;              // Transform content
-        unsafe private static GameObjectTrie<Vector2> positionsI;                 // Position content
-        unsafe private static GameObjectTrie<Texture2D> spritesI;                 // Sprite content
-        unsafe private static GameObjectTrie<float> scalesI;                      // Scale content
-        unsafe private static GameObjectTrie<string> objectEnumsI;                // Actual content names
-        private ushort index;                            // The current content index in all of the content arrays
+        private static GameObject allGameObjects = null; 
+        private static List<Animation> animations = null;              
+        private static List<Collider> colliders = null;              
+        private static List<Rectangle> transforms = null;              
+        private static List<Vector2> positions = null;                 
+        private static List<Texture2D> sprites = null;                 
+        private static List<float> scales = null;                     
+        private static List<string> objectEnums = null;                
+        unsafe private static GameObjectTrie<Animation> animationsI;            
+        unsafe private static GameObjectTrie<Collider> collidersI;              
+        unsafe private static GameObjectTrie<Rectangle> transformsI;            
+        unsafe private static GameObjectTrie<Vector2> positionsI;            
+        unsafe private static GameObjectTrie<Texture2D> spritesI;                 
+        unsafe private static GameObjectTrie<float> scalesI;                      
+        unsafe private static GameObjectTrie<string> objectEnumsI;                
+        private ushort index;                            
         private ushort instance;
-        private ContentManager contentManager;           // Used to load in the sprite
+        private ContentManager contentManager;           // Used to load in the content
         private GraphicsDevice graphicsDevice;           // Graphics Device
         private SpriteBatch spriteBatch;                 // Sprite Batch
         private static List<List<List<ushort>>> trie;
@@ -238,6 +238,53 @@ namespace Galabingus
                 }
 
                 return result;
+            }
+
+            public static List<ushort> GetLayer4(ushort layer1Find, List<T> data)
+            {
+                if (layer1Find >= Trie.Count)
+                {
+                    for (int i = Trie.Count; i <= layer1Find; i++)
+                    {
+                        Trie.Add(new List<List<ushort>>());
+                    }
+                }
+                if (GameObject.Instance.Index >= Trie[layer1Find].Count)
+                {
+                    for (int i = Trie[layer1Find].Count; i <= GameObject.Instance.Index; i++)
+                    {
+                        Trie[layer1Find].Add(new List<ushort>());
+                    }
+                }
+
+                List<ushort> result = new List<ushort>();
+                foreach (ushort index in Trie[layer1Find][GameObject.Instance.Index])
+                {
+                    result.Add(index);
+                }
+
+                return result;
+            }
+            #nullable enable
+
+            public static ushort GetLayer4Instance(ushort layer1Find, ushort layer3Find, List<T> data)
+            {
+                if (layer1Find >= Trie.Count)
+                {
+                    for (int i = Trie.Count; i <= layer1Find; i++)
+                    {
+                        Trie.Add(new List<List<ushort>>());
+                    }
+                }
+                if (GameObject.Instance.Index >= Trie[layer1Find].Count)
+                {
+                    for (int i = Trie[layer1Find].Count; i <= GameObject.Instance.Index; i++)
+                    {
+                        Trie[layer1Find].Add(new List<ushort>());
+                    }
+                }
+
+                return Trie[layer1Find][GameObject.Instance.Index][layer3Find];
             }
             #nullable enable
         }
@@ -540,6 +587,21 @@ namespace Galabingus
             #nullable enable
         }
 
+        public ref List<Collider> ColliderCollisions()
+        {
+            return ref colliders;
+        }
+
+        public List<ushort> ColliderLayer4()
+        {
+            return GameObjectTrie<Collider>.GetLayer4(colliderConst, colliders);
+        }
+
+        public ushort ColliderLayer4Instance(ushort instanceNumber)
+        {
+            return GameObjectTrie<Collider>.GetLayer4Instance(colliderConst, instanceNumber, colliders); 
+        }
+
         /// <summary>
         ///  Current index relation to all of the content arrays
         /// </summary>
@@ -666,6 +728,7 @@ namespace Galabingus
             SetAnimation(instanceNumber, new Animation(GetSprite(instanceNumber).Width, GetSprite(instanceNumber).Height, strip));
             Collider newCollider = new Collider();
             newCollider.Layer = contentName;
+            newCollider.Resolved = true;
             SetCollider(instanceNumber, newCollider);
             SetPosition(instanceNumber, Vector2.Zero);
             SetTransform(instanceNumber,

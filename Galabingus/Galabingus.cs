@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 
 // Wabungus Corpsungus Duplicatungus
-// 2023, 3, 9
+// 2023, 3, 13
 // Galabingus
 // Creates a GameObject Instance
 
@@ -53,7 +53,7 @@ namespace Galabingus
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // Initalize the GameObject Instance and Content Dynamic (Always goes first)
+            // Initilize the GameObject Instance and Content Dynamic (Always goes first)
             content = GameObject.Instance.Initialize(Content, GraphicsDevice, _spriteBatch);
 
             //new UI class and loading its content

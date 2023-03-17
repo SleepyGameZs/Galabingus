@@ -205,6 +205,9 @@ namespace Galabingus
             this.BT_ability = BT_ability;
             int_stateTimer = 0;
 
+            // Set the animation duration
+            this.Animation.AnimationDuration = 0.03f;
+
             // Set Position
             this.Scale = 3f;
             this.Position = new Vector2(vc2_position.X + Transform.Width * Scale / 2.0f, vc2_position.Y - Transform.Height * Scale / 2.0f);
@@ -267,26 +270,27 @@ namespace Galabingus
         {
             // Apply position change
             int int_speedmulti = 9;
+            float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds * 60; // Matt: added this is for velocity consistency with variable framerate
             switch (BT_ability)
             {
                 case BulletType.Normal:
-                    this.Position += vc2_velocity * int_speedmulti * 2;
+                    this.Position += vc2_velocity * int_speedmulti * 2 * deltaTime;
                     break;
 
                 case BulletType.Bouncing:
-                    this.Position += vc2_velocity * int_speedmulti;
+                    this.Position += vc2_velocity * int_speedmulti * deltaTime;
                     break;
 
                 case BulletType.Splitter:
-                    this.Position += vc2_velocity * int_speedmulti * 3;
+                    this.Position += vc2_velocity * int_speedmulti * 3 * deltaTime;
                     break;
 
                 case BulletType.SplitSmall:
-                    this.Position += vc2_velocity * int_speedmulti * 2;
+                    this.Position += vc2_velocity * int_speedmulti * 2 * deltaTime;
                     break;
 
                 case BulletType.Circle:
-                    this.Position += vc2_velocity * int_speedmulti;
+                    this.Position += vc2_velocity * int_speedmulti * deltaTime;
                     break;
 
                 default:
@@ -295,7 +299,7 @@ namespace Galabingus
             }
 
             // Manage Animation
-            this.Animation.AnimationDuration = 0.03f;
+            //this.Animation.AnimationDuration = 0.03f; // Matt: Don't do this here set this in the constructor
             this.Transform = this.Animation.Play(gameTime);
 
             // Check if off screen

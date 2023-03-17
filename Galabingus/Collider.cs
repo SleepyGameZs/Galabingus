@@ -1,9 +1,12 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 // Matthew Rodriguez
-// 2023, 3, 7
+// 2023, 3, 13
 // Collision
 // Empty - Collision that is empty
 // positionOfCollision - Point of the collision
@@ -36,6 +39,7 @@ namespace Galabingus
         public GameObject other;            // GameObject collided with
         public Vector2 positionOfCollision; // Point of the collision Default: (-1,-1)
         public Vector2 position;            // Position of which to avoid the collison Default (-1,-1)
+        public Vector2 mtv;
 
         /// <summary>
         ///  Base collision, default
@@ -59,6 +63,7 @@ namespace Galabingus
             this.other = null;
             this.positionOfCollision = new Vector2(-1, -1);
             this.position = new Vector2(-1, -1);
+            this.mtv = new Vector2(-1, -1);
         }
 
         /// <summary>
@@ -71,12 +76,14 @@ namespace Galabingus
         public Collision(
             GameObject other,
             Vector2 positionOfCollision,
-            Vector2 position
+            Vector2 position,
+            Vector2 mtv
         )
         {
             this.other = other;
             this.positionOfCollision = positionOfCollision;
             this.position = position;
+            this.mtv = mtv;
         }
     }
 
@@ -96,6 +103,8 @@ namespace Galabingus
         private Color clearColor;                            // Clear color for the sprite render
         private ushort layer;                                // Collider layer
         private bool resolved;                               // If the Collider collision is resolved
+        private Vector2 colldierCurrentMTV;
+        private Vector2 colliderNextMTV;
 
         /// <summary>
         ///  Colider that is empty
@@ -212,7 +221,7 @@ namespace Galabingus
             pixelCheck = null;
             clearColor = Color.Transparent;
             layer = 0;
-            resolved = true;
+            resolved = false;
         }
 
         /// <summary>
@@ -242,7 +251,7 @@ namespace Galabingus
             this.transform = transform;
             this.position = position;
             this.layer = layer;
-            resolved = true;
+            resolved = false;
             pixels = null;
             pixelCheck = null;
 
@@ -305,7 +314,7 @@ namespace Galabingus
         /// <param name="spriteBatch">Any: SpriteBatch</param>
         /// <param name="scale">Scale of the collider</param>
         /// <param name="effect">SpriteEffect applied to the collider</param>
-        public Collision UpdateTransform(
+        public List<Collision> UpdateTransform(
             Texture2D sprite,
             Vector2 position,
             Rectangle transform,
@@ -313,7 +322,8 @@ namespace Galabingus
             SpriteBatch spriteBatch,
             float scale,
             SpriteEffects effect,
-            ushort layer
+            ushort layer,
+            ushort instanceNumber
         )
         {
             // Set the temporal states for the collider
@@ -339,104 +349,107 @@ namespace Galabingus
             )
             {
                 this.sprite = null;
-                return Collision.Empty;
+                return new List<Collision>();
             }
 
-            /*
-            // Go through all collider instances to check for a collision and determine what colliders are active
-            for (ushort colliderIndex = 0; colliderIndex < GameObject.Instance.Colliders.Count; colliderIndex++)
+            List<Collision> result = new List<Collision>();
+            ushort layer4 = GameObject.Instance.ColliderLayer4Instance(instanceNumber);
+            unsafe
             {
-                // Get the other collider asset type array count
-                int countO = GameObject.Instance.Colliders[colliderIndex].Count;
+                ref List<Collider> collidersR = ref GameObject.Instance.ColliderCollisions();
 
-                // Determine if the collider in that array is active and if it collides return proper Collision
-                for (ushort otherColliderIndex = 0; otherColliderIndex < countO; otherColliderIndex++)
+                // Go through all collider instances to check for a collision and determine what colliders are active
+                for (ushort colliderIndex = 0; colliderIndex < collidersR.Count; colliderIndex++)
                 {
                     // The other collider
-                    Collider otherCollider = GameObject.Instance.Colliders[colliderIndex][otherColliderIndex];
+                    Collider otherCollider = collidersR[colliderIndex];
 
-                    // When the bounds are intercepting and the layer isn't the same and all collisions have been resolved
-                    // Then we can activate the collider
-                    if (otherCollider != this &&
-                        otherCollider.transform.Intersects(this.transform) &&
-                        otherCollider.layer != this.layer &&
-                        this.resolved
-                    )
+                    // Determine if the colldier exist as a instance of this content
+                    if (layer4 != colliderIndex)
                     {
-                        active = true;
-                    }
-                    else
-                    {
-                        active = false;
-                    }
-
-                    // Only update the collider once
-                    if (active && !updated)
-                    {
-                        updated = true;
-                        // Setup the renderTarget
-                        RenderTarget2D scaledSprite = new RenderTarget2D(graphicsDevice,
-                            (int)(transform.Width * scale) <= 0 ? 1 : (int)(transform.Width * scale),
-                            (int)(transform.Height * scale) <= 0 ? 1 : (int)(transform.Height * scale)
-                        );
-
-                        // Render the new sprite 
-                        graphicsDevice.SetRenderTarget(scaledSprite);
-                        graphicsDevice.Clear(clearColor);
-                        spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
-                        spriteBatch.Draw(
-                            sprite,
-                            new Vector2(0, 0),
-                            transform,
-                            Color.Black,
-                            0.0f,
-                            Vector2.Zero,
-                            scale,
-                            effect,
-                            1.0f
-                        );
-                        spriteBatch.End();
-                        graphicsDevice.SetRenderTarget(null);
-
-                        // Update the transform with the new scale and srptie
-                        this.sprite = scaledSprite;
-
-                        // Load pixel data to CPU memory
-                        Load();
-                    }
-
-                    // When the collider is active check for a collision
-                    if (active)
-                    {
-                        // Define the collision points
-                        Vector2[] other = (
-                            otherCollider != this ? // We are not the same collider
-                                (this.PixelsIntersects(otherCollider)) : // Pixels intercept points
-                                    new Vector2[] { new Vector2(-1, -1), new Vector2(-1, -1) } // otheriwse default to a new array
-                        );
-
-                        // If there was a collision
-                        if (new Vector2(-1, -1) != other[1] && other != null)
+                        // When the bounds are intercepting and the layer isn't the same and all collisions have been resolved
+                        // Then we can activate the collider
+                        if (this.resolved &&
+                            otherCollider.layer != this.layer &&
+                            otherCollider.transform.Intersects(this.transform)
+                        )
                         {
-                            // Set the resolved collision to false
-                            // Return the Collision
-                            this.resolved = false;
-                            return new Collision(
-                                GameObject.Instance,
-                                other[0],
-                                other[1]
+                            active = true;
+                        }
+                        else
+                        {
+                            active = false;
+                            this.colliderNextMTV = Vector2.Zero;
+                            this.colldierCurrentMTV = Vector2.Zero;
+                        }
+
+                        // Only update the collider once
+                        if (active && !updated)
+                        {
+                            updated = true;
+                            // Setup the renderTarget
+                            RenderTarget2D scaledSprite = new RenderTarget2D(graphicsDevice,
+                                (int)(transform.Width * scale) <= 0 ? 1 : (int)(transform.Width * scale),
+                                (int)(transform.Height * scale) <= 0 ? 1 : (int)(transform.Height * scale)
                             );
+
+                            // Render the new sprite 
+                            graphicsDevice.SetRenderTarget(scaledSprite);
+                            graphicsDevice.Clear(clearColor);
+                            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
+                            spriteBatch.Draw(
+                                sprite,
+                                new Vector2(0, 0),
+                                transform,
+                                Color.Black,
+                                0.0f,
+                                Vector2.Zero,
+                                scale,
+                                effect,
+                                1.0f
+                            );
+                            spriteBatch.End();
+                            graphicsDevice.SetRenderTarget(null);
+                            //this.colliderNextMTV = Vector2.Zero;
+                            //this.colldierCurrentMTV = Vector2.Zero;
+
+                            // Update the transform with the new scale and sprite
+                            this.sprite = scaledSprite;
+                            // Load pixel data to CPU memory
+                            Load();
+                        }
+
+                        // When the collider is active check for a collision
+                        if (active)
+                        {
+                            // Define the collision points
+                            Vector2[] other = (
+                                otherCollider != this ? // We are not the same collider
+                                    (this.PixelsIntersects(otherCollider)) : // Pixels intercept points
+                                        new Vector2[] { new Vector2(-1, -1), new Vector2(-1, -1), new Vector2(-1, -1) } // otherwise default to a new array
+                            );
+
+                            // If there was a collision
+                            if (new Vector2(-1, -1) != other[1] && other != null)
+                            {
+                                // Set the resolved collision to false
+                                // Return the Collision
+                                this.resolved = false;
+                                //GameObject.Instance.SetCollider(instanceNumber,this);
+                                result.Add(new Collision(
+                                    GameObject.Instance,
+                                    other[0],
+                                    other[1],
+                                    other[2]
+                                ));
+                            }
                         }
                     }
                 }
             }
-            */
+
             // No collision
-            return new Collision(
-                GameObject.Instance,
-                new Vector2(-1, -1),
-                new Vector2(-1, -1)
-            );
+            return result;
         }
 
         /// <summary>
@@ -464,7 +477,7 @@ namespace Galabingus
             if (this.sprite == null || other.sprite == null)
             {
                 // Exit with off-screen positions
-                return new Vector2[] { new Vector2(-1, -1), new Vector2(-1, -1) };
+                return new Vector2[] { new Vector2(-1, -1), new Vector2(-1, -1), new Vector2(-1, -1) };
             }
 
             // Calculate the intersecting rectangle
@@ -489,95 +502,38 @@ namespace Galabingus
                         // Use the PixelCheck to determine intercept
                         if (PixelCheckFunction(a1, b1, clearColor))
                         {
-                            // Calculates displacment needed to avoid collision
-                            float interWidth = Math.Abs(x2 - x);
-                            float interHeight = Math.Abs(y2 - y);
-                            Vector2 intercept = new Vector2(transform.X, transform.Y);
-                            if (interWidth > interHeight)
+                            Vector2 interceptPosition = new Vector2(x1 + Math.Abs(x2 - x1) / 2.0f, y1 + Math.Abs(x2 - x1) / 2.0f);
+                            Vector2 intercept;
+                            Vector2 mtv = MTV(this, x2, y2, y1, x1, interceptPosition.Y, interceptPosition.X);
+                            Vector2 otherMTV = MTV(other, x2, y2, y1, x1, interceptPosition.Y, interceptPosition.X);
+
+                            intercept = new Vector2(position.X + mtv.X, position.Y + mtv.Y);
+
+                            if (this.colliderNextMTV == Vector2.Zero)
                             {
-                                // Vertical collision
-                                if (y1 > position.Y)
-                                {
-                                    intercept.Y -= (interHeight);
-                                }
-                                else if (y2 > position.Y)
-                                {
-                                    intercept.Y += (interHeight);
-                                }
-                                else
-                                {
-                                    if (y > position.Y)
-                                    {
-                                        intercept.Y += (interHeight);
-                                    }
-                                }
+                                this.colliderNextMTV = otherMTV;
                             }
-                            else if (interWidth < interHeight)
+
+                            colldierCurrentMTV = colliderNextMTV;
+                            
+                            if (
+                                Math.Abs(otherMTV.X) < Math.Abs(colldierCurrentMTV.Y) && otherMTV.X != 0 && colldierCurrentMTV.Y != 0 ||
+                                Math.Abs(otherMTV.Y) < Math.Abs(colldierCurrentMTV.X) && otherMTV.Y != 0 && colldierCurrentMTV.X != 0 ||
+                                otherMTV.Y != 0 && colldierCurrentMTV.Y != 0 && otherMTV.X != 0 && colldierCurrentMTV.X != 0
+                            )
                             {
-                                // Horizontal collision
-                                if (x1 > position.X)
-                                {
-                                    intercept.X -= (interWidth);
-                                }
-                                else if (x2 > position.X)
-                                {
-                                    intercept.X += (interWidth);
-                                }
-                                else
-                                {
-                                    if (x > position.X)
-                                    {
-                                        intercept.X += (interWidth);
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                // Vertical and Horizontal collision
-                                if (y1 > position.Y)
-                                {
-                                    intercept.Y -= (interHeight / 2.0f + 1);
-                                }
-                                else if (y > position.Y)
-                                {
-                                    intercept.Y += (interHeight / 2.0f + 1);
-                                }
-                                else
-                                {
-                                    if (y2 > position.Y)
-                                    {
-                                        intercept.Y += (interHeight / 2.0f + 1);
-                                    }
-                                    else
-                                    {
-                                        intercept.Y += (interHeight / 2.0f + 1);
-                                    }
-                                }
-                                if (x1 > position.X)
-                                {
-                                    intercept.X -= (interWidth / 2.0f + 1);
-                                }
-                                else if (x2 > position.X)
-                                {
-                                    intercept.X += (interWidth / 2.0f + 1);
-                                }
-                                else
-                                {
-                                    if (x > position.X)
-                                    {
-                                        intercept.X += (interWidth / 2.0f + 1);
-                                    }
-                                }
+                                colliderNextMTV = otherMTV;
                             }
 
                             // Return the resulting rectangle
                             return new Vector2[]
                             {
-                                new Vector2(position.X+x,position.Y+y), // Position of pixel intercept
+                                interceptPosition, // Position of pixel intercept
                                 new Vector2(
                                     intercept.X, // Position to avoid intercept X
                                     intercept.Y  // Position to avoid intercept Y
-                                )
+                                ),
+                                colliderNextMTV
                             };
                         }
                     }
@@ -585,7 +541,46 @@ namespace Galabingus
             }
 
             // Default to top-left offscreen positions
-            return new Vector2[] { new Vector2(-1, -1), new Vector2(-1, -1) };
+            return new Vector2[] { new Vector2(-1, -1), new Vector2(-1, -1), new Vector2(-1, -1) };
+        }
+
+        /// <summary>
+        ///  Calculates the Minimum Translation Vector of the other collider
+        /// </summary>
+        /// <param name="other"></param>
+        /// <param name="x2"></param>
+        /// <param name="y2"></param>
+        /// <param name="y1"></param>
+        /// <param name="x1"></param>
+        /// <param name="y"></param>
+        /// <param name="x"></param>
+        /// <returns></returns>
+        private Vector2 MTV(Collider other, int x2, int y2, int y1, int x1, float y, float x)
+        {
+            Vector2 mtv = new Vector2();
+
+            int w = Math.Abs(x2 - x1);
+            int h = Math.Abs(y2 - y1);
+
+            float ocx = other.position.X + other.Transform.Width / 2.0f;
+            float ocy = other.position.Y + other.Transform.Height / 2.0f;
+
+            mtv.X = ocx - x;
+            mtv.Y = ocy - y;
+
+            if (mtv == Vector2.Zero)
+            {
+                return Vector2.Zero;
+            }
+
+            mtv = Vector2.Normalize(mtv);
+
+            if (mtv.X != 0 || mtv.Y != 0)
+            {
+                mtv = mtv * new Vector2((float)Math.Sqrt((x2 - x1)*(x2 - x1))/4.5f,(float)Math.Sqrt((y2 - y1)*(y2 - y1))/4.5f);
+            }
+
+            return mtv;
         }
     }
 }
