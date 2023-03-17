@@ -95,7 +95,7 @@ namespace Galabingus
 
             // Create Tile Manager
             tileManager = TileManager.Instance;
-            tileManager.CreateTile();
+            tileManager.CreateTile(1);
         }
 
         protected override void Update(GameTime gameTime)
@@ -138,14 +138,24 @@ namespace Galabingus
                 // Draws enemies
                 //mng_enemy.Draw();
 
+                if (TileManager.Instance.CurrentSpriteNumber == 0)
+                {
+                    // Draws tiles
+                    tileManager.Draw();
+                }
+
                 // Draw the player
                 player.Draw();
 
                 // Draws bullets
                 mng_bullet.Draw();
 
-                // Draws tiles
-                tileManager.Draw();
+                if (TileManager.Instance.CurrentSpriteNumber == 1)
+                {
+                    // Draws tiles
+                    tileManager.Draw();
+                }
+                
             }
 
             // End the SpriteBatch draw

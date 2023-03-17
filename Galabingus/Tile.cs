@@ -14,10 +14,16 @@ namespace Galabingus
 
         private ushort contentName;
         private ushort instanceNumber;
+        private ushort spriteNumber;
 
         // -------------------------------------------------
         // Properties
         // -------------------------------------------------
+
+        public ushort SpriteNumber
+        {
+            get { return spriteNumber;  }
+        }
 
         public ushort InstanceNumber
         {
@@ -139,6 +145,7 @@ namespace Galabingus
             this.instanceNumber = instanceNumber;
             this.Transform = this.Animation.GetFrame(sprite);
             this.Scale = 3.0f;
+            this.spriteNumber = sprite;
         }
 
         // -------------------------------------------------

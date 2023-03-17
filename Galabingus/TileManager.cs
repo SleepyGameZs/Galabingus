@@ -32,13 +32,26 @@ namespace Galabingus
         
         private Vector2 screenSize;
         private Vector2 tileSize;
-        private Tile[,] tiles;
+        private List<Tile> tilesList;
+        private List<Tile> tilesBorder;
+        private List<ushort> layers;
+        private List<ushort> spriteNumbers;
+        private ushort currentSpriteNumber;
 
 
         // -------------------------------------------------
         // Properties
         // -------------------------------------------------
 
+        public ushort LayerNumber
+        {
+            get { return layers[spriteNumbers[currentSpriteNumber]]; }
+        }
+
+        public ushort CurrentSpriteNumber
+        {
+            get { return currentSpriteNumber; }
+        }
 
         // -------------------------------------------------
         // Contructors
@@ -59,81 +72,86 @@ namespace Galabingus
             //tileSize = new Vector2(GameObject.Instance.Content.tile_strip26,
                 //GameObject.Instance.Content.tile_strip26.Sprite.Height);
 
-            tiles = new Tile[(int)(screenSize.Y / tileSize.Y), (int)(screenSize.X / tileSize.X)];
+            layers = new List<ushort>();
+            spriteNumbers = new List<ushort>();
+
+            tilesList = new List<Tile>();
         }
 
         // -------------------------------------------------
         // Meathods 
         // -------------------------------------------------
 
-        public void CreateTile()
+        public void CreateTile(ushort spriteNumber)
         {
             ushort instanceCounter = 0;
-            for (ushort i = 0; i < tiles.GetLength(0); i++)
+            for (int i = 0; i < 100; i++)
             {
-                for (int j = 0; j < tiles.GetLength(1); j++)
+                Tile tile = new Tile(GameObject.Instance.Content.tile_strip26, instanceCounter, spriteNumber);
+                tile.Position = new Vector2(tile.Transform.Width * tile.Scale * i, 0);
+
+                switch (spriteNumber)
                 {
-                    Tile tile = new Tile(GameObject.Instance.Content.tile_strip26, instanceCounter, 0);
-                    //tile.Position = new Vector2(tile.Sprite.Width*j, 0);
-                    tile.Position = new Vector2(0, 0);
-                    tile.Transform = new Rectangle(
-                        (int)tile.Position.X,
-                        (int)tile.Position.Y,
-                        tile.Transform.Width,
-                        tile.Transform.Height
-                    );
-                    tiles[i, j] = tile;
-                    instanceCounter++;
+                    case 0:
+                        layers.Add(Player.PlayerInstance.ContentName);
+                        spriteNumbers.Add(spriteNumber);
+                        break;
+
+                    case 1:
+                        layers.Add(Tile.Instance.Index);
+                        spriteNumbers.Add(spriteNumber);
+                        break;
+
+                    default:
+                        break;
                 }
+
+                tilesList.Add(tile);
+                instanceCounter++;
             }
         }
 
         public void Update(GameTime gameTime)
         {
-            for (int i = 0; i < tiles.GetLength(0); i++)
+            for (int i = 0; i < tilesList.Count; i++)
             {
-                for (int j = 0; j < tiles.GetLength(1); j++)
-                {
-                    tiles[i, j].Update(gameTime);
+                currentSpriteNumber = tilesList[i].SpriteNumber;
 
-                    List<Collision> collisions = tiles[i, j].Collider.UpdateTransform(
-                        tiles[i,j].Sprite, 
-                        tiles[i, j].Position, 
-                        tiles[i,j].Transform, 
-                        GameObject.Instance.GraphicsDevice, 
-                        GameObject.Instance.SpriteBatch, 
-                        tiles[i,j].Scale, 
-                        SpriteEffects.None, 
-                        GameObject.Instance.Content.tile_strip26, 
-                        tiles[i,j].InstanceNumber
+                tilesList[i].Update(gameTime);
+                List<Collision> collisions = tilesList[i].Collider.UpdateTransform(
+                    tilesList[i].Sprite,
+                    tilesList[i].Position,
+                    tilesList[i].Transform,
+                    GameObject.Instance.GraphicsDevice,
+                    GameObject.Instance.SpriteBatch,
+                    tilesList[i].Scale,
+                    SpriteEffects.None,
+                    TileManager.Instance.LayerNumber,//GameObject.Instance.Content.tile_strip26,
+                    tilesList[i].InstanceNumber
                     );
-                    foreach (Collision collision in collisions)
+
+                foreach (Collision collision in collisions)
+                {
+                    if (collision.other != null)
                     {
-                        if (collision.other != null)
+                        if (collision.other.Index == Player.PlayerInstance.Index)
                         {
-                            if (collision.other.Index == Player.PlayerInstance.Index)
-                            {
-                                //Player.PlayerInstance.Position += collision.mtv;
-                                
-                                Player.PlayerInstance.Collider.Resolved = true;
-                            }
+                            Player.PlayerInstance.Position += collision.mtv;
+                            Player.PlayerInstance.Collider.Resolved = true;
                         }
                     }
-                    tiles[i, j].Collider.Resolved = true;
                 }
-            }
+                tilesList[i].Collider.Resolved = true;
 
+            }
 
         }
 
         public void Draw()
         {
-            for (int i = 0; i < tiles.GetLength(0); i++)
+            for (int i = 0; i < tilesList.Count; i++)
             {
-                for (int j = 0; j < tiles.GetLength(1); j++)
-                {
-                    tiles[i, j].Draw();
-                }
+                tilesList[i].Draw();
             }
         }
     }
