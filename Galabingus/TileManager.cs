@@ -69,8 +69,6 @@ namespace Galabingus
             Tile tile = new Tile(contentName, 0, 0);
             tileSize = new Vector2 (tile.Transform.Width, tile.Transform.Height);
 
-            //tileSize = new Vector2(GameObject.Instance.Content.tile_strip26,
-                //GameObject.Instance.Content.tile_strip26.Sprite.Height);
 
             layers = new List<ushort>();
             spriteNumbers = new List<ushort>();
@@ -85,9 +83,10 @@ namespace Galabingus
         public void CreateTile(ushort spriteNumber)
         {
             ushort instanceCounter = 0;
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < screenSize.X; i++)
             {
-                Tile tile = new Tile(GameObject.Instance.Content.tile_strip26, instanceCounter, spriteNumber);
+                Tile tile = new Tile(GameObject.Instance.Content.white_pixel_strip1, instanceCounter, spriteNumber, true);
+                tile.Scale = 0.1f;
                 tile.Position = new Vector2(tile.Transform.Width * tile.Scale * i, 0);
                 
 

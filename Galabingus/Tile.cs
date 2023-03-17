@@ -148,6 +148,15 @@ namespace Galabingus
             this.spriteNumber = sprite;
         }
 
+        public Tile(ushort contentName, ushort instanceNumber, ushort sprite, bool border) : base(contentName, instanceNumber)
+        {
+            this.contentName = contentName;
+            this.instanceNumber = instanceNumber;
+            this.Transform = this.Animation.GetFrame(0);
+            this.Scale = 3.0f;
+            this.spriteNumber = sprite;
+        }
+
         // -------------------------------------------------
         // Meathods 
         // -------------------------------------------------
