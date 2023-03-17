@@ -353,7 +353,7 @@ namespace Galabingus
             }
 
             List<Collision> result = new List<Collision>();
-            ushort layer4 = GameObject.Instance.ColliderLayer4()[instanceNumber];
+            ushort layer4 = GameObject.Instance.ColliderLayer4Instance(instanceNumber);
             unsafe
             {
                 ref List<Collider> collidersR = ref GameObject.Instance.ColliderCollisions();

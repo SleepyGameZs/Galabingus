@@ -266,6 +266,27 @@ namespace Galabingus
                 return result;
             }
             #nullable enable
+
+            public static ushort GetLayer4Instance(ushort layer1Find, ushort layer3Find, List<T> data)
+            {
+                if (layer1Find >= Trie.Count)
+                {
+                    for (int i = Trie.Count; i <= layer1Find; i++)
+                    {
+                        Trie.Add(new List<List<ushort>>());
+                    }
+                }
+                if (GameObject.Instance.Index >= Trie[layer1Find].Count)
+                {
+                    for (int i = Trie[layer1Find].Count; i <= GameObject.Instance.Index; i++)
+                    {
+                        Trie[layer1Find].Add(new List<ushort>());
+                    }
+                }
+
+                return Trie[layer1Find][GameObject.Instance.Index][layer3Find];
+            }
+            #nullable enable
         }
 
         public ushort InstanceID
@@ -574,6 +595,11 @@ namespace Galabingus
         public List<ushort> ColliderLayer4()
         {
             return GameObjectTrie<Collider>.GetLayer4(colliderConst, colliders);
+        }
+
+        public ushort ColliderLayer4Instance(ushort instanceNumber)
+        {
+            return GameObjectTrie<Collider>.GetLayer4Instance(colliderConst, instanceNumber, colliders); 
         }
 
         /// <summary>
