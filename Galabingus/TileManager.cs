@@ -1,10 +1,11 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections.Generic;
+using Microsoft.Xna.Framework.Content;
+
 
 namespace Galabingus
 {
@@ -49,8 +50,11 @@ namespace Galabingus
             GraphicsDeviceManager.DefaultBackBufferWidth, 
             GraphicsDeviceManager.DefaultBackBufferHeight);
 
-            Tile tile = new Tile(GameObject.Instance.Content.tile_strip26, 0, 0);
-            tileSize = new Vector2 (tile.Sprite.Width, tile.Sprite.Height);
+            ushort contentName = GameObject.Instance.Content.tile_strip26;
+            Debug.WriteLine(contentName);
+
+            Tile tile = new Tile(contentName, 0, 0);
+            tileSize = new Vector2 (tile.Transform.Width, tile.Transform.Height);
 
             //tileSize = new Vector2(GameObject.Instance.Content.tile_strip26,
                 //GameObject.Instance.Content.tile_strip26.Sprite.Height);
@@ -64,13 +68,20 @@ namespace Galabingus
 
         public void CreateTile()
         {
-            ushort instanceCounter = 1;
+            ushort instanceCounter = 0;
             for (ushort i = 0; i < tiles.GetLength(0); i++)
             {
                 for (int j = 0; j < tiles.GetLength(1); j++)
                 {
                     Tile tile = new Tile(GameObject.Instance.Content.tile_strip26, instanceCounter, 0);
-                    tile.Position = new Vector2(tile.Sprite.Width, tile.Sprite.Height);
+                    //tile.Position = new Vector2(tile.Sprite.Width*j, 0);
+                    tile.Position = new Vector2(0, 0);
+                    tile.Transform = new Rectangle(
+                        (int)tile.Position.X,
+                        (int)tile.Position.Y,
+                        tile.Transform.Width,
+                        tile.Transform.Height
+                    );
                     tiles[i, j] = tile;
                     instanceCounter++;
                 }
@@ -84,8 +95,35 @@ namespace Galabingus
                 for (int j = 0; j < tiles.GetLength(1); j++)
                 {
                     tiles[i, j].Update(gameTime);
+
+                    List<Collision> collisions = tiles[i, j].Collider.UpdateTransform(
+                        tiles[i,j].Sprite, 
+                        tiles[i, j].Position, 
+                        tiles[i,j].Transform, 
+                        GameObject.Instance.GraphicsDevice, 
+                        GameObject.Instance.SpriteBatch, 
+                        tiles[i,j].Scale, 
+                        SpriteEffects.None, 
+                        GameObject.Instance.Content.tile_strip26, 
+                        tiles[i,j].InstanceNumber
+                    );
+                    foreach (Collision collision in collisions)
+                    {
+                        if (collision.other != null)
+                        {
+                            if (collision.other.Index == Player.PlayerInstance.Index)
+                            {
+                                //Player.PlayerInstance.Position += collision.mtv;
+                                
+                                Player.PlayerInstance.Collider.Resolved = true;
+                            }
+                        }
+                    }
+                    tiles[i, j].Collider.Resolved = true;
                 }
             }
+
+
         }
 
         public void Draw()

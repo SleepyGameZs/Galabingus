@@ -88,7 +88,7 @@ namespace Galabingus
             mng_bullet = BulletManager.Instance;
 
             // Create Enemy Manager + Load data
-            mng_enemy = EnemyManager.Instance.Initialize(l_a4_obj_enemyData);
+            //mng_enemy = EnemyManager.Instance.Initialize(l_a4_obj_enemyData);
 
             // Create Camera
             camera = Camera.Instance;
@@ -136,7 +136,7 @@ namespace Galabingus
             if (!(userInterface.GS == GameState.Menu))
             {
                 // Draws enemies
-                mng_enemy.Draw();
+                //mng_enemy.Draw();
 
                 // Draw the player
                 player.Draw();

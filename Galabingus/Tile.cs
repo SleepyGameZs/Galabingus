@@ -19,6 +19,14 @@ namespace Galabingus
         // Properties
         // -------------------------------------------------
 
+        public ushort InstanceNumber
+        {
+            get
+            {
+                return this.instanceNumber;
+            }
+        }
+
         /// <summary>
         ///  Position of the player
         /// </summary>
@@ -147,11 +155,11 @@ namespace Galabingus
             //this.Position = new Vector2(0, 0);
             //Debug.WriteLine(Position.X);
             //Debug.WriteLine(Position.Y);
-
+            //Debug.WriteLine(this.Position);
             GameObject.Instance.SpriteBatch.Draw(
-                Sprite,                          // The sprite-sheet for the player
-                Position,                        // The position for the player
-                Transform,                       // The scale and bounding box for the animation
+                this.Sprite,                          // The sprite-sheet for the player
+                this.Position,                        // The position for the player
+                this.Transform,                       // The scale and bounding box for the animation
                 Color.White,                     // The color for the palyer
                 0.0f,                            // There cannot be any rotation of the player
                 Vector2.Zero,                    // Starting render position

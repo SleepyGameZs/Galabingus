@@ -91,28 +91,28 @@ namespace Galabingus
                     ET_tempAbility = (EnemyType)l_obj_enemyData[i][1];
 
                     Vector2 vc2_enemyPos = new Vector2(l_obj_enemyData[i][2], l_obj_enemyData[i][3]);
-                    ushort ush_sprite = GameObject.Instance.Content.tile_strip26;
+                    ushort ush_sprite = GameObject.Instance.Content.bigbullet_strip4;
 
                     switch (ET_tempAbility)
                     {
                         case EnemyType.Normal:
-                            ush_sprite = GameObject.Instance.Content.tile_strip26;
+                            ush_sprite = GameObject.Instance.Content.bigbullet_strip4;
                             break;
 
                         case EnemyType.Bouncing:
-                            ush_sprite = GameObject.Instance.Content.tile_strip26;
+                            ush_sprite = GameObject.Instance.Content.bigbullet_strip4;
                             break;
 
                         case EnemyType.Splitter:
-                            ush_sprite = GameObject.Instance.Content.tile_strip26;
+                            ush_sprite = GameObject.Instance.Content.bigbullet_strip4;
                             break;
 
                         case EnemyType.Circle:
-                            ush_sprite = GameObject.Instance.Content.tile_strip26;
+                            ush_sprite = GameObject.Instance.Content.bigbullet_strip4;
                             break;
 
                         default:
-                            ush_sprite = GameObject.Instance.Content.tile_strip26;
+                            ush_sprite = GameObject.Instance.Content.bigbullet_strip4;
                             break;
                     }
 

@@ -693,6 +693,7 @@ namespace Galabingus
             {
                 exist = true;
                 GameObject.ObjectEnumsI.Add(binder.Name);
+                GameObject.ObjectEnumsI = GameObject.ObjectEnumsI;
             }
             this.index = index;
             result = index;
