@@ -28,6 +28,12 @@ namespace Galabingus
         private BulletManager mng_bullet;
         private EnemyManager mng_enemy;
 
+        // Camera
+        private Camera camera;
+
+        // Tiles 
+        private TileManager tileManager;
+
         // Tile / Enemy Position & Data
         private List<int[]> l_a4_obj_enemyData;
 
@@ -83,6 +89,13 @@ namespace Galabingus
 
             // Create Enemy Manager + Load data
             mng_enemy = EnemyManager.Instance.Initialize(l_a4_obj_enemyData);
+
+            // Create Camera
+            camera = Camera.Instance;
+
+            // Create Tile Manager
+            tileManager = TileManager.Instance;
+            tileManager.CreateTile();
         }
 
         protected override void Update(GameTime gameTime)
@@ -102,6 +115,11 @@ namespace Galabingus
 
             //update the game state
             userInterface.Update();
+
+            // Update the Camera
+            camera.Update(gameTime);
+
+            tileManager.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -125,6 +143,9 @@ namespace Galabingus
 
                 // Draws bullets
                 mng_bullet.Draw();
+
+                // Draws tiles
+                tileManager.Draw();
             }
 
             // End the SpriteBatch draw
