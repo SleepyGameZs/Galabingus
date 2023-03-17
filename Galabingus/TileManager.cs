@@ -89,6 +89,7 @@ namespace Galabingus
             {
                 Tile tile = new Tile(GameObject.Instance.Content.tile_strip26, instanceCounter, spriteNumber);
                 tile.Position = new Vector2(tile.Transform.Width * tile.Scale * i, 0);
+                
 
                 switch (spriteNumber)
                 {
