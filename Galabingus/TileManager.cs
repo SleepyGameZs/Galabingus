@@ -70,7 +70,7 @@ namespace Galabingus
                 for (int j = 0; j < tiles.GetLength(1); j++)
                 {
                     Tile tile = new Tile(GameObject.Instance.Content.tile_strip26, instanceCounter, 0);
-                    tile.Position = new Vector2(tile.Sprite.Width+100, tile.Sprite.Height+100);
+                    tile.Position = new Vector2(tile.Sprite.Width, tile.Sprite.Height);
                     tiles[i, j] = tile;
                     instanceCounter++;
                 }
