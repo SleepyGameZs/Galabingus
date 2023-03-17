@@ -85,7 +85,7 @@ namespace Galabingus
                 PlayerInstance.health = value;
             }
         }
-
+        
 
         public Vector2 Velocity
         {
