@@ -702,6 +702,7 @@ namespace Galabingus
             SetAnimation(instanceNumber, new Animation(GetSprite(instanceNumber).Width, GetSprite(instanceNumber).Height, strip));
             Collider newCollider = new Collider();
             newCollider.Layer = contentName;
+            newCollider.Resolved = true;
             SetCollider(instanceNumber, newCollider);
             SetPosition(instanceNumber, Vector2.Zero);
             SetTransform(instanceNumber,

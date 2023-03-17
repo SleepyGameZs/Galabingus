@@ -358,6 +358,36 @@ namespace Galabingus
                 0
             );
 
+            foreach (Collision collision in intercepts)
+            {
+                if (collision.other != null && this.Collider.Resolved)
+                {
+                    if (collision.mtv.X != 0)
+                    {
+                        Position = new Vector2((previousPosition.X + (Position.X - previousPosition.X) / (1+1/4.5f)), Position.Y);
+                        previousPosition.X = Position.X;
+                    }
+                    else
+                    {
+                        previousPosition.X = Position.X;
+                    }
+                    if (collision.mtv.Y != 0)
+                    {
+                        Position = new Vector2(previousPosition.X, (previousPosition.Y + (Position.Y - previousPosition.Y) / (1 + 1 / 4.5f)));
+                    }
+                    totalTime = inputBufferTime;
+                    playerState = PlayerStates.None;
+                    previousKeyboardState = Keyboard.GetState();
+                }
+                else if (collision.other != null)
+                {
+                    Position = (previousPosition + (Position - previousPosition) / (1+1/4.5f));
+                    totalTime = inputBufferTime;
+                    playerState = PlayerStates.None;
+                    previousKeyboardState = Keyboard.GetState();
+                }
+            }
+
             previousVelocity = velocity;
             totalTime += gameTime.ElapsedGameTime.TotalSeconds;
 

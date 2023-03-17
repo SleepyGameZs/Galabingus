@@ -331,7 +331,6 @@ namespace Galabingus
             bool active = false;  // The collider needs to check for collision
             bool updated = false; // The collider needs to update its pixel data
             this.layer = layer;   // The collider's layer
-            this.Resolved = false;
 
             // Create transform from scale and position
             this.transform = new Rectangle(
@@ -370,7 +369,7 @@ namespace Galabingus
                     {
                         // When the bounds are intercepting and the layer isn't the same and all collisions have been resolved
                         // Then we can activate the collider
-                        if (!this.resolved &&
+                        if (this.resolved &&
                             otherCollider.layer != this.layer &&
                             otherCollider.transform.Intersects(this.transform)
                         )
@@ -435,8 +434,8 @@ namespace Galabingus
                             {
                                 // Set the resolved collision to false
                                 // Return the Collision
-                                //this.resolved = false;
                                 this.resolved = false;
+                                //GameObject.Instance.SetCollider(instanceNumber,this);
                                 result.Add(new Collision(
                                     GameObject.Instance,
                                     other[0],
@@ -448,6 +447,7 @@ namespace Galabingus
                     }
                 }
             }
+
             // No collision
             return result;
         }
@@ -502,16 +502,20 @@ namespace Galabingus
                         // Use the PixelCheck to determine intercept
                         if (PixelCheckFunction(a1, b1, clearColor))
                         {
-                            Vector2 interceptPosition = new Vector2((x1 + x2) / 2.0f, (y1 + y2) / 2.0f);
+                            Vector2 interceptPosition = new Vector2(x1 + Math.Abs(x2 - x1) / 2.0f, y1 + Math.Abs(x2 - x1) / 2.0f);
                             Vector2 intercept;
-                            Vector2 mtv = MTV(other, x2, y2, y1, x1, y, x);
-                            Vector2 otherMTV = MTV(this, x2, y2, y1, x1, y, x);
+                            Vector2 mtv = MTV(this, x2, y2, y1, x1, interceptPosition.Y, interceptPosition.X);
+                            Vector2 otherMTV = MTV(other, x2, y2, y1, x1, interceptPosition.Y, interceptPosition.X);
+
                             intercept = new Vector2(position.X + mtv.X, position.Y + mtv.Y);
+
                             if (this.colliderNextMTV == Vector2.Zero)
                             {
                                 this.colliderNextMTV = otherMTV;
                             }
+
                             colldierCurrentMTV = colliderNextMTV;
+                            
                             if (
                                 Math.Abs(otherMTV.X) < Math.Abs(colldierCurrentMTV.Y) && otherMTV.X != 0 && colldierCurrentMTV.Y != 0 ||
                                 Math.Abs(otherMTV.Y) < Math.Abs(colldierCurrentMTV.X) && otherMTV.Y != 0 && colldierCurrentMTV.X != 0 ||
@@ -520,6 +524,7 @@ namespace Galabingus
                             {
                                 colliderNextMTV = otherMTV;
                             }
+
                             // Return the resulting rectangle
                             return new Vector2[]
                             {
@@ -530,8 +535,6 @@ namespace Galabingus
                                 ),
                                 colliderNextMTV
                             };
-
-                            
                         }
                     }
                 }
@@ -552,90 +555,29 @@ namespace Galabingus
         /// <param name="y"></param>
         /// <param name="x"></param>
         /// <returns></returns>
-        private Vector2 MTV(Collider other, int x2, int y2, int y1, int x1, int y, int x)
+        private Vector2 MTV(Collider other, int x2, int y2, int y1, int x1, float y, float x)
         {
             Vector2 mtv = new Vector2();
 
             int w = Math.Abs(x2 - x1);
             int h = Math.Abs(y2 - y1);
 
-            int relX = other.Transform.Left - x1;
-            int relY = other.Transform.Top - y1;
+            float ocx = other.position.X + other.Transform.Width / 2.0f;
+            float ocy = other.position.Y + other.Transform.Height / 2.0f;
 
-            int minOverlapX = w + other.Transform.Width;
-            int mtvX = 0;
+            mtv.X = ocx - x;
+            mtv.Y = ocy - y;
 
-            if ((relX) > (w - other.Transform.Width))
+            if (mtv == Vector2.Zero)
             {
-
-                mtvX = other.Transform.Left - x2;
-                if (mtvX < minOverlapX)
-                {
-                    minOverlapX = mtvX;
-                    mtvX = other.Transform.Right - x1;
-                }
-            }
-            else if (relX < 0)
-            {
-                mtvX = other.Transform.Right - x1;
-                if (mtvX < minOverlapX)
-                {
-                    minOverlapX = mtvX;
-                    mtvX = other.Transform.Left - x2;
-                }
+                return Vector2.Zero;
             }
 
-            int minOverlapY = h + other.Transform.Height;
-            int mtvY = 0;
-
-            if ((relY) > (h - other.Transform.Height))
-            {
-                mtvY = other.Transform.Bottom - y1;
-                if (mtvY <= minOverlapY)
-                {
-                    minOverlapY = -mtvY;
-                    mtvY = -(other.Transform.Top - y1);
-
-                }
-            }
-            else if ((relY) < 0)
-            {
-                mtvY = other.Transform.Top - y1;
-                if (mtvY <= minOverlapY)
-                {
-                    minOverlapY = -mtvY;
-                    mtvY = (other.Transform.Bottom - y1);
-
-                }
-            }
-            else
-            {
-                if ((y != y1) && mtvY == 0)
-                {
-                    minOverlapY = minOverlapY / 2;
-                }
-                else if (mtvY == 0 && (y > y1))
-                {
-                    minOverlapY = -minOverlapY / 2;
-                }
-            }
-
-            if (minOverlapX < minOverlapY)
-            {
-                mtv = new Vector2(minOverlapX, 0);
-            }
-            else if (minOverlapX > minOverlapY)
-            {
-                mtv = new Vector2(0, minOverlapY);
-            }
-            else if (mtvX != 0 && mtvY != 0)
-            {
-                mtv = new Vector2(0,0);
-            }
+            mtv = Vector2.Normalize(mtv);
 
             if (mtv.X != 0 || mtv.Y != 0)
             {
-                mtv = Vector2.Normalize(mtv) * new Vector2((float)Math.Sqrt((x2 - x1) * (x2 - x1)) / 4.5f, (float)Math.Sqrt((y2 - y1) * (y2 - y1)) / 4.5f);
+                mtv = mtv * new Vector2((float)Math.Sqrt((x2 - x1)*(x2 - x1))/4.5f,(float)Math.Sqrt((y2 - y1)*(y2 - y1))/4.5f);
             }
 
             return mtv;
