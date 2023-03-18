@@ -828,7 +828,7 @@ namespace Galabingus
 
 
 
-            Debug.WriteLine(mtv);
+            //Debug.WriteLine(mtv);
 
             return mtv;
         }
