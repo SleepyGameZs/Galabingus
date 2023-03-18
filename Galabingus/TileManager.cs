@@ -82,28 +82,44 @@ namespace Galabingus
 
         public void CreateTile(ushort spriteNumber)
         {
-            currentSpriteNumber = spriteNumber;
-            Tile tile = new Tile(GameObject.Instance.Content.white_pixel_strip1, 0, spriteNumber, true);
-            tile.Scale = 25f;
-            tile.ScaleVector = new Vector2(1000, 1);
-            tile.Position = new Vector2(0, 0);
-
+            ushort index = 0;
 
             switch (spriteNumber)
             {
                 case 0:
                     layers.Add(Player.PlayerInstance.ContentName);
-                    spriteNumbers.Add(spriteNumber);
                     break;
 
                 case 1:
                     layers.Add(Tile.Instance.Index);
-                    spriteNumbers.Add(spriteNumber);
                     break;
 
                 default:
                     break;
             }
+
+            index = (ushort)(layers.Count - 1);
+
+            switch (spriteNumber)
+            {
+                case 0:
+                    spriteNumbers.Add(index);
+                    break;
+
+                case 1:
+                    spriteNumbers.Add(index);
+                    break;
+
+                default:
+                    break;
+            }
+
+            currentSpriteNumber = (index);
+            Tile tile = new Tile(GameObject.Instance.Content.white_pixel_strip1, 0, index, true);
+            tile.Scale = 25f;
+            tile.ScaleVector = new Vector2(1000, 1);
+            tile.Position = new Vector2(0, 0);
+
 
             tilesList.Add(tile);
         }
@@ -112,7 +128,7 @@ namespace Galabingus
         {
             for (int i = 0; i < tilesList.Count; i++)
             {
-                currentSpriteNumber = tilesList[i].SpriteNumber;
+                //currentSpriteNumber = tilesList[i].SpriteNumber;
 
                 tilesList[i].Update(gameTime);
                 List<Collision> collisions = tilesList[i].Collider.UpdateTransform(
