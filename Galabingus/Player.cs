@@ -419,8 +419,19 @@ namespace Galabingus
                 }
             }
 
+            if (Math.Abs(previousVelocity.X) < 0.0000001)
+            {
+                previousVelocity.X = 0;
+            }
+            if (Math.Abs(previousVelocity.Y) < 0.0000001)
+            {
+                previousVelocity.Y = 0;
+            }
+
             if ( collides || previousVelocity != Vector2.Zero && velocity != Vector2.Zero && ((velocity == Vector2.Zero ? velocity : Vector2.Normalize(velocity)) != (previousVelocity == Vector2.Zero ? previousVelocity : Vector2.Normalize(previousVelocity))))
             {
+                //Debug.WriteLine(previousVelocity);
+                //Debug.WriteLine(velocity);
                 previousCollision = collides;
                 previousVelocity = velocity;
             } 
