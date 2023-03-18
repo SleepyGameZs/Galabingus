@@ -343,11 +343,13 @@ namespace Galabingus
             //
             // Determine the bounds of the collider
             this.position = position;
+            /*
             if (position.X - transform.Width * scale > GraphicsDeviceManager.DefaultBackBufferWidth ||
                 position.X + transform.Width * scale < 0 ||
                 position.Y - transform.Height * scale > GraphicsDeviceManager.DefaultBackBufferHeight ||
                 position.Y + transform.Height * scale < 0
             )
+            */
             {
                 this.sprite = null;
                 return new List<Collision>();
@@ -444,6 +446,10 @@ namespace Galabingus
                                     other[2]
                                 ));
                             }
+                            else if (other != null)
+                            {
+                                sprite = null; 
+                            }
                         }
                     }
                 }
@@ -452,6 +458,162 @@ namespace Galabingus
             // No collision
             return result;
         }
+
+        /// <summary>
+        ///  Updates the Transform for the Collider
+        /// </summary>
+        /// <param name="sprite">Sprite for the collider</param>
+        /// <param name="position">Position of the collider</param>
+        /// <param name="transform">Offset, Height and Width</param>
+        /// <param name="graphicsDevice">Any: GraphicsDevice</param>
+        /// <param name="spriteBatch">Any: SpriteBatch</param>
+        /// <param name="scale">Scale of the collider</param>
+        /// <param name="effect">SpriteEffect applied to the collider</param>
+        public List<Collision> UpdateTransform(
+            Texture2D sprite,
+            Vector2 position,
+            Rectangle transform,
+            GraphicsDevice graphicsDevice,
+            SpriteBatch spriteBatch,
+            Vector2 scale,
+            SpriteEffects effect,
+            ushort layer,
+            ushort instanceNumber
+        )
+        {
+            // Set the temporal states for the collider
+            // These determine if the collider needs to update
+            bool active = false;  // The collider needs to check for collision
+            bool updated = false; // The collider needs to update its pixel data
+            this.layer = layer;   // The collider's layer
+
+            // Create transform from scale and position
+            this.transform = new Rectangle(
+                (int)(position.X),
+                (int)(position.Y),
+                (int)(transform.Width * scale.X),
+                (int)(transform.Height * scale.Y)
+            );
+
+            //
+            // Determine the bounds of the collider
+            this.position = position;
+            /*
+            if (position.X - transform.Width * scale > GraphicsDeviceManager.DefaultBackBufferWidth ||
+                position.X + transform.Width * scale < 0 ||
+                position.Y - transform.Height * scale > GraphicsDeviceManager.DefaultBackBufferHeight ||
+                position.Y + transform.Height * scale < 0
+            )
+            */
+            {
+                this.sprite = null;
+                return new List<Collision>();
+            }
+
+            List<Collision> result = new List<Collision>();
+            ushort layer4 = GameObject.Instance.ColliderLayer4Instance(instanceNumber);
+            unsafe
+            {
+                ref List<Collider> collidersR = ref GameObject.Instance.ColliderCollisions();
+
+                // Go through all collider instances to check for a collision and determine what colliders are active
+                for (ushort colliderIndex = 0; colliderIndex < collidersR.Count; colliderIndex++)
+                {
+                    // The other collider
+                    Collider otherCollider = collidersR[colliderIndex];
+
+                    // Determine if the colldier exist as a instance of this content
+                    if (layer4 != colliderIndex)
+                    {
+                        // When the bounds are intercepting and the layer isn't the same and all collisions have been resolved
+                        // Then we can activate the collider
+                        if (this.resolved &&
+                            otherCollider.layer != this.layer &&
+                            otherCollider.transform.Intersects(this.transform)
+                        )
+                        {
+                            active = true;
+                        }
+                        else
+                        {
+                            active = false;
+                            this.colliderNextMTV = Vector2.Zero;
+                            this.colldierCurrentMTV = Vector2.Zero;
+                        }
+
+                        // Only update the collider once
+                        if (active && !updated)
+                        {
+                            updated = true;
+                            // Setup the renderTarget
+                            RenderTarget2D scaledSprite = new RenderTarget2D(graphicsDevice,
+                                (int)(transform.Width * scale.X) <= 0 ? 1 : (int)(transform.Width * scale.X),
+                                (int)(transform.Height * scale.Y) <= 0 ? 1 : (int)(transform.Height * scale.Y)
+                            );
+
+                            // Render the new sprite 
+                            graphicsDevice.SetRenderTarget(scaledSprite);
+                            graphicsDevice.Clear(clearColor);
+                            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
+                            spriteBatch.Draw(
+                                sprite,
+                                new Vector2(0, 0),
+                                transform,
+                                Color.Black,
+                                0.0f,
+                                Vector2.Zero,
+                                scale,
+                                effect,
+                                1.0f
+                            );
+                            spriteBatch.End();
+                            graphicsDevice.SetRenderTarget(null);
+                            //this.colliderNextMTV = Vector2.Zero;
+                            //this.colldierCurrentMTV = Vector2.Zero;
+
+                            // Update the transform with the new scale and sprite
+                            this.sprite = scaledSprite;
+                            // Load pixel data to CPU memory
+                            Load();
+                        }
+
+                        // When the collider is active check for a collision
+                        if (active)
+                        {
+                            // Define the collision points
+                            Vector2[] other = (
+                                otherCollider != this ? // We are not the same collider
+                                    (this.PixelsIntersects(otherCollider)) : // Pixels intercept points
+                                        new Vector2[] { new Vector2(-1, -1), new Vector2(-1, -1), new Vector2(-1, -1) } // otherwise default to a new array
+                            );
+
+                            // If there was a collision
+                            if (new Vector2(-1, -1) != other[1] && other != null)
+                            {
+                                // Set the resolved collision to false
+                                // Return the Collision
+                                this.resolved = false;
+                                //GameObject.Instance.SetCollider(instanceNumber,this);
+                                result.Add(new Collision(
+                                    GameObject.Instance,
+                                    other[0],
+                                    other[1],
+                                    other[2]
+                                ));
+                            }
+                            else if (other != null)
+                            {
+                                sprite = null;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // No collision
+            return result;
+        }
+
 
         /// <summary>
         ///  Calls the PixelCheck function
@@ -560,9 +722,6 @@ namespace Galabingus
         {
             Vector2 mtv = new Vector2();
 
-            int w = Math.Abs(x2 - x1);
-            int h = Math.Abs(y2 - y1);
-
             float ocx = other.position.X + other.Transform.Width / 2.0f;
             float ocy = other.position.Y + other.Transform.Height / 2.0f;
 
@@ -574,11 +733,20 @@ namespace Galabingus
                 return Vector2.Zero;
             }
 
+            if (Math.Abs(mtv.X) > Math.Abs(mtv.Y))
+            {
+                mtv.X = 0;
+            }
+            else
+            {
+                mtv.Y = 0;
+            }
+
             mtv = Vector2.Normalize(mtv);
 
             if (mtv.X != 0 || mtv.Y != 0)
             {
-                mtv = mtv * new Vector2((float)Math.Sqrt((x2 - x1)*(x2 - x1))/4.5f,(float)Math.Sqrt((y2 - y1)*(y2 - y1))/4.5f);
+                mtv = mtv * new Vector2((float)Math.Sqrt((x2 - x1)*(x2 - x1)),(float)Math.Sqrt((y2 - y1)*(y2 - y1)));
             }
 
             return mtv;
