@@ -788,8 +788,8 @@ namespace Galabingus
                 {
                     mtv.Y = -mtv.Y;
                 }
-                mtv.X *= 2;
-                mtv.Y *= 2;
+                mtv.X *= -2;
+                mtv.Y *= -2;
             }
             //mtv.Y = -mtv.Y;
 
@@ -808,7 +808,7 @@ namespace Galabingus
 
             if (mtv.X != 0 || mtv.Y != 0)
             {
-                mtv = mtv * new Vector2((float)Math.Sqrt((x2 - x1)*(x2 - x1)),(float)Math.Sqrt((y2 - y1)*(y2 - y1))) * 2;
+                mtv = mtv * new Vector2((float)Math.Sqrt((x2 - x1)*(x2 - x1)),(float)Math.Sqrt((y2 - y1)*(y2 - y1))) * 1.5f;
             }
 
             return mtv;
