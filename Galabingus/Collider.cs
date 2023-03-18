@@ -766,11 +766,11 @@ namespace Galabingus
 
             if (Math.Abs(mtv.X) > Math.Abs(mtv.Y))
             {
-                mtv.X = -mtv.X;
+                mtv.X = 0;//-mtv.X;
             }
             else if (Math.Abs(mtv.X) < Math.Abs(mtv.Y))
             {
-                mtv.Y = -mtv.Y;
+                mtv.Y = 0;//-mtv.Y;
             }
 
             mtv = Vector2.Normalize(mtv);
