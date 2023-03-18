@@ -777,6 +777,10 @@ namespace Galabingus
                 {
                     mtv.Y = -mtv.Y;
                 }
+                else if ((ocy - y1) == 0)
+                {
+                    //mtv.Y = -mtv.X;
+                }
                 mtv.X = 0;
             }
             else
@@ -788,14 +792,25 @@ namespace Galabingus
                 {
                     mtv.Y = -mtv.Y;
                 }
+                else if ((ocy - y1) == 0)
+                {
+                    //mtv.Y = -mtv.X;
+                }
                 mtv.X *= 1;
-                mtv.Y *= -1;
+                //mtv.Y *= -1;
             }
             //mtv.Y = -mtv.Y;
+
+
 
             if (mtv == Vector2.Zero)
             {
                 return Vector2.Zero;
+            }
+
+            if (overlap.Length() <= new Vector2(Math.Abs(this.Transform.Width),Math.Abs(this.Transform.Height)).Length())
+            {
+                overlap = (new Vector2(Math.Abs(other.Transform.Width), Math.Abs(other.Transform.Height)));
             }
 
             mtv = Vector2.Normalize(mtv);
@@ -806,10 +821,14 @@ namespace Galabingus
 
             //}
 
-            if (mtv.X != 0 || mtv.Y != 0)
-            {
-                mtv = mtv * new Vector2((float)Math.Sqrt((x2 - x1)*(x2 - x1)),(float)Math.Sqrt((y2 - y1)*(y2 - y1))) * 9.5f;
-            }
+                //if (mtv.X != 0 || mtv.Y != 0)
+                //{
+                mtv = mtv + overlap*mtv;
+            //}
+
+
+
+            Debug.WriteLine(mtv);
 
             return mtv;
         }
