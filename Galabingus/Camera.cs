@@ -32,7 +32,7 @@ namespace Galabingus
 
         private int x;
         private int y;
-        private int cameraScroll;
+        private float cameraScroll;
         private Vector2 offSet;
         private bool cameraLock;
 
@@ -53,10 +53,10 @@ namespace Galabingus
             set { y = value; }
         }
 
-        public int CameraScroll
+        public float CameraScroll
         {
-            get { return y; }
-            set { y = value; }
+            get { return cameraScroll; }
+            set { cameraScroll = value; }
         }
 
         public Vector2 OffSet
@@ -91,15 +91,7 @@ namespace Galabingus
         {
             if (Keyboard.GetState().IsKeyDown(Keys.F5))
             {
-                cameraLock = true;
-            }
-        }
-
-        public void DebugMode(Player player)
-        {
-            if (cameraLock == true)
-            {
-                
+                cameraScroll = Player.PlayerInstance.Velocity.X;
             }
         }
     }
