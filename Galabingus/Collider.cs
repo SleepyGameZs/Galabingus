@@ -788,8 +788,8 @@ namespace Galabingus
                 {
                     mtv.Y = -mtv.Y;
                 }
-                mtv.X *= -2;
-                mtv.Y *= -2;
+                mtv.X *= 1;
+                mtv.Y *= -1;
             }
             //mtv.Y = -mtv.Y;
 
