@@ -343,13 +343,12 @@ namespace Galabingus
             //
             // Determine the bounds of the collider
             this.position = position;
-            /*
+            
             if (position.X - transform.Width * scale > GraphicsDeviceManager.DefaultBackBufferWidth ||
                 position.X + transform.Width * scale < 0 ||
                 position.Y - transform.Height * scale > GraphicsDeviceManager.DefaultBackBufferHeight ||
                 position.Y + transform.Height * scale < 0
             )
-            */
             {
                 this.sprite = null;
                 return new List<Collision>();
@@ -446,10 +445,6 @@ namespace Galabingus
                                     other[2]
                                 ));
                             }
-                            else if (other != null)
-                            {
-                                sprite = null; 
-                            }
                         }
                     }
                 }
@@ -498,13 +493,11 @@ namespace Galabingus
             //
             // Determine the bounds of the collider
             this.position = position;
-            /*
-            if (position.X - transform.Width * scale > GraphicsDeviceManager.DefaultBackBufferWidth ||
-                position.X + transform.Width * scale < 0 ||
-                position.Y - transform.Height * scale > GraphicsDeviceManager.DefaultBackBufferHeight ||
-                position.Y + transform.Height * scale < 0
+            if (position.X - transform.Width * scale.Y > GraphicsDeviceManager.DefaultBackBufferWidth ||
+                position.X + transform.Width * scale.Y < 0 ||
+                position.Y - transform.Height * scale.Y > GraphicsDeviceManager.DefaultBackBufferHeight ||
+                position.Y + transform.Height * scale.Y < 0
             )
-            */
             {
                 this.sprite = null;
                 return new List<Collision>();
@@ -600,10 +593,6 @@ namespace Galabingus
                                     other[1],
                                     other[2]
                                 ));
-                            }
-                            else if (other != null)
-                            {
-                                sprite = null;
                             }
                         }
                     }
@@ -702,6 +691,48 @@ namespace Galabingus
                     }
                 }
             }
+            { 
+                Color a1 = this.pixels[(x1 - this.transform.X) + (y1 - this.transform.Y) * (this.transform.Width)];
+                Color b1 = other.pixels[(x1 - other.transform.X) + (y1 - other.transform.Y) * (other.transform.Width)];
+
+                // Use the PixelCheck to determine intercept
+                if (PixelCheckFunction(a1, b1, clearColor))
+                {
+                    Vector2 interceptPosition = new Vector2(x1 + Math.Abs(x2 - x1) / 2.0f, y1 + Math.Abs(x2 - x1) / 2.0f);
+                    Vector2 intercept;
+                    Vector2 mtv = MTV(this, x2, y2, y1, x1, interceptPosition.Y, interceptPosition.X);
+                    Vector2 otherMTV = MTV(other, x2, y2, y1, x1, interceptPosition.Y, interceptPosition.X);
+
+                    intercept = new Vector2(position.X + mtv.X, position.Y + mtv.Y);
+
+                    if (this.colliderNextMTV == Vector2.Zero)
+                    {
+                        this.colliderNextMTV = otherMTV;
+                    }
+
+                    colldierCurrentMTV = colliderNextMTV;
+
+                    if (
+                        Math.Abs(otherMTV.X) < Math.Abs(colldierCurrentMTV.Y) && otherMTV.X != 0 && colldierCurrentMTV.Y != 0 ||
+                        Math.Abs(otherMTV.Y) < Math.Abs(colldierCurrentMTV.X) && otherMTV.Y != 0 && colldierCurrentMTV.X != 0 ||
+                        otherMTV.Y != 0 && colldierCurrentMTV.Y != 0 && otherMTV.X != 0 && colldierCurrentMTV.X != 0
+                    )
+                    {
+                        colliderNextMTV = otherMTV;
+                    }
+
+                    // Return the resulting rectangle
+                    return new Vector2[]
+                    {
+                                interceptPosition, // Position of pixel intercept
+                                new Vector2(
+                                    intercept.X, // Position to avoid intercept X
+                                    intercept.Y  // Position to avoid intercept Y
+                                ),
+                                colliderNextMTV
+                    };
+                }
+            }
 
             // Default to top-left offscreen positions
             return new Vector2[] { new Vector2(-1, -1), new Vector2(-1, -1), new Vector2(-1, -1) };
@@ -735,18 +766,18 @@ namespace Galabingus
 
             if (Math.Abs(mtv.X) > Math.Abs(mtv.Y))
             {
-                mtv.X = 0;
+                mtv.X = -mtv.X;
             }
-            else
+            else if (Math.Abs(mtv.X) < Math.Abs(mtv.Y))
             {
-                mtv.Y = 0;
+                mtv.Y = -mtv.Y;
             }
 
             mtv = Vector2.Normalize(mtv);
 
             if (mtv.X != 0 || mtv.Y != 0)
             {
-                mtv = mtv * new Vector2((float)Math.Sqrt((x2 - x1)*(x2 - x1)),(float)Math.Sqrt((y2 - y1)*(y2 - y1)));
+                mtv = mtv * new Vector2((float)Math.Sqrt((x2 - x1)*(x2 - x1)),(float)Math.Sqrt((y2 - y1)*(y2 - y1))) * 0.99f;
             }
 
             return mtv;
