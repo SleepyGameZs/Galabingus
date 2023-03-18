@@ -376,7 +376,7 @@ namespace Galabingus
                 {
                     if (collision.mtv.X != 0)
                     {
-                        Position = new Vector2((previousPosition.X + (Position.X - previousPosition.X) / (1+1/4.5f)), Position.Y);
+                        Position = new Vector2((previousPosition.X + (Position.X - previousPosition.X) / (1)), Position.Y);
                         previousPosition.X = Position.X;
                     }
                     else
@@ -385,18 +385,22 @@ namespace Galabingus
                     }
                     if (collision.mtv.Y != 0)
                     {
-                        Position = new Vector2(previousPosition.X, (previousPosition.Y + (Position.Y - previousPosition.Y) / (1 + 1 / 4.5f)));
+                        Position = new Vector2(previousPosition.X, (previousPosition.Y + (Position.Y - previousPosition.Y) / (1)));
                     }
                     totalTime = inputBufferTime;
                     playerState = PlayerStates.None;
                     previousKeyboardState = Keyboard.GetState();
+                    acceleration = Vector2.Zero;
+                    velocity = Vector2.Zero;
                 }
                 else if (collision.other != null)
                 {
-                    Position = (previousPosition + (Position - previousPosition) / (1+1/4.5f));
+                    Position = (previousPosition + (Position - previousPosition) / (1));
                     totalTime = inputBufferTime;
                     playerState = PlayerStates.None;
                     previousKeyboardState = Keyboard.GetState();
+                    acceleration = Vector2.Zero;
+                    velocity = Vector2.Zero;
                 }
             }
 
