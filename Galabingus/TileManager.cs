@@ -82,33 +82,30 @@ namespace Galabingus
 
         public void CreateTile(ushort spriteNumber)
         {
-            ushort instanceCounter = 0;
-            for (int i = 0; i < screenSize.X; i++)
+            currentSpriteNumber = spriteNumber;
+            Tile tile = new Tile(GameObject.Instance.Content.white_pixel_strip1, 0, spriteNumber, true);
+            tile.Scale = 25f;
+            tile.ScaleVector = new Vector2(1000, 1);
+            tile.Position = new Vector2(0, 0);
+
+
+            switch (spriteNumber)
             {
-                Tile tile = new Tile(GameObject.Instance.Content.white_pixel_strip1, instanceCounter, spriteNumber, true);
-                tile.Scale = 1f;
-                tile.Position = new Vector2(tile.Transform.Width * tile.Scale * i, 0);
-                
+                case 0:
+                    layers.Add(Player.PlayerInstance.ContentName);
+                    spriteNumbers.Add(spriteNumber);
+                    break;
 
-                switch (spriteNumber)
-                {
-                    case 0:
-                        layers.Add(Player.PlayerInstance.ContentName);
-                        spriteNumbers.Add(spriteNumber);
-                        break;
+                case 1:
+                    layers.Add(Tile.Instance.Index);
+                    spriteNumbers.Add(spriteNumber);
+                    break;
 
-                    case 1:
-                        layers.Add(Tile.Instance.Index);
-                        spriteNumbers.Add(spriteNumber);
-                        break;
-
-                    default:
-                        break;
-                }
-
-                tilesList.Add(tile);
-                instanceCounter++;
+                default:
+                    break;
             }
+
+            tilesList.Add(tile);
         }
 
         public void Update(GameTime gameTime)
@@ -124,7 +121,7 @@ namespace Galabingus
                     tilesList[i].Transform,
                     GameObject.Instance.GraphicsDevice,
                     GameObject.Instance.SpriteBatch,
-                    tilesList[i].Scale,
+                    tilesList[i].ScaleVector,
                     SpriteEffects.None,
                     TileManager.Instance.LayerNumber,//GameObject.Instance.Content.tile_strip26,
                     tilesList[i].InstanceNumber

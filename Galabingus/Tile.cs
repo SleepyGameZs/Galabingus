@@ -15,10 +15,13 @@ namespace Galabingus
         private ushort contentName;
         private ushort instanceNumber;
         private ushort spriteNumber;
+        private Vector2 scale;
 
         // -------------------------------------------------
         // Properties
         // -------------------------------------------------
+
+
 
         public ushort SpriteNumber
         {
@@ -101,6 +104,19 @@ namespace Galabingus
             }
         }
 
+        public Vector2 ScaleVector
+        {
+            get
+            {
+                return scale;
+            }
+
+            set
+            {
+                scale = value;
+            }
+        }
+
         /// <summary>
         ///  Player animation
         /// </summary>
@@ -163,7 +179,7 @@ namespace Galabingus
 
         public void Update(GameTime gameTime)
         {
-            this.Position -= Camera.Instance.OffSet;
+            //this.Position -= Camera.Instance.OffSet;
         }
 
         public void Draw()
@@ -179,7 +195,7 @@ namespace Galabingus
                 Color.White,                     // The color for the palyer
                 0.0f,                            // There cannot be any rotation of the player
                 Vector2.Zero,                    // Starting render position
-                this.Scale,                      // The scale of the sprite
+                this.ScaleVector,                      // The scale of the sprite
                 SpriteEffects.None,              // Which direction the sprite faces
                 0.0f                             // Layer depth of the player is 0.0
             );

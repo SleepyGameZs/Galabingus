@@ -95,7 +95,7 @@ namespace Galabingus
 
             // Create Tile Manager
             tileManager = TileManager.Instance;
-            tileManager.CreateTile(1);
+            tileManager.CreateTile(0);
         }
 
         protected override void Update(GameTime gameTime)
