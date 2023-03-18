@@ -86,7 +86,7 @@ namespace Galabingus
             for (int i = 0; i < screenSize.X; i++)
             {
                 Tile tile = new Tile(GameObject.Instance.Content.white_pixel_strip1, instanceCounter, spriteNumber, true);
-                tile.Scale = 0.1f;
+                tile.Scale = 1f;
                 tile.Position = new Vector2(tile.Transform.Width * tile.Scale * i, 0);
                 
 
