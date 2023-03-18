@@ -95,7 +95,7 @@ namespace Galabingus
     internal class Collider
     {
         private static Collider empty = null;                // Collider singleton
-        private Texture2D sprite;                            // Collider sprite with all applied effects
+        private Texture2D sprite = null;                     // Collider sprite with all applied effects
         private Rectangle transform;                         // Collider transform: contains the position, scaled height and width
         private Vector2 position;                            // Position of the Collider
         private Color[] pixels;                              // Sprite pixel information
@@ -292,8 +292,16 @@ namespace Galabingus
         /// </summary>
         public void Load()
         {
-            pixels = new Color[sprite.Width * sprite.Height];
-            sprite.GetData(pixels);
+            if (pixels == null || pixels.Length != (sprite.Width * sprite.Height))
+            {
+                pixels = new Color[sprite.Width * sprite.Height];
+                sprite.GetData(pixels);
+                GC.Collect();
+            }
+            else
+            {
+                sprite.GetData(pixels);
+            }
         }
 
         /// <summary>
@@ -363,17 +371,14 @@ namespace Galabingus
                 // Go through all collider instances to check for a collision and determine what colliders are active
                 for (ushort colliderIndex = 0; colliderIndex < collidersR.Count; colliderIndex++)
                 {
-                    // The other collider
-                    Collider otherCollider = collidersR[colliderIndex];
-
                     // Determine if the colldier exist as a instance of this content
                     if (layer4 != colliderIndex)
                     {
                         // When the bounds are intercepting and the layer isn't the same and all collisions have been resolved
                         // Then we can activate the collider
                         if (this.resolved &&
-                            otherCollider.layer != this.layer &&
-                            otherCollider.transform.Intersects(this.transform)
+                            collidersR[colliderIndex].layer != this.layer &&
+                            collidersR[colliderIndex].transform.Intersects(this.transform)
                         )
                         {
                             active = true;
@@ -426,8 +431,8 @@ namespace Galabingus
                         {
                             // Define the collision points
                             Vector2[] other = (
-                                otherCollider != this ? // We are not the same collider
-                                    (this.PixelsIntersects(otherCollider)) : // Pixels intercept points
+                                collidersR[colliderIndex] != this ? // We are not the same collider
+                                    (this.PixelsIntersects(collidersR[colliderIndex])) : // Pixels intercept points
                                         new Vector2[] { new Vector2(-1, -1), new Vector2(-1, -1), new Vector2(-1, -1) } // otherwise default to a new array
                             );
 
@@ -763,72 +768,52 @@ namespace Galabingus
 
             if (Math.Abs(overlap.Y) > Math.Abs(overlap.X))
             {
-                //float tempX = mtv.X;
-                //mtv.X = mtv.Y;
-                //mtv.Y = tempX;
                 mtv.Y = 0;
             }
             else if (Math.Abs(overlap.Y) < Math.Abs(overlap.X))
             {
-                //float tempX = mtv.X;
-                //mtv.X = mtv.Y;
-                //mtv.Y = tempX;
-                if ((ocy - y1) > 0)
+                if ((ocy - y1) > 0 && (ocy != y1))
                 {
-                    mtv.Y = -mtv.Y;
+                    mtv.Y = Math.Abs(mtv.Y);
                 }
-                else if ((ocy - y1) == 0)
+                else if ((ocy - y1) != 0)
                 {
-                    //mtv.Y = -mtv.X;
+                    mtv.Y = -Math.Abs(mtv.Y);
                 }
                 mtv.X = 0;
             }
             else
             {
-                //float tempX = mtv.X;
-                //mtv.X = mtv.Y;
-                //mtv.Y = tempX;
-                if ((ocy - y1) > 0)
+                if ((ocy - y1) > 0 && (ocy != y1))
                 {
-                    mtv.Y = -mtv.Y;
+                    mtv.Y = Math.Abs(mtv.Y);
                 }
-                else if ((ocy - y1) == 0)
+                else if ((ocy - y1) != 0)
                 {
-                    //mtv.Y = -mtv.X;
+                    mtv.Y = -Math.Abs(mtv.Y);
                 }
-                mtv.X *= 1;
-                //mtv.Y *= -1;
             }
-            //mtv.Y = -mtv.Y;
-
-
 
             if (mtv == Vector2.Zero)
             {
                 return Vector2.Zero;
             }
 
-            if (overlap.Length() <= new Vector2(Math.Abs(this.Transform.Width),Math.Abs(this.Transform.Height)).Length())
+            if (new Vector2(Math.Abs(other.Transform.Width), Math.Abs(other.Transform.Height)).Length() >= new Vector2(Math.Abs(this.Transform.Width),Math.Abs(this.Transform.Height)).Length())
             {
-                overlap = (new Vector2(Math.Abs(other.Transform.Width), Math.Abs(other.Transform.Height)));
+                // TODO: Fix size relation issues
+                //overlap = (new Vector2(Math.Abs(other.Transform.Width), Math.Abs(other.Transform.Height)));
             }
 
             mtv = Vector2.Normalize(mtv);
-            //Debug.WriteLine("");
-            //Debug.WriteLine(mtv);
-            //if ()
-            //{
 
-            //}
+            if (mtv.X != 0 && mtv.Y != 0)
+            {
+                mtv.X *= 2;
+                mtv.Y *= 0.5f;
+            }
 
-                //if (mtv.X != 0 || mtv.Y != 0)
-                //{
-                mtv = mtv + overlap*mtv;
-            //}
-
-
-
-            //Debug.WriteLine(mtv);
+            mtv = overlap*mtv;
 
             return mtv;
         }

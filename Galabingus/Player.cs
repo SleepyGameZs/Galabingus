@@ -413,33 +413,17 @@ namespace Galabingus
             }
             else
             {
-                if (!collides)
+                if (!collides && !previousCollision)
                 {
-                    if (previousCollision)
-                    {
-                        if (velocity != previousVelocity)
-                        {
-                            // When the player is not idle normalize their velocity to extract direction and translate by the speed of the player
-                            Position += (velocity == Vector2.Zero ? velocity : Vector2.Normalize(velocity) * (float)gameTime.ElapsedGameTime.TotalSeconds * 0.5f * 120 * speed * translationAjdustedRatio);
-                        }
-                        else
-                        {
-                            Position -= (previousVelocity == Vector2.Zero ? previousVelocity : Vector2.Normalize(previousVelocity) * (float)gameTime.ElapsedGameTime.TotalSeconds * 0.5f * 120 * speed * translationAjdustedRatio);
-                        }
-                    }
-                    else
-                    {
-                        // When the player is not idle normalize their velocity to extract direction and translate by the speed of the player
-                        Position += (velocity == Vector2.Zero ? velocity : Vector2.Normalize(velocity) * (float)gameTime.ElapsedGameTime.TotalSeconds * 0.5f * 120 * speed * translationAjdustedRatio);
-                    }
-                }
-                else
-                {
-                    Position -= (previousVelocity == Vector2.Zero ? previousVelocity : Vector2.Normalize(previousVelocity) * (float)gameTime.ElapsedGameTime.TotalSeconds * 0.5f * 120 * speed * translationAjdustedRatio);
+                    Position += (velocity == Vector2.Zero ? velocity : Vector2.Normalize(velocity) * (float)gameTime.ElapsedGameTime.TotalSeconds * 0.5f * 120 * speed * translationAjdustedRatio);
                 }
             }
 
-            previousCollision = collides;
+            if ( collides || previousVelocity != Vector2.Zero && velocity != Vector2.Zero && ((velocity == Vector2.Zero ? velocity : Vector2.Normalize(velocity)) != (previousVelocity == Vector2.Zero ? previousVelocity : Vector2.Normalize(previousVelocity))))
+            {
+                previousCollision = collides;
+                previousVelocity = velocity;
+            } 
 
             /*
             // Adjust the animation speed based upon velocity speed
