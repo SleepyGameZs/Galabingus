@@ -352,8 +352,8 @@ namespace Galabingus
                     {
                         velocity = Vector2.Normalize(velocity);
                     }
-                    Position -= velocity * speed * 1f ;
-                    Position -= acceleration;
+                    //Position -= velocity * speed * 0.5f ;
+                    //Position -= acceleration;
                     totalTime = inputBufferTime;
                     playerState = PlayerStates.Idle;
                     previousKeyboardState = Keyboard.GetState();
@@ -371,8 +371,8 @@ namespace Galabingus
                     {
                         velocity = Vector2.Normalize(velocity);
                     }
-                    Position -= velocity * speed  * 1f;
-                    Position -= acceleration;
+                    //Position -= velocity * speed  * 0.5f;
+                    //Position -= acceleration;
                     totalTime = inputBufferTime;
                     playerState = PlayerStates.Idle;
                     previousKeyboardState = Keyboard.GetState();
