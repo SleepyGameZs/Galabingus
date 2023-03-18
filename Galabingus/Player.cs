@@ -53,6 +53,7 @@ namespace Galabingus
         private float inputBufferTime;               // input response time
         private ushort contentName;                  // the content index
         private float health;
+        private bool previousCollision;
 
         public static Player PlayerInstance
         {
@@ -227,6 +228,7 @@ namespace Galabingus
                 ((((float)PlayerInstance.Transform.Width) / ((float)PlayerInstance.Transform.Height))) / 2.0f,
                 ((((float)PlayerInstance.Transform.Height) / ((float)PlayerInstance.Transform.Width))) / 2.0f
             );
+            previousCollision = false;
         }
 
         /// <summary>
@@ -307,7 +309,80 @@ namespace Galabingus
                 }
             }
 
-            Vector2 previousPosition = Position;
+            //Vector2 previousPosition = Position;
+
+            PlayerInstance.Transform = PlayerInstance.Animation.Play(gameTime, velocity, this.Position, this.Transform, this.Scale);
+            List<Collision> intercepts = PlayerInstance.Collider.UpdateTransform(
+                PlayerInstance.Sprite,                         // Player Sprite
+                PlayerInstance.Position,                       // Player position
+                PlayerInstance.Transform,                      // Player transform for sprite selection
+                GameObject.Instance.GraphicsDevice,
+                GameObject.Instance.SpriteBatch,
+                PlayerInstance.Scale,                          // Player scale
+                SpriteEffects.None,
+                contentName,                          // Content
+                0
+            );
+
+            //Vector2 previousVelocity;
+            bool collides = false;
+            
+            foreach (Collision collision in intercepts)
+            {
+                if (collision.other != null && this.Collider.Resolved)
+                {
+                    /*
+                    if (collision.mtv.X != 0)
+                    {
+                        Position = new Vector2((previousPosition.X + (Position.X - previousPosition.X) / (1)), Position.Y);
+                        previousPosition.X = Position.X;
+                    }
+                    else
+                    {
+                        previousPosition.X = Position.X;
+                    }
+                    if (collision.mtv.Y != 0)
+                    {
+                        Position = new Vector2(previousPosition.X, (previousPosition.Y + (Position.Y - previousPosition.Y) / (1)));
+                    }
+                    */
+                    //Position = previousPosition;
+                    previousVelocity = velocity;
+                    if (velocity != Vector2.Zero)
+                    {
+                        velocity = Vector2.Normalize(velocity);
+                    }
+                    Position -= velocity * speed * 1f ;
+                    Position -= acceleration;
+                    totalTime = inputBufferTime;
+                    playerState = PlayerStates.Idle;
+                    previousKeyboardState = Keyboard.GetState();
+                    acceleration = Vector2.Zero;
+                    velocity = Vector2.Zero; //-previousVelocity / 2.0f;
+                    //previousVelocity = Vector2.Zero;
+                    collides = true;
+                }
+                else if (collision.other != null)
+                {
+                    //Position = (previousPosition + (Position - previousPosition) / (1));
+                    //Position = previousPosition;
+                    previousVelocity = velocity;
+                    if (velocity != Vector2.Zero)
+                    {
+                        velocity = Vector2.Normalize(velocity);
+                    }
+                    Position -= velocity * speed  * 1f;
+                    Position -= acceleration;
+                    totalTime = inputBufferTime;
+                    playerState = PlayerStates.Idle;
+                    previousKeyboardState = Keyboard.GetState();
+                    //velocity = Vector2.Zero;//-previousVelocity / 2.0f;
+                    //previousVelocity = Vector2.Zero;
+                    acceleration = Vector2.Zero;
+                    velocity = Vector2.Zero;
+                    collides = true;
+                }
+            }
 
             // Determine if idle
             if (playerState == PlayerStates.Idle || playerState == PlayerStates.None)
@@ -338,9 +413,33 @@ namespace Galabingus
             }
             else
             {
-                // When the player is not idle normalize their velocity to extract direction and translate by the speed of the player
-                Position += (velocity == Vector2.Zero ? velocity : Vector2.Normalize(velocity) * (float)gameTime.ElapsedGameTime.TotalSeconds*0.5f * 120 * speed * translationAjdustedRatio);
+                if (!collides)
+                {
+                    if (previousCollision)
+                    {
+                        if (velocity != previousVelocity)
+                        {
+                            // When the player is not idle normalize their velocity to extract direction and translate by the speed of the player
+                            Position += (velocity == Vector2.Zero ? velocity : Vector2.Normalize(velocity) * (float)gameTime.ElapsedGameTime.TotalSeconds * 0.5f * 120 * speed * translationAjdustedRatio);
+                        }
+                        else
+                        {
+                            Position -= (previousVelocity == Vector2.Zero ? previousVelocity : Vector2.Normalize(previousVelocity) * (float)gameTime.ElapsedGameTime.TotalSeconds * 0.5f * 120 * speed * translationAjdustedRatio);
+                        }
+                    }
+                    else
+                    {
+                        // When the player is not idle normalize their velocity to extract direction and translate by the speed of the player
+                        Position += (velocity == Vector2.Zero ? velocity : Vector2.Normalize(velocity) * (float)gameTime.ElapsedGameTime.TotalSeconds * 0.5f * 120 * speed * translationAjdustedRatio);
+                    }
+                }
+                else
+                {
+                    Position -= (previousVelocity == Vector2.Zero ? previousVelocity : Vector2.Normalize(previousVelocity) * (float)gameTime.ElapsedGameTime.TotalSeconds * 0.5f * 120 * speed * translationAjdustedRatio);
+                }
             }
+
+            previousCollision = collides;
 
             /*
             // Adjust the animation speed based upon velocity speed
@@ -357,224 +456,180 @@ namespace Galabingus
             */
 
             // Update the animation and collider
-            PlayerInstance.Transform = PlayerInstance.Animation.Play(gameTime, velocity, this.Position, this.Transform, this.Scale);
-            List<Collision> intercepts = PlayerInstance.Collider.UpdateTransform(
-                PlayerInstance.Sprite,                         // Player Sprite
-                PlayerInstance.Position,                       // Player position
-                PlayerInstance.Transform,                      // Player transform for sprite selection
-                GameObject.Instance.GraphicsDevice,
-                GameObject.Instance.SpriteBatch,
-                PlayerInstance.Scale,                          // Player scale
-                SpriteEffects.None,
-                contentName,                          // Content
-                0
-            );
 
-            foreach (Collision collision in intercepts)
-            {
-                if (collision.other != null && this.Collider.Resolved)
-                {
-                    /*
-                    if (collision.mtv.X != 0)
-                    {
-                        Position = new Vector2((previousPosition.X + (Position.X - previousPosition.X) / (1)), Position.Y);
-                        previousPosition.X = Position.X;
-                    }
-                    else
-                    {
-                        previousPosition.X = Position.X;
-                    }
-                    if (collision.mtv.Y != 0)
-                    {
-                        Position = new Vector2(previousPosition.X, (previousPosition.Y + (Position.Y - previousPosition.Y) / (1)));
-                    }
-                    */
-                    //Position = previousPosition;
-                    totalTime = inputBufferTime;
-                    playerState = PlayerStates.None;
-                    previousKeyboardState = Keyboard.GetState();
-                    acceleration = Vector2.Zero;
-                    velocity = Vector2.Zero;
-                }
-                else if (collision.other != null)
-                {
-                    //Position = (previousPosition + (Position - previousPosition) / (1));
-                    totalTime = inputBufferTime;
-                    playerState = PlayerStates.None;
-                    previousKeyboardState = Keyboard.GetState();
-                    acceleration = Vector2.Zero;
-                    velocity = Vector2.Zero;
-                }
-            }
 
             previousVelocity = velocity;
             totalTime += gameTime.ElapsedGameTime.TotalSeconds;
 
             currentKeyboardState = Keyboard.GetState();
-            // Player Finite State Machine
-            switch (playerState)
+            //if (!collides)
             {
-                // Input Transition state
-                case PlayerStates.None:
-                    if (
-                        previousKeyboardState.IsKeyDown(Keys.D) ||
-                        previousKeyboardState.IsKeyDown(Keys.A) ||
-                        previousKeyboardState.IsKeyDown(Keys.W) ||
-                        previousKeyboardState.IsKeyDown(Keys.S)
-                    )
-                    {
-                        playerState = PlayerStates.Move;
-                    }
-                    else
-                    {
-                        playerState = PlayerStates.Idle;
-                    }
-                    break;
+                // Player Finite State Machine
+                switch (playerState)
+                {
+                    // Input Transition state
+                    case PlayerStates.None:
+                        if (
+                            previousKeyboardState.IsKeyDown(Keys.D) ||
+                            previousKeyboardState.IsKeyDown(Keys.A) ||
+                            previousKeyboardState.IsKeyDown(Keys.W) ||
+                            previousKeyboardState.IsKeyDown(Keys.S)
+                        )
+                        {
+                            playerState = PlayerStates.Move;
+                        }
+                        else
+                        {
+                            playerState = PlayerStates.Idle;
+                        }
+                        break;
 
-                // Player is idle so slow the velocity and get rid of acceleration
-                // Exit to the Player None state
-                case PlayerStates.Idle:
-                    acceleration = Vector2.Zero;
-                    playerState = PlayerStates.None;
-                    break;
-
-                // Updates the player velocity and acceleration
-                // Uses standard WASD controls
-                // Exits to the player None state when not presing WASD
-                case PlayerStates.Move:
-                    // When a directional key is lifted pick out
-                    // and update the directional de acceleration
-                    if (previousKeyboardState.IsKeyUp(Keys.D))
-                    {
-                        deAccFrom = Keys.D;
-                    }
-                    else if (previousKeyboardState.IsKeyUp(Keys.A))
-                    {
-                        deAccFrom = Keys.A;
-                    }
-                    else if (previousKeyboardState.IsKeyUp(Keys.W))
-                    {
-                        deAccFrom = Keys.W;
-                    }
-                    else if (previousKeyboardState.IsKeyUp(Keys.S))
-                    {
-                        deAccFrom = Keys.S;
-                    }
-
-                    // If we are not translating
-                    if (!(
-                        previousKeyboardState.IsKeyDown(Keys.D) ||
-                        previousKeyboardState.IsKeyDown(Keys.A) ||
-                        previousKeyboardState.IsKeyDown(Keys.W) ||
-                        previousKeyboardState.IsKeyDown(Keys.S)
-                    ))
-                    {
-                        // Exit PlayerInstance player state
-                        // force next key update
-                        // Instantly update the key
-                        totalTime = inputBufferTime;
+                    // Player is idle so slow the velocity and get rid of acceleration
+                    // Exit to the Player None state
+                    case PlayerStates.Idle:
+                        acceleration = Vector2.Zero;
                         playerState = PlayerStates.None;
-                        previousKeyboardState = Keyboard.GetState();
-                    }
+                        break;
 
-                    // Directional X +
-                    if (
-                        previousKeyboardState.IsKeyDown(Keys.D)
-                    )
-                    {
-                        if (velocity.X >= 1)
+                    // Updates the player velocity and acceleration
+                    // Uses standard WASD controls
+                    // Exits to the player None state when not presing WASD
+                    case PlayerStates.Move:
+                        // When a directional key is lifted pick out
+                        // and update the directional de acceleration
+                        if (previousKeyboardState.IsKeyUp(Keys.D))
                         {
-                            velocity.X = 1;
+                            deAccFrom = Keys.D;
                         }
-                        if (velocity.X < -inputBufferTime && !currentKeyboardState.IsKeyDown(Keys.A))
+                        else if (previousKeyboardState.IsKeyUp(Keys.A))
                         {
-                            velocity.X = inputBufferTime;
-                            acceleration.X = acceleration.X / 10f;
+                            deAccFrom = Keys.A;
                         }
-                        velocity.X += 0.05f;
-                        acceleration.X += 0.0005f;
-                        if (!currentKeyboardState.IsKeyDown(Keys.W) && !currentKeyboardState.IsKeyDown(Keys.S))
+                        else if (previousKeyboardState.IsKeyUp(Keys.W))
                         {
-                            velocity.Y = velocity.Y / 10.0f;
-                            acceleration.Y = acceleration.Y / 10f;
-                            acceleration.X = acceleration.X / 10f;
+                            deAccFrom = Keys.W;
                         }
-                    }
+                        else if (previousKeyboardState.IsKeyUp(Keys.S))
+                        {
+                            deAccFrom = Keys.S;
+                        }
 
-                    // Directional X -
-                    if (
-                        previousKeyboardState.IsKeyDown(Keys.A)
-                    )
-                    {
-                        if (velocity.X <= -1)
+                        // If we are not translating
+                        if (!(
+                            previousKeyboardState.IsKeyDown(Keys.D) ||
+                            previousKeyboardState.IsKeyDown(Keys.A) ||
+                            previousKeyboardState.IsKeyDown(Keys.W) ||
+                            previousKeyboardState.IsKeyDown(Keys.S)
+                        ))
                         {
-                            velocity.X = -1;
+                            // Exit PlayerInstance player state
+                            // force next key update
+                            // Instantly update the key
+                            totalTime = inputBufferTime;
+                            playerState = PlayerStates.None;
+                            previousKeyboardState = Keyboard.GetState();
                         }
-                        if (velocity.X > inputBufferTime && !currentKeyboardState.IsKeyDown(Keys.D))
-                        {
-                            velocity.X = -inputBufferTime;
-                            acceleration.X = acceleration.X / 10f;
 
-                        }
-                        velocity.X += -0.05f;
-                        acceleration.X += -0.0005f;
-                        if (!currentKeyboardState.IsKeyDown(Keys.W) && !currentKeyboardState.IsKeyDown(Keys.S))
+                        // Directional X +
+                        if (
+                            previousKeyboardState.IsKeyDown(Keys.D)
+                        )
                         {
-                            velocity.Y = velocity.Y / 10.0f;
-                            acceleration.Y = acceleration.Y / 10f;
-                            acceleration.X = acceleration.X / 10f;
+                            if (velocity.X >= 1)
+                            {
+                                velocity.X = 1;
+                            }
+                            if (velocity.X < -inputBufferTime && !currentKeyboardState.IsKeyDown(Keys.A))
+                            {
+                                velocity.X = inputBufferTime;
+                                acceleration.X = acceleration.X / 10f;
+                            }
+                            velocity.X += 0.05f;
+                            acceleration.X += 0.0005f;
+                            if (!currentKeyboardState.IsKeyDown(Keys.W) && !currentKeyboardState.IsKeyDown(Keys.S))
+                            {
+                                velocity.Y = velocity.Y / 10.0f;
+                                acceleration.Y = acceleration.Y / 10f;
+                                acceleration.X = acceleration.X / 10f;
+                            }
                         }
-                    }
 
-                    // Directional Y -
-                    if (
-                        previousKeyboardState.IsKeyDown(Keys.W)
-                    )
-                    {
-                        if (velocity.Y <= -1)
+                        // Directional X -
+                        if (
+                            previousKeyboardState.IsKeyDown(Keys.A)
+                        )
                         {
-                            velocity.Y = -1;
-                        }
-                        if (velocity.Y > inputBufferTime && !currentKeyboardState.IsKeyDown(Keys.S))
-                        {
-                            velocity.Y = -inputBufferTime;
-                            acceleration.Y = acceleration.Y / 10f;
-                        }
-                        velocity.Y += -0.05f;
-                        acceleration.Y += -0.0005f;
-                        if (!currentKeyboardState.IsKeyDown(Keys.A) && !currentKeyboardState.IsKeyDown(Keys.D))
-                        {
-                            velocity.X = velocity.X / 10.0f;
-                            acceleration.X = acceleration.X / 10f;
-                            acceleration.Y = acceleration.Y / 10f;
-                        }
-                    }
+                            if (velocity.X <= -1)
+                            {
+                                velocity.X = -1;
+                            }
+                            if (velocity.X > inputBufferTime && !currentKeyboardState.IsKeyDown(Keys.D))
+                            {
+                                velocity.X = -inputBufferTime;
+                                acceleration.X = acceleration.X / 10f;
 
-                    // Directional Y +
-                    if (
-                        previousKeyboardState.IsKeyDown(Keys.S)
-                    )
-                    {
-                        if (velocity.Y >= 1)
-                        {
-                            velocity.Y = 1;
+                            }
+                            velocity.X += -0.05f;
+                            acceleration.X += -0.0005f;
+                            if (!currentKeyboardState.IsKeyDown(Keys.W) && !currentKeyboardState.IsKeyDown(Keys.S))
+                            {
+                                velocity.Y = velocity.Y / 10.0f;
+                                acceleration.Y = acceleration.Y / 10f;
+                                acceleration.X = acceleration.X / 10f;
+                            }
                         }
-                        if (velocity.Y < inputBufferTime && !currentKeyboardState.IsKeyDown(Keys.W))
+
+                        // Directional Y -
+                        if (
+                            previousKeyboardState.IsKeyDown(Keys.W)
+                        )
                         {
-                            velocity.Y = inputBufferTime;
-                            acceleration.Y = acceleration.Y / 10f;
+                            if (velocity.Y <= -1)
+                            {
+                                velocity.Y = -1;
+                            }
+                            if (velocity.Y > inputBufferTime && !currentKeyboardState.IsKeyDown(Keys.S))
+                            {
+                                velocity.Y = -inputBufferTime;
+                                acceleration.Y = acceleration.Y / 10f;
+                            }
+                            velocity.Y += -0.05f;
+                            acceleration.Y += -0.0005f;
+                            if (!currentKeyboardState.IsKeyDown(Keys.A) && !currentKeyboardState.IsKeyDown(Keys.D))
+                            {
+                                velocity.X = velocity.X / 10.0f;
+                                acceleration.X = acceleration.X / 10f;
+                                acceleration.Y = acceleration.Y / 10f;
+                            }
                         }
-                        velocity.Y += 0.05f;
-                        acceleration.Y += 0.0005f;
-                        if (!currentKeyboardState.IsKeyDown(Keys.A) && !currentKeyboardState.IsKeyDown(Keys.D))
+
+                        // Directional Y +
+                        if (
+                            previousKeyboardState.IsKeyDown(Keys.S)
+                        )
                         {
-                            velocity.X = velocity.X / 10.0f;
-                            acceleration.X = acceleration.X / 10f;
-                            acceleration.Y = acceleration.Y / 10f;
+                            if (velocity.Y >= 1)
+                            {
+                                velocity.Y = 1;
+                            }
+                            if (velocity.Y < inputBufferTime && !currentKeyboardState.IsKeyDown(Keys.W))
+                            {
+                                velocity.Y = inputBufferTime;
+                                acceleration.Y = acceleration.Y / 10f;
+                            }
+                            velocity.Y += 0.05f;
+                            acceleration.Y += 0.0005f;
+                            if (!currentKeyboardState.IsKeyDown(Keys.A) && !currentKeyboardState.IsKeyDown(Keys.D))
+                            {
+                                velocity.X = velocity.X / 10.0f;
+                                acceleration.X = acceleration.X / 10f;
+                                acceleration.Y = acceleration.Y / 10f;
+                            }
                         }
-                    }
-                    break;
+                        break;
+                }
             }
+
 
             // When space is pressed trigger shoot
             if (previousKeyboardState.IsKeyDown(Keys.Space) && currentKeyboardState.IsKeyUp(Keys.Space))

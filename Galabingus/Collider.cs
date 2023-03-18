@@ -685,7 +685,7 @@ namespace Galabingus
                                     intercept.X, // Position to avoid intercept X
                                     intercept.Y  // Position to avoid intercept Y
                                 ),
-                                colliderNextMTV
+                                colldierCurrentMTV
                             };
                         }
                     }
@@ -752,6 +752,7 @@ namespace Galabingus
         private Vector2 MTV(Collider other, int x2, int y2, int y1, int x1, float y, float x)
         {
             Vector2 mtv = new Vector2();
+            Vector2 overlap = new Vector2((float)Math.Sqrt((x2 - x1) * (x2 - x1)), (float)Math.Sqrt((y2 - y1) * (y2 - y1)));
 
             float ocx = other.position.X + other.Transform.Width / 2.0f;
             float ocy = other.position.Y + other.Transform.Height / 2.0f;
@@ -759,25 +760,55 @@ namespace Galabingus
             mtv.X = ocx - x;
             mtv.Y = ocy - y;
 
+
+            if (Math.Abs(overlap.Y) > Math.Abs(overlap.X))
+            {
+                //float tempX = mtv.X;
+                //mtv.X = mtv.Y;
+                //mtv.Y = tempX;
+                mtv.Y = 0;
+            }
+            else if (Math.Abs(overlap.Y) < Math.Abs(overlap.X))
+            {
+                //float tempX = mtv.X;
+                //mtv.X = mtv.Y;
+                //mtv.Y = tempX;
+                if ((ocy - y1) > 0)
+                {
+                    mtv.Y = -mtv.Y;
+                }
+                mtv.X = 0;
+            }
+            else
+            {
+                //float tempX = mtv.X;
+                //mtv.X = mtv.Y;
+                //mtv.Y = tempX;
+                if ((ocy - y1) > 0)
+                {
+                    mtv.Y = -mtv.Y;
+                }
+                mtv.X *= 2;
+                mtv.Y *= 2;
+            }
+            //mtv.Y = -mtv.Y;
+
             if (mtv == Vector2.Zero)
             {
                 return Vector2.Zero;
             }
 
-            if (Math.Abs(mtv.X) > Math.Abs(mtv.Y))
-            {
-                mtv.X = 0;//-mtv.X;
-            }
-            else if (Math.Abs(mtv.X) < Math.Abs(mtv.Y))
-            {
-                mtv.Y = 0;//-mtv.Y;
-            }
-
             mtv = Vector2.Normalize(mtv);
+            //Debug.WriteLine("");
+            //Debug.WriteLine(mtv);
+            //if ()
+            //{
+
+            //}
 
             if (mtv.X != 0 || mtv.Y != 0)
             {
-                mtv = mtv * new Vector2((float)Math.Sqrt((x2 - x1)*(x2 - x1)),(float)Math.Sqrt((y2 - y1)*(y2 - y1))) * 0.99f;
+                mtv = mtv * new Vector2((float)Math.Sqrt((x2 - x1)*(x2 - x1)),(float)Math.Sqrt((y2 - y1)*(y2 - y1))) * 2;
             }
 
             return mtv;
