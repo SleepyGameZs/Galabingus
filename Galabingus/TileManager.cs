@@ -116,8 +116,8 @@ namespace Galabingus
             currentSpriteNumber = (index);
             Tile tile = new Tile(GameObject.Instance.Content.white_pixel_strip1, 0, index, true);
             tile.Scale = 1f;
-            tile.ScaleVector = new Vector2(10000, 51f);
-            tile.Position = new Vector2(0, -50);
+            tile.ScaleVector = new Vector2(10000, 20f);
+            tile.Position = new Vector2(0, -20f);
 
 
             tilesList.Add(tile);
