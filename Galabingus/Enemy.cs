@@ -182,7 +182,7 @@ namespace Galabingus
             this.ush_contentName = ush_contentName;
             this.ush_enemyNumber = ush_enemyNumber;
 
-            GameObject.Instance.Content = GameObject.Instance.Content.bigbullet_strip4;
+            GameObject.Instance.Content = GameObject.Instance.Content.tile_strip26;
 
             // Set Animation
             //this.Sprite = 
