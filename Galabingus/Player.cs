@@ -451,9 +451,6 @@ namespace Galabingus
                 }
             }
 
-            Debug.WriteLine("P" + previousVelocity);
-            Debug.WriteLine("V" + normVelocity);
-
             if (collides || !collides && normPreVelocity != Vector2.Zero && normPreVelocity != normVelocity)
             {
                 previousCollision = collides;
