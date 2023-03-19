@@ -38,7 +38,7 @@ namespace Galabingus
     /// </summary>
     internal class Player : GameObject
     {
-        private static Player playerInstance = null; 
+        private static Player playerInstance = null;
         private KeyboardState previousKeyboardState; // Previous KeyboardState (only updates every interval of input buffer time)
         private KeyboardState currentKeyboardState;  // Current KeyboardState (always current keyboard state)
         private Vector2 previousVelocity;            // Holds the previous direction and magnitude of velocity
@@ -70,23 +70,23 @@ namespace Galabingus
         public ushort ContentName
         {
             get
-            { 
-                return PlayerInstance.contentName; 
+            {
+                return PlayerInstance.contentName;
             }
         }
 
         public float Health
         {
             get
-            { 
-                return PlayerInstance.health; 
+            {
+                return PlayerInstance.health;
             }
             set
             {
                 PlayerInstance.health = value;
             }
         }
-        
+
 
         public Vector2 Velocity
         {
@@ -143,7 +143,7 @@ namespace Galabingus
             set
             {
                 GameObject.Instance.Content = PlayerInstance.contentName;
-                SetTransform(0,value);
+                SetTransform(0, value);
             }
         }
 
@@ -326,7 +326,7 @@ namespace Galabingus
 
             //Vector2 previousVelocity;
             bool collides = false;
-            
+
             foreach (Collision collision in intercepts)
             {
                 if (collision.other != null && this.Collider.Resolved)
@@ -400,7 +400,7 @@ namespace Galabingus
                 {
                     normPreVelocity.X = 1;
                 }
-                else if(normPreVelocity.Y < 0)
+                else if (normPreVelocity.Y < 0)
                 {
                     normPreVelocity.X = -1;
                 }
@@ -451,6 +451,9 @@ namespace Galabingus
                 }
             }
 
+            Debug.WriteLine("P" + previousVelocity);
+            Debug.WriteLine("V" + normVelocity);
+
             if (collides || !collides && normPreVelocity != Vector2.Zero && normPreVelocity != normVelocity)
             {
                 previousCollision = collides;
@@ -461,7 +464,7 @@ namespace Galabingus
             totalTime += gameTime.ElapsedGameTime.TotalSeconds;
 
             currentKeyboardState = Keyboard.GetState();
-            if (!collides)
+            if (!previousCollision || currentKeyboardState != previousKeyboardState )
             {
                 // Player Finite State Machine
                 switch (playerState)

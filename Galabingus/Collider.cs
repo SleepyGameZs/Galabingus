@@ -811,8 +811,8 @@ namespace Galabingus
 
             if (mtv.X != 0 && mtv.Y != 0)
             {
-                mtv.X *= 2;
-                mtv.Y *= 0.5f;
+                //mtv.X *= 2;
+                //mtv.Y *= 0.5f;
             }
 
             mtv = overlap*mtv+mtv;
