@@ -62,11 +62,10 @@ namespace Galabingus
             GraphicsDeviceManager.DefaultBackBufferWidth, 
             GraphicsDeviceManager.DefaultBackBufferHeight);
 
-            ushort contentName = GameObject.Instance.Content.tile_strip26;
-            Debug.WriteLine(contentName);
+            //ushort contentName = GameObject.Instance.Content.tile_strip26;
 
-            Tile tile = new Tile(contentName, 0, 0);
-            tileSize = new Vector2 (tile.Transform.Width, tile.Transform.Height);
+            //Tile tile = new Tile(contentName, 0, 0);
+            //tileSize = new Vector2 (tile.Transform.Width, tile.Transform.Height);
 
 
             layers = new List<ushort>();
