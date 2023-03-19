@@ -8,6 +8,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
+// Zane Smith
+
 namespace Galabingus
 {
     public sealed class EnemyManager
@@ -26,6 +28,9 @@ namespace Galabingus
 
         // Enemy Total
         private ushort ush_totalEnemies;
+
+        // Draw Direction
+        private SpriteEffects sfx_enemyDirection;
 
         #endregion
 
@@ -59,6 +64,9 @@ namespace Galabingus
 
             l_obj_activeEnemies = new List<Enemy>();
             l_ush_content = new List<ushort>();
+
+            // Get base camera direction data
+            sfx_enemyDirection = SpriteEffects.None;
         }
 
         #endregion
@@ -96,23 +104,31 @@ namespace Galabingus
                     switch (ET_tempAbility)
                     {
                         case EnemyType.Normal:
-                            ush_sprite = GameObject.Instance.Content.tile_strip26;
+                            ush_sprite = GameObject.Instance.Content.enemy_dblue_strip4;
                             break;
 
                         case EnemyType.Bouncing:
-                            ush_sprite = GameObject.Instance.Content.tile_strip26;
+                            ush_sprite = GameObject.Instance.Content.enemy_orange_strip4;
                             break;
 
                         case EnemyType.Splitter:
-                            ush_sprite = GameObject.Instance.Content.tile_strip26;
+                            ush_sprite = GameObject.Instance.Content.enemy_green_strip4;
                             break;
 
                         case EnemyType.Circle:
-                            ush_sprite = GameObject.Instance.Content.tile_strip26;
+                            ush_sprite = GameObject.Instance.Content.enemy_purple_strip4;
+                            break;
+
+                        case EnemyType.Large:
+                            ush_sprite = GameObject.Instance.Content.enemy_yellow_strip4;
+                            break;
+
+                        case EnemyType.Seeker:
+                            ush_sprite = GameObject.Instance.Content.enemy_violet_strip4;
                             break;
 
                         default:
-                            ush_sprite = GameObject.Instance.Content.tile_strip26;
+                            ush_sprite = GameObject.Instance.Content.enemy_lblue_strip4;
                             break;
                     }
 
@@ -150,6 +166,18 @@ namespace Galabingus
 
         public void Update (GameTime gameTime)
         {
+            // Get camera's movement direction
+            float flt_cameraScroll = Camera.Instance.CameraScroll;
+            if (flt_cameraScroll < 0)
+            {
+                sfx_enemyDirection = SpriteEffects.None;
+            } 
+            else
+            {
+                sfx_enemyDirection = SpriteEffects.FlipHorizontally;
+            }
+
+            // Run enemy updates
             for (int i = 0; i < l_obj_activeEnemies.Count; i++)
             {
                 // Runs the bullet's update.
@@ -172,11 +200,11 @@ namespace Galabingus
                     obj_enemy.Sprite,                   // The sprite-sheet for the player
                     obj_enemy.Position,                 // The position for the player
                     obj_enemy.Transform,                // The scale and bounding box for the animation
-                    Color.Red,                          // The color for the palyer (RED IS TEMP UNTIL WE GET ENEMY SPRITES IN)
+                    Color.White,                        // The color for the palyer (RED IS TEMP UNTIL WE GET ENEMY SPRITES IN)
                     0.0f,                               // There cannot be any rotation of the player
                     Vector2.Zero,                       // Starting render position
                     obj_enemy.Scale,                    // The scale of the sprite
-                    SpriteEffects.None,                 // Which direction the sprite faces
+                    sfx_enemyDirection,                 // Which direction the sprite faces
                     0.0f                                // Layer depth of the player is 0.0
                 );
             }

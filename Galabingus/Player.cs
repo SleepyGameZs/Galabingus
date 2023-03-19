@@ -322,7 +322,7 @@ namespace Galabingus
                 GameObject.Instance.SpriteBatch,
                 PlayerInstance.Scale,                          // Player scale
                 SpriteEffects.None,
-                contentName,                          // Content
+                contentName,                                   // Content
                 0
             );
 
@@ -670,9 +670,8 @@ namespace Galabingus
                                                + velocity.Y             // Account for possible next movement
                                                );
 
-            BulletManager.Instance.CreateBullet(BulletType.Normal, vc2_shootPos, 0);
+            BulletManager.Instance.CreateBullet(BulletType.Normal, vc2_shootPos, 0, 1);
         }
-
 
         /// <summary>
         ///  Draws the player

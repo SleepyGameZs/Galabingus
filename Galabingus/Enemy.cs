@@ -8,6 +8,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
+// Zane Smith
+
 namespace Galabingus
 {
     /// <summary>
@@ -18,7 +20,9 @@ namespace Galabingus
         Normal,
         Bouncing,
         Splitter,
-        Circle
+        Circle,
+        Large,
+        Seeker
     }
 
     internal class Enemy : GameObject
@@ -39,6 +43,14 @@ namespace Galabingus
 
         // Number into game object index to look for items
         private ushort ush_enemyNumber;
+
+        // Time between each shot
+        private int int_shotTimer;
+
+        // Randomizer for time between shots
+        private Random rng;
+        private int int_shotWaitTime;
+        private int int_shotWaitVariance;
 
         #endregion
 
@@ -181,14 +193,12 @@ namespace Galabingus
             // Set Sprite from given
             this.ush_contentName = ush_contentName;
             this.ush_enemyNumber = ush_enemyNumber;
+            Animation.AnimationDuration = 0.01f;
 
-            GameObject.Instance.Content = GameObject.Instance.Content.tile_strip26;
-
-            // Set Animation
-            //this.Sprite = 
+            //GameObject.Instance.Content = GameObject.Instance.Content.tile_strip26;
 
             // Set Scale
-            this.Scale = 2.5f;
+            this.Scale = 3f;
 
             // Set bullet state & timer
             this.ET_ability = ET_ability;
@@ -199,6 +209,14 @@ namespace Galabingus
 
             // Set velocity to zero at start
             vc2_velocity = Vector2.Zero;
+
+            // set randomizer + extra time between next shot
+            rng = new Random();
+            int_shotWaitVariance = 8;
+            int_shotWaitTime = rng.Next(int_shotWaitVariance) - int_shotWaitVariance / 2;
+
+            // Set shot timer with some randomization
+            int_shotTimer = rng.Next(50);
         }
 
         #endregion
@@ -208,11 +226,120 @@ namespace Galabingus
         public void Update (GameTime gameTime)
         {
             // Check if off screen
-            bool bol_bulletOffScreen = this.Position.X < 0 &&
-                                       this.Position.X > BulletManager.Instance.ScreenDimensions.X;
-            if (bol_bulletOffScreen)
+            bool bol_bulletOnScreen = !(this.Position.X < 0 &&
+                                       this.Position.X > BulletManager.Instance.ScreenDimensions.X);
+            //Debug.WriteLine("e");
+            if (bol_bulletOnScreen)
             {
+
+                // Check which direction the enemy is facing
+                int int_spriteDirection;
+                if (Camera.Instance.CameraScroll < 0)
+                {
+                    int_spriteDirection = 1;
+                }
+                else
+                {
+                    int_spriteDirection = -1;
+                }
+
+                // Get shooting position
+                float flt_enemyShootX = (Transform.Width * this.Scale) / 2;
+                float flt_enemyShootY = (Transform.Height * this.Scale) / 2;
+
+                Vector2 vc2_shootPos = new Vector2(Position.X               // Base player X position
+                                                   + flt_enemyShootX,
+                                                       Position.Y               // Base player Y position
+                                                       + flt_enemyShootY        // Center vertically
+                                                       );
+
                 // Will only perform actions if currently on the screen
+                switch (this.ET_ability)
+                {
+                    case EnemyType.Bouncing:
+                        // Shooting Delay
+                        if (int_shotTimer > (int)(140 * (1 + (0.1 * int_shotWaitTime))))
+                        {
+                            // Fix rotation errors when flipped
+                            if (int_spriteDirection < 0)
+                            {
+                                vc2_shootPos = new Vector2(Position.X,
+                                                           Position.Y + flt_enemyShootY * 2 - 20);
+                            }
+
+                            // Shoot the 3 bullets
+                            BulletManager.Instance.CreateBullet(BulletType.Bouncing, vc2_shootPos, 0, int_spriteDirection);
+                            BulletManager.Instance.CreateBullet(BulletType.Bouncing, vc2_shootPos, 30, int_spriteDirection);
+                            BulletManager.Instance.CreateBullet(BulletType.Bouncing, vc2_shootPos, -30, int_spriteDirection);
+
+                            // Reset Shooting time
+                            int_shotWaitTime = rng.Next(int_shotWaitVariance) - int_shotWaitVariance / 2;
+                            int_shotTimer = 0;
+                        }
+                        break;
+
+                    case EnemyType.Splitter:
+                        // Shooting Delay
+                        if (int_shotTimer > (int)(140 * (1 + (0.1 * int_shotWaitTime))))
+                        {
+                            // Fix rotation errors when flipped
+                            if (int_spriteDirection < 0)
+                            {
+                                vc2_shootPos = new Vector2(Position.X,
+                                                           Position.Y + flt_enemyShootY * 2 - 10);
+                            }
+
+                            // Shoot the splitter bullet
+                            BulletManager.Instance.CreateBullet(BulletType.Splitter, vc2_shootPos, 0, int_spriteDirection);
+
+                            // Reset Shooting time
+                            int_shotWaitTime = rng.Next(int_shotWaitVariance) - int_shotWaitVariance / 2;
+                            int_shotTimer = 0;
+                        }
+                        break;
+
+                    case EnemyType.Large:
+                        // Shooting Delay
+                        if (int_shotTimer > (int)(120 * (1 + (0.1 * int_shotWaitTime))))
+                        {
+                            // Fix rotation errors when flipped
+                            if (int_spriteDirection < 0)
+                            {
+                                vc2_shootPos = new Vector2(Position.X,
+                                                           Position.Y + flt_enemyShootY * 2);
+                            }
+
+                            // Shoot the BIG BULLET
+                            BulletManager.Instance.CreateBullet(BulletType.Large, vc2_shootPos, 0, int_spriteDirection);
+
+                            // Reset Shooting time
+                            int_shotWaitTime = rng.Next(int_shotWaitVariance);
+                            int_shotTimer = 0;
+                        }
+                        break;
+
+                    case EnemyType.Seeker:
+                        // Shooting Delay
+                        if (int_shotTimer > (int)(190 * (1 + (0.1 * int_shotWaitTime))))
+                        {
+                            // Fix rotation errors when flipped
+                            if (int_spriteDirection < 0)
+                            {
+                                vc2_shootPos = new Vector2(Position.X,
+                                                           Position.Y + flt_enemyShootY * 2 - 10);
+                            }
+
+                            // Shoot the seeker bullet
+                            BulletManager.Instance.CreateBullet(BulletType.Seeker, vc2_shootPos, 0, int_spriteDirection);
+
+                            // Reset Shooting time
+                            int_shotWaitTime = rng.Next(int_shotWaitVariance) - int_shotWaitVariance / 2;
+                            int_shotTimer = 0;
+                        }
+                        break;
+                }
+                int_shotTimer++;
+
 
             }
 

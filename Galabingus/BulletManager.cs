@@ -8,6 +8,8 @@ using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
+// Zane Smith
+
 namespace Galabingus
 {
     public sealed class BulletManager
@@ -78,7 +80,7 @@ namespace Galabingus
 
         #region------------------[ Methods ]------------------
 
-        public void CreateBullet (BulletType BT_ability, Vector2 vc2_position, int int_direction)
+        public void CreateBullet (BulletType BT_ability, Vector2 vc2_position, int int_angle, int int_direction)
         {
             // Normalize and set speed based on bullet type
             ushort ush_sprite = GameObject.Instance.Content.smallbullet_strip4;
@@ -89,15 +91,23 @@ namespace Galabingus
                     break;
 
                 case BulletType.Bouncing:
-                    ush_sprite = GameObject.Instance.Content.smallbullet_strip4;
+                    ush_sprite = GameObject.Instance.Content.tinybullet_strip4;
                     break;
 
                 case BulletType.Splitter:
-                    ush_sprite = GameObject.Instance.Content.bigbullet_strip4;
+                    ush_sprite = GameObject.Instance.Content.smallbullet_strip4;
                     break;
 
                 case BulletType.Circle:
+                    ush_sprite = GameObject.Instance.Content.smallbullet_strip4;
+                    break;
+
+                case BulletType.Large:
                     ush_sprite = GameObject.Instance.Content.bigbullet_strip4;
+                    break;
+
+                case BulletType.Seeker:
+                    ush_sprite = GameObject.Instance.Content.circlebullet_strip4;
                     break;
             }
 
@@ -123,7 +133,7 @@ namespace Galabingus
             }
 
             // Add bullet itself to list
-            l_obj_activeBullets.Add(new Bullet(BT_ability, vc2_position, int_direction, ush_sprite, ush_totalBullets));
+            l_obj_activeBullets.Add(new Bullet(BT_ability, vc2_position, int_angle, int_direction, ush_sprite, ush_totalBullets));
             
             // Increment count
             ush_totalBullets++;
@@ -151,12 +161,26 @@ namespace Galabingus
         {
             foreach (Bullet obj_bullet in l_obj_activeBullets)
             {
+                // Convert angle
+                float flt_direction = (float)MathHelper.ToRadians(obj_bullet.Angle);
+
+                // Get direction
+                SpriteEffects spx_direction;
+                if (obj_bullet.Direction < 1)
+                {
+                    spx_direction = SpriteEffects.None;
+                    flt_direction += (float)Math.PI;
+                } else
+                {
+                    spx_direction = SpriteEffects.FlipHorizontally;
+                }
+
                 GameObject.Instance.SpriteBatch.Draw(
                     obj_bullet.Sprite,                  // The sprite-sheet for the player
                     obj_bullet.Position,                // The position for the player
                     obj_bullet.Transform,               // The scale and bounding box for the animation
                     obj_bullet.Color,                   // The color for the palyer
-                    0.0f,                               // There cannot be any rotation of the player
+                    flt_direction,                      // rotation uses the velocity
                     Vector2.Zero,                       // Starting render position
                     obj_bullet.Scale,                   // The scale of the sprite
                     SpriteEffects.None,                 // Which direction the sprite faces
