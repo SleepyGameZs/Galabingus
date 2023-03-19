@@ -54,6 +54,7 @@ namespace Galabingus
         private ushort contentName;                  // the content index
         private float health;
         private bool previousCollision;
+        private bool shot;
 
         public static Player PlayerInstance
         {
@@ -229,6 +230,7 @@ namespace Galabingus
                 ((((float)PlayerInstance.Transform.Height) / ((float)PlayerInstance.Transform.Width))) / 2.0f
             );
             previousCollision = false;
+            shot = false;
         }
 
         /// <summary>
@@ -627,6 +629,7 @@ namespace Galabingus
                         }
                         break;
                 }
+                //shot = false;
             }
 
             // When space is pressed trigger shoot
