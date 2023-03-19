@@ -774,10 +774,12 @@ namespace Galabingus
             {
                 if ((ocy - y1) > 0 && (ocy != y1))
                 {
+                    //overlap = (new Vector2(Math.Abs(other.Transform.Width), Math.Abs(other.Transform.Height)));
                     mtv.Y = Math.Abs(mtv.Y);
                 }
                 else if ((ocy - y1) != 0)
                 {
+                    //overlap = (new Vector2(Math.Abs(other.Transform.Width), Math.Abs(other.Transform.Height)));
                     mtv.Y = -Math.Abs(mtv.Y);
                 }
                 mtv.X = 0;
@@ -813,7 +815,7 @@ namespace Galabingus
                 mtv.Y *= 0.5f;
             }
 
-            mtv = overlap*mtv;
+            mtv = overlap*mtv+mtv;
 
             return mtv;
         }

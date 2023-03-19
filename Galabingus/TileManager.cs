@@ -38,7 +38,6 @@ namespace Galabingus
         private List<ushort> spriteNumbers;
         private ushort currentSpriteNumber;
 
-
         // -------------------------------------------------
         // Properties
         // -------------------------------------------------
@@ -116,8 +115,8 @@ namespace Galabingus
 
             currentSpriteNumber = (index);
             Tile tile = new Tile(GameObject.Instance.Content.white_pixel_strip1, 0, index, true);
-            tile.Scale = 25f;
-            tile.ScaleVector = new Vector2(100, 110);
+            tile.Scale = 1f;
+            tile.ScaleVector = new Vector2(100, 100);
             tile.Position = new Vector2(100, 100);
 
 

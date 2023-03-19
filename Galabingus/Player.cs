@@ -331,60 +331,21 @@ namespace Galabingus
             {
                 if (collision.other != null && this.Collider.Resolved)
                 {
-                    /*
-                    if (collision.mtv.X != 0)
-                    {
-                        Position = new Vector2((previousPosition.X + (Position.X - previousPosition.X) / (1)), Position.Y);
-                        previousPosition.X = Position.X;
-                    }
-                    else
-                    {
-                        previousPosition.X = Position.X;
-                    }
-                    if (collision.mtv.Y != 0)
-                    {
-                        Position = new Vector2(previousPosition.X, (previousPosition.Y + (Position.Y - previousPosition.Y) / (1)));
-                    }
-                    */
-                    //Position = previousPosition;
                     previousVelocity = velocity;
-                    if (velocity != Vector2.Zero)
-                    {
-                        velocity = Vector2.Normalize(velocity);
-                    }
-                    //Position -= velocity * speed * 0.5f ;
-                    //Position -= acceleration;
-                    totalTime = inputBufferTime;
-                    playerState = PlayerStates.Idle;
-                    previousKeyboardState = Keyboard.GetState();
                     acceleration = Vector2.Zero;
-                    velocity = Vector2.Zero; //-previousVelocity / 2.0f;
-                    //previousVelocity = Vector2.Zero;
+                    velocity = Vector2.Zero;
                     collides = true;
                 }
                 else if (collision.other != null)
                 {
-                    //Position = (previousPosition + (Position - previousPosition) / (1));
-                    //Position = previousPosition;
                     previousVelocity = velocity;
-                    if (velocity != Vector2.Zero)
-                    {
-                        velocity = Vector2.Normalize(velocity);
-                    }
-                    //Position -= velocity * speed  * 0.5f;
-                    //Position -= acceleration;
-                    totalTime = inputBufferTime;
-                    playerState = PlayerStates.Idle;
-                    previousKeyboardState = Keyboard.GetState();
-                    //velocity = Vector2.Zero;//-previousVelocity / 2.0f;
-                    //previousVelocity = Vector2.Zero;
                     acceleration = Vector2.Zero;
                     velocity = Vector2.Zero;
                     collides = true;
                 }
             }
 
-            // Determine if idle
+            // Determine if idle or moving
             if (playerState == PlayerStates.Idle || playerState == PlayerStates.None)
             {
                 // Get the directional velocity to de-accelerate
@@ -415,49 +376,92 @@ namespace Galabingus
             {
                 if (!collides && !previousCollision)
                 {
-                    Position += (velocity == Vector2.Zero ? velocity : Vector2.Normalize(velocity) * (float)gameTime.ElapsedGameTime.TotalSeconds * 0.5f * 120 * speed * translationAjdustedRatio);
+                    Position += (velocity == Vector2.Zero ? velocity : Vector2.Normalize(velocity) * (float)gameTime.ElapsedGameTime.TotalSeconds * 1.0f * 60 * speed * translationAjdustedRatio);
                 }
             }
 
-            if (Math.Abs(previousVelocity.X) < 0.0000001)
+            Vector2 normPreVelocity = previousVelocity;
+            Vector2 normVelocity = velocity;
+
+            if (Math.Abs(normPreVelocity.X) < 0.0000001)
             {
-                previousVelocity.X = 0;
+                normPreVelocity.X = 0;
             }
-            if (Math.Abs(previousVelocity.Y) < 0.0000001)
+            if (Math.Abs(normPreVelocity.Y) < 0.0000001)
             {
-                previousVelocity.Y = 0;
+                normPreVelocity.Y = 0;
             }
 
-            if ( collides || previousVelocity != Vector2.Zero && velocity != Vector2.Zero && ((velocity == Vector2.Zero ? velocity : Vector2.Normalize(velocity)) != (previousVelocity == Vector2.Zero ? previousVelocity : Vector2.Normalize(previousVelocity))))
+            normPreVelocity = (normPreVelocity == Vector2.Zero ? normPreVelocity : Vector2.Normalize(normPreVelocity));
+
+            if (Math.Abs(normPreVelocity.X) > 0.99)
             {
-                //Debug.WriteLine(previousVelocity);
-                //Debug.WriteLine(velocity);
+                if (normPreVelocity.X > 0)
+                {
+                    normPreVelocity.X = 1;
+                }
+                else if(normPreVelocity.Y < 0)
+                {
+                    normPreVelocity.X = -1;
+                }
+            }
+            if (Math.Abs(normPreVelocity.Y) > 0.99)
+            {
+                if (normPreVelocity.Y > 0)
+                {
+                    normPreVelocity.Y = 1;
+                }
+                else if (normPreVelocity.Y < 0)
+                {
+                    normPreVelocity.Y = -1;
+                }
+            }
+
+            if (Math.Abs(normVelocity.X) < 0.0000001)
+            {
+                normVelocity.X = 0;
+            }
+            if (Math.Abs(normVelocity.Y) < 0.0000001)
+            {
+                normVelocity.Y = 0;
+            }
+
+            normVelocity = (normVelocity == Vector2.Zero ? normVelocity : Vector2.Normalize(normVelocity));
+
+            if (Math.Abs(normVelocity.X) > 0.99)
+            {
+                if (normVelocity.X > 0)
+                {
+                    normVelocity.X = 1;
+                }
+                else if (normVelocity.X < 0)
+                {
+                    normVelocity.X = -1;
+                }
+            }
+            if (Math.Abs(normVelocity.Y) > 0.99)
+            {
+                if (normVelocity.Y > 0)
+                {
+                    normVelocity.Y = 1;
+                }
+                else if (normVelocity.Y < 0)
+                {
+                    normVelocity.Y = -1;
+                }
+            }
+
+            if (collides || !collides && normPreVelocity != Vector2.Zero && normPreVelocity != normVelocity)
+            {
                 previousCollision = collides;
-                previousVelocity = velocity;
-            } 
-
-            /*
-            // Adjust the animation speed based upon velocity speed
-            if (velocity.Length() > 0.005f && velocity.Length() < 0.05f)
-            {
-                // Animation is faster
-                PlayerInstance.Animation.AnimationDuration = velocity.Length();
             }
-            else
-            {
-                // Minimum speed
-                PlayerInstance.Animation.AnimationDuration = 0.05f;
-            }
-            */
-
-            // Update the animation and collider
-
 
             previousVelocity = velocity;
+
             totalTime += gameTime.ElapsedGameTime.TotalSeconds;
 
             currentKeyboardState = Keyboard.GetState();
-            //if (!collides)
+            if (!collides)
             {
                 // Player Finite State Machine
                 switch (playerState)
@@ -624,7 +628,6 @@ namespace Galabingus
                         break;
                 }
             }
-
 
             // When space is pressed trigger shoot
             if (previousKeyboardState.IsKeyDown(Keys.Space) && currentKeyboardState.IsKeyUp(Keys.Space))
