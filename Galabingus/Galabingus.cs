@@ -68,13 +68,15 @@ namespace Galabingus
 
             // ROUGH EXAMPLE FORMAT I USED HERE (we can change it, I just wanted to have something testable
             /* [0] -> Is this an enemy? (1 or 0)
-             * [1] -> What kind of enemy (checks within bounds of EnemyType Enum
+             * [1] -> What kind of enemy (checks within bounds of EnemyType Enum)
              * [2] -> X Position
              * [3] -> Y Position
              */
             
-            l_a4_obj_enemyData.Add(new int[] { 1, 0, 100, 100});
-            l_a4_obj_enemyData.Add(new int[] { 1, 0, 100, 200});
+            l_a4_obj_enemyData.Add(new int[] { 1, 1, 700, 70 });
+            l_a4_obj_enemyData.Add(new int[] { 1, 4, 700, 160 });
+            l_a4_obj_enemyData.Add(new int[] { 1, 5, 700, 250 });
+            l_a4_obj_enemyData.Add(new int[] { 1, 2, 700, 340 });
 
             // NOTE FOR MATT: whenever jay does tiling, you may need some a separate animation system that lets them choose which
             //                tile asset they want to draw, rather than just looping through the whole thing.
@@ -88,7 +90,7 @@ namespace Galabingus
             mng_bullet = BulletManager.Instance;
 
             // Create Enemy Manager + Load data
-            //mng_enemy = EnemyManager.Instance.Initialize(l_a4_obj_enemyData);
+            mng_enemy = EnemyManager.Instance.Initialize(l_a4_obj_enemyData);
 
             // Create Camera
             camera = Camera.Instance;
@@ -108,7 +110,7 @@ namespace Galabingus
             player.Update(gameTime);
 
             // Update the enemies
-            //mng_enemy.Update(gameTime);
+            mng_enemy.Update(gameTime);
 
             // Update the bullets
             mng_bullet.Update(gameTime);
@@ -136,7 +138,7 @@ namespace Galabingus
             if (!(userInterface.GS == GameState.Menu))
             {
                 // Draws enemies
-                //mng_enemy.Draw();
+                mng_enemy.Draw();
 
                 if (TileManager.Instance.CurrentSpriteNumber == 0)
                 {

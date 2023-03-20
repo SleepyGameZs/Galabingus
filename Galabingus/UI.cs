@@ -247,7 +247,7 @@ namespace Galabingus
                 case GameState.Game:
 
                     //changes the screen color to blue
-                    ClearColor = Color.DarkBlue;
+                    ClearColor = Color.DarkSlateGray;
 
                     break;
 
