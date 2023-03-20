@@ -248,9 +248,9 @@ namespace Galabingus
                 timeDialiation = 0.7f;
             }
 
-            if (timeDialiation > 1.0675f)
+            if (timeDialiation > 2.0675f)
             {
-                //timeDialiation = 1.0675f;
+                timeDialiation = 2.0675f;
             }
 
             ellapsedTime = ((gameTime.ElapsedGameTime.TotalSeconds * 60 * (1 / timeDialiation)) * 0.5f) + (gameTime.ElapsedGameTime.TotalSeconds * 0.5f);
