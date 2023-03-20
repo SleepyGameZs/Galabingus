@@ -250,13 +250,13 @@ namespace Galabingus
 
             if (timeDialiation > 1.0675f)
             {
-                timeDialiation = 1.0675f;
+                //timeDialiation = 1.0675f;
             }
 
             ellapsedTime = ((gameTime.ElapsedGameTime.TotalSeconds * 60 * (1 / timeDialiation)) * 0.5f) + (gameTime.ElapsedGameTime.TotalSeconds * 0.5f);
 
             // Increase the total anmation time
-            animationTime += (ellapsedTime / 60);
+            animationTime += (ellapsedTime / 60) / timeDialiation;
 
             ellapsedTime *= timeDialiation;
 
