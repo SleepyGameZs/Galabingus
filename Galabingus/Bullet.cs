@@ -335,7 +335,6 @@ namespace Galabingus
                 case BulletType.Normal:
                     // Set Current Position
                     vc2_currentPosition = SetPosition(gameTime, 8);
-
                     break;
 
                 case BulletType.Bouncing:
