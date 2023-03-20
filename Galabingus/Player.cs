@@ -220,7 +220,7 @@ namespace Galabingus
             PlayerInstance.totalTime = 0;
             PlayerInstance.inputBufferTime = 0.004f;
             PlayerInstance.delayBufferTime = inputBufferTime / 2.0f;
-            PlayerInstance.Scale = 3f;
+            PlayerInstance.Scale = 1.5f;
             playerInstance.Animation.AnimationDuration = 0.05f;
             // Ratio is calclated via the shape of the player sprite
             // against the width and height of the screen
@@ -378,7 +378,7 @@ namespace Galabingus
             {
                 if (!collides && !previousCollision)
                 {
-                    Position += (velocity == Vector2.Zero ? velocity : Vector2.Normalize(velocity) * (float)gameTime.ElapsedGameTime.TotalSeconds * 1.0f * 60 * speed * translationAjdustedRatio);
+                    Position += (velocity == Vector2.Zero ? velocity : Vector2.Normalize(velocity) * speed * translationAjdustedRatio);
                 }
             }
 

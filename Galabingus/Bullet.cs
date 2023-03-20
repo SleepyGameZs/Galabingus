@@ -334,7 +334,7 @@ namespace Galabingus
             {
                 case BulletType.Normal:
                     // Set Current Position
-                    vc2_currentPosition = SetPosition(gameTime, 8);
+                    vc2_currentPosition = SetPosition(gameTime, 8); 
                     break;
 
                 case BulletType.Bouncing:
@@ -462,7 +462,7 @@ namespace Galabingus
 
             // Manage Animation
             //this.Animation.AnimationDuration = 0.03f; // Matt: Don't do this here set this in the constructor
-            this.Transform = this.Animation.Play(gameTime);
+            this.Transform = this.Animation.Play(gameTime, vc2_velocity, Position, Transform, Scale); // Matt: special relativity requires animation with velocity account at what position and size
 
             // Check if off screen
             bool bol_bulletOffScreen = this.Position.X < 0 &&

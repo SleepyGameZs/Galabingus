@@ -227,7 +227,13 @@ namespace Galabingus
                 // There should never be a spacetime jump that is greater than what can be perceived
                 timeDialiation = 0.7f;
             }
-            gameTime.ElapsedGameTime = ((gameTime.ElapsedGameTime * (1 / timeDialiation)) * 0.125f) + (gameTime.ElapsedGameTime * 0.875f);
+
+            if (timeDialiation > 1.0675f)
+            {
+                timeDialiation = 1.0675f;
+            }
+
+            gameTime.ElapsedGameTime = ((gameTime.ElapsedGameTime * (1 / timeDialiation)) * 0.5f) + (gameTime.ElapsedGameTime * 0.5f);
 
             // Increase the total anmation time
             animationTime += gameTime.ElapsedGameTime.TotalSeconds;
@@ -270,7 +276,6 @@ namespace Galabingus
         /// <returns>Transform to view this currentFrame</returns>
         public Rectangle GetFrame(int currentFrame)
         {
-
             return new Rectangle(
                     (width / spritesInAnimation * currentFrame),
                     0, +
