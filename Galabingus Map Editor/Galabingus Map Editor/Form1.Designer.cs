@@ -61,7 +61,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(120, 39);
+            this.label1.Location = new System.Drawing.Point(113, 38);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(288, 31);
             this.label1.TabIndex = 3;
@@ -76,7 +76,6 @@
             this.label2.Size = new System.Drawing.Size(97, 29);
             this.label2.TabIndex = 4;
             this.label2.Text = "Hieght -";
-            this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
             // label3
             // 
@@ -87,25 +86,26 @@
             this.label3.Size = new System.Drawing.Size(94, 29);
             this.label3.TabIndex = 5;
             this.label3.Text = "Width - ";
-            this.label3.Click += new System.EventHandler(this.label3_Click);
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(276, 287);
+            this.button1.Location = new System.Drawing.Point(276, 277);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(180, 85);
             this.button1.TabIndex = 7;
-            this.button1.Text = "button1";
+            this.button1.Text = "Load";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(57, 287);
+            this.button2.Location = new System.Drawing.Point(57, 277);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(180, 85);
             this.button2.TabIndex = 8;
-            this.button2.Text = "button2";
+            this.button2.Text = "Create";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // pictureBox1
             // 

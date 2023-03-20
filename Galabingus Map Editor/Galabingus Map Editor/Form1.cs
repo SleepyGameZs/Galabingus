@@ -17,12 +17,14 @@ namespace Galabingus_Map_Editor
             InitializeComponent();
         }
 
-        private void label2_Click(object sender, EventArgs e)
+        //Create Button
+        private void button2_Click(object sender, EventArgs e)
         {
 
         }
 
-        private void label3_Click(object sender, EventArgs e)
+        //Load Button
+        private void button1_Click(object sender, EventArgs e)
         {
 
         }
