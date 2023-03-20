@@ -462,7 +462,8 @@ namespace Galabingus
 
             // Manage Animation
             //this.Animation.AnimationDuration = 0.03f; // Matt: Don't do this here set this in the constructor
-            this.Transform = this.Animation.Play(gameTime);
+            // Matt: special relativity requires animation with velocity account at what position and size
+            this.Transform = this.Animation.Play(gameTime, vc2_velocity, Position, Transform, Scale); 
 
             // Check if off screen
             bool bol_bulletOffScreen = this.Position.X < 0 &&
@@ -483,7 +484,7 @@ namespace Galabingus
         {
             int int_speedmulti = 1;
             // Matt's framerate fixing data
-            float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
+            float deltaTime = (float)Animation.EllapsedTime;
 
             // Sets position
             this.Position += vc2_velocity * int_speedmulti * int_abilitySpeed * deltaTime;

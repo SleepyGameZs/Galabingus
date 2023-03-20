@@ -84,7 +84,7 @@ namespace Galabingus
             //             sprite, it instead seemed to set position values for the player object.
 
             // Create a player
-            player = new Player(new Vector2(16.25f, 16.25f), content.player_strip5);
+            player = new Player(new Vector2(8.125f, 8.125f), content.player_strip5);
 
             // Create Bullet Manager
             mng_bullet = BulletManager.Instance;
