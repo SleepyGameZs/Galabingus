@@ -486,7 +486,7 @@ namespace Galabingus
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
 
             // Sets position
-            this.Position += vc2_velocity * int_speedmulti * int_abilitySpeed * deltaTime * 1.675f; // Matt: 1.675 increase in velocity to account for spacetime curvature minimum
+            this.Position += vc2_velocity * int_speedmulti * int_abilitySpeed * deltaTime * 1.5f; // Matt: 1.5 increase in velocity to account for spacetime curvature minimum
 
             // Returns position
             return this.Position;
