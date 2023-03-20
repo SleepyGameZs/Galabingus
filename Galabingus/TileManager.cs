@@ -131,7 +131,7 @@ namespace Galabingus
             tile = new Tile(GameObject.Instance.Content.white_pixel_strip1, 2, index, true);
             tile.Scale = 25f;
             tile.ScaleVector = new Vector2(20, screenSize.Y);
-            tile.Position = new Vector2(screenSize.X+20, 0);
+            tile.Position = new Vector2(screenSize.X, 0);
             tilesList.Add(tile);
 
             // Left
