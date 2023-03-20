@@ -116,15 +116,15 @@ namespace Galabingus
             currentSpriteNumber = (index);
             Tile tile = new Tile(GameObject.Instance.Content.white_pixel_strip1, 0, index, true);
             tile.Scale = 25f;
-            tile.ScaleVector = new Vector2(100, 1);
-            tile.Position = new Vector2(100, 100);
+            tile.ScaleVector = new Vector2(screenSize.X, 20);
+            tile.Position = new Vector2(0, -20);
             tilesList.Add(tile);
 
             // Bot
             tile = new Tile(GameObject.Instance.Content.white_pixel_strip1, 1, index, true);
             tile.Scale = 25f;
-            tile.ScaleVector = new Vector2(1000, 20);
-            tile.Position = new Vector2(0, screenSize.Y);
+            tile.ScaleVector = new Vector2(screenSize.X, 20);
+            tile.Position = new Vector2(20, screenSize.Y);
             tilesList.Add(tile);
 
             // Right
