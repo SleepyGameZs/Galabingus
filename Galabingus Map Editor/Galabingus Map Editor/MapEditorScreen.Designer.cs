@@ -47,16 +47,20 @@
             this.button14 = new System.Windows.Forms.Button();
             this.button12 = new System.Windows.Forms.Button();
             this.button13 = new System.Windows.Forms.Button();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.groupBox1.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.pictureBox1);
             this.groupBox1.Location = new System.Drawing.Point(238, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1100, 705);
+            this.groupBox1.Size = new System.Drawing.Size(1095, 740);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "groupBox1";
@@ -192,16 +196,16 @@
             // 
             this.groupBox2.Controls.Add(this.button15);
             this.groupBox2.Controls.Add(this.button14);
-            this.groupBox2.Location = new System.Drawing.Point(21, 628);
+            this.groupBox2.Location = new System.Drawing.Point(21, 624);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(200, 89);
+            this.groupBox2.Size = new System.Drawing.Size(200, 122);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Save/Load";
             // 
             // button15
             // 
-            this.button15.Location = new System.Drawing.Point(110, 13);
+            this.button15.Location = new System.Drawing.Point(110, 31);
             this.button15.Name = "button15";
             this.button15.Size = new System.Drawing.Size(70, 70);
             this.button15.TabIndex = 11;
@@ -211,7 +215,7 @@
             // 
             // button14
             // 
-            this.button14.Location = new System.Drawing.Point(20, 13);
+            this.button14.Location = new System.Drawing.Point(20, 31);
             this.button14.Name = "button14";
             this.button14.Size = new System.Drawing.Size(70, 70);
             this.button14.TabIndex = 10;
@@ -239,11 +243,19 @@
             this.button13.UseVisualStyleBackColor = true;
             this.button13.Click += new System.EventHandler(this.button13_Click);
             // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Location = new System.Drawing.Point(9, 14);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(1080, 720);
+            this.pictureBox1.TabIndex = 0;
+            this.pictureBox1.TabStop = false;
+            // 
             // MapEditorScreen
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1350, 729);
+            this.ClientSize = new System.Drawing.Size(1350, 761);
             this.Controls.Add(this.button12);
             this.Controls.Add(this.button13);
             this.Controls.Add(this.groupBox4);
@@ -252,9 +264,11 @@
             this.Controls.Add(this.groupBox1);
             this.Name = "MapEditorScreen";
             this.Text = "MapEditorScreen";
+            this.groupBox1.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
             this.groupBox4.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -280,5 +294,6 @@
         private System.Windows.Forms.Button button13;
         private System.Windows.Forms.Button button10;
         private System.Windows.Forms.Button button11;
+        private System.Windows.Forms.PictureBox pictureBox1;
     }
 }
