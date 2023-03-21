@@ -218,7 +218,7 @@ namespace Galabingus
             PlayerInstance.speed = speed;
             PlayerInstance.playerState = PlayerStates.Idle;
             PlayerInstance.totalTime = 0;
-            PlayerInstance.inputBufferTime = 0.004f;
+            PlayerInstance.inputBufferTime = 0.0035f;
             PlayerInstance.delayBufferTime = inputBufferTime / 2.0f;
             PlayerInstance.Scale = 1.5f;
             playerInstance.Animation.AnimationDuration = 0.05f;
@@ -378,7 +378,7 @@ namespace Galabingus
             {
                 if (!collides && !previousCollision)
                 {
-                    Position += (velocity == Vector2.Zero ? velocity : Vector2.Normalize(velocity) * speed * translationAjdustedRatio);
+                    Position += (velocity == Vector2.Zero ? velocity : Vector2.Normalize(velocity) * (float)Animation.EllapsedTime * speed * translationAjdustedRatio);
                 }
             }
 

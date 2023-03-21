@@ -82,7 +82,7 @@ namespace Galabingus
             l_a4_obj_enemyData.Add(new int[] { 1, 2, 700, 340 });
 
             // Create a player
-            player = new Player(new Vector2(8.125f, 8.125f), content.player_strip5);
+            player = new Player(new Vector2(8.1875f, 8.1875f), content.player_strip5);
 
             // Create Bullet Manager
             mng_bullet = BulletManager.Instance;
