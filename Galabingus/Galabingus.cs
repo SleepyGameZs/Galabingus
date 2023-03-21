@@ -19,6 +19,9 @@ namespace Galabingus
         // GameObject Dynamic
         private dynamic content;
 
+        // Temporary Background
+        private Texture2D tempBackground;
+
         // UI Object
         private UI userInterface;
 
@@ -78,11 +81,6 @@ namespace Galabingus
             l_a4_obj_enemyData.Add(new int[] { 1, 5, 700, 250 });
             l_a4_obj_enemyData.Add(new int[] { 1, 2, 700, 340 });
 
-            // NOTE FOR MATT: whenever jay does tiling, you may need some a separate animation system that lets them choose which
-            //                tile asset they want to draw, rather than just looping through the whole thing.
-            // ADDIONALLY: I think I might have messed something up in EnemyManager, because when I tried to give enemies the player
-            //             sprite, it instead seemed to set position values for the player object.
-
             // Create a player
             player = new Player(new Vector2(8.125f, 8.125f), content.player_strip5);
 
@@ -98,6 +96,9 @@ namespace Galabingus
             // Create Tile Manager
             tileManager = TileManager.Instance;
             tileManager.CreateTile(1);
+
+            // Load the temporary background
+            tempBackground = Content.Load<Texture2D>("spacebackground_strip1");
         }
 
         protected override void Update(GameTime gameTime)
@@ -137,6 +138,22 @@ namespace Galabingus
 
             if (!(userInterface.GS == GameState.Menu))
             {
+                //draw the background using the temporary background texture
+                _spriteBatch.Draw(
+                    tempBackground,
+                    Vector2.Zero,
+                    new Rectangle(0, 0, tempBackground.Width, tempBackground.Height),
+                    Color.Gray,
+                    0,
+                    Vector2.Zero,
+                    new Vector2(
+                        GameObject.Instance.GraphicsDevice.Viewport.Width / (float)tempBackground.Width,
+                        GameObject.Instance.GraphicsDevice.Viewport.Height / (float)tempBackground.Height
+                    ),
+                    SpriteEffects.None,
+                    1
+                );
+
                 // Draws enemies
                 mng_enemy.Draw();
 

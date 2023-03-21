@@ -228,8 +228,8 @@ namespace Galabingus
             }
 
             // On the sub scale adjust spacetime to Lorentz's factor
-            float rapidity = (float)Math.Atanh(    (Math.Abs(((position.X)) / (Player.PlayerInstance.Position.X - position.X))) * 0.1f   );
-            //float rapidity = (float)Math.Atanh((Math.Abs((((position)) / (Player.PlayerInstance.Position - position)).Length())) * 0.1f);
+            //float rapidity = (float)Math.Atanh(    (Math.Abs(((position.X)) / (Player.PlayerInstance.Position.X - position.X))) * 0.1f   );
+            float rapidity = (float)Math.Atanh((Math.Abs((((position)) / (Player.PlayerInstance.Position - position)).Length())) * 0.1f);
             rapidity = (rapidity.ToString() == "NaN") ? 0 : rapidity;
 
             //Debug.WriteLine(  (Math.Abs(( (position.X)) / ( Player.PlayerInstance.Position.X - position.X))) * 0.1f );
