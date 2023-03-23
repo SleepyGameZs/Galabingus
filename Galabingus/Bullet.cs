@@ -34,29 +34,29 @@ namespace Galabingus
         #region-------------------[ Fields ]-------------------
 
         // Is this bullet ready to be destroyed?
-        private bool bol_destroy;
+        private bool destroy;
 
         // Position data
-        private Vector2 vc2_currentPosition;
-        private Vector2 vc2_oldPosition;
+        private Vector2 currentPosition;
+        private Vector2 oldPosition;
 
         // Movement data - uses degrees for storage purposes
-        private int int_angle;
-        private Vector2 vc2_velocity;
-        private int int_direction;
+        private int angle;
+        private Vector2 velocity;
+        private int direction;
 
         // State data
-        private BulletType BT_ability;
-        private int int_stateTimer;
+        private BulletType ability;
+        private int stateTimer;
 
         // Animation Data
-        private Color clr_bulletColor;
+        private Color bulletColor;
 
         // Name used to find values from GameObject dynamic
-        private ushort ush_contentName;
+        private ushort contentName;
 
         // Number into game object index to look for items
-        private ushort ush_bulletNumber;
+        private ushort bulletNumber;
 
         #endregion 
 
@@ -67,11 +67,11 @@ namespace Galabingus
         /// </summary>
         public bool Destroy
         {
-            get { return bol_destroy; }
+            get { return destroy; }
         }
 
         /// <summary>
-        /// Accesses dynamic singleton GameObject class, using ushort ush_contentName to find
+        /// Accesses dynamic singleton GameObject class, using ushort contentName to find
         /// specific type of thing to access, an bulletNumber as the index inside that list of bullets
         /// This allows one to access this bullet's stored position value
         /// </summary>
@@ -79,18 +79,18 @@ namespace Galabingus
         {
             get
             {
-                GameObject.Instance.Content = ush_contentName;
-                return GetPosition(ush_bulletNumber);
+                GameObject.Instance.Content = contentName;
+                return GetPosition(bulletNumber);
             }
             set
             {
-                GameObject.Instance.Content = ush_contentName;
-                SetPosition(ush_bulletNumber, value);
+                GameObject.Instance.Content = contentName;
+                SetPosition(bulletNumber, value);
             }
         }
 
         /// <summary>
-        /// Accesses dynamic singleton GameObject class, using ushort ush_contentName to find
+        /// Accesses dynamic singleton GameObject class, using ushort contentName to find
         /// specific type of thing to access, an bulletNumber as the index inside that list of bullets
         /// This allows one to access this bullet's stored sprite for this bullet
         /// </summary>
@@ -98,13 +98,13 @@ namespace Galabingus
         {
             get
             {
-                GameObject.Instance.Content = ush_contentName;
-                return GetSprite(ush_bulletNumber);
+                GameObject.Instance.Content = contentName;
+                return GetSprite(bulletNumber);
             }
         }
 
         /// <summary>
-        /// Accesses dynamic singleton GameObject class, using ushort ush_contentName to find
+        /// Accesses dynamic singleton GameObject class, using ushort contentName to find
         /// specific type of thing to access, an bulletNumber as the index inside that list of bullets
         /// This allows one to access this bullet's transform off total spritesheet (most likely
         /// relates to which frame of the animation is to be shown)
@@ -113,18 +113,18 @@ namespace Galabingus
         {
             get
             {
-                GameObject.Instance.Content = ush_contentName;
-                return GetTransform(ush_bulletNumber);
+                GameObject.Instance.Content = contentName;
+                return GetTransform(bulletNumber);
             }
             set
             {
-                GameObject.Instance.Content = ush_contentName;
-                SetTransform(ush_bulletNumber, value);
+                GameObject.Instance.Content = contentName;
+                SetTransform(bulletNumber, value);
             }
         }
 
         /// <summary>
-        /// Accesses dynamic singleton GameObject class, using ushort ush_contentName to find
+        /// Accesses dynamic singleton GameObject class, using ushort contentName to find
         /// specific type of thing to access, an bulletNumber as the index inside that list of bullets
         /// This allows one to access this bullet's sprite scale, so that it can be easily resized
         /// </summary>
@@ -132,13 +132,13 @@ namespace Galabingus
         {
             get
             {
-                GameObject.Instance.Content = ush_contentName;
-                return GetScale(ush_bulletNumber);
+                GameObject.Instance.Content = contentName;
+                return GetScale(bulletNumber);
             }
             set
             {
-                GameObject.Instance.Content = ush_contentName;
-                SetScale(ush_bulletNumber, value);
+                GameObject.Instance.Content = contentName;
+                SetScale(bulletNumber, value);
             }
         }
 
@@ -146,18 +146,18 @@ namespace Galabingus
         {
             get
             {
-                GameObject.Instance.Content = ush_contentName;
-                return GetAnimation(ush_bulletNumber);
+                GameObject.Instance.Content = contentName;
+                return GetAnimation(bulletNumber);
             }
             set
             {
-                GameObject.Instance.Content = ush_contentName;
-                SetAnimation(ush_bulletNumber, value);
+                GameObject.Instance.Content = contentName;
+                SetAnimation(bulletNumber, value);
             }
         }
 
         /// <summary>
-        /// Accesses dynamic singleton GameObject class, using ushort ush_contentName to find
+        /// Accesses dynamic singleton GameObject class, using ushort contentName to find
         /// specific type of thing to access, an bulletNumber as the index inside that list of bullets
         /// This allows one to access this bullet's stored collider for collision checking
         /// </summary>
@@ -165,13 +165,13 @@ namespace Galabingus
         {
             get
             {
-                GameObject.Instance.Content = ush_contentName;
-                return GetCollider(ush_bulletNumber);
+                GameObject.Instance.Content = contentName;
+                return GetCollider(bulletNumber);
             }
             set
             {
-                GameObject.Instance.Content = ush_contentName;
-                SetCollider(ush_bulletNumber, value);
+                GameObject.Instance.Content = contentName;
+                SetCollider(bulletNumber, value);
             }
         }
 
@@ -182,7 +182,7 @@ namespace Galabingus
         {
             get
             {
-                return clr_bulletColor;
+                return bulletColor;
             }
         }
 
@@ -193,7 +193,7 @@ namespace Galabingus
         {
             get
             {
-                return int_angle;
+                return angle;
             }
         }
 
@@ -204,7 +204,7 @@ namespace Galabingus
         {
             get
             {
-                return int_direction;
+                return direction;
             }
         }
 
@@ -213,104 +213,102 @@ namespace Galabingus
         #region-------------------[ Constructor ]-------------------
 
         /// <summary>
-        /// 
+        /// Spawns a bullet with given stats
         /// </summary>
-        /// <param name="BT_ability">Sets which type of bullet is to be shot for
-        ///                          bullet finite state machine.</param>
-        /// <param name="vc2_position">The starting position of the bullet</param>
-        /// <param name="int_angle">The initial angle of the bullet</param>
-        /// <param name="int_direction">The initial direction of the bullet</param>
-        /// <param name="ush_contentName">Name to use for GameObject storage</param>
-        /// <param name="scale">scale of bullet object</param>
+        /// <param name="ability">The ability to give the bullet</param>
+        /// <param name="position">The position to spawn the bullet at</param>
+        /// <param name="angle">The angle the bullet should move at</param>
+        /// <param name="direction">The direction of the bullet, mainly for visuals</param>
+        /// <param name="contentName">Name to use for GameObject storage</param>
         /// <param name="bulletNumber">Number to give bullet in GameObject list</param>
         public Bullet (
-            BulletType BT_ability,
-            Vector2 vc2_position,
-            int int_angle,
-            int int_direction,
-            ushort ush_contentName,
-            ushort ush_bulletNumber
-        ) : base(ush_contentName, ush_bulletNumber)
+            BulletType ability,
+            Vector2 position,
+            int angle,
+            int direction,
+            ushort contentName,
+            ushort bulletNumber
+        ) : base(contentName, bulletNumber)
         {
             // Set Sprite from given
-            this.ush_contentName = ush_contentName;
-            this.ush_bulletNumber = ush_bulletNumber;
+            this.contentName = contentName;
+            this.bulletNumber = bulletNumber;
 
-            switch (BT_ability)
+            switch (ability)
             {
                 case BulletType.Normal:
-                    clr_bulletColor = Color.LightBlue;
+                    bulletColor = Color.LightBlue;
                     GameObject.Instance.Content = GameObject.Instance.Content.smallbullet_strip4;
                     break;
 
                 case BulletType.Bouncing:
-                    clr_bulletColor = Color.Orange;
+                    bulletColor = Color.Orange;
                     GameObject.Instance.Content = GameObject.Instance.Content.tinybullet_strip4;
                     break;
 
                 case BulletType.Splitter:
-                    clr_bulletColor = Color.LimeGreen;
+                    bulletColor = Color.LimeGreen;
                     GameObject.Instance.Content = GameObject.Instance.Content.smallbullet_strip4;
                     break;
 
                 case BulletType.SplitSmall:
-                    clr_bulletColor = Color.LimeGreen;
+                    bulletColor = Color.LimeGreen;
                     GameObject.Instance.Content = GameObject.Instance.Content.smallbullet_strip4;
                     break;
 
                 case BulletType.Circle:
-                    clr_bulletColor = Color.DarkMagenta;
+                    bulletColor = Color.DarkMagenta;
                     GameObject.Instance.Content = GameObject.Instance.Content.smallbullet_strip4;
                     break;
 
                 case BulletType.Large:
-                    clr_bulletColor = Color.Yellow;
+                    bulletColor = Color.Yellow;
                     GameObject.Instance.Content = GameObject.Instance.Content.bigbullet_strip4;
                     break;
 
                 case BulletType.Seeker:
-                    clr_bulletColor = Color.Violet;
+                    bulletColor = Color.Violet;
                     GameObject.Instance.Content = GameObject.Instance.Content.circlebullet_strip4;
                     break;
 
                 default:
-                    clr_bulletColor = Color.White;
+                    bulletColor = Color.White;
                     GameObject.Instance.Content = GameObject.Instance.Content.smallbullet_strip4;
                     break;
             }
 
             // Set bullet state & timer
-            this.BT_ability = BT_ability;
-            int_stateTimer = 0;
+            this.ability = ability;
+            stateTimer = 0;
 
             // Set the animation duration
             this.Animation.AnimationDuration = 0.03f;
 
             // Set Position
-            this.Scale = 3f;
-            this.Position = new Vector2(vc2_position.X + Transform.Width * Scale / 2.0f, vc2_position.Y - Transform.Height * Scale / 2.0f);
-            vc2_currentPosition = this.Position;
-            vc2_oldPosition = this.Position;
+            this.Scale = Player.PlayerInstance.Scale;
+            this.Position = new Vector2(position.X + Transform.Width * Scale / 2.0f, position.Y - Transform.Height * Scale / 2.0f);
+            currentPosition = this.Position;
+            oldPosition = this.Position;
 
             // Convert to radians
-            this.int_direction = int_direction;
-            this.int_angle = int_angle;
-            if (int_direction < 0)
+            this.direction = direction;
+            this.angle = angle;
+            if (direction < 0)
             {
-                int_angle += 180;
+                angle += 180;
             }
 
             // Set values for vector lengths
-            float flt_horizontalVal = (float)Math.Cos(MathHelper.ToRadians(int_angle));
-            float flt_verticalVal = (float)Math.Sin(MathHelper.ToRadians(int_angle));
-            vc2_velocity = Vector2.Normalize(new Vector2(flt_horizontalVal, flt_verticalVal));
+            float horizontalVal = (float)Math.Cos(MathHelper.ToRadians(angle));
+            float verticalVal = (float)Math.Sin(MathHelper.ToRadians(angle));
+            velocity = Vector2.Normalize(new Vector2(horizontalVal, verticalVal));
 
             // Set sprite manually at position
             //GameObject.Instance.Content = ::file name::
             //GameObject.Instance.Sprite;
 
             // Set constructor easier access
-            // ush_contentName = ::file name::;
+            // contentName = ::file name::;
 
             // value to use if established in constructor
             // this.Sprite <- property
@@ -327,19 +325,19 @@ namespace Galabingus
         public void Update(GameTime gameTime)
         {
             // Get old position
-            vc2_oldPosition = this.Position;
+            oldPosition = this.Position;
 
             // Ability specific setting
-            switch (BT_ability)
+            switch (ability)
             {
                 case BulletType.Normal:
                     // Set Current Position
-                    vc2_currentPosition = SetPosition(gameTime, 8);
+                    currentPosition = SetPosition(gameTime, 8);
                     break;
 
                 case BulletType.Bouncing:
                     // Set Current Position
-                    vc2_currentPosition = SetPosition(gameTime, 3);
+                    currentPosition = SetPosition(gameTime, 3);
 
                     // Check for wall collison
                     bool CeilingHit = this.Position.Y < Sprite.Height;
@@ -347,32 +345,32 @@ namespace Galabingus
 
                     if (CeilingHit)
                     {
-                        vc2_velocity.Y *= -1;
+                        velocity.Y *= -1;
 
                         // Change angle (check direction)
-                        if (int_direction < 0)
+                        if (direction < 0)
                         {
-                            int_angle -= 90;
+                            angle -= 90;
                         } 
                         else
                         {
-                            int_angle += 90;
+                            angle += 90;
                         }
                         
                     }
 
                     if (FloorHit)
                     {
-                        vc2_velocity.Y *= -1;
+                        velocity.Y *= -1;
 
                         // Change angle (check direction)
-                        if (int_direction < 0)
+                        if (direction < 0)
                         {
-                            int_angle += 90;
+                            angle += 90;
                         }
                         else
                         {
-                            int_angle -= 90;
+                            angle -= 90;
                         }
                     }
 
@@ -380,76 +378,75 @@ namespace Galabingus
 
                 case BulletType.Splitter:
                     // Set Current Position
-                    vc2_currentPosition = SetPosition(gameTime, 6);
+                    currentPosition = SetPosition(gameTime, 6);
 
                     // Center position of the player
-                    float flt_PlayerX = Player.PlayerInstance.Position.X +              // Base Position
+                    float PlayerX = Player.PlayerInstance.Position.X +              // Base Position
                                         Player.PlayerInstance.Sprite.Bounds.Center.X +  // Centering
                                         Player.PlayerInstance.Velocity.X;               // Adds player velocity
 
                     // Split into 2 bullets
-                    if (vc2_currentPosition.X < flt_PlayerX && vc2_currentPosition.X > flt_PlayerX - 20)
+                    if (currentPosition.X < PlayerX && currentPosition.X > PlayerX - 20)
                     {
                         // Fix positions
-                        Vector2 vc2_topBullet = new Vector2(vc2_currentPosition.X - 50, vc2_currentPosition.Y);
-                        Vector2 vc2_bottomBullet = new Vector2(vc2_currentPosition.X - 30, vc2_currentPosition.Y);
+                        Vector2 topBullet = new Vector2(currentPosition.X - 50, currentPosition.Y);
+                        Vector2 bottomBullet = new Vector2(currentPosition.X - 30, currentPosition.Y);
 
                         // Create Bullets
-                        BulletManager.Instance.CreateBullet(BulletType.SplitSmall, vc2_topBullet, 90, int_direction);
-                        BulletManager.Instance.CreateBullet(BulletType.SplitSmall, vc2_bottomBullet, -90, int_direction);
+                        BulletManager.Instance.CreateBullet(BulletType.SplitSmall, topBullet, 90, direction);
+                        BulletManager.Instance.CreateBullet(BulletType.SplitSmall, bottomBullet, -90, direction);
 
                         // Tell Bullet Manager to delete this bullet
-                        bol_destroy = true;
+                        destroy = true;
                     }
 
                     break;
 
                 case BulletType.SplitSmall:
                     // Set Current Position
-                    vc2_currentPosition = SetPosition(gameTime, 10);
+                    currentPosition = SetPosition(gameTime, 10);
                     break;
 
                 case BulletType.Circle:
                     // Set Current Position
-                    vc2_currentPosition = SetPosition(gameTime, 1);
+                    currentPosition = SetPosition(gameTime, 1);
                     break;
 
                 case BulletType.Large:
                     // Set Current Position
-                    vc2_currentPosition = SetPosition(gameTime, 7);
+                    currentPosition = SetPosition(gameTime, 7);
                     break;
 
                 case BulletType.Seeker:
                     // Change angle
-                    if (int_stateTimer < 200)
+                    if (stateTimer < 200)
                     {
-                        Player obj_player = Player.PlayerInstance;
-                        Vector2 vc2_playerCenter = new Vector2(obj_player.Position.X +              // Base X position 
-                                                               obj_player.Sprite.Bounds.Center.X +  // Center X
-                                                               obj_player.Velocity.X,               // Velocity X
-                                                               obj_player.Position.Y +              // Base Y
-                                                               obj_player.Sprite.Bounds.Center.Y +  // Center Y
-                                                               obj_player.Velocity.Y);              // Velocity X
+                        Player player = Player.PlayerInstance;
 
-                        Vector2 vc2_bulletCenter = new Vector2(vc2_oldPosition.X +
-                                                               Sprite.Bounds.Center.X,
-                                                               vc2_oldPosition.Y +
-                                                               Sprite.Bounds.Center.Y);
+                        // Get Player's Center relative to bullet
+                        Vector2 playerCenter = new Vector2(player.Position.X + (player.Transform.Width * player.Scale) / 2,
+                                                           player.Position.Y + (player.Transform.Height * player.Scale) / 2);
+
+                        playerCenter = playerCenter + new Vector2((Transform.Width * Scale) / 2,
+                                                                  (Transform.Height * Scale) / 2);
+
+                        // Get Bullet's  Center
+                        Vector2 bulletCenter = new Vector2(oldPosition.X, oldPosition.Y);
 
                         // Find vector distance between player and bullet
-                        Vector2 vc2_playerBulletDistance = vc2_playerCenter - vc2_bulletCenter;
+                        Vector2 playerBulletDistance = playerCenter - bulletCenter;
 
                         // Find angle distance between player and bullet
-                        double dbl_playerBulletAngle = Math.Atan2(vc2_playerBulletDistance.X, vc2_playerBulletDistance.Y);
+                        double playerBulletAngle = Math.Atan2(playerBulletDistance.X, playerBulletDistance.Y);
 
-                        vc2_velocity = Vector2.Normalize( // Normalize in case of trolling
-                                                         new Vector2((float)(10 * Math.Sin(dbl_playerBulletAngle)), // X
-                                                                     (float)(10 * Math.Cos(dbl_playerBulletAngle))  // Y
-                                                                     ));
+                        // Normalize in case of trolling + perform calculations
+                        velocity = Vector2.Normalize(new Vector2((float)(10 * Math.Sin(playerBulletAngle)), // X
+                                                                 (float)(10 * Math.Cos(playerBulletAngle))  // Y
+                                                     ));
                     }
 
                     // Set Current Position
-                    vc2_currentPosition = SetPosition(gameTime, 4);
+                    currentPosition = SetPosition(gameTime, 3);
                     break;
 
                 default:
@@ -458,19 +455,19 @@ namespace Galabingus
             }
 
             // Increment State Timer
-            int_stateTimer++;
+            stateTimer++;
 
             // Manage Animation
             //this.Animation.AnimationDuration = 0.03f; // Matt: Don't do this here set this in the constructor
             // Matt: special relativity requires animation with velocity account at what position and size
-            this.Transform = this.Animation.Play(gameTime, vc2_velocity, Position, Transform, Scale); 
+            this.Transform = this.Animation.Play(gameTime, velocity, Position, Transform, Scale); 
 
             // Check if off screen
             bool bol_bulletOffScreen = this.Position.X < 0 &&
                                        this.Position.X > BulletManager.Instance.ScreenDimensions.X;
             if (bol_bulletOffScreen)
             {
-                bol_destroy = true;
+                destroy = true;
             }
 
         }
@@ -480,14 +477,12 @@ namespace Galabingus
         /// </summary>
         /// <param name="gameTime">Game Time Data</param>
         /// <returns></returns>
-        private Vector2 SetPosition(GameTime gameTime, int int_abilitySpeed)
+        private Vector2 SetPosition(GameTime gameTime, int abilitySpeed)
         {
-            int int_speedmulti = 1;
-            // Matt's framerate fixing data
-            float deltaTime = (float)Animation.EllapsedTime;
+            int speedmulti = 1;
 
             // Sets position
-            this.Position += vc2_velocity * int_speedmulti * int_abilitySpeed * deltaTime;
+            this.Position += velocity * speedmulti * abilitySpeed;
 
             // Returns position
             return this.Position;

@@ -17,20 +17,20 @@ namespace Galabingus
         #region-------------------[ Fields ]-------------------
 
         // actual variable attached to singleton calling property
-        private static EnemyManager s_instance = null;
+        private static EnemyManager instance = null;
 
         // Fileplaced enemy positions (used as base)
-        private List<int[]> l_obj_enemyData;
+        private List<int[]> enemyData;
 
         // List of enemies
-        private List<Enemy> l_obj_activeEnemies;
-        private List<ushort> l_ush_content;
+        private List<Enemy> activeEnemies;
+        private List<ushort> content;
 
         // Enemy Total
-        private ushort ush_totalEnemies;
+        private ushort totalEnemies;
 
         // Draw Direction
-        private SpriteEffects sfx_enemyDirection;
+        private SpriteEffects enemyDirection;
 
         #endregion
 
@@ -43,11 +43,11 @@ namespace Galabingus
         {
             get
             {
-                if (s_instance == null)
+                if (instance == null)
                 {
-                    s_instance = new EnemyManager();
+                    instance = new EnemyManager();
                 }
-                return s_instance;
+                return instance;
             }
         }
 
@@ -62,11 +62,11 @@ namespace Galabingus
         {
             // Fake constructor, real data stuff done below in Initialize
 
-            l_obj_activeEnemies = new List<Enemy>();
-            l_ush_content = new List<ushort>();
+            activeEnemies = new List<Enemy>();
+            content = new List<ushort>();
 
             // Get base camera direction data
-            sfx_enemyDirection = SpriteEffects.None;
+            enemyDirection = SpriteEffects.None;
         }
 
         #endregion
@@ -76,117 +76,122 @@ namespace Galabingus
         /// <summary>
         /// Loads in data for where to place enemies, and parses it
         /// </summary>
-        /// <param name="l_obj_enemyData">A list containing enemy data in the form (FORMAT IS PLACEHOLDER SHAWN)
-        ///                               [0] -> Is this an enemy? (1 or 0)
-        ///                               [1] -> What kind of enemy (checks within bounds
-        ///                                      of EnemyType Enum
-        ///                               [2] -> X Position
-        ///                               [3] -> Y Position
-        ///                               </param>
-        public EnemyManager Initialize(List<int[]> l_obj_enemyData)
+        /// <param name="enemyData">A list containing enemy data in the form (FORMAT IS PLACEHOLDER SHAWN)
+        ///                         [0] -> Is this an enemy? (1 or 0)
+        ///                         [1] -> What kind of enemy (checks within bounds
+        ///                                of EnemyType Enum
+        ///                         [2] -> X Position
+        ///                         [3] -> Y Position
+        ///                         </param>
+        public EnemyManager Initialize(List<int[]> enemyData)
         {
 
-            for (int i = 0; i < l_obj_enemyData.Count; i++)
+            for (int i = 0; i < enemyData.Count; i++)
             {
                 // Setup temp enemy values
-                EnemyType ET_tempAbility = EnemyType.Normal;
+                EnemyType tempAbility = EnemyType.Normal;
 
                 //check if slot contains an enemy
                 //SHAWN: Delete this if, I did that check for you
-                if (l_obj_enemyData[i][0] == 1)
+                if (enemyData[i][0] == 1)
                 {
                     // Found enemy, setup stats
-                    ET_tempAbility = (EnemyType)l_obj_enemyData[i][1];
+                    tempAbility = (EnemyType)enemyData[i][1];
 
-                    Vector2 vc2_enemyPos = new Vector2(l_obj_enemyData[i][2], l_obj_enemyData[i][3]);
-                    ushort ush_sprite = GameObject.Instance.Content.tile_strip26;
+                    Vector2 enemyPos = new Vector2(enemyData[i][2], enemyData[i][3]);
+                    ushort sprite = GameObject.Instance.Content.tile_strip26;
 
-                    switch (ET_tempAbility)
+                    switch (tempAbility)
                     {
                         case EnemyType.Normal:
-                            ush_sprite = GameObject.Instance.Content.enemy_dblue_strip4;
+                            sprite = GameObject.Instance.Content.enemy_dblue_strip4;
                             break;
 
                         case EnemyType.Bouncing:
-                            ush_sprite = GameObject.Instance.Content.enemy_orange_strip4;
+                            sprite = GameObject.Instance.Content.enemy_orange_strip4;
                             break;
 
                         case EnemyType.Splitter:
-                            ush_sprite = GameObject.Instance.Content.enemy_green_strip4;
+                            sprite = GameObject.Instance.Content.enemy_green_strip4;
                             break;
 
                         case EnemyType.Circle:
-                            ush_sprite = GameObject.Instance.Content.enemy_purple_strip4;
+                            sprite = GameObject.Instance.Content.enemy_purple_strip4;
                             break;
 
                         case EnemyType.Large:
-                            ush_sprite = GameObject.Instance.Content.enemy_yellow_strip4;
+                            sprite = GameObject.Instance.Content.enemy_yellow_strip4;
                             break;
 
                         case EnemyType.Seeker:
-                            ush_sprite = GameObject.Instance.Content.enemy_violet_strip4;
+                            sprite = GameObject.Instance.Content.enemy_violet_strip4;
                             break;
 
                         default:
-                            ush_sprite = GameObject.Instance.Content.enemy_lblue_strip4;
+                            sprite = GameObject.Instance.Content.enemy_lblue_strip4;
                             break;
                     }
 
                     // Add sprite linker to list
-                    if (l_ush_content.Count == 0)
+                    if (content.Count == 0)
                     {
-                        l_ush_content.Add(ush_sprite);
+                        content.Add(sprite);
                     }
                     else
                     {
                         bool foundSprite = false;
-                        foreach (ushort asset in l_ush_content)
+                        foreach (ushort asset in content)
                         {
-                            if (asset == ush_sprite)
+                            if (asset == sprite)
                             {
                                 foundSprite = true;
                             }
                         }
                         if (!foundSprite)
                         {
-                            l_ush_content.Add(ush_sprite);
+                            content.Add(sprite);
                         }
                     }
 
                     // Add enemy itself to list
-                    l_obj_activeEnemies.Add(new Enemy( ET_tempAbility, vc2_enemyPos, ush_sprite, ush_totalEnemies));
+                    activeEnemies.Add(new Enemy( tempAbility,   // Ability of the Enemy spawned
+                                                 enemyPos,      // Position of Enemy
+                                                 sprite,        // Sprite for Enemy
+                                                 totalEnemies   // Total enemies
+                                                )
+                                      );
 
                     // Increment count
-                    ush_totalEnemies++;
+                    totalEnemies++;
                 }
             }
 
-            return s_instance;
+            return instance;
         }
 
         public void Update (GameTime gameTime)
         {
             // Get camera's movement direction
-            float flt_cameraScroll = Camera.Instance.CameraScroll;
-            if (flt_cameraScroll < 0)
+            float cameraScroll = Camera.Instance.CameraScroll;
+            if (cameraScroll < 0)
             {
-                sfx_enemyDirection = SpriteEffects.None;
+                enemyDirection = SpriteEffects.None;
             } 
             else
             {
-                sfx_enemyDirection = SpriteEffects.FlipHorizontally;
+                enemyDirection = SpriteEffects.FlipHorizontally;
             }
 
             // Run enemy updates
-            for (int i = 0; i < l_obj_activeEnemies.Count; i++)
+            for (int i = 0; i < activeEnemies.Count; i++)
             {
                 // Runs the bullet's update.
-                l_obj_activeEnemies[i].Update(gameTime);
+                activeEnemies[i].Update(gameTime);
 
                 // Checks if enemy is set to be destroyed.
-                if (l_obj_activeEnemies[i].Destroy)
+                if (activeEnemies[i].Destroy)
                 {
-                    l_obj_activeEnemies.RemoveAt(i);
+                    activeEnemies.RemoveAt(i);
                     i -= 1;
                 }
             }
@@ -194,17 +199,17 @@ namespace Galabingus
 
         public void Draw ()
         {
-            foreach (Enemy obj_enemy in l_obj_activeEnemies)
+            foreach (Enemy enemy in activeEnemies)
             {
                 GameObject.Instance.SpriteBatch.Draw(
-                    obj_enemy.Sprite,                   // The sprite-sheet for the player
-                    obj_enemy.Position,                 // The position for the player
-                    obj_enemy.Transform,                // The scale and bounding box for the animation
+                    enemy.Sprite,                   // The sprite-sheet for the player
+                    enemy.Position,                 // The position for the player
+                    enemy.Transform,                // The scale and bounding box for the animation
                     Color.White,                        // The color for the palyer (RED IS TEMP UNTIL WE GET ENEMY SPRITES IN)
                     0.0f,                               // There cannot be any rotation of the player
                     Vector2.Zero,                       // Starting render position
-                    obj_enemy.Scale,                    // The scale of the sprite
-                    sfx_enemyDirection,                 // Which direction the sprite faces
+                    enemy.Scale,                    // The scale of the sprite
+                    enemyDirection,                 // Which direction the sprite faces
                     0.0f                                // Layer depth of the player is 0.0
                 );
             }

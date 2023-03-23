@@ -220,7 +220,7 @@ namespace Galabingus
             PlayerInstance.totalTime = 0;
             PlayerInstance.inputBufferTime = 0.0035f;
             PlayerInstance.delayBufferTime = inputBufferTime / 2.0f;
-            PlayerInstance.Scale = 1.5f;
+            PlayerInstance.Scale = 2f;
             playerInstance.Animation.AnimationDuration = 0.05f;
             // Ratio is calclated via the shape of the player sprite
             // against the width and height of the screen
