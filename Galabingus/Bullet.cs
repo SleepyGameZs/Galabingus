@@ -458,7 +458,7 @@ namespace Galabingus
             stateTimer++;
 
             // Manage Animation
-            this.Transform = this.Animation.Play(gameTime);
+            this.Transform = this.Animation.Play(gameTime,velocity,Position,Transform,Scale);
 
             // Check if off screen
             bool bol_bulletOffScreen = this.Position.X < 0 &&

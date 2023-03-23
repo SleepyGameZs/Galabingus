@@ -328,7 +328,7 @@ namespace Galabingus
 
             //Vector2 previousPosition = Position;
 
-            PlayerInstance.Transform = PlayerInstance.Animation.Play(gameTime);
+            PlayerInstance.Transform = PlayerInstance.Animation.Play(gameTime,velocity,Position,Transform,Scale);
             List<Collision> intercepts = PlayerInstance.Collider.UpdateTransform(
                 PlayerInstance.Sprite,                         // Player Sprite
                 PlayerInstance.Position,                       // Player position
@@ -607,7 +607,7 @@ namespace Galabingus
                             xPause = false;
                         }
 
-                        if (previousKeyboardStateX.IsKeyDown(Keys.D) && previousPreviousKeyboardStateX.IsKeyDown(Keys.A))
+                        if (previousKeyboardStateX.IsKeyDown(Keys.D) && previousPreviousKeyboardStateX.IsKeyDown(Keys.A) || previousPreviousKeyboardStateX.IsKeyDown(Keys.D) && previousKeyboardStateX.IsKeyDown(Keys.A))
                         {
                             previousPreviousKeyboardStateX = previousKeyboardStateX;
                             velocity.X = 0.0f;
@@ -678,7 +678,7 @@ namespace Galabingus
 
                         }
 
-                        if (previousKeyboardStateX.IsKeyDown(Keys.S) && previousPreviousKeyboardStateX.IsKeyDown(Keys.W))
+                        if (previousKeyboardStateX.IsKeyDown(Keys.S) && previousPreviousKeyboardStateX.IsKeyDown(Keys.W) || previousPreviousKeyboardStateX.IsKeyDown(Keys.S) && previousKeyboardStateX.IsKeyDown(Keys.W))
                         {
                             previousPreviousKeyboardStateY = previousKeyboardStateY;
                             velocity.Y = 0;
