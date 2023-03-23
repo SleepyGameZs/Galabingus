@@ -39,7 +39,11 @@ namespace Galabingus
     internal class Player : GameObject
     {
         private static Player playerInstance = null;
-        private KeyboardState previousKeyboardState; // Previous KeyboardState (only updates every interval of input buffer time)
+        private KeyboardState previousPreviousKeyboardStateX;
+        private KeyboardState previousPreviousKeyboardStateY;
+        private KeyboardState previousKeyboardState;
+        private KeyboardState previousKeyboardStateX;
+        private KeyboardState previousKeyboardStateY; // Previous KeyboardState (only updates every interval of input buffer time)
         private KeyboardState currentKeyboardState;  // Current KeyboardState (always current keyboard state)
         private Vector2 previousVelocity;            // Holds the previous direction and magnitude of velocity
         private Vector2 velocity;                    // Holds the current direction and magnitude of velocity
@@ -496,6 +500,8 @@ namespace Galabingus
                     // Uses standard WASD controls
                     // Exits to the player None state when not presing WASD
                     case PlayerStates.Move:
+                        bool xPause = true;
+                        bool yPause = true;
                         // When a directional key is lifted pick out
                         // and update the directional de acceleration
                         if (previousKeyboardState.IsKeyUp(Keys.D))
@@ -531,11 +537,18 @@ namespace Galabingus
                             previousKeyboardState = Keyboard.GetState();
                         }
 
+                        foreach (Keys key in previousKeyboardState.GetPressedKeys())
+                        {
+                            //Debug.WriteLine(key);
+                        }
+                        //Debug.WriteLine();
+
                         // Directional X +
                         if (
-                            previousKeyboardState.IsKeyDown(Keys.D)
+                            previousKeyboardStateX.IsKeyDown(Keys.D) && !previousPreviousKeyboardStateX.IsKeyDown(Keys.A) || previousKeyboardStateX.IsKeyDown(Keys.D) && previousPreviousKeyboardStateX.IsKeyDown(Keys.D)
                         )
                         {
+                            previousPreviousKeyboardStateX = previousKeyboardStateX;
                             if (velocity.X >= 1)
                             {
                                 velocity.X = 1;
@@ -553,13 +566,15 @@ namespace Galabingus
                                 acceleration.Y = acceleration.Y / 10f;
                                 acceleration.X = acceleration.X / 10f;
                             }
+                            xPause = false;
                         }
 
                         // Directional X -
                         if (
-                            previousKeyboardState.IsKeyDown(Keys.A)
+                            previousKeyboardStateX.IsKeyDown(Keys.A) && !previousPreviousKeyboardStateX.IsKeyDown(Keys.D) || previousKeyboardStateX.IsKeyDown(Keys.A) && previousPreviousKeyboardStateX.IsKeyDown(Keys.A)
                         )
                         {
+                            previousPreviousKeyboardStateX = previousKeyboardStateX;
                             if (velocity.X <= -1)
                             {
                                 velocity.X = -1;
@@ -578,13 +593,20 @@ namespace Galabingus
                                 acceleration.Y = acceleration.Y / 10f;
                                 acceleration.X = acceleration.X / 10f;
                             }
+                            xPause = false;
+                        }
+
+                        if (xPause)
+                        {
+                            previousPreviousKeyboardStateX = previousKeyboardStateX;
                         }
 
                         // Directional Y -
                         if (
-                            previousKeyboardState.IsKeyDown(Keys.W)
+                            previousKeyboardStateY.IsKeyDown(Keys.W) && !previousPreviousKeyboardStateY.IsKeyDown(Keys.S) || previousKeyboardStateY.IsKeyDown(Keys.W) && previousPreviousKeyboardStateY.IsKeyDown(Keys.W)
                         )
                         {
+                            previousPreviousKeyboardStateY = previousKeyboardStateY;
                             if (velocity.Y <= -1)
                             {
                                 velocity.Y = -1;
@@ -602,13 +624,15 @@ namespace Galabingus
                                 acceleration.X = acceleration.X / 10f;
                                 acceleration.Y = acceleration.Y / 10f;
                             }
+                            yPause = false;
                         }
 
                         // Directional Y +
                         if (
-                            previousKeyboardState.IsKeyDown(Keys.S)
+                            previousKeyboardStateY.IsKeyDown(Keys.S) && !previousPreviousKeyboardStateY.IsKeyDown(Keys.W) || previousKeyboardStateY.IsKeyDown(Keys.S) && previousPreviousKeyboardStateY.IsKeyDown(Keys.S)
                         )
                         {
+                            previousPreviousKeyboardStateY = previousKeyboardStateY;
                             if (velocity.Y >= 1)
                             {
                                 velocity.Y = 1;
@@ -626,7 +650,15 @@ namespace Galabingus
                                 acceleration.X = acceleration.X / 10f;
                                 acceleration.Y = acceleration.Y / 10f;
                             }
+                            yPause = false;
+
                         }
+
+                        if (yPause)
+                        {
+                            previousPreviousKeyboardStateY = previousKeyboardStateY;
+                        }
+
                         break;
                 }
                 //shot = false;
@@ -650,6 +682,14 @@ namespace Galabingus
             if (totalTime >= bufferTime)
             {
                 previousKeyboardState = currentKeyboardState;
+                if (currentKeyboardState.IsKeyDown(Keys.A) || currentKeyboardState.IsKeyDown(Keys.D) || currentKeyboardState.IsKeyUp(Keys.A) || currentKeyboardState.IsKeyUp(Keys.D) )
+                {
+                    previousKeyboardStateX = currentKeyboardState;
+                }
+                if (currentKeyboardState.IsKeyDown(Keys.W) || currentKeyboardState.IsKeyDown(Keys.S) || currentKeyboardState.IsKeyUp(Keys.W) || currentKeyboardState.IsKeyUp(Keys.S) )
+                {
+                    previousKeyboardStateY = currentKeyboardState;
+                }
                 totalTime -= bufferTime;
             }
         }

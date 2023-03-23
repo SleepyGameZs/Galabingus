@@ -231,34 +231,27 @@ namespace Galabingus
             //float rapidity = (float)Math.Atanh(    (Math.Abs(((position.X)) / (Player.PlayerInstance.Position.X - position.X))) * 0.1f   );
             float rapidity = (float)Math.Atanh((Math.Abs((((position)) / (Player.PlayerInstance.Position - position)).Length())) * 0.1f);
             rapidity = (rapidity.ToString() == "NaN") ? 0 : rapidity;
-
-            //Debug.WriteLine(  (Math.Abs(( (position.X)) / ( Player.PlayerInstance.Position.X - position.X))) * 0.1f );
-
             float dilationFactor1 = (float)(1 - Math.Pow(rapidity, 2));
             dilationFactor1 = dilationFactor1 > 0 ? dilationFactor1 : 1;
             float dilationFactor2 = (float)( 1 - (8 * Math.Pow(rapidity, 2) / dilationFactor1 ) );
             dilationFactor2 = dilationFactor2 > 0 ? dilationFactor2 : -dilationFactor2;
             float timeDialiation = (float)Math.Sqrt(dilationFactor2);
 
-            //Debug.WriteLine(timeDialiation);
-
             if (timeDialiation < 0.7)
             {
                 // There should never be a spacetime jump that is greater than what can be perceived
-                timeDialiation = 0.7f;
+                //timeDialiation = 0.7f;
             }
 
-            if (timeDialiation > 2.0675f)
+            if (timeDialiation > 1.0675f)
             {
-                timeDialiation = 2.0675f;
+                //timeDialiation = 1.0675f;
             }
 
-            ellapsedTime = ((gameTime.ElapsedGameTime.TotalSeconds * 60 * (1 / timeDialiation)) * 0.5f) + (gameTime.ElapsedGameTime.TotalSeconds * 0.5f);
+            ellapsedTime = (gameTime.ElapsedGameTime.TotalSeconds * timeDialiation * 0.5f) + (gameTime.ElapsedGameTime.TotalSeconds * 0.5f) * 60 * 1.875f;
 
             // Increase the total anmation time
-            animationTime += (ellapsedTime / 60) / timeDialiation;
-
-            ellapsedTime *= timeDialiation;
+            animationTime += (ellapsedTime * 0.01666666666666666666666666666666f);
 
             // Check to see if the animation time has ellapsed past the animation duration
             if (animationTime >= animationDuration)
