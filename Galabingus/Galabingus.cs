@@ -85,7 +85,7 @@ namespace Galabingus
             l_a4_obj_enemyData.Add(new int[] { 1, 1, GameObject.Instance.GraphicsDevice.Viewport.Width - 67, (GameObject.Instance.GraphicsDevice.Viewport.Height / 4) * 3 + 50 });
 
             // Create a player
-            player = new Player(new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Height * 0.00875f, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.00875f), content.player_strip5);
+            player = new Player(new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Height * 0.01375f, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.01375f), content.player_strip5);
 
             // Create Bullet Manager
             mng_bullet = BulletManager.Instance;
