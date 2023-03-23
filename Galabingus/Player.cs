@@ -101,6 +101,14 @@ namespace Galabingus
             }
         }
 
+        public Vector2 TranslationRatio
+        {
+            get
+            {
+                return translationRatio * 2;
+            }
+        }
+
         /// <summary>
         ///  Position of the player
         /// </summary>
