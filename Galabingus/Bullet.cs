@@ -480,7 +480,7 @@ namespace Galabingus
             int speedmulti = 1;
 
             // Sets position
-            this.Position += velocity * speedmulti * abilitySpeed * Player.PlayerInstance.TranslationRatio;
+            this.Position += velocity * speedmulti * abilitySpeed * Player.PlayerInstance.TranslationRatio * (float)Animation.EllapsedTime;
 
             // Returns position
             return this.Position;
