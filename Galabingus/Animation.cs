@@ -253,6 +253,8 @@ namespace Galabingus
             // Increase the total anmation time
             animationTime += (ellapsedTime * 0.01666666666666666666666666666666f);
 
+            ellapsedTime = (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
+
             // Check to see if the animation time has ellapsed past the animation duration
             if (animationTime >= animationDuration)
             {

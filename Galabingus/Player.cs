@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Content;
+using System.Security.Cryptography;
 
 // Matthew Rodriguez
 // 2023, 3, 13
@@ -251,8 +252,7 @@ namespace Galabingus
         /// </summary>
         public void Update(GameTime gameTime)
         {
-            inputBufferTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            //PlayerInstance.inputBufferTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            PlayerInstance.inputBufferTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
             Vector2 translationAjdustedRatio = translationRatio;
             float bufferTime = inputBufferTime;
 
