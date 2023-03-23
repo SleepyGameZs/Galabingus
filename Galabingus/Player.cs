@@ -328,7 +328,7 @@ namespace Galabingus
 
             //Vector2 previousPosition = Position;
 
-            PlayerInstance.Transform = PlayerInstance.Animation.Play(gameTime,velocity,Position,Transform,Scale);
+            PlayerInstance.Transform = PlayerInstance.Animation.Play(gameTime);
             List<Collision> intercepts = PlayerInstance.Collider.UpdateTransform(
                 PlayerInstance.Sprite,                         // Player Sprite
                 PlayerInstance.Position,                       // Player position
