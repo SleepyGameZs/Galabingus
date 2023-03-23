@@ -70,8 +70,8 @@ namespace Galabingus
             totalBullets = 0;
 
             screenSize = new Vector2(
-                GraphicsDeviceManager.DefaultBackBufferWidth, // Width of screen
-                GraphicsDeviceManager.DefaultBackBufferHeight // Height of screen
+                GameObject.Instance.GraphicsDevice.Viewport.Width, // Width of screen
+                GameObject.Instance.GraphicsDevice.Viewport.Height // Height of screen
                 );
 
         }

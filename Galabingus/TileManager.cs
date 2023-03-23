@@ -59,8 +59,8 @@ namespace Galabingus
         public TileManager()
         {
             screenSize = new Vector2(
-            GraphicsDeviceManager.DefaultBackBufferWidth, 
-            GraphicsDeviceManager.DefaultBackBufferHeight);
+            GameObject.Instance.GraphicsDevice.Viewport.Width,
+            GameObject.Instance.GraphicsDevice.Viewport.Height);
 
             //ushort contentName = GameObject.Instance.Content.tile_strip26;
 

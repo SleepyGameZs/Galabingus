@@ -136,8 +136,8 @@ namespace Galabingus
             playButtonScale = 6;
 
             //sets the current screens size to the current screen size
-            screenWidth = gr.PreferredBackBufferWidth;
-            screenHeight = gr.PreferredBackBufferHeight;
+            screenWidth = GameObject.Instance.GraphicsDevice.Viewport.Width;
+            screenHeight = GameObject.Instance.GraphicsDevice.Viewport.Height;
 
             //creates the list which will hold the tiles locations
             objectData = new List<int[]>();

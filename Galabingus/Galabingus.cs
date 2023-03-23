@@ -49,6 +49,9 @@ namespace Galabingus
 
         protected override void Initialize()
         {
+            _graphics.PreferredBackBufferWidth = 1280;
+            _graphics.PreferredBackBufferHeight = 720;
+            _graphics.ApplyChanges();
             base.Initialize();
         }
 
@@ -76,13 +79,13 @@ namespace Galabingus
              * [3] -> Y Position
              */
             
-            l_a4_obj_enemyData.Add(new int[] { 1, 1, 700, 70 });
-            l_a4_obj_enemyData.Add(new int[] { 1, 4, 700, 160 });
-            l_a4_obj_enemyData.Add(new int[] { 1, 5, 700, 250 });
-            l_a4_obj_enemyData.Add(new int[] { 1, 2, 700, 340 });
+            l_a4_obj_enemyData.Add(new int[] { 1, 1, GameObject.Instance.GraphicsDevice.Viewport.Width - 67, 50 });
+            l_a4_obj_enemyData.Add(new int[] { 1, 4, GameObject.Instance.GraphicsDevice.Viewport.Width - 67, GameObject.Instance.GraphicsDevice.Viewport.Height / 4 + 50 });
+            l_a4_obj_enemyData.Add(new int[] { 1, 5, GameObject.Instance.GraphicsDevice.Viewport.Width - 67, (GameObject.Instance.GraphicsDevice.Viewport.Height / 4) * 2 + 50 });
+            l_a4_obj_enemyData.Add(new int[] { 1, 2, GameObject.Instance.GraphicsDevice.Viewport.Width - 67, (GameObject.Instance.GraphicsDevice.Viewport.Height / 4) * 3 + 50 });
 
             // Create a player
-            player = new Player(new Vector2(8.1875f, 8.1875f), content.player_strip5);
+            player = new Player(new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Height * 0.015f, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.015f), content.player_strip5);
 
             // Create Bullet Manager
             mng_bullet = BulletManager.Instance;

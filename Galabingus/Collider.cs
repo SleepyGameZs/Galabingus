@@ -352,9 +352,9 @@ namespace Galabingus
             // Determine the bounds of the collider
             this.position = position;
             
-            if (position.X - transform.Width * scale > GraphicsDeviceManager.DefaultBackBufferWidth ||
+            if (position.X - transform.Width * scale > GameObject.Instance.GraphicsDevice.Viewport.Width ||
                 position.X + transform.Width * scale < 0 ||
-                position.Y - transform.Height * scale > GraphicsDeviceManager.DefaultBackBufferHeight ||
+                position.Y - transform.Height * scale > GameObject.Instance.GraphicsDevice.Viewport.Height ||
                 position.Y + transform.Height * scale < 0
             )
             {
@@ -498,9 +498,9 @@ namespace Galabingus
             //
             // Determine the bounds of the collider
             this.position = position;
-            if (position.X - transform.Width * scale.Y > GraphicsDeviceManager.DefaultBackBufferWidth ||
+            if (position.X - transform.Width * scale.Y > GameObject.Instance.GraphicsDevice.Viewport.Width ||
                 position.X + transform.Width * scale.Y < 0 ||
-                position.Y - transform.Height * scale.Y > GraphicsDeviceManager.DefaultBackBufferHeight ||
+                position.Y - transform.Height * scale.Y > GameObject.Instance.GraphicsDevice.Viewport.Height ||
                 position.Y + transform.Height * scale.Y < 0
             )
             {
