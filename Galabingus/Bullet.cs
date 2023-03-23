@@ -458,9 +458,7 @@ namespace Galabingus
             stateTimer++;
 
             // Manage Animation
-            //this.Animation.AnimationDuration = 0.03f; // Matt: Don't do this here set this in the constructor
-            // Matt: special relativity requires animation with velocity account at what position and size
-            this.Transform = this.Animation.Play(gameTime, velocity, Position, Transform, Scale);
+            this.Transform = this.Animation.Play(gameTime);
 
             // Check if off screen
             bool bol_bulletOffScreen = this.Position.X < 0 &&
@@ -482,7 +480,7 @@ namespace Galabingus
             int speedmulti = 1;
 
             // Sets position
-            this.Position += velocity * speedmulti * abilitySpeed;
+            this.Position += velocity * speedmulti * abilitySpeed * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
 
             // Returns position
             return this.Position;

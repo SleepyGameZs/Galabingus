@@ -502,6 +502,12 @@ namespace Galabingus
                     case PlayerStates.Move:
                         bool xPause = true;
                         bool yPause = true;
+                        bool xShift = false;
+                        bool yShift = false;
+                        bool xFromFirst = false;
+                        bool yFromFirst = false;
+                        bool xFromSecond = false;
+                        bool yFromSecond = false;
                         // When a directional key is lifted pick out
                         // and update the directional de acceleration
                         if (previousKeyboardState.IsKeyUp(Keys.D))
@@ -545,9 +551,11 @@ namespace Galabingus
 
                         // Directional X +
                         if (
-                            previousKeyboardStateX.IsKeyDown(Keys.D) && !previousPreviousKeyboardStateX.IsKeyDown(Keys.A) || previousKeyboardStateX.IsKeyDown(Keys.D) && previousPreviousKeyboardStateX.IsKeyDown(Keys.D)
+                            previousKeyboardStateX.IsKeyDown(Keys.D) && !previousPreviousKeyboardStateX.IsKeyDown(Keys.A) || previousKeyboardStateX.IsKeyDown(Keys.D) && previousPreviousKeyboardStateX.IsKeyDown(Keys.D) || previousKeyboardStateX.IsKeyDown(Keys.D) && previousPreviousKeyboardStateX.IsKeyDown(Keys.A) && !(previousKeyboardStateX.IsKeyDown(Keys.A) && previousPreviousKeyboardStateX.IsKeyDown(Keys.D))
                         )
                         {
+                            xShift = previousKeyboardStateX.IsKeyDown(Keys.D) && previousPreviousKeyboardStateX.IsKeyDown(Keys.A);
+                            xFromFirst = true;
                             previousPreviousKeyboardStateX = previousKeyboardStateX;
                             if (velocity.X >= 1)
                             {
@@ -571,9 +579,16 @@ namespace Galabingus
 
                         // Directional X -
                         if (
-                            previousKeyboardStateX.IsKeyDown(Keys.A) && !previousPreviousKeyboardStateX.IsKeyDown(Keys.D) || previousKeyboardStateX.IsKeyDown(Keys.A) && previousPreviousKeyboardStateX.IsKeyDown(Keys.A)
+                            previousKeyboardStateX.IsKeyDown(Keys.A) && !previousPreviousKeyboardStateX.IsKeyDown(Keys.D) || previousKeyboardStateX.IsKeyDown(Keys.A) && previousPreviousKeyboardStateX.IsKeyDown(Keys.A) || previousKeyboardStateX.IsKeyDown(Keys.A) && previousPreviousKeyboardStateX.IsKeyDown(Keys.D)
                         )
                         {
+                            if (!xFromFirst)
+                            {
+                                xShift = (previousKeyboardStateX.IsKeyDown(Keys.A) && previousPreviousKeyboardStateX.IsKeyDown(Keys.D));
+                                xFromFirst = false;
+                            }
+
+
                             previousPreviousKeyboardStateX = previousKeyboardStateX;
                             if (velocity.X <= -1)
                             {
@@ -596,6 +611,32 @@ namespace Galabingus
                             xPause = false;
                         }
 
+                        //Debug.WriteLine(xShift);
+                        //Debug.WriteLine(xFromFirst);
+
+                        if ( xShift && xFromFirst )
+                        {
+                            previousPreviousKeyboardStateX = previousKeyboardStateX;
+                            if (velocity.X >= 1)
+                            {
+                                velocity.X = 1;
+                            }
+                            if (velocity.X < -inputBufferTime && !currentKeyboardState.IsKeyDown(Keys.A))
+                            {
+                                velocity.X = inputBufferTime;
+                                acceleration.X = acceleration.X / 10f;
+                            }
+                            velocity.X += 0.05f;
+                            acceleration.X += 0.0005f;
+                            if (!currentKeyboardState.IsKeyDown(Keys.W) && !currentKeyboardState.IsKeyDown(Keys.S))
+                            {
+                                velocity.Y = velocity.Y / 10.0f;
+                                acceleration.Y = acceleration.Y / 10f;
+                                acceleration.X = acceleration.X / 10f;
+                            }
+                            xPause = false;
+                        }
+
                         if (xPause)
                         {
                             previousPreviousKeyboardStateX = previousKeyboardStateX;
@@ -603,9 +644,11 @@ namespace Galabingus
 
                         // Directional Y -
                         if (
-                            previousKeyboardStateY.IsKeyDown(Keys.W) && !previousPreviousKeyboardStateY.IsKeyDown(Keys.S) || previousKeyboardStateY.IsKeyDown(Keys.W) && previousPreviousKeyboardStateY.IsKeyDown(Keys.W)
+                            previousKeyboardStateY.IsKeyDown(Keys.W) && !previousPreviousKeyboardStateY.IsKeyDown(Keys.S) || previousKeyboardStateY.IsKeyDown(Keys.W) && previousPreviousKeyboardStateY.IsKeyDown(Keys.W) || previousKeyboardStateX.IsKeyDown(Keys.W) && previousPreviousKeyboardStateX.IsKeyDown(Keys.S) && !yShift
                         )
                         {
+                            yShift = previousKeyboardStateX.IsKeyDown(Keys.W) && previousPreviousKeyboardStateX.IsKeyDown(Keys.S);
+                            yFromFirst = true;
                             previousPreviousKeyboardStateY = previousKeyboardStateY;
                             if (velocity.Y <= -1)
                             {
@@ -629,9 +672,10 @@ namespace Galabingus
 
                         // Directional Y +
                         if (
-                            previousKeyboardStateY.IsKeyDown(Keys.S) && !previousPreviousKeyboardStateY.IsKeyDown(Keys.W) || previousKeyboardStateY.IsKeyDown(Keys.S) && previousPreviousKeyboardStateY.IsKeyDown(Keys.S)
+                            previousKeyboardStateY.IsKeyDown(Keys.S) && !previousPreviousKeyboardStateY.IsKeyDown(Keys.W) || previousKeyboardStateY.IsKeyDown(Keys.S) && previousPreviousKeyboardStateY.IsKeyDown(Keys.S) || previousKeyboardStateX.IsKeyDown(Keys.S) && previousPreviousKeyboardStateX.IsKeyDown(Keys.W) && !yShift
                         )
                         {
+                            yShift = previousKeyboardStateX.IsKeyDown(Keys.S) && previousPreviousKeyboardStateX.IsKeyDown(Keys.W) && (!yShift || !yFromFirst);
                             previousPreviousKeyboardStateY = previousKeyboardStateY;
                             if (velocity.Y >= 1)
                             {
@@ -652,6 +696,30 @@ namespace Galabingus
                             }
                             yPause = false;
 
+                        }
+
+                        if (yShift)
+                        {
+                            yShift = previousKeyboardStateX.IsKeyDown(Keys.W) && previousPreviousKeyboardStateX.IsKeyDown(Keys.S);
+                            previousPreviousKeyboardStateY = previousKeyboardStateY;
+                            if (velocity.Y <= -1)
+                            {
+                                velocity.Y = -1;
+                            }
+                            if (velocity.Y > inputBufferTime && !currentKeyboardState.IsKeyDown(Keys.S))
+                            {
+                                velocity.Y = -inputBufferTime;
+                                acceleration.Y = acceleration.Y / 10f;
+                            }
+                            velocity.Y += -0.05f;
+                            acceleration.Y += -0.0005f;
+                            if (!currentKeyboardState.IsKeyDown(Keys.A) && !currentKeyboardState.IsKeyDown(Keys.D))
+                            {
+                                velocity.X = velocity.X / 10.0f;
+                                acceleration.X = acceleration.X / 10f;
+                                acceleration.Y = acceleration.Y / 10f;
+                            }
+                            yPause = false;
                         }
 
                         if (yPause)
