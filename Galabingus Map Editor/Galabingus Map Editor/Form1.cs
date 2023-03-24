@@ -12,11 +12,13 @@ namespace Galabingus_Map_Editor
 {
     public partial class Form1 : Form
     {
+        
         public Form1()
         {
             InitializeComponent();
-        }
 
+            
+        }
         //Create Button
         private void button2_Click(object sender, EventArgs e)
         {
@@ -25,6 +27,11 @@ namespace Galabingus_Map_Editor
 
         //Load Button
         private void button1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
         {
 
         }
