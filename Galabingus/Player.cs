@@ -39,6 +39,13 @@ namespace Galabingus
     /// </summary>
     internal class Player : GameObject
     {
+        private struct Ghost
+        {
+            public Vector2 Position;
+            public float boostOpacity;
+            public Color ghostColor;
+        }
+
         private static Player playerInstance = null;
         private KeyboardState previousPreviousKeyboardStateX;
         private KeyboardState previousPreviousKeyboardStateY;
@@ -57,9 +64,17 @@ namespace Galabingus
         private float delayBufferTime;               // half the actual input buffer time
         private float inputBufferTime;               // input response time
         private ushort contentName;                  // the content index
+        private float boostFrameRate;
         private float health;
         private bool previousCollision;
         private bool shot;
+        private bool boost;
+        private float boostSpeed;
+        private List<Ghost> ghosts = new List<Ghost>();
+        private Vector2 boostSpawnGhost;
+        private float boostOpacity;
+        private bool shiftBoost;
+        private double totalBoostTime;
 
         public static Player PlayerInstance
         {
@@ -243,8 +258,15 @@ namespace Galabingus
                 ((((float)PlayerInstance.Transform.Width) / ((float)PlayerInstance.Transform.Height))) / 2.0f,
                 ((((float)PlayerInstance.Transform.Height) / ((float)PlayerInstance.Transform.Width))) / 2.0f
             );
-            previousCollision = false;
-            shot = false;
+            PlayerInstance.previousCollision = false;
+            PlayerInstance.shot = false;
+            PlayerInstance.boost = false;
+            PlayerInstance.boostSpeed = 1.3f;
+            PlayerInstance.boostFrameRate = 0.005f;
+            PlayerInstance.boostOpacity = 1;
+            PlayerInstance.boostSpawnGhost = Vector2.Zero;
+            PlayerInstance.shiftBoost = false;
+            PlayerInstance.ghosts = new List<Ghost>();
         }
 
         /// <summary>
@@ -393,7 +415,7 @@ namespace Galabingus
             {
                 if (!collides && !previousCollision)
                 {
-                    Position += (velocity == Vector2.Zero ? velocity : Vector2.Normalize(velocity) * (float)Animation.EllapsedTime * speed * translationAjdustedRatio);
+                    Position += (velocity == Vector2.Zero ? velocity : Vector2.Normalize(velocity) * (float)Animation.EllapsedTime * ((boost) ? boostSpeed : 1) * speed * translationAjdustedRatio);
                 }
             }
 
@@ -475,6 +497,7 @@ namespace Galabingus
 
             previousVelocity = velocity;
 
+            totalBoostTime += gameTime.ElapsedGameTime.TotalSeconds;
             totalTime += gameTime.ElapsedGameTime.TotalSeconds;
 
             currentKeyboardState = Keyboard.GetState();
@@ -696,6 +719,11 @@ namespace Galabingus
                             previousPreviousKeyboardStateY = previousKeyboardStateY;
                         }
 
+                        if (previousKeyboardState.IsKeyDown(Keys.LeftControl))
+                        {
+                            boost = true;
+                        }
+
                         break;
                 }
                 //shot = false;
@@ -719,16 +747,69 @@ namespace Galabingus
             if (totalTime >= bufferTime)
             {
                 previousKeyboardState = currentKeyboardState;
-                if (currentKeyboardState.IsKeyDown(Keys.A) || currentKeyboardState.IsKeyDown(Keys.D) || currentKeyboardState.IsKeyUp(Keys.A) || currentKeyboardState.IsKeyUp(Keys.D) )
+                if (currentKeyboardState.IsKeyDown(Keys.A) || currentKeyboardState.IsKeyDown(Keys.D) || currentKeyboardState.IsKeyUp(Keys.A) || currentKeyboardState.IsKeyUp(Keys.D))
                 {
                     previousKeyboardStateX = currentKeyboardState;
                 }
-                if (currentKeyboardState.IsKeyDown(Keys.W) || currentKeyboardState.IsKeyDown(Keys.S) || currentKeyboardState.IsKeyUp(Keys.W) || currentKeyboardState.IsKeyUp(Keys.S) )
+                if (currentKeyboardState.IsKeyDown(Keys.W) || currentKeyboardState.IsKeyDown(Keys.S) || currentKeyboardState.IsKeyUp(Keys.W) || currentKeyboardState.IsKeyUp(Keys.S))
                 {
                     previousKeyboardStateY = currentKeyboardState;
                 }
+
+                if (boostOpacity <= 0.0f)
+                {
+                    boostOpacity = 0.01f;
+                }
+                if (ghosts.Count >= 3 && totalBoostTime >= boostFrameRate)
+                {
+                    //ghosts.RemoveAt(2);
+                    List<Ghost> newGhost = new List<Ghost>();
+                    for (int i = 0; i < ghosts.Count; i++)
+                    {
+                        Ghost tempGhost = ghosts[i];
+                        //tempGhost.Position -= velocity * (1/ tempGhost.boostOpacity);
+                        tempGhost.boostOpacity = tempGhost.boostOpacity - 0.5f;
+                        tempGhost.ghostColor = tempGhost.ghostColor * 0.5f;
+                        ghosts[i] = tempGhost;
+                        if (ghosts[i].boostOpacity > 0.0f)
+                        {
+                            newGhost.Add(ghosts[i]);
+                        }
+                    }
+                    ghosts = newGhost;
+                }
+                
+                if (!currentKeyboardState.IsKeyDown(Keys.LeftControl))
+                {
+                    //totalBoostTime = 0.0f;
+                    boostOpacity = 1f;
+                    boost = false;
+                    List<Ghost> newGhost = new List<Ghost>();
+                    ghosts = newGhost;
+                }
+                else
+                {
+                    if (ghosts.Count <= 2 && totalBoostTime >= boostFrameRate)
+                    {
+                        Ghost ghostBoost = new Ghost();
+                        ghostBoost.ghostColor = new Color(Color.DarkSlateBlue, 1.0f);
+                        //Debug.WriteLine(normVelocity);
+                        ghostBoost.Position = Position + -normVelocity * (float)Animation.EllapsedTime * new Vector2(speed.X, speed.Y).LengthSquared() * 0.0625f; //* (1/boostOpacity * 10);
+                        boostSpeed *= (float)Animation.EllapsedTime;
+                        boostOpacity -= 0.0005f;
+                        ghostBoost.boostOpacity = boostOpacity;
+                        ghosts.Add(ghostBoost);
+                    }
+                }
                 totalTime -= bufferTime;
             }
+
+            if (totalBoostTime >= boostFrameRate)
+            {
+                totalBoostTime -= boostFrameRate;
+            }
+
+            //Debug.WriteLine();
         }
 
         /// <summary>
@@ -759,6 +840,24 @@ namespace Galabingus
             //Debug.WriteLine(Position.X);
             //Debug.WriteLine(Position.Y);
 
+            if (boost && totalBoostTime >= boostFrameRate)
+            {
+                foreach (Ghost ghostn in ghosts)
+                {
+                    GameObject.Instance.SpriteBatch.Draw(
+                        Sprite,                          // The sprite-sheet for the player
+                        ghostn.Position,                        // The position for the player
+                        Transform,                       // The scale and bounding box for the animation
+                        new Color(ghostn.ghostColor, ghostn.boostOpacity),                     // The color for the palyer
+                        0.0f,                            // There cannot be any rotation of the player
+                        Vector2.Zero,                    // Starting render position
+                        PlayerInstance.Scale,                      // The scale of the sprite
+                        SpriteEffects.None,              // Which direction the sprite faces
+                        0.0f                             // Layer depth of the player is 0.0
+                    );
+                }
+            }
+
             GameObject.Instance.SpriteBatch.Draw(
                 Sprite,                          // The sprite-sheet for the player
                 Position,                        // The position for the player
@@ -770,6 +869,8 @@ namespace Galabingus
                 SpriteEffects.None,              // Which direction the sprite faces
                 0.0f                             // Layer depth of the player is 0.0
             );
+
+
         }
     }
 }
