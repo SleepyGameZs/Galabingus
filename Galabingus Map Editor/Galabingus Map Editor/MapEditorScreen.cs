@@ -43,6 +43,11 @@ namespace Galabingus_Map_Editor
         {
             InitializeComponent();
 
+            ImageList tiles = new ImageList();
+
+            tiles.ImageSize = new Size(80, 80);
+            tiles.TransparentColor = Color.White;
+
             tileSize = 60;
         }
 

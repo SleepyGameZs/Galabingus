@@ -74,6 +74,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -87,6 +88,87 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tile_strip26-2.png.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Tile 1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tile_strip26-1.png.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tile_strip26-3.png.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tile_strip26-4.png.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tile_strip26-5.png.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tile_strip26-6.png.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tile_strip26-7.png.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tile_strip26-8.png.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tile_strip26-9.png.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tile_strip26-10.png.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tile_strip26-11.png.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tile_strip26-12.png.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tile_strip26-13.png.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tile_strip26-14.png.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tile_strip26-15.png.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tile_strip26-16.png.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tile_strip26-17.png.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tile_strip26-18.png.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tile_strip26-19.png.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tile_strip26-20.png.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tile_strip26-21.png.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tile_strip26-22.png.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tile_strip26-23.png.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tile_strip26-24.png.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tile_strip26-25.png.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tile_strip26-26.png.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
