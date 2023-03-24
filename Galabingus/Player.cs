@@ -114,7 +114,11 @@ namespace Galabingus
             get
             {
                 GameObject.Instance.Content = GameObject.Instance.Content.player_white_strip5;
-                return GameObject.Instance.GetSprite(0);
+                if (GetSprite(0) == null)
+                {
+                    LoadSprite(GameObject.Instance.Content.player_white_strip5, 0);
+                }
+                return GetSprite(0);
             }
         }
 
@@ -271,7 +275,7 @@ namespace Galabingus
             PlayerInstance.previousCollision = false;
             PlayerInstance.shot = false;
             PlayerInstance.boost = false;
-            PlayerInstance.boostSpeed = 1.3f;
+            PlayerInstance.boostSpeed = 1.5f;
             PlayerInstance.boostFrameRate = 0.005f;
             PlayerInstance.boostOpacity = 1;
             PlayerInstance.boostSpawnGhost = Vector2.Zero;
@@ -804,7 +808,7 @@ namespace Galabingus
                         Ghost ghostBoost = new Ghost();
                         ghostBoost.ghostColor = new Color(Color.DarkSlateBlue, 1.0f);
                         //Debug.WriteLine(normVelocity);
-                        ghostBoost.Position = Position + -normVelocity * (float)Animation.EllapsedTime * new Vector2(speed.X, speed.Y).LengthSquared() * 0.0625f; //* (1/boostOpacity * 10);
+                        ghostBoost.Position = Position + -normVelocity * (float)Animation.EllapsedTime * new Vector2(speed.X, speed.Y).LengthSquared() * 0.0525f; //* (1/boostOpacity * 10);
                         boostSpeed *= (float)Animation.EllapsedTime;
                         boostOpacity -= 0.0005f;
                         ghostBoost.boostOpacity = boostOpacity;
@@ -849,17 +853,32 @@ namespace Galabingus
             //PlayerInstance.Position = new Vector2(0, 0);
             //Debug.WriteLine(Position.X);
             //Debug.WriteLine(Position.Y);
+            const float boostScale = 1.125f;
 
             if (boost && totalBoostTime >= boostFrameRate)
             {
+                foreach (Ghost ghost in ghosts)
+                {
+                    GameObject.Instance.SpriteBatch.Draw(
+                        Sprite,                     // The sprite-sheet for the player
+                        ghost.Position,    // The position for the player
+                        Transform,                       // The scale and bounding box for the animation
+                        ghost.ghostColor,                     // The color for the palyer
+                        0.0f,                            // There cannot be any rotation of the player
+                        Vector2.Zero,                    // Starting render position
+                        PlayerInstance.Scale,                      // The scale of the sprite
+                        SpriteEffects.None,              // Which direction the sprite faces
+                        0.0f                             // Layer depth of the player is 0.0
+                    );
+                }
                 GameObject.Instance.SpriteBatch.Draw(
-                    Sprite,                     // The sprite-sheet for the player
-                    Position - new Vector2(Transform.Width,Transform.Height) * 0.125f,    // The position for the player
+                    WhiteSprite,                     // The sprite-sheet for the player
+                    Position - new Vector2(Transform.Width,Transform.Height) * (boostScale * 0.1f + 0.025f),    // The position for the player
                     Transform,                       // The scale and bounding box for the animation
                     Color.Blue,                     // The color for the palyer
                     0.0f,                            // There cannot be any rotation of the player
                     Vector2.Zero,                    // Starting render position
-                    PlayerInstance.Scale * 1.125f,                      // The scale of the sprite
+                    PlayerInstance.Scale * boostScale,                      // The scale of the sprite
                     SpriteEffects.None,              // Which direction the sprite faces
                     0.0f                             // Layer depth of the player is 0.0
                 );

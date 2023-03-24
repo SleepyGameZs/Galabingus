@@ -701,6 +701,15 @@ namespace Galabingus
             return exist;
         }
 
+        public void LoadSprite(ushort contentName, ushort instanceNumber)
+        {
+            GameObject.Instance.Content = contentName;
+            instance = instanceNumber;
+            string path = GameObject.ObjectEnumsI[contentName];
+            GameObject.Instance.index = contentName;
+            SetSprite(instanceNumber, GameObject.Instance.contentManager.Load<Texture2D>(path));
+        }
+
         private GameObject()
         {
             // Does nothing, just is used to create a singleton instance
