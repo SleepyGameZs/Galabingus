@@ -107,7 +107,15 @@ namespace Galabingus
                 PlayerInstance.health = value;
             }
         }
-
+        
+        public Texture2D WhiteSprite
+        {
+            get
+            {
+                GameObject.Instance.Content = GameObject.Instance.Content.player_white_strip5;
+                return GameObject.Instance.GetSprite(0);
+            }
+        }
 
         public Vector2 Velocity
         {
@@ -842,20 +850,18 @@ namespace Galabingus
 
             if (boost && totalBoostTime >= boostFrameRate)
             {
-                foreach (Ghost ghostn in ghosts)
-                {
-                    GameObject.Instance.SpriteBatch.Draw(
-                        Sprite,                          // The sprite-sheet for the player
-                        ghostn.Position,                        // The position for the player
-                        Transform,                       // The scale and bounding box for the animation
-                        new Color(ghostn.ghostColor, ghostn.boostOpacity),                     // The color for the palyer
-                        0.0f,                            // There cannot be any rotation of the player
-                        Vector2.Zero,                    // Starting render position
-                        PlayerInstance.Scale,                      // The scale of the sprite
-                        SpriteEffects.None,              // Which direction the sprite faces
-                        0.0f                             // Layer depth of the player is 0.0
-                    );
-                }
+
+                GameObject.Instance.SpriteBatch.Draw(
+                    WhiteSprite,                     // The sprite-sheet for the player
+                    Position - new Vector2(Transform.Width,Transform.Height) * 0.1f,    // The position for the player
+                    Transform,                       // The scale and bounding box for the animation
+                    Color.White,                     // The color for the palyer
+                    0.0f,                            // There cannot be any rotation of the player
+                    Vector2.Zero,                    // Starting render position
+                    PlayerInstance.Scale * 1.1f,                      // The scale of the sprite
+                    SpriteEffects.None,              // Which direction the sprite faces
+                    0.0f                             // Layer depth of the player is 0.0
+                );
             }
 
             GameObject.Instance.SpriteBatch.Draw(
