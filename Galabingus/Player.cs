@@ -800,7 +800,7 @@ namespace Galabingus
                 }
                 else
                 {
-                    if (ghosts.Count <= 2 && totalBoostTime >= boostFrameRate)
+                    if (ghosts.Count <= 30 && totalBoostTime >= boostFrameRate * 0.3333333f)
                     {
                         Ghost ghostBoost = new Ghost();
                         ghostBoost.ghostColor = new Color(Color.DarkSlateBlue, 1.0f);
@@ -856,11 +856,16 @@ namespace Galabingus
                 
                 foreach (Ghost ghost in ghosts)
                 {
+                    Color halfOColor = ghost.ghostColor;//new Color(ghost.ghostColor * 0.825f, 0.825f);
+                    if (halfOColor.R <= 7)
+                    {
+                        halfOColor = Color.Transparent;
+                    }
                     GameObject.Instance.SpriteBatch.Draw(
                         Sprite,                     // The sprite-sheet for the player
                         ghost.Position,    // The position for the player
                         Transform,                       // The scale and bounding box for the animation
-                        ghost.ghostColor,                     // The color for the palyer
+                        halfOColor,                     // The color for the palyer
                         0.0f,                            // There cannot be any rotation of the player
                         Vector2.Zero,                    // Starting render position
                         PlayerInstance.Scale,                      // The scale of the sprite
@@ -872,7 +877,7 @@ namespace Galabingus
                     WhiteSprite,                     // The sprite-sheet for the player
                     Position - new Vector2(Transform.Width,Transform.Height) * (boostScale * 0.1f + 0.0077637999f),    // The position for the player
                     Transform,                       // The scale and bounding box for the animation
-                    new Color(Color.Blue,0.0f),                     // The color for the palyer
+                    new Color(Color.Blue,1.0f),                     // The color for the palyer
                     0.0f,                            // There cannot be any rotation of the player
                     Vector2.Zero,                    // Starting render position
                     PlayerInstance.Scale * boostScale,                      // The scale of the sprite
