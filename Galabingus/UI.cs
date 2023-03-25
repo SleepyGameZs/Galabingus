@@ -13,28 +13,6 @@ namespace Galabingus
         // Learn Singleton and Do Singleton
         // Implement A Debug Mode
 
-    #region Enums
-
-    /// <summary>
-    /// Represents the overall states of the game
-    /// </summary>
-    public enum GameState
-    {
-        Menu,
-        Game
-    }
-
-    /// <summary>
-    /// represents the type of level data which should be retrieved
-    /// </summary>
-    public enum Type
-    {
-        Enemy,
-        Tile
-    }
-
-    #endregion
-
     internal class UI
     {
         #region Fields
