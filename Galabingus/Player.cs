@@ -1,11 +1,9 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework.Content;
-using System.Security.Cryptography;
+using System.Diagnostics;
 
 // Matthew Rodriguez
 // 2023, 3, 13
@@ -588,62 +586,9 @@ namespace Galabingus
 
                         foreach (Keys key in previousKeyboardState.GetPressedKeys())
                         {
-                            //Debug.WriteLine(key);
+                            Debug.WriteLine(key);
                         }
                         //Debug.WriteLine();
-
-                        // Directional X +
-                        if (
-                            previousKeyboardStateX.IsKeyDown(Keys.D) && !previousPreviousKeyboardStateX.IsKeyDown(Keys.A) || previousKeyboardStateX.IsKeyDown(Keys.D) && previousPreviousKeyboardStateX.IsKeyDown(Keys.D)
-                        )
-                        {
-                            previousPreviousKeyboardStateX = previousKeyboardStateX;
-                            if (velocity.X >= 1)
-                            {
-                                velocity.X = 1;
-                            }
-                            if (velocity.X < -inputBufferTime && !currentKeyboardState.IsKeyDown(Keys.A))
-                            {
-                                velocity.X = inputBufferTime;
-                                acceleration.X = acceleration.X / 10f;
-                            }
-                            velocity.X += 0.05f;
-                            acceleration.X += 0.0005f;
-                            if (!currentKeyboardState.IsKeyDown(Keys.W) && !currentKeyboardState.IsKeyDown(Keys.S))
-                            {
-                                velocity.Y = velocity.Y / 10.0f;
-                                acceleration.Y = acceleration.Y / 10f;
-                                acceleration.X = acceleration.X / 10f;
-                            }
-                            xPause = false;
-                        }
-
-                        // Directional X -
-                        if (
-                            previousKeyboardStateX.IsKeyDown(Keys.A) && !previousPreviousKeyboardStateX.IsKeyDown(Keys.D) || previousKeyboardStateX.IsKeyDown(Keys.A) && previousPreviousKeyboardStateX.IsKeyDown(Keys.A)
-                        )
-                        {
-                            previousPreviousKeyboardStateX = previousKeyboardStateX;
-                            if (velocity.X <= -1)
-                            {
-                                velocity.X = -1;
-                            }
-                            if (velocity.X > inputBufferTime && !currentKeyboardState.IsKeyDown(Keys.D))
-                            {
-                                velocity.X = -inputBufferTime;
-                                acceleration.X = acceleration.X / 10f;
-
-                            }
-                            velocity.X += -0.05f;
-                            acceleration.X += -0.0005f;
-                            if (!currentKeyboardState.IsKeyDown(Keys.W) && !currentKeyboardState.IsKeyDown(Keys.S))
-                            {
-                                velocity.Y = velocity.Y / 10.0f;
-                                acceleration.Y = acceleration.Y / 10f;
-                                acceleration.X = acceleration.X / 10f;
-                            }
-                            xPause = false;
-                        }
 
                         if (previousKeyboardStateX.IsKeyDown(Keys.D) && previousPreviousKeyboardStateX.IsKeyDown(Keys.A) || previousPreviousKeyboardStateX.IsKeyDown(Keys.D) && previousKeyboardStateX.IsKeyDown(Keys.A))
                         {
@@ -657,29 +602,72 @@ namespace Galabingus
                             }
                             xPause = false;
                         }
+                        else
+                        {
+                            // Directional X +
+                            if (
+                                previousKeyboardStateX.IsKeyDown(Keys.D) && !previousPreviousKeyboardStateX.IsKeyDown(Keys.A) || previousKeyboardStateX.IsKeyDown(Keys.D) && previousPreviousKeyboardStateX.IsKeyDown(Keys.D)
+                            )
+                            {
+                                previousPreviousKeyboardStateX = previousKeyboardStateX;
+                                if (velocity.X >= 1)
+                                {
+                                    velocity.X = 1;
+                                }
+                                if (velocity.X < -inputBufferTime && !currentKeyboardState.IsKeyDown(Keys.A))
+                                {
+                                    velocity.X = inputBufferTime;
+                                    acceleration.X = acceleration.X / 10f;
+                                }
+                                velocity.X += 0.05f;
+                                acceleration.X += 0.0005f;
+                                if (!currentKeyboardState.IsKeyDown(Keys.W) && !currentKeyboardState.IsKeyDown(Keys.S))
+                                {
+                                    velocity.Y = velocity.Y / 10.0f;
+                                    acceleration.Y = acceleration.Y / 10f;
+                                    acceleration.X = acceleration.X / 10f;
+                                }
+                                xPause = false;
+                            }
+
+                            // Directional X -
+                            if (
+                                previousKeyboardStateX.IsKeyDown(Keys.A) && !previousPreviousKeyboardStateX.IsKeyDown(Keys.D) || previousKeyboardStateX.IsKeyDown(Keys.A) && previousPreviousKeyboardStateX.IsKeyDown(Keys.A)
+                            )
+                            {
+                                previousPreviousKeyboardStateX = previousKeyboardStateX;
+                                if (velocity.X <= -1)
+                                {
+                                    velocity.X = -1;
+                                }
+                                if (velocity.X > inputBufferTime && !currentKeyboardState.IsKeyDown(Keys.D))
+                                {
+                                    velocity.X = -inputBufferTime;
+                                    acceleration.X = acceleration.X / 10f;
+
+                                }
+                                velocity.X += -0.05f;
+                                acceleration.X += -0.0005f;
+                                if (!currentKeyboardState.IsKeyDown(Keys.W) && !currentKeyboardState.IsKeyDown(Keys.S))
+                                {
+                                    velocity.Y = velocity.Y / 10.0f;
+                                    acceleration.Y = acceleration.Y / 10f;
+                                    acceleration.X = acceleration.X / 10f;
+                                }
+                                xPause = false;
+                            }
+                        }
 
                         if (xPause)
                         {
                             previousPreviousKeyboardStateX = previousKeyboardStateX;
                         }
 
-                        // Directional Y -
-                        if (
-                            previousKeyboardStateY.IsKeyDown(Keys.W) && !previousPreviousKeyboardStateY.IsKeyDown(Keys.S) || previousKeyboardStateY.IsKeyDown(Keys.W) && previousPreviousKeyboardStateY.IsKeyDown(Keys.W)
-                        )
+                        if (previousKeyboardStateY.IsKeyDown(Keys.S) && previousPreviousKeyboardStateY.IsKeyDown(Keys.W) || previousPreviousKeyboardStateY.IsKeyDown(Keys.S) && previousKeyboardStateY.IsKeyDown(Keys.W))
                         {
                             previousPreviousKeyboardStateY = previousKeyboardStateY;
-                            if (velocity.Y <= -1)
-                            {
-                                velocity.Y = -1;
-                            }
-                            if (velocity.Y > inputBufferTime && !currentKeyboardState.IsKeyDown(Keys.S))
-                            {
-                                velocity.Y = -inputBufferTime;
-                                acceleration.Y = acceleration.Y / 10f;
-                            }
-                            velocity.Y += -0.05f;
-                            acceleration.Y += -0.0005f;
+                            //if (previousKeyboardStateY.X)
+                            velocity.Y = 0.0f;
                             if (!currentKeyboardState.IsKeyDown(Keys.A) && !currentKeyboardState.IsKeyDown(Keys.D))
                             {
                                 velocity.X = velocity.X / 10.0f;
@@ -688,45 +676,60 @@ namespace Galabingus
                             }
                             yPause = false;
                         }
-
-                        // Directional Y +
-                        if (
-                            previousKeyboardStateY.IsKeyDown(Keys.S) && !previousPreviousKeyboardStateY.IsKeyDown(Keys.W) || previousKeyboardStateY.IsKeyDown(Keys.S) && previousPreviousKeyboardStateY.IsKeyDown(Keys.S)
-                        )
+                        else
                         {
-                            previousPreviousKeyboardStateY = previousKeyboardStateY;
-                            if (velocity.Y >= 1)
+                            // Directional Y -
+                            if (
+                                previousKeyboardStateY.IsKeyDown(Keys.W) && !previousPreviousKeyboardStateY.IsKeyDown(Keys.S) || previousKeyboardStateY.IsKeyDown(Keys.W) && previousPreviousKeyboardStateY.IsKeyDown(Keys.W)
+                            )
                             {
-                                velocity.Y = 1;
+                                previousPreviousKeyboardStateY = previousKeyboardStateY;
+                                if (velocity.Y <= -1)
+                                {
+                                    velocity.Y = -1;
+                                }
+                                if (velocity.Y > inputBufferTime && !currentKeyboardState.IsKeyDown(Keys.S))
+                                {
+                                    velocity.Y = -inputBufferTime;
+                                    acceleration.Y = acceleration.Y / 10f;
+                                }
+                                velocity.Y += -0.05f;
+                                acceleration.Y += -0.0005f;
+                                if (!currentKeyboardState.IsKeyDown(Keys.A) && !currentKeyboardState.IsKeyDown(Keys.D))
+                                {
+                                    velocity.X = velocity.X / 10.0f;
+                                    acceleration.X = acceleration.X / 10f;
+                                    acceleration.Y = acceleration.Y / 10f;
+                                }
+                                yPause = false;
                             }
-                            if (velocity.Y < inputBufferTime && !currentKeyboardState.IsKeyDown(Keys.W))
-                            {
-                                velocity.Y = inputBufferTime;
-                                acceleration.Y = acceleration.Y / 10f;
-                            }
-                            velocity.Y += 0.05f;
-                            acceleration.Y += 0.0005f;
-                            if (!currentKeyboardState.IsKeyDown(Keys.A) && !currentKeyboardState.IsKeyDown(Keys.D))
-                            {
-                                velocity.X = velocity.X / 10.0f;
-                                acceleration.X = acceleration.X / 10f;
-                                acceleration.Y = acceleration.Y / 10f;
-                            }
-                            yPause = false;
 
-                        }
-
-                        if (previousKeyboardStateX.IsKeyDown(Keys.S) && previousPreviousKeyboardStateX.IsKeyDown(Keys.W) || previousPreviousKeyboardStateX.IsKeyDown(Keys.S) && previousKeyboardStateX.IsKeyDown(Keys.W))
-                        {
-                            previousPreviousKeyboardStateY = previousKeyboardStateY;
-                            velocity.Y = 0;
-                            if (!currentKeyboardState.IsKeyDown(Keys.A) && !currentKeyboardState.IsKeyDown(Keys.D))
+                            // Directional Y +
+                            if (
+                                previousKeyboardStateY.IsKeyDown(Keys.S) && !previousPreviousKeyboardStateY.IsKeyDown(Keys.W) || previousKeyboardStateY.IsKeyDown(Keys.S) && previousPreviousKeyboardStateY.IsKeyDown(Keys.S)
+                            )
                             {
-                                velocity.X = velocity.X / 10.0f;
-                                acceleration.X = acceleration.X / 10f;
-                                acceleration.Y = acceleration.Y / 10f;
+                                previousPreviousKeyboardStateY = previousKeyboardStateY;
+                                if (velocity.Y >= 1)
+                                {
+                                    velocity.Y = 1;
+                                }
+                                if (velocity.Y < inputBufferTime && !currentKeyboardState.IsKeyDown(Keys.W))
+                                {
+                                    velocity.Y = inputBufferTime;
+                                    acceleration.Y = acceleration.Y / 10f;
+                                }
+                                velocity.Y += 0.05f;
+                                acceleration.Y += 0.0005f;
+                                if (!currentKeyboardState.IsKeyDown(Keys.A) && !currentKeyboardState.IsKeyDown(Keys.D))
+                                {
+                                    velocity.X = velocity.X / 10.0f;
+                                    acceleration.X = acceleration.X / 10f;
+                                    acceleration.Y = acceleration.Y / 10f;
+                                }
+                                yPause = false;
+
                             }
-                            yPause = false;
                         }
 
                         if (yPause)
