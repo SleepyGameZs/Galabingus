@@ -584,10 +584,6 @@ namespace Galabingus
                             previousKeyboardState = Keyboard.GetState();
                         }
 
-                        foreach (Keys key in previousKeyboardState.GetPressedKeys())
-                        {
-                            Debug.WriteLine(key);
-                        }
                         //Debug.WriteLine();
 
                         if (previousKeyboardStateX.IsKeyDown(Keys.D) && previousPreviousKeyboardStateX.IsKeyDown(Keys.A) || previousPreviousKeyboardStateX.IsKeyDown(Keys.D) && previousKeyboardStateX.IsKeyDown(Keys.A))
@@ -761,10 +757,21 @@ namespace Galabingus
                 Shoot();
             }
 
+            /*
+            foreach (Keys key in currentKeyboardState.GetPressedKeys())
+            {
+                Debug.WriteLine(key);
+            }
+            */
+
             // When the ellapsed time is the buffer time update the keyboard state
             if (totalTime >= bufferTime)
             {
+
                 previousKeyboardState = currentKeyboardState;
+
+
+
                 if (currentKeyboardState.IsKeyDown(Keys.A) || currentKeyboardState.IsKeyDown(Keys.D) || currentKeyboardState.IsKeyUp(Keys.A) || currentKeyboardState.IsKeyUp(Keys.D))
                 {
                     previousKeyboardStateX = currentKeyboardState;
