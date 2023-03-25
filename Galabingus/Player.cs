@@ -275,8 +275,8 @@ namespace Galabingus
             PlayerInstance.previousCollision = false;
             PlayerInstance.shot = false;
             PlayerInstance.boost = false;
-            PlayerInstance.boostSpeed = 1.5f;
-            PlayerInstance.boostFrameRate = 0.005f;
+            PlayerInstance.boostSpeed = 1.8f;
+            PlayerInstance.boostFrameRate = 0.0625f;
             PlayerInstance.boostOpacity = 1;
             PlayerInstance.boostSpawnGhost = Vector2.Zero;
             PlayerInstance.shiftBoost = false;
@@ -776,16 +776,14 @@ namespace Galabingus
                 }
                 if (ghosts.Count >= 3 && totalBoostTime >= boostFrameRate)
                 {
-                    //ghosts.RemoveAt(2);
                     List<Ghost> newGhost = new List<Ghost>();
                     for (int i = 0; i < ghosts.Count; i++)
                     {
                         Ghost tempGhost = ghosts[i];
-                        //tempGhost.Position -= velocity * (1/ tempGhost.boostOpacity);
                         tempGhost.boostOpacity = tempGhost.boostOpacity - 0.5f;
                         tempGhost.ghostColor = tempGhost.ghostColor * 0.5f;
                         ghosts[i] = tempGhost;
-                        if (ghosts[i].boostOpacity > 0.0f)
+                        if (ghosts[i].boostOpacity > -(2.0f))
                         {
                             newGhost.Add(ghosts[i]);
                         }
@@ -795,7 +793,6 @@ namespace Galabingus
                 
                 if (!currentKeyboardState.IsKeyDown(Keys.LeftControl))
                 {
-                    //totalBoostTime = 0.0f;
                     boostOpacity = 1f;
                     boost = false;
                     List<Ghost> newGhost = new List<Ghost>();
@@ -807,8 +804,7 @@ namespace Galabingus
                     {
                         Ghost ghostBoost = new Ghost();
                         ghostBoost.ghostColor = new Color(Color.DarkSlateBlue, 1.0f);
-                        //Debug.WriteLine(normVelocity);
-                        ghostBoost.Position = Position + -normVelocity * (float)Animation.EllapsedTime * new Vector2(speed.X, speed.Y).LengthSquared() * 0.0525f; //* (1/boostOpacity * 10);
+                        ghostBoost.Position = Position + normVelocity * (float)Animation.EllapsedTime * new Vector2(speed.X, speed.Y).LengthSquared() * ((1 - boostSpeed) * -0.1f );
                         boostSpeed *= (float)Animation.EllapsedTime;
                         boostOpacity -= 0.0005f;
                         ghostBoost.boostOpacity = boostOpacity;
@@ -853,10 +849,11 @@ namespace Galabingus
             //PlayerInstance.Position = new Vector2(0, 0);
             //Debug.WriteLine(Position.X);
             //Debug.WriteLine(Position.Y);
-            const float boostScale = 1.125f;
+            const float boostScale = 1.1f;
 
-            if (boost && totalBoostTime >= boostFrameRate)
+            if (boost) //&& totalBoostTime >= boostFrameRate)
             {
+                
                 foreach (Ghost ghost in ghosts)
                 {
                     GameObject.Instance.SpriteBatch.Draw(
@@ -873,9 +870,9 @@ namespace Galabingus
                 }
                 GameObject.Instance.SpriteBatch.Draw(
                     WhiteSprite,                     // The sprite-sheet for the player
-                    Position - new Vector2(Transform.Width,Transform.Height) * (boostScale * 0.1f + 0.025f),    // The position for the player
+                    Position - new Vector2(Transform.Width,Transform.Height) * (boostScale * 0.1f + 0.0077637999f),    // The position for the player
                     Transform,                       // The scale and bounding box for the animation
-                    Color.Blue,                     // The color for the palyer
+                    new Color(Color.Blue,0.0f),                     // The color for the palyer
                     0.0f,                            // There cannot be any rotation of the player
                     Vector2.Zero,                    // Starting render position
                     PlayerInstance.Scale * boostScale,                      // The scale of the sprite
@@ -883,7 +880,7 @@ namespace Galabingus
                     0.0f                             // Layer depth of the player is 0.0
                 );
             }
- 
+
             GameObject.Instance.SpriteBatch.Draw(
                 Sprite,                          // The sprite-sheet for the player
                 Position,                        // The position for the player
@@ -895,7 +892,6 @@ namespace Galabingus
                 SpriteEffects.None,              // Which direction the sprite faces
                 0.0f                             // Layer depth of the player is 0.0
             );
-
 
         }
     }
