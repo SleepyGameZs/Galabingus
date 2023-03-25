@@ -275,7 +275,7 @@ namespace Galabingus
             PlayerInstance.previousCollision = false;
             PlayerInstance.shot = false;
             PlayerInstance.boost = false;
-            PlayerInstance.boostSpeed = 1.8f;
+            PlayerInstance.boostSpeed = 1.75f;
             PlayerInstance.boostFrameRate = 0.0625f;
             PlayerInstance.boostOpacity = 1;
             PlayerInstance.boostSpawnGhost = Vector2.Zero;
