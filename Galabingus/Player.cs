@@ -276,7 +276,7 @@ namespace Galabingus
             PlayerInstance.shot = false;
             PlayerInstance.boost = false;
             PlayerInstance.boostSpeed = 1.625f;
-            PlayerInstance.boostFrameRate = 0.0625f;
+            PlayerInstance.boostFrameRate = 0.0308333321f;
             PlayerInstance.boostOpacity = 1;
             PlayerInstance.boostSpawnGhost = Vector2.Zero;
             PlayerInstance.shiftBoost = false;
@@ -289,6 +289,7 @@ namespace Galabingus
         public void Update(GameTime gameTime)
         {
             PlayerInstance.inputBufferTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            //boostFrameRate = PlayerInstance.inputBufferTime;
             Vector2 translationAjdustedRatio = translationRatio;
             float bufferTime = inputBufferTime;
 
@@ -800,7 +801,7 @@ namespace Galabingus
                 }
                 else
                 {
-                    if (ghosts.Count <= 30 && totalBoostTime >= boostFrameRate * 0.3333333f)
+                    if (totalBoostTime >= boostFrameRate * 0.3333333f)
                     {
                         Ghost ghostBoost = new Ghost();
                         ghostBoost.ghostColor = new Color(Color.DarkSlateBlue, 1.0f);
