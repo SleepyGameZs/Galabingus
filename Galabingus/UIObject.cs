@@ -21,16 +21,23 @@ namespace Galabingus
 
         #endregion
 
+        #region Constructor
         public UIObject(string filename, ContentManager cm, Vector2 position, int scale)
         {
             uiTexture = cm.Load<Texture2D>(filename);
+
+            int length = (uiTexture.Width / scale);
+            int width = (uiTexture.Height / scale);
+
             uiPosition =
                 new Rectangle(
-                    (int)position.X,
-                    (int)position.Y,
-                    (uiTexture.Width / scale),
-                    (uiTexture.Height / scale));
+                    ((int)position.X) - (length/2),
+                    ((int)position.Y) - (width/2),
+                    length,
+                    width
+                );
         }
+        #endregion
 
         #region Methods
 

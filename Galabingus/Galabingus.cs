@@ -23,7 +23,8 @@ namespace Galabingus
         private Texture2D tempBackground;
 
         // UI Object
-        private UI userInterface;
+        //private UI userInterface;
+        private UIManager userInterface;
 
         // Player GameObject
         private Player player;
@@ -63,7 +64,12 @@ namespace Galabingus
             content = GameObject.Instance.Initialize(Content, GraphicsDevice, _spriteBatch);
 
             //new UI class and loading its content
-            userInterface = new UI(_graphics, Content, _spriteBatch);
+            //userInterface = new UI(_graphics, Content, _spriteBatch);
+            //userInterface.LoadContent();
+
+            //creates and initializes the UIManager, and then loads its contents
+            userInterface = UIManager.Instance;
+            userInterface.Initialize(_graphics, Content, _spriteBatch);
             userInterface.LoadContent();
 
             //gets the list of enemies from the file
@@ -110,6 +116,12 @@ namespace Galabingus
                 || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+            //Update the UI
+            userInterface.Update(gameTime);
+
+            //update the game state
+            //userInterface.Update();
+
             // Update the player
             player.Update(gameTime);
 
@@ -118,9 +130,6 @@ namespace Galabingus
 
             // Update the bullets
             mng_bullet.Update(gameTime);
-
-            //update the game state
-            userInterface.Update();
 
             // Update the Camera
             camera.Update(gameTime);
@@ -133,16 +142,17 @@ namespace Galabingus
         protected override void Draw(GameTime gameTime)
         {
             // Change the clear color to transparent and use point rendering for pixel art
-            GraphicsDevice.Clear(userInterface.ClearColor);
+            //GraphicsDevice.Clear(userInterface.ClearColor);
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap);
 
             //draw the screen
             userInterface.Draw();
-
+            
             if (!(userInterface.GS == GameState.Menu))
             {
+                
                 //draw the background using the temporary background texture
-                _spriteBatch.Draw(
+                /*_spriteBatch.Draw(
                     tempBackground,
                     Vector2.Zero,
                     new Rectangle(0, 0, tempBackground.Width, tempBackground.Height),
@@ -156,6 +166,7 @@ namespace Galabingus
                     SpriteEffects.None,
                     1
                 );
+                */
 
                 // Draws enemies
                 mng_enemy.Draw();
@@ -177,7 +188,6 @@ namespace Galabingus
                     // Draws tiles
                     tileManager.Draw();
                 }
-                
             }
 
             // End the SpriteBatch draw

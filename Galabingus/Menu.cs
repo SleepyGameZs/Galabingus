@@ -28,9 +28,7 @@ namespace Galabingus
 
         public override void Update()
         {
-            throw new NotImplementedException();
-
-            if(UIManager.UserInterface.SingleKeyPress(Keys.Back))
+            if(UIManager.Instance.SingleKeyPress(Keys.Back))
             {
                 visible = false;
             }
@@ -38,8 +36,6 @@ namespace Galabingus
 
         public override void Draw(SpriteBatch sb)
         {
-            throw new NotImplementedException();
-
             if(visible)
             {
                 sb.Draw(

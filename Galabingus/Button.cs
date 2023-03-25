@@ -30,7 +30,7 @@ namespace Galabingus
 
         public Button
             (string filename, ContentManager cm, Vector2 position, Menu menu) 
-            : base(filename, cm, position, 5)
+            : base(filename, cm, position, 6)
         {
             this.menu = menu;
             returnState = default(GameState);
@@ -50,21 +50,23 @@ namespace Galabingus
 
         public override void Update()
         {
-            throw new NotImplementedException();
-
             mouseState = Mouse.GetState();
 
             if(uiPosition.Contains(mouseState.Position))
             {
                 if(mouseState.LeftButton == ButtonState.Pressed)
                 {
-                    if (menu == null)
+                    if (menu != null)
                     {
-                        UIManager.UserInterface.UIEvent(this, returnState);
+                        UIManager.Instance.UIEvent(menu);
+                    }
+                    else if (returnState != default(GameState))
+                    {
+                        UIManager.Instance.UIEvent(returnState);
                     }
                     else
                     {
-                        UIManager.UserInterface.UIEvent(menu);
+                        throw new Exception("Button Update Issue");
                     }
                     
                 }

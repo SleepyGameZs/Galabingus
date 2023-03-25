@@ -19,6 +19,7 @@ namespace Galabingus
     /// </summary>
     public enum GameState
     {
+        NoState,
         Menu,
         Game,
         Pause
@@ -46,7 +47,7 @@ namespace Galabingus
         #region Fields
 
         //the instance of the UIManager
-        private static UIManager instance;
+        private static UIManager instance = null;
 
         //the list of UIObjects it manages
         private Dictionary<UIObject, GameState> uiObjects;
@@ -81,8 +82,9 @@ namespace Galabingus
         bool singleUpdate;
         Menu singleMenu;
 
-        //random to delete
-        Menu menu;
+        // Temporary Backgrounds
+        private Texture2D tempBackground;
+        private Texture2D menuBackground;
 
         #endregion
 
@@ -91,12 +93,24 @@ namespace Galabingus
         /// <summary>
         /// returns the instance of the UI manager
         /// </summary>
-        public static UIManager UserInterface
+        public static UIManager Instance
         {
             get
             {
+                if (instance == null)
+                {
+                    instance = new UIManager();
+                }
                 return instance;
             }
+        }
+
+        /// <summary>
+        /// can return current game state
+        /// </summary>
+        public GameState GS
+        {
+            get { return gs; }
         }
 
         #endregion
@@ -106,16 +120,18 @@ namespace Galabingus
         /// <summary>
         /// 
         /// </summary>
-        /// <exception cref="NotImplementedException"></exception>
         private UIManager()
         {
             //initialize the gamestate variable
             gs = new GameState();
             ds = new DebugState();
 
-            //set the debug to off to start
+            //set the base game and debug states
+            gs = GameState.Menu;
             ds = DebugState.DebugOn;
 
+            //create the uiObject list
+            uiObjects = new Dictionary<UIObject, GameState>();
         }
 
         #endregion
@@ -139,22 +155,27 @@ namespace Galabingus
 
         public void LoadContent()
         {
-            //random to delete
-            menu = new Menu("txt", cm, new Vector2(100, 100));
-
             //creates the list of UIObjects
             uiObjects.Add(
-                new Button("txt", cm, new Vector2(100, 100), menu), GameState.Menu
+                new Button(
+                    "playbutton_strip1", cm, 
+                    new Vector2(
+                        GameObject.Instance.GraphicsDevice.Viewport.Width / 2,
+                        GameObject.Instance.GraphicsDevice.Viewport.Height / 2), 
+                    GameState.Game), GameState.Menu
             );
+
+            //loads temp background
+            tempBackground = cm.Load<Texture2D>("spacebackground_strip1");
+            menuBackground = cm.Load<Texture2D>("menubackground_strip1");
         }
 
-        public void Update(GameState gameState)
+        public void Update(GameTime gameTime)
         {
-            //set this classes gamestate to the current gamestate
-            gs = gameState;
-
             //set the keyboardstate
             currentKBS = Keyboard.GetState();
+
+            UpdateObjects(gs);
 
             switch (gs)
             {
@@ -174,8 +195,6 @@ namespace Galabingus
                         }
                     }
 
-
-
                     break;
 
                 case GameState.Game:
@@ -186,7 +205,7 @@ namespace Galabingus
                     }
                     else
                     {
-                        //DEBUG: if the shift button is pressed, change the state
+                        //if the shift button is pressed, change the state
                         if (SingleKeyPress(Keys.LeftShift)
                             || SingleKeyPress(Keys.RightShift))
                         {
@@ -204,23 +223,49 @@ namespace Galabingus
 
             }
 
-            UpdateObjects(gs);
-
             previousKBS = currentKBS;
         }
 
         public void Draw()
         {
-            sb.Begin();
-
             switch (gs)
             {
+                case GameState.Menu:
+
+                    //changes the screen background
+                    sb.Draw(
+                        menuBackground,
+                        new Rectangle(
+                            0,
+                            0,
+                            menuBackground.Width,
+                            menuBackground.Height),
+                        Color.White);
+
+                    break;
+
+                case GameState.Game:
+
+                    sb.Draw(
+                        tempBackground,
+                        Vector2.Zero,
+                        new Rectangle(0, 0, tempBackground.Width, tempBackground.Height),
+                        new Color(Color.White * 0.7f, 1.0f),
+                        0,
+                        Vector2.Zero,
+                        new Vector2(
+                            GameObject.Instance.GraphicsDevice.Viewport.Width / (float)tempBackground.Width,
+                            GameObject.Instance.GraphicsDevice.Viewport.Height / (float)tempBackground.Height
+                        ),
+                        SpriteEffects.None,
+                        1
+                    );
+
+                    break;
 
             }
 
             DrawObjects(gs);
-
-            sb.End();
         }
 
         #endregion
@@ -344,9 +389,9 @@ namespace Galabingus
             singleMenu = menu;
         }
 
-        public void UIEvent(UIObject button, GameState game)
+        public void UIEvent(GameState gameState)
         {
-
+            gs = gameState;
         }
 
         #endregion
