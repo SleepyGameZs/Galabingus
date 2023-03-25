@@ -276,7 +276,7 @@ namespace Galabingus
             PlayerInstance.shot = false;
             PlayerInstance.boost = false;
             PlayerInstance.boostSpeed = 1.625f;
-            PlayerInstance.boostFrameRate = 0.0308333321f;
+            PlayerInstance.boostFrameRate = 0.029166655f;
             PlayerInstance.boostOpacity = 1;
             PlayerInstance.boostSpawnGhost = Vector2.Zero;
             PlayerInstance.shiftBoost = false;
@@ -804,7 +804,7 @@ namespace Galabingus
                     if (totalBoostTime >= boostFrameRate * 0.3333333f)
                     {
                         Ghost ghostBoost = new Ghost();
-                        ghostBoost.ghostColor = new Color(Color.DarkSlateBlue, 1.0f);
+                        ghostBoost.ghostColor = new Color(Color.SkyBlue, 1.0f);
                         ghostBoost.Position = Position + normVelocity * (float)Animation.EllapsedTime * new Vector2(speed.X, speed.Y).LengthSquared() * ((1 - boostSpeed) * -0.1f );
                         boostSpeed *= (float)Animation.EllapsedTime;
                         boostOpacity -= 0.0005f;
@@ -878,7 +878,7 @@ namespace Galabingus
                     WhiteSprite,                     // The sprite-sheet for the player
                     Position - new Vector2(Transform.Width,Transform.Height) * (boostScale * 0.1f + 0.0077637999f),    // The position for the player
                     Transform,                       // The scale and bounding box for the animation
-                    new Color(Color.Blue,1.0f),                     // The color for the palyer
+                    new Color(Color.SkyBlue, 1.0f),                     // The color for the palyer
                     0.0f,                            // There cannot be any rotation of the player
                     Vector2.Zero,                    // Starting render position
                     PlayerInstance.Scale * boostScale,                      // The scale of the sprite
