@@ -596,7 +596,7 @@ namespace Galabingus
                             velocity.X = 0.0f;
                             if (!currentKeyboardState.IsKeyDown(Keys.W) && !currentKeyboardState.IsKeyDown(Keys.S))
                             {
-                                velocity.Y = velocity.Y / 10.0f;
+                                //velocity.Y = velocity.Y / 10.0f;
                                 acceleration.Y = acceleration.Y / 10f;
                                 acceleration.X = acceleration.X / 10f;
                             }
@@ -670,7 +670,7 @@ namespace Galabingus
                             velocity.Y = 0.0f;
                             if (!currentKeyboardState.IsKeyDown(Keys.A) && !currentKeyboardState.IsKeyDown(Keys.D))
                             {
-                                velocity.X = velocity.X / 10.0f;
+                                //velocity.X = velocity.X / 10.0f;
                                 acceleration.X = acceleration.X / 10f;
                                 acceleration.Y = acceleration.Y / 10f;
                             }
