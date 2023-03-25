@@ -801,7 +801,7 @@ namespace Galabingus
                     if (totalBoostTime >= boostFrameRate * 0.3333333f)
                     {
                         Ghost ghostBoost = new Ghost();
-                        ghostBoost.ghostColor = new Color(new Color(3.5f * 0.1f, 3.5f * 0.1f, 3.5f * 0.1f), 1.0f);
+                        ghostBoost.ghostColor = new Color(new Color(1.5f * 0.1f, 1.5f * 0.1f, 1.5f * 0.1f), 1.0f);
                         ghostBoost.Position = Position + normVelocity * (float)Animation.EllapsedTime * new Vector2(speed.X, speed.Y).LengthSquared() * ((1 - boostSpeed) * -0.1f);
                         boostSpeed *= (float)Animation.EllapsedTime;
                         boostOpacity -= 0.05f;
