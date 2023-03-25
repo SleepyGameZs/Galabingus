@@ -46,7 +46,7 @@ namespace Galabingus
         #region Fields
 
         //the instance of the UIManager
-        private static UIManager instance = null;
+        private static UIManager instance;
 
         //the list of UIObjects it manages
         private Dictionary<UIObject, GameState> uiObjects;
@@ -76,6 +76,13 @@ namespace Galabingus
         //The list of tile values to be
         //returned by the LevelReader
         List<int[]> objectData;
+
+        //single menu display
+        bool singleUpdate;
+        Menu singleMenu;
+
+        //random to delete
+        Menu menu;
 
         #endregion
 
@@ -124,13 +131,20 @@ namespace Galabingus
             this.gr = gr;
             this.cm = cm;
             this.sb = sb;
+
+            //single menu stuff
+            singleUpdate = false;
+            singleMenu = null;
         }
 
         public void LoadContent()
         {
+            //random to delete
+            menu = new Menu("txt", cm, new Vector2(100, 100));
+
             //creates the list of UIObjects
             uiObjects.Add(
-                new Button("txt", cm, 100, 100, 1), GameState.Menu
+                new Button("txt", cm, new Vector2(100, 100), menu), GameState.Menu
             );
         }
 
@@ -159,22 +173,38 @@ namespace Galabingus
                             gs = GameState.Game;
                         }
                     }
-                    
+
+
 
                     break;
 
                 case GameState.Game:
 
-                    //DEBUG: if the shift button is pressed, change the state
-                    if (SingleKeyPress(Keys.LeftShift)
-                        || SingleKeyPress(Keys.RightShift))
+                    if (ds == DebugState.DebugOff)
                     {
-                        gs = GameState.Menu;
+
+                    }
+                    else
+                    {
+                        //DEBUG: if the shift button is pressed, change the state
+                        if (SingleKeyPress(Keys.LeftShift)
+                            || SingleKeyPress(Keys.RightShift))
+                        {
+                            gs = GameState.Menu;
+                        }
                     }
 
                     break;
 
+                case GameState.Pause:
+
+
+
+                    break;
+
             }
+
+            UpdateObjects(gs);
 
             previousKBS = currentKBS;
         }
@@ -187,6 +217,8 @@ namespace Galabingus
             {
 
             }
+
+            DrawObjects(gs);
 
             sb.End();
         }
@@ -256,6 +288,65 @@ namespace Galabingus
 
             //returns the list of desired values
             return returnList;
+        }
+
+        public void UpdateObjects(GameState gs)
+        {
+            foreach (KeyValuePair<UIObject, GameState> uiobject in uiObjects)
+            {
+                if (uiobject.Value == gs)
+                {
+                    if(uiobject.Key is Button)
+                    {
+                        Button button = (Button)uiobject.Key;
+                        button.Update();
+                    }
+                    else if (uiobject.Key is Menu)
+                    {
+                        Menu menu = (Menu)uiobject.Key;
+                        menu.Update();
+                    }
+                }
+            }
+        }
+
+        public void DrawObjects(GameState gs)
+        {
+            if(!singleUpdate)
+            {
+                foreach (KeyValuePair<UIObject, GameState> uiobject in uiObjects)
+                {
+                    if (uiobject.Value == gs)
+                    {
+                        if (uiobject.Key is Button)
+                        {
+                            Button button = (Button)uiobject.Key;
+                            button.Draw(sb);
+                        }
+                        else if (uiobject.Key is Menu)
+                        {
+                            Menu menu = (Menu)uiobject.Key;
+                            menu.Draw(sb);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                singleMenu.Draw(sb);
+            }
+            
+        }
+
+        public void UIEvent(Menu menu)
+        {
+            singleUpdate = true;
+            singleMenu = menu;
+        }
+
+        public void UIEvent(UIObject button, GameState game)
+        {
+
         }
 
         #endregion
