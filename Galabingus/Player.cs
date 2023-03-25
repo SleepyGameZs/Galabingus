@@ -276,7 +276,7 @@ namespace Galabingus
             PlayerInstance.shot = false;
             PlayerInstance.boost = false;
             PlayerInstance.boostSpeed = 1.625f;
-            PlayerInstance.boostFrameRate = 0.029166655f;
+            PlayerInstance.boostFrameRate = 0.0479166648f;
             PlayerInstance.boostOpacity = 1;
             PlayerInstance.boostSpawnGhost = Vector2.Zero;
             PlayerInstance.shiftBoost = false;
@@ -874,17 +874,19 @@ namespace Galabingus
                         0.0f                             // Layer depth of the player is 0.0
                     );
                 }
+                
                 GameObject.Instance.SpriteBatch.Draw(
                     WhiteSprite,                     // The sprite-sheet for the player
                     Position - new Vector2(Transform.Width,Transform.Height) * (boostScale * 0.1f + 0.0077637999f),    // The position for the player
                     Transform,                       // The scale and bounding box for the animation
-                    new Color(Color.SkyBlue, 1.0f),                     // The color for the palyer
+                    new Color(Color.SkyBlue * 0.5f, 0.05f),                     // The color for the palyer
                     0.0f,                            // There cannot be any rotation of the player
                     Vector2.Zero,                    // Starting render position
                     PlayerInstance.Scale * boostScale,                      // The scale of the sprite
                     SpriteEffects.None,              // Which direction the sprite faces
                     0.0f                             // Layer depth of the player is 0.0
                 );
+                
             }
 
             GameObject.Instance.SpriteBatch.Draw(
