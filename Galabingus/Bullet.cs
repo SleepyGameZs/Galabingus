@@ -380,13 +380,21 @@ namespace Galabingus
                     // Set Current Position
                     currentPosition = SetPosition(gameTime, 6);
 
-                    // Center position of the player
-                    float PlayerX = Player.PlayerInstance.Position.X +              // Base Position
-                                        Player.PlayerInstance.Sprite.Bounds.Center.X +  // Centering
-                                        Player.PlayerInstance.Velocity.X;               // Adds player velocity
+                    // X Position of the player
+                    float PlayerX = Player.PlayerInstance.Position.X;     // Base Position
+                    PlayerX = PlayerX + Player.PlayerInstance.Velocity.X; // Position shifted over by the player velocity, result: next player position to compare to
+
+                    // Each one of these allows us to shift the left by the center for comparison
+                    // This is the center coordinate of the player plus a one pixel buffer zone
+                    // Use this as the right bound or the furthest right the bullet can go
+                    float rightBound = (PlayerX + Player.PlayerInstance.Transform.Width * Player.PlayerInstance.Scale) + 1;
+
+                    // This is the furthest left coordinate of the player minus the center of the bullet
+                    // Use this as the left bound or the furthest left the bullet can go; it will never hit the player if further left than the width of the bullet
+                    float leftBound = (PlayerX + Player.PlayerInstance.Transform.Width * Player.PlayerInstance.Scale) - (Transform.Width * Scale * 0.5f);
 
                     // Split into 2 bullets
-                    if (currentPosition.X < PlayerX && currentPosition.X > PlayerX - 20)
+                    if (currentPosition.X < rightBound && currentPosition.X > leftBound)
                     {
                         // Fix positions
                         Vector2 topBullet = new Vector2(currentPosition.X - 50, currentPosition.Y);
@@ -399,7 +407,6 @@ namespace Galabingus
                         // Tell Bullet Manager to delete this bullet
                         destroy = true;
                     }
-
                     break;
 
                 case BulletType.SplitSmall:
