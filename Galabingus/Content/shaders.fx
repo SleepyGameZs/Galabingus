@@ -21,28 +21,20 @@ struct VertexShaderOutput
 	float2 TextureCoordinates : TEXCOORD0;
 };
 
+float3 normalizeSaturation(float4 color)
+{
+	return normalize(color) * 1.732050807568877293527446341505872366 * 0.5 + color * 0.5;
+}
+
 float4 MainPS(VertexShaderOutput input) : COLOR
 {
 	float4 color = tex2D(SpriteTextureSampler,input.TextureCoordinates) * input.Color;
 	if (color.a == 1)
 	{
-		float4 maxBright = normalize(color) * 2;//1.732050807568877293527446341505872366;
+		float3 maxBright = normalizeSaturation(color) * 1.0;
 		color.r = maxBright.r;
 		color.b = maxBright.b;
 		color.g = maxBright.g;
-	}
-	else
-	{
-		float tempA = color.a;
-		color.r = color.r;
-		color.g = color.g;
-		color.b = color.b;
-		//color.a = 1;
-		float4 maxBright = normalize(color) * 2;//1.732050807568877293527446341505872366;
-		//color.r = maxBright.r;// *tempA;
-		//color.b = maxBright.b;// *tempA;
-		//color.g = maxBright.g;// *tempA;
-		//color.a = tempA;
 	}
 	return color;
 }
