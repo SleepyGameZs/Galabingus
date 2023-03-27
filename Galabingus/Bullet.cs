@@ -500,7 +500,7 @@ namespace Galabingus
                 GameObject.Instance.SpriteBatch,
                 this.Scale,                          // Bullet scale
                 SpriteEffects.None,
-                contentName,                           // Collision Layer
+                (ushort)CollisionGroup.Bullet,                           // Collision Layer
                 bulletNumber
             );
 

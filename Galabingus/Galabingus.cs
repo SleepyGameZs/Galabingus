@@ -13,6 +13,15 @@ using static System.Formats.Asn1.AsnWriter;
 namespace Galabingus
 {
 
+    enum CollisionGroup
+    {
+        None,
+        Player,
+        Tile,
+        Bullet,
+        Enemy
+    }
+
     public class Galabingus : Game
     {
         private GraphicsDeviceManager _graphics;

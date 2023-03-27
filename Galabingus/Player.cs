@@ -372,14 +372,14 @@ namespace Galabingus
                 GameObject.Instance.SpriteBatch,
                 PlayerInstance.Scale,                          // Player scale
                 SpriteEffects.None,
-                contentName,                                   // Content
+                (ushort)CollisionGroup.Player,                                   // Content
                 0
             );
 
             //Vector2 previousVelocity;
             bool collides = false;
 
-            /*foreach (Collision collision in intercepts)
+            foreach (Collision collision in intercepts)
             {
                 if (collision.other != null && this.Collider.Resolved)
                 {
@@ -395,7 +395,7 @@ namespace Galabingus
                     velocity = Vector2.Zero;
                     collides = true;
                 }
-            }*/
+            }
 
             // Determine if idle or moving
             if (playerState == PlayerStates.Idle || playerState == PlayerStates.None)

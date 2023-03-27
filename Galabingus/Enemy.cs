@@ -345,7 +345,7 @@ namespace Galabingus
 
                 // Creates currect collider for Enemy
                 this.Transform = this.Animation.Play(gameTime);
-                List<Collision> intercepts = this.Collider.UpdateTransform(
+                List<Collision> intercepts = this.Collider.UpdateTransform/*<put type here>*/(
                     this.Sprite,                         // Enemy Sprite
                     this.Position,                       // Enemy position
                     this.Transform,                      // Enemy transform for sprite selection
@@ -353,7 +353,7 @@ namespace Galabingus
                     GameObject.Instance.SpriteBatch,
                     this.Scale,                          // Enemy scale
                     SpriteEffects.None,
-                    contentName,                         // Content
+                    (ushort)CollisionGroup.Enemy,        // Content on same collision layer won't coll
                     enemyNumber
                 );
                 

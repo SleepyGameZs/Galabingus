@@ -166,7 +166,7 @@ namespace Galabingus
                 //currentSpriteNumber = tilesList[i].SpriteNumber;
 
                 tilesList[i].Update(gameTime);
-                /*List<Collision> collisions = tilesList[i].Collider.UpdateTransform(
+                List<Collision> collisions = tilesList[i].Collider.UpdateTransform(
                     tilesList[i].Sprite,
                     tilesList[i].Position,
                     tilesList[i].Transform,
@@ -174,7 +174,7 @@ namespace Galabingus
                     GameObject.Instance.SpriteBatch,
                     tilesList[i].ScaleVector,
                     SpriteEffects.None,
-                    TileManager.Instance.LayerNumber,//GameObject.Instance.Content.tile_strip26,
+                    (ushort)CollisionGroup.Tile,//GameObject.Instance.Content.tile_strip26,
                     tilesList[i].InstanceNumber
                     );
 
@@ -182,14 +182,14 @@ namespace Galabingus
                 {
                     if (collision.other != null)
                     {
-                        if (collision.other.Index == Player.PlayerInstance.Index )
+                        if (collision.other.Index == Player.PlayerInstance.Index && )
                         {
                             Player.PlayerInstance.Position += collision.mtv;
                             Player.PlayerInstance.Collider.Resolved = true;
                         }
                     }
                 }
-                tilesList[i].Collider.Resolved = true;*/
+                tilesList[i].Collider.Resolved = true;
 
             }
 
