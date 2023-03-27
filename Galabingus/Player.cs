@@ -957,5 +957,14 @@ namespace Galabingus
             );
 
         }
+
+        public void DrawEffect()
+        {
+            GameObject.Instance.SpriteBatch.Draw(
+                Sprite,                          // The sprite-sheet for the player
+                Position,                        // The position for the player
+                Color.White                     // The color for the palyer
+            );
+        }
     }
 }
