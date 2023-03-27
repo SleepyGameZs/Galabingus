@@ -24,10 +24,13 @@ struct VertexShaderOutput
 float4 MainPS(VertexShaderOutput input) : COLOR
 {
 	float4 color = tex2D(SpriteTextureSampler,input.TextureCoordinates) * input.Color;
-	float4 maxBright = color * 1.732050807568877293527446341505872366;
-	color.r = maxBright.r;
-	color.b = maxBright.b;
-	color.g = maxBright.g;
+	float4 maxBright = normalize(color) * 1.732050807568877293527446341505872366;
+	if (color.a == 1)
+	{
+		color.r = maxBright.r;
+		color.b = maxBright.b;
+		color.g = maxBright.g;
+	}
 	return color;
 }
 
