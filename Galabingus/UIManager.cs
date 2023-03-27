@@ -19,12 +19,14 @@ namespace Galabingus
     /// </summary>
     public enum GameState
     {
-        NoState,
         Menu,
         Game,
         Pause
     }
 
+    /// <summary>
+    /// deterimines whether the program has debug features enabled
+    /// </summary>
     public enum DebugState
     {
         DebugOn,
@@ -42,6 +44,79 @@ namespace Galabingus
 
     #endregion
 
+    #region Structs
+
+    /// <summary>
+    /// holds the basic elements of a UI Object
+    /// </summary>
+    struct UIElement
+    {
+        //Fields
+
+        private UIObject element; //the object
+        private GameState gs; //its gamestate
+
+        //these represent any more complex events,
+
+        //the UIEvent class holds data which it needs to 
+        //execute those events and the method to do so
+        private UIEvent uiEvent;
+
+        //these are a list of the specfic methods which
+        //will be envoked by each function of the object
+        //(ex: click, hold, etc) of the element 
+        private List<EventType> type;
+
+        //Properties
+
+        /// <summary>
+        /// returns the game object (or element)
+        /// </summary>
+        public UIObject Element
+        {
+            get { return element; }
+        }
+
+        /// <summary>
+        /// returns the gameState the element exists in
+        /// </summary>
+        public GameState GS
+        {
+            get { return gs;}
+        }
+
+        //Constructor
+
+        /// <summary>
+        /// instantiates a member of the UIElement structure
+        /// </summary>
+        /// <param name="element">the game object</param>
+        /// <param name="gs">the gameState</param>
+        /// <param name="uiEvent">the event data</param>
+        /// <param name="type">the envokable events</param>
+        public UIElement(UIObject element, GameState gs, 
+            UIEvent uiEvent, List<EventType> type) 
+        {
+            this.element = element;
+            this.gs = gs;
+            this.uiEvent = uiEvent;
+            this.type = type;
+        }
+
+        //Methods
+
+        /// <summary>
+        /// runs a the UIEvent related to the specified index
+        /// </summary>
+        /// <param name="index">the index of the event to be invoked</param>
+        public void UIEvent(int index)
+        {
+            uiEvent.Event(element, gs, type[index]);
+        }
+    }
+
+    #endregion
+
     sealed class UIManager
     {
         #region Fields
@@ -50,7 +125,7 @@ namespace Galabingus
         private static UIManager instance = null;
 
         //the list of UIObjects it manages
-        private Dictionary<UIObject, GameState> uiObjects;
+        private List<UIElement> elements;
 
         //variable containing the current gamestate
         private GameState gs;
@@ -61,9 +136,6 @@ namespace Galabingus
         //create a current and previous keyboardstate variable
         private KeyboardState currentKBS;
         private KeyboardState previousKBS;
-
-        //the current state of the mouse
-        private MouseState mouseState;
 
         //the Game1 / Galabingus class' managers
         //for updating the game
@@ -77,10 +149,6 @@ namespace Galabingus
         //The list of tile values to be
         //returned by the LevelReader
         List<int[]> objectData;
-
-        //single menu display
-        bool singleUpdate;
-        Menu singleMenu;
 
         // Temporary Backgrounds
         private Texture2D tempBackground;
@@ -118,7 +186,8 @@ namespace Galabingus
         #region Constructor
 
         /// <summary>
-        /// 
+        /// creates the initial instance of the UIManager 
+        /// by instantiating its basic components
         /// </summary>
         private UIManager()
         {
@@ -130,14 +199,20 @@ namespace Galabingus
             gs = GameState.Menu;
             ds = DebugState.DebugOn;
 
-            //create the uiObject list
-            uiObjects = new Dictionary<UIObject, GameState>();
-        }
+            //create the elements list
+            elements = new List<UIElement>();
+    }
 
         #endregion
 
         #region Methods
 
+        /// <summary>
+        /// initializes the UIManager with data from the Game1(Galabingus) class
+        /// </summary>
+        /// <param name="gr">Game1's Graphics Device Manager (for editing the game window)</param>
+        /// <param name="cm">Game1's Content Manager (for loading)</param>
+        /// <param name="sb">Game1's Sprite Batch (for drawing)</param>
         public void Initialize(
             GraphicsDeviceManager gr,
             ContentManager cm,
@@ -147,22 +222,35 @@ namespace Galabingus
             this.gr = gr;
             this.cm = cm;
             this.sb = sb;
-
-            //single menu stuff
-            singleUpdate = false;
-            singleMenu = null;
         }
 
+        /// <summary>
+        /// loads all of the necesary content for the game and creates the
+        /// data structures needed for the UI to function correctly
+        /// </summary>
         public void LoadContent()
         {
-            //creates the list of UIObjects
-            uiObjects.Add(
-                new Button(
-                    "playbutton_strip1", cm, 
-                    new Vector2(
-                        GameObject.Instance.GraphicsDevice.Viewport.Width / 2,
-                        GameObject.Instance.GraphicsDevice.Viewport.Height / 2), 
-                    GameState.Game), GameState.Menu
+            //a dictionary to store all of the values for each button
+            Dictionary<string, Vector2> buttonData = new Dictionary<string, Vector2>();
+
+            //every button being added to the dictionary (side comments are indices)
+            buttonData.Add("playbutton_strip1", new Vector2(1280/2, 720/2)); //0
+
+            //a dictionary to store all of the values for each menu
+            Dictionary<string, Vector2> menuData = new Dictionary<string, Vector2>();
+
+            //every menu being added to the dictionary (side comments are indices)
+
+            //lists of all of the UIObjects in the program
+            List<Button> buttons = CreateButtons(buttonData);
+            List<Menu> menus = CreateMenus(menuData);
+
+            //creates the play button
+            AddElement(
+                buttons[0], 
+                GameState.Menu, 
+                new UIEvent(GameState.Game),
+                new List<EventType>() { EventType.StartGame }
             );
 
             //loads temp background
@@ -170,22 +258,24 @@ namespace Galabingus
             menuBackground = cm.Load<Texture2D>("menubackground_strip1");
         }
 
+        /// <summary>
+        /// updates the UI everyframe
+        /// </summary>
+        /// <param name="gameTime">the game's timer</param>
         public void Update(GameTime gameTime)
         {
             //set the keyboardstate
             currentKBS = Keyboard.GetState();
 
+            //update all of the UIObjects (we do so first because this can change the state)
             UpdateObjects(gs);
 
+            //finite state machine for the UI to update the UI based on user input
             switch (gs)
             {
                 case GameState.Menu:
 
-                    if (ds == DebugState.DebugOff)
-                    {
-
-                    }
-                    else
+                    if (ds != DebugState.DebugOff)
                     {
                         //if the shift button is pressed, change the state
                         if (SingleKeyPress(Keys.LeftShift)
@@ -199,11 +289,7 @@ namespace Galabingus
 
                 case GameState.Game:
 
-                    if (ds == DebugState.DebugOff)
-                    {
-
-                    }
-                    else
+                    if (ds != DebugState.DebugOff)
                     {
                         //if the shift button is pressed, change the state
                         if (SingleKeyPress(Keys.LeftShift)
@@ -213,21 +299,34 @@ namespace Galabingus
                         }
                     }
 
+                    if (SingleKeyPress(Keys.Tab))
+                    {
+                        gs = GameState.Pause;
+                    }
+
                     break;
 
                 case GameState.Pause:
 
-
+                    if (SingleKeyPress(Keys.Tab))
+                    {
+                        gs = GameState.Game;
+                    }
 
                     break;
 
             }
 
+            //set the previous KeyboardState to the current one for next frame
             previousKBS = currentKBS;
         }
 
+        /// <summary>
+        /// draws UI elements to the screen
+        /// </summary>
         public void Draw()
         {
+            //finite state machine for determining what to draw this frame
             switch (gs)
             {
                 case GameState.Menu:
@@ -241,6 +340,8 @@ namespace Galabingus
                             menuBackground.Width,
                             menuBackground.Height),
                         Color.White);
+
+                    
 
                     break;
 
@@ -265,6 +366,7 @@ namespace Galabingus
 
             }
 
+            //then draw the UI elements to the screen (second because they need to be drawn over the other stuff)
             DrawObjects(gs);
         }
 
@@ -335,61 +437,146 @@ namespace Galabingus
             return returnList;
         }
 
+        /// <summary>
+        /// updates all of the objects within the list of UIElements
+        /// </summary>
+        /// <param name="gs">the current gameState</param>
         public void UpdateObjects(GameState gs)
         {
-            foreach (KeyValuePair<UIObject, GameState> uiobject in uiObjects)
+            foreach (UIElement element in elements)
             {
-                if (uiobject.Value == gs)
+                //if the element is located within the current gameState
+                if (element.GS == gs)
                 {
-                    if(uiobject.Key is Button)
+                    //casting the object down to its original form
+                    if(element.Element is Button)
                     {
-                        Button button = (Button)uiobject.Key;
-                        button.Update();
+                        Button button = (Button)element.Element;
+
+                        //run the update of the button and store what event it returns
+                        int currentEvent = button.Update();
+
+                        //run the event it returns
+                        element.UIEvent(currentEvent);
                     }
-                    else if (uiobject.Key is Menu)
+                    else if (element.Element is Menu)
                     {
-                        Menu menu = (Menu)uiobject.Key;
-                        menu.Update();
+                        Menu menu = (Menu)element.Element;
+
+                        //run the update of the menu and store what event it returns
+                        int currentEvent = menu.Update();
+
+                        //run the event it returns
+                        element.UIEvent(currentEvent);
                     }
                 }
             }
         }
 
+        /// <summary>
+        /// draw every object in the current game state to the screen
+        /// </summary>
+        /// <param name="gs">the current gameState</param>
         public void DrawObjects(GameState gs)
         {
-            if(!singleUpdate)
+            foreach (UIElement element in elements)
             {
-                foreach (KeyValuePair<UIObject, GameState> uiobject in uiObjects)
+                //if the current element is in the current gameState
+                if (element.GS == gs)
                 {
-                    if (uiobject.Value == gs)
+                    //cast it down to its original form
+                    if (element.Element is Button)
                     {
-                        if (uiobject.Key is Button)
-                        {
-                            Button button = (Button)uiobject.Key;
-                            button.Draw(sb);
-                        }
-                        else if (uiobject.Key is Menu)
-                        {
-                            Menu menu = (Menu)uiobject.Key;
-                            menu.Draw(sb);
-                        }
+                        Button button = (Button)element.Element;
+
+                        //and draw it
+                        button.Draw(sb);
+                    }
+                    else if (element.Element is Menu)
+                    {
+                        Menu menu = (Menu)element.Element;
+
+                        //and draw it
+                        menu.Draw(sb);
                     }
                 }
-            }
-            else
-            {
-                singleMenu.Draw(sb);
             }
             
         }
 
-        public void UIEvent(Menu menu)
+        /// <summary>
+        /// create a list of buttons based on file data and a vector2
+        /// </summary>
+        /// <param name="buttonData">a dict containing a string filename and a vector2 position</param>
+        /// <returns>a list of buttons</returns>
+        public List<Button> CreateButtons(Dictionary<string, Vector2> buttonData)
         {
-            singleUpdate = true;
-            singleMenu = menu;
+            //create a new list of buttons for returning
+            List<Button> buttons = new List<Button>();
+
+            //foreach KeyValuePair, load the texture and add the button to the list
+            foreach(KeyValuePair<string, Vector2> button in buttonData)
+            {
+                Texture2D texture = cm.Load<Texture2D>(button.Key);
+
+                buttons.Add(
+                    new Button(
+                        texture,
+                        button.Value
+                    )
+                );
+            }
+
+            return buttons;
         }
 
-        public void UIEvent(GameState gameState)
+        /// <summary>
+        /// create a list of menus from a dictionary
+        /// </summary>
+        /// <param name="menuData">a dictionary containing a string filename and a vextor2 position</param>
+        /// <returns>a list of menu</returns>
+        public List<Menu> CreateMenus(Dictionary<string, Vector2> menuData)
+        {
+            //create a new list of menus for returning
+            List<Menu> menus = new List<Menu>();
+
+            //for each KeyValuePair load the texture and add the menu to the list
+            foreach (KeyValuePair<string, Vector2> menu in menuData)
+            {
+                Texture2D texture = cm.Load<Texture2D>(menu.Key);
+
+                menus.Add(
+                    new Menu(
+                        texture,
+                        menu.Value
+                    )
+                );
+            }
+            return menus;
+        }
+
+        /// <summary>
+        /// creates a UIElement and adds it to the list elements
+        /// </summary>
+        /// <param name="uiObject">the ui object / element</param>
+        /// <param name="gs">the gamestate the element exists in</param>
+        /// <param name="uiEvent">the data which it needs for its events</param>
+        /// <param name="types">the event types it can call</param>
+        public void AddElement
+            (UIObject uiObject, GameState gs, UIEvent uiEvent, List<EventType> types)
+        {
+            //insert the default event at the from of the list (thus return 0 is always no event)
+            types.Insert(0, default(EventType));
+
+            //add the new UIElement to the list
+            elements.Add(new UIElement(uiObject, gs, uiEvent, types));
+        }
+
+        /// <summary>
+        /// changes the UIManagers gameState
+        /// </summary>
+        /// <param name="gameState">the gameState to change to</param>
+        public void ChangeState(GameState gameState)
         {
             gs = gameState;
         }

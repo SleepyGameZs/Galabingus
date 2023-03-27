@@ -217,6 +217,12 @@
 /processorParam:TextureFormat=Color
 /build:player_white_strip5.png
 
+#begin shaders.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:shaders.fx
+
 #begin smallbullet_strip4.png
 /importer:TextureImporter
 /processor:TextureProcessor

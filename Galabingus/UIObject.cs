@@ -14,25 +14,34 @@ namespace Galabingus
     {
         #region Fields
 
-        protected ContentManager cm;
-        protected Texture2D uiTexture;
-        protected Rectangle uiPosition;
-        protected Color clearColor;
+        protected Texture2D uiTexture; //its texture
+        protected Rectangle uiPosition; //its position rect
+        protected Color clearColor; //its tint
 
         #endregion
 
         #region Constructor
-        public UIObject(string filename, ContentManager cm, Vector2 position, int scale)
-        {
-            uiTexture = cm.Load<Texture2D>(filename);
 
+        /// <summary>
+        /// creates a basic UIObject
+        /// </summary>
+        /// <param name="uiTexture">the objects texture</param>
+        /// <param name="position">the objects position</param>
+        /// <param name="scale">the size it needs to be scaled to</param>
+        public UIObject(Texture2D uiTexture, Vector2 position, int scale)
+        {
+            //sets the texture to this classes texture
+            this.uiTexture = uiTexture;
+
+            //sets the length and width of the object
             int length = (uiTexture.Width / scale);
             int width = (uiTexture.Height / scale);
 
+            //creates its position rectangle
             uiPosition =
                 new Rectangle(
-                    ((int)position.X) - (length/2),
-                    ((int)position.Y) - (width/2),
+                    ((int)position.X) - (length / 2),
+                    ((int)position.Y) - (width / 2),
                     length,
                     width
                 );
@@ -41,7 +50,7 @@ namespace Galabingus
 
         #region Methods
 
-        public abstract void Update();
+        public abstract int Update();
 
         public abstract void Draw(SpriteBatch sb);
         #endregion

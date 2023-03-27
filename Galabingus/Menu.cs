@@ -18,19 +18,25 @@ namespace Galabingus
 
         #endregion
 
-        public Menu(string filename, ContentManager cm, Vector2 position)
-            : base(filename, cm, position, 5)
+        #region Constructor
+        public Menu(Texture2D texture, Vector2 position)
+            : base(texture, position, 5)
         {
             visible = false;
         }
+        #endregion
 
         #region Methods
 
-        public override void Update()
+        public override int Update()
         {
             if(UIManager.Instance.SingleKeyPress(Keys.Back))
             {
-                visible = false;
+                return 1;
+            }
+            else
+            {
+                return 0;
             }
         }
 

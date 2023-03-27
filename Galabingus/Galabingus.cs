@@ -2,6 +2,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
+using System.Diagnostics;
+using static System.Formats.Asn1.AsnWriter;
 
 // Wabungus Corpsungus Duplicatungus
 // 2023, 3, 13
@@ -28,6 +30,9 @@ namespace Galabingus
 
         // Player GameObject
         private Player player;
+
+        // Shaders
+        private Effect shaders;
 
         private BulletManager mng_bullet;
         private EnemyManager mng_enemy;
@@ -108,6 +113,8 @@ namespace Galabingus
 
             // Load the temporary background
             tempBackground = Content.Load<Texture2D>("spacebackground_strip1");
+
+            shaders = Content.Load<Effect>("shaders");
         }
 
         protected override void Update(GameTime gameTime)
@@ -122,20 +129,23 @@ namespace Galabingus
             //update the game state
             //userInterface.Update();
 
-            // Update the player
-            player.Update(gameTime);
+            if (!(userInterface.GS == GameState.Pause))
+            {
+                // Update the player
+                player.Update(gameTime);
 
-            // Update the enemies
-            mng_enemy.Update(gameTime);
+                // Update the enemies
+                mng_enemy.Update(gameTime);
 
-            // Update the bullets
-            mng_bullet.Update(gameTime);
+                // Update the bullets
+                mng_bullet.Update(gameTime);
 
-            // Update the Camera
-            camera.Update(gameTime);
+                // Update the Camera
+                camera.Update(gameTime);
 
-            tileManager.Update(gameTime);
-
+                tileManager.Update(gameTime);
+            }
+        
             base.Update(gameTime);
         }
 
@@ -143,14 +153,14 @@ namespace Galabingus
         {
             // Change the clear color to transparent and use point rendering for pixel art
             //GraphicsDevice.Clear(userInterface.ClearColor);
-            _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap);
+            _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, effect: shaders);
 
             //draw the screen
             userInterface.Draw();
-            
+
             if (!(userInterface.GS == GameState.Menu))
             {
-                
+
                 //draw the background using the temporary background texture
                 /*_spriteBatch.Draw(
                     tempBackground,
@@ -189,6 +199,7 @@ namespace Galabingus
                     tileManager.Draw();
                 }
             }
+
 
             // End the SpriteBatch draw
             _spriteBatch.End();
