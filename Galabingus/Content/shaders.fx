@@ -37,12 +37,12 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 		color.r = color.r;
 		color.g = color.g;
 		color.b = color.b;
-		color.a = 1;
+		//color.a = 1;
 		float4 maxBright = normalize(color) * 2;//1.732050807568877293527446341505872366;
-		color.r = maxBright.r;// *tempA;
-		color.b = maxBright.b;// *tempA;
-		color.g = maxBright.g;// *tempA;
-		color.a = tempA;
+		//color.r = maxBright.r;// *tempA;
+		//color.b = maxBright.b;// *tempA;
+		//color.g = maxBright.g;// *tempA;
+		//color.a = tempA;
 	}
 	return color;
 }
