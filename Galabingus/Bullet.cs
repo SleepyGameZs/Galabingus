@@ -58,6 +58,9 @@ namespace Galabingus
         // Number into game object index to look for items
         private ushort bulletNumber;
 
+        // Reference to the object that created the bullet
+        private object creatorReference;
+
         #endregion 
 
         #region-------------------[ Properties ]-------------------
@@ -67,7 +70,13 @@ namespace Galabingus
         /// </summary>
         public bool Destroy
         {
-            get { return destroy; }
+            get { 
+                return destroy; 
+            }
+            set
+            {
+                destroy = value;
+            }
         }
 
         /// <summary>
@@ -208,6 +217,17 @@ namespace Galabingus
             }
         }
 
+        /// <summary>
+        /// The object which created this bullet.
+        /// </summary>
+        public object Creator
+        {
+            get
+            {
+                return creatorReference;
+            }
+        }
+
         #endregion
 
         #region-------------------[ Constructor ]-------------------
@@ -219,6 +239,7 @@ namespace Galabingus
         /// <param name="position">The position to spawn the bullet at</param>
         /// <param name="angle">The angle the bullet should move at</param>
         /// <param name="direction">The direction of the bullet, mainly for visuals</param>
+        /// <param name="creator">Reference to the object who created the bullet</param>
         /// <param name="contentName">Name to use for GameObject storage</param>
         /// <param name="bulletNumber">Number to give bullet in GameObject list</param>
         public Bullet (
@@ -226,6 +247,7 @@ namespace Galabingus
             Vector2 position,
             int angle,
             int direction,
+            object creator,
             ushort contentName,
             ushort bulletNumber
         ) : base(contentName, bulletNumber)
@@ -234,6 +256,7 @@ namespace Galabingus
             this.contentName = contentName;
             this.bulletNumber = bulletNumber;
 
+            // Establish bullet color and link to game object correct image
             switch (ability)
             {
                 case BulletType.Normal:
@@ -276,6 +299,9 @@ namespace Galabingus
                     GameObject.Instance.Content = GameObject.Instance.Content.smallbullet_strip4;
                     break;
             }
+
+            // Set the owner reference
+            creatorReference = creator;
 
             // Set bullet state & timer
             this.ability = ability;
@@ -332,7 +358,7 @@ namespace Galabingus
             {
                 case BulletType.Normal:
                     // Set Current Position
-                    currentPosition = SetPosition(gameTime, 8);
+                    currentPosition = SetPosition(gameTime, 16);
                     break;
 
                 case BulletType.Bouncing:
@@ -401,8 +427,8 @@ namespace Galabingus
                         Vector2 bottomBullet = new Vector2(currentPosition.X - 30, currentPosition.Y);
 
                         // Create Bullets
-                        BulletManager.Instance.CreateBullet(BulletType.SplitSmall, topBullet, 90, direction);
-                        BulletManager.Instance.CreateBullet(BulletType.SplitSmall, bottomBullet, -90, direction);
+                        BulletManager.Instance.CreateBullet(BulletType.SplitSmall, topBullet, 90, direction, creatorReference);
+                        BulletManager.Instance.CreateBullet(BulletType.SplitSmall, bottomBullet, -90, direction, creatorReference);
 
                         // Tell Bullet Manager to delete this bullet
                         destroy = true;
@@ -464,8 +490,24 @@ namespace Galabingus
             // Increment State Timer
             stateTimer++;
 
-            // Manage Animation
+            // Creates currect collider for Enemy
             this.Transform = this.Animation.Play(gameTime);
+            this.Collider.UpdateTransform(
+                this.Sprite,                         // Bullet Sprite
+                this.Position,                       // Bullet position
+                this.Transform,                      // Bullet transform for sprite selection
+                GameObject.Instance.GraphicsDevice,
+                GameObject.Instance.SpriteBatch,
+                this.Scale,                          // Bullet scale
+                SpriteEffects.None,
+                contentName,                           // Collision Layer
+                bulletNumber
+            );
+
+            if (contentName == Player.PlayerInstance.ContentName)
+            {
+                Debug.WriteLine("!!!");
+            }
 
             // Check if off screen
             bool bol_bulletOffScreen = this.Position.X < 0 &&

@@ -765,7 +765,6 @@ namespace Galabingus
             mtv.X = ocx - x;
             mtv.Y = ocy - y;
 
-
             if (Math.Abs(overlap.Y) > Math.Abs(overlap.X))
             {
                 mtv.Y = 0;
