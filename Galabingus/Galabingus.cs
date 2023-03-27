@@ -122,20 +122,23 @@ namespace Galabingus
             //update the game state
             //userInterface.Update();
 
-            // Update the player
-            player.Update(gameTime);
+            if (!(userInterface.GS == GameState.Pause))
+            {
+                // Update the player
+                player.Update(gameTime);
 
-            // Update the enemies
-            mng_enemy.Update(gameTime);
+                // Update the enemies
+                mng_enemy.Update(gameTime);
 
-            // Update the bullets
-            mng_bullet.Update(gameTime);
+                // Update the bullets
+                mng_bullet.Update(gameTime);
 
-            // Update the Camera
-            camera.Update(gameTime);
+                // Update the Camera
+                camera.Update(gameTime);
 
-            tileManager.Update(gameTime);
-
+                tileManager.Update(gameTime);
+            }
+        
             base.Update(gameTime);
         }
 

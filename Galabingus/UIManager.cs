@@ -42,6 +42,50 @@ namespace Galabingus
 
     #endregion
 
+    #region Structs
+
+    struct UIElement
+    {
+        //Fields
+
+        private UIObject element;
+        private GameState gs;
+        private UIEvent uiEvent;
+        private List<EventType> type;
+
+        //Properties
+
+        public UIObject Element
+        {
+            get { return element; }
+        }
+
+        public GameState GS
+        {
+            get { return gs;}
+        }
+
+        //Constructor
+
+        public UIElement(UIObject element, GameState gs, 
+            UIEvent uiEvent, List<EventType> type) 
+        {
+            this.element = element;
+            this.gs = gs;
+            this.uiEvent = uiEvent;
+            this.type = type;
+        }
+
+        //Methods
+
+        public void UIEvent(int index)
+        {
+            uiEvent.Event(element, gs, type[index]);
+        }
+    }
+
+    #endregion
+
     sealed class UIManager
     {
         #region Fields
@@ -50,7 +94,7 @@ namespace Galabingus
         private static UIManager instance = null;
 
         //the list of UIObjects it manages
-        private Dictionary<UIObject, GameState> uiObjects;
+        private List<UIElement> elements;
 
         //variable containing the current gamestate
         private GameState gs;
@@ -77,10 +121,6 @@ namespace Galabingus
         //The list of tile values to be
         //returned by the LevelReader
         List<int[]> objectData;
-
-        //single menu display
-        bool singleUpdate;
-        Menu singleMenu;
 
         // Temporary Backgrounds
         private Texture2D tempBackground;
@@ -130,9 +170,9 @@ namespace Galabingus
             gs = GameState.Menu;
             ds = DebugState.DebugOn;
 
-            //create the uiObject list
-            uiObjects = new Dictionary<UIObject, GameState>();
-        }
+            //create the elements list
+            elements = new List<UIElement>();
+    }
 
         #endregion
 
@@ -147,22 +187,31 @@ namespace Galabingus
             this.gr = gr;
             this.cm = cm;
             this.sb = sb;
-
-            //single menu stuff
-            singleUpdate = false;
-            singleMenu = null;
         }
 
         public void LoadContent()
         {
-            //creates the list of UIObjects
-            uiObjects.Add(
-                new Button(
-                    "playbutton_strip1", cm, 
-                    new Vector2(
-                        GameObject.Instance.GraphicsDevice.Viewport.Width / 2,
-                        GameObject.Instance.GraphicsDevice.Viewport.Height / 2), 
-                    GameState.Game), GameState.Menu
+            //a dictionary to store all of the values for each button
+            Dictionary<string, Vector2> buttonData = new Dictionary<string, Vector2>();
+
+            //every button being added to the dictionary (side comments are indices)
+            buttonData.Add("playbutton_strip1", new Vector2(1280/2, 720/2)); //0
+
+            //a dictionary to store all of the values for each menu
+            Dictionary<string, Vector2> menuData = new Dictionary<string, Vector2>();
+
+            //every menu being added to the dictionary (side comments are indices)
+
+            //lists of all of the UIObjects in the program
+            List<Button> buttons = CreateButtons(buttonData);
+            List<Menu> menus = CreateMenus(menuData);
+
+            //creates the play button
+            AddElement(
+                buttons[0], 
+                GameState.Menu, 
+                new UIEvent(GameState.Game),
+                new List<EventType>() { EventType.StartGame }
             );
 
             //loads temp background
@@ -181,11 +230,7 @@ namespace Galabingus
             {
                 case GameState.Menu:
 
-                    if (ds == DebugState.DebugOff)
-                    {
-
-                    }
-                    else
+                    if (ds != DebugState.DebugOff)
                     {
                         //if the shift button is pressed, change the state
                         if (SingleKeyPress(Keys.LeftShift)
@@ -199,11 +244,7 @@ namespace Galabingus
 
                 case GameState.Game:
 
-                    if (ds == DebugState.DebugOff)
-                    {
-
-                    }
-                    else
+                    if (ds != DebugState.DebugOff)
                     {
                         //if the shift button is pressed, change the state
                         if (SingleKeyPress(Keys.LeftShift)
@@ -213,11 +254,19 @@ namespace Galabingus
                         }
                     }
 
+                    if (SingleKeyPress(Keys.Tab))
+                    {
+                        gs = GameState.Pause;
+                    }
+
                     break;
 
                 case GameState.Pause:
 
-
+                    if (SingleKeyPress(Keys.Tab))
+                    {
+                        gs = GameState.Game;
+                    }
 
                     break;
 
@@ -228,6 +277,7 @@ namespace Galabingus
 
         public void Draw()
         {
+            
             switch (gs)
             {
                 case GameState.Menu:
@@ -241,6 +291,8 @@ namespace Galabingus
                             menuBackground.Width,
                             menuBackground.Height),
                         Color.White);
+
+                    
 
                     break;
 
@@ -337,19 +389,23 @@ namespace Galabingus
 
         public void UpdateObjects(GameState gs)
         {
-            foreach (KeyValuePair<UIObject, GameState> uiobject in uiObjects)
+            foreach (UIElement element in elements)
             {
-                if (uiobject.Value == gs)
+                if (element.GS == gs)
                 {
-                    if(uiobject.Key is Button)
+                    if(element.Element is Button)
                     {
-                        Button button = (Button)uiobject.Key;
-                        button.Update();
+                        Button button = (Button)element.Element;
+                        int currentEvent = button.Update();
+
+                        element.UIEvent(currentEvent);
                     }
-                    else if (uiobject.Key is Menu)
+                    else if (element.Element is Menu)
                     {
-                        Menu menu = (Menu)uiobject.Key;
-                        menu.Update();
+                        Menu menu = (Menu)element.Element;
+                        int currentEvent = menu.Update();
+
+                        element.UIEvent(currentEvent);
                     }
                 }
             }
@@ -357,39 +413,71 @@ namespace Galabingus
 
         public void DrawObjects(GameState gs)
         {
-            if(!singleUpdate)
+            foreach (UIElement element in elements)
             {
-                foreach (KeyValuePair<UIObject, GameState> uiobject in uiObjects)
+                if (element.GS == gs)
                 {
-                    if (uiobject.Value == gs)
+                    if (element.Element is Button)
                     {
-                        if (uiobject.Key is Button)
-                        {
-                            Button button = (Button)uiobject.Key;
-                            button.Draw(sb);
-                        }
-                        else if (uiobject.Key is Menu)
-                        {
-                            Menu menu = (Menu)uiobject.Key;
-                            menu.Draw(sb);
-                        }
+                        Button button = (Button)element.Element;
+                        button.Draw(sb);
+                    }
+                    else if (element.Element is Menu)
+                    {
+                        Menu menu = (Menu)element.Element;
+                        menu.Draw(sb);
                     }
                 }
-            }
-            else
-            {
-                singleMenu.Draw(sb);
             }
             
         }
 
-        public void UIEvent(Menu menu)
+        public List<Button> CreateButtons(Dictionary<string, Vector2> buttonData)
         {
-            singleUpdate = true;
-            singleMenu = menu;
+            List<Button> buttons = new List<Button>();
+
+            foreach(KeyValuePair<string, Vector2> button in buttonData)
+            {
+                Texture2D texture = cm.Load<Texture2D>(button.Key);
+
+                buttons.Add(
+                    new Button(
+                        texture,
+                        button.Value
+                    )
+                );
+            }
+
+            return buttons;
         }
 
-        public void UIEvent(GameState gameState)
+        public List<Menu> CreateMenus(Dictionary<string, Vector2> menuData)
+        {
+            List<Menu> menus = new List<Menu>();
+
+            foreach (KeyValuePair<string, Vector2> menu in menuData)
+            {
+                Texture2D texture = cm.Load<Texture2D>(menu.Key);
+
+                menus.Add(
+                    new Menu(
+                        texture,
+                        menu.Value
+                    )
+                );
+            }
+            return menus;
+        }
+
+        public void AddElement
+            (UIObject uiObject, GameState gs, UIEvent uiEvent, List<EventType> types)
+        {
+            types.Insert(0, default(EventType));
+
+            elements.Add(new UIElement(uiObject, gs, uiEvent, types));
+        }
+
+        public void ChangeState(GameState gameState)
         {
             gs = gameState;
         }

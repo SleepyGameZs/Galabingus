@@ -29,26 +29,14 @@ namespace Galabingus
         #region Constructor
 
         public Button
-            (string filename, ContentManager cm, Vector2 position, Menu menu) 
-            : base(filename, cm, position, 6)
-        {
-            this.menu = menu;
-            returnState = default(GameState);
-        }
-
-        public Button
-            (string filename, ContentManager cm, Vector2 position, GameState returnState)
-            : base(filename, cm, position, 5)
-        {
-            this.returnState = returnState;
-            menu = null;
-        }
+            (Texture2D texture, Vector2 position)
+            : base(texture, position, 5) { }
 
         #endregion
 
         #region Methods
 
-        public override void Update()
+        public override int Update()
         {
             mouseState = Mouse.GetState();
 
@@ -56,28 +44,19 @@ namespace Galabingus
             {
                 if(mouseState.LeftButton == ButtonState.Pressed)
                 {
-                    if (menu != null)
-                    {
-                        UIManager.Instance.UIEvent(menu);
-                    }
-                    else if (returnState != default(GameState))
-                    {
-                        UIManager.Instance.UIEvent(returnState);
-                    }
-                    else
-                    {
-                        throw new Exception("Button Update Issue");
-                    }
-                    
+                    return 1;
+
                 }
                 else
                 {
                     clearColor = Color.LightGray;
+                    return 0;
                 }
             }
             else
             {
                 clearColor = Color.White;
+                return 0;
             }
         }
 
