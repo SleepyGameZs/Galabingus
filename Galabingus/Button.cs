@@ -28,6 +28,11 @@ namespace Galabingus
 
         #region Constructor
 
+        /// <summary>
+        /// instantiates a basic button
+        /// </summary>
+        /// <param name="texture">its texure</param>
+        /// <param name="position">its position rectangle</param>
         public Button
             (Texture2D texture, Vector2 position)
             : base(texture, position, 5) { }
