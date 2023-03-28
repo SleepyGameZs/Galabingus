@@ -505,11 +505,6 @@ namespace Galabingus
                 bulletNumber
             );
 
-            if (contentName == Player.PlayerInstance.ContentName)
-            {
-                Debug.WriteLine("!!!");
-            }
-
             // Check if off screen
             bool bol_bulletOffScreen = this.Position.X < 0 &&
                                        this.Position.X > BulletManager.Instance.ScreenDimensions.X;
@@ -529,6 +524,11 @@ namespace Galabingus
                         // TODO: Write Player damage stuff here
                     }
                 }
+            }
+
+            if (destroy) 
+            {
+                Delete(bulletNumber);
             }
         }
 

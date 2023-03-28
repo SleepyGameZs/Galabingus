@@ -361,7 +361,7 @@ namespace Galabingus
                         //Debug.WriteLine((collision.other as GameObject).GameObjectType == typeof(Tile));
                         if ((collision.other as Bullet) is Bullet)
                         { // Collided with a Bullet
-                            Debug.WriteLine("eee");
+                            //Debug.WriteLine("eee");
                             Bullet hitBullet = (Bullet)collision.other;
 
                             if (hitBullet.Creator is Player)

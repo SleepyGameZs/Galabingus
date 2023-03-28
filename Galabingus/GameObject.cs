@@ -85,7 +85,6 @@ namespace Galabingus
 
         public struct GameObjectTrie<T>
         {
-
             public object GetPass(ushort layer1Find, ushort layer3Pass)
             {
                 switch (layer1Find)
@@ -651,6 +650,52 @@ namespace Galabingus
         public ushort ColliderLayer4Instance(ushort instanceNumber)
         {
             return GameObjectTrie<Collider>.GetLayer4Instance(colliderConst, instanceNumber, colliders);
+        }
+
+        public void Delete(ushort instanceNumber)
+        {
+            (spritesI).SetPass(spritesConst, instanceNumber, default(Texture2D));
+            (scalesI).SetPass(scalesConst, instanceNumber, default(float));
+            (objectEnumsI).SetPass(objectEnumsConst, instanceNumber, default(string));
+            (animationsI).SetPass(animationConst, instanceNumber, default(Animation));
+            (collidersI).SetPass(colliderConst, instanceNumber, default(Collider));
+            (transformsI).SetPass(transformConst, instanceNumber, default(Rectangle));
+            (positionsI).SetPass(positionConst, instanceNumber, default(Vector2));
+        }
+
+        public void DeleteCollider(ushort instanceNumber)
+        {
+            (collidersI).SetPass(colliderConst, instanceNumber, default(Collider));
+        }
+
+        public void DeleteSprite(ushort instanceNumber)
+        {
+            (spritesI).SetPass(spritesConst, instanceNumber, default(Texture2D));
+        }
+
+        public void DeleteScale(ushort instanceNumber)
+        {
+            (scalesI).SetPass(scalesConst, instanceNumber, default(float));
+        }
+
+        public void DeleteEnum(ushort instanceNumber)
+        {
+            (objectEnumsI).SetPass(objectEnumsConst, instanceNumber, default(string));
+        }
+
+        public void DeleteAnimation(ushort instanceNumber)
+        {
+            (animationsI).SetPass(animationConst, instanceNumber, default(Animation));
+        }
+
+        public void DeleteTransform(ushort instanceNumber)
+        {
+            (transformsI).SetPass(transformConst, instanceNumber, default(Rectangle));
+        }
+
+        public void DeletePosition(ushort instanceNumber)
+        {
+            (positionsI).SetPass(positionConst, instanceNumber, default(Vector2));
         }
 
         /// <summary>

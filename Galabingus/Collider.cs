@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Xml.Linq;
 
 // Matthew Rodriguez
 // 2023, 3, 13
@@ -358,7 +360,7 @@ namespace Galabingus
             //
             // Determine the bounds of the collider
             this.position = position;
-            
+
             if (position.X - transform.Width * scale > GameObject.Instance.GraphicsDevice.Viewport.Width ||
                 position.X + transform.Width * scale < 0 ||
                 position.Y - transform.Height * scale > GameObject.Instance.GraphicsDevice.Viewport.Height ||
@@ -379,7 +381,7 @@ namespace Galabingus
                 for (ushort colliderIndex = 0; colliderIndex < collidersR.Count; colliderIndex++)
                 {
                     // Determine if the colldier exist as a instance of this content
-                    if (layer4 != colliderIndex)
+                    if (layer4 != colliderIndex && collidersR[colliderIndex] != null)
                     {
                         // When the bounds are intercepting and the layer isn't the same and all collisions have been resolved
                         // Then we can activate the collider
@@ -429,6 +431,7 @@ namespace Galabingus
 
                             // Update the transform with the new scale and sprite
                             this.sprite = scaledSprite;
+                            scaledSprite = null;
                             // Load pixel data to CPU memory
                             Load();
                         }
@@ -525,6 +528,8 @@ namespace Galabingus
             {
                 ref List<Collider> collidersR = ref GameObject.Instance.ColliderCollisions();
 
+                //Debug.WriteLine(collidersR.Count);
+
                 // Go through all collider instances to check for a collision and determine what colliders are active
                 for (ushort colliderIndex = 0; colliderIndex < collidersR.Count; colliderIndex++)
                 {
@@ -532,7 +537,7 @@ namespace Galabingus
                     Collider otherCollider = collidersR[colliderIndex];
 
                     // Determine if the colldier exist as a instance of this content
-                    if (layer4 != colliderIndex)
+                    if (layer4 != colliderIndex && collidersR[colliderIndex] != null)
                     {
                         // When the bounds are intercepting and the layer isn't the same and all collisions have been resolved
                         // Then we can activate the collider
@@ -548,6 +553,7 @@ namespace Galabingus
                             active = false;
                             this.colliderNextMTV = Vector2.Zero;
                             this.colldierCurrentMTV = Vector2.Zero;
+                            //this.pixels = null;
                         }
 
                         // Only update the collider once
@@ -582,6 +588,7 @@ namespace Galabingus
 
                             // Update the transform with the new scale and sprite
                             this.sprite = scaledSprite;
+                            scaledSprite = null;
                             // Load pixel data to CPU memory
                             Load();
                         }
@@ -605,6 +612,7 @@ namespace Galabingus
                                 //GameObject.Instance.SetCollider(instanceNumber,this);
                                 //if (GameObject.Instance.GetInstance<T>() is T)
                                 //{
+
                                 result.Add(new Collision(
                                     self,
                                     collidersR[colliderIndex].self,
@@ -679,12 +687,13 @@ namespace Galabingus
             unsafe
             {
                 ref List<Collider> collidersR = ref GameObject.Instance.ColliderCollisions();
-
+                //Debug.WriteLine(instanceNumber);
+                //Debug.WriteLine((CollisionGroup)layer);
                 // Go through all collider instances to check for a collision and determine what colliders are active
                 for (ushort colliderIndex = 0; colliderIndex < collidersR.Count; colliderIndex++)
                 {
                     // Determine if the colldier exist as a instance of this content
-                    if (layer4 != colliderIndex)
+                    if (layer4 != colliderIndex && collidersR[colliderIndex] != null )
                     {
                         // When the bounds are intercepting and the layer isn't the same and all collisions have been resolved
                         // Then we can activate the collider
@@ -700,6 +709,7 @@ namespace Galabingus
                             active = false;
                             this.colliderNextMTV = Vector2.Zero;
                             this.colldierCurrentMTV = Vector2.Zero;
+                            //this.pixels = null;
                         }
 
                         // Only update the collider once
@@ -734,6 +744,7 @@ namespace Galabingus
 
                             // Update the transform with the new scale and sprite
                             this.sprite = scaledSprite;
+                            scaledSprite = null;
                             // Load pixel data to CPU memory
                             Load();
                         }
@@ -768,7 +779,10 @@ namespace Galabingus
                             }
                         }
                     }
+
                 }
+
+
             }
 
             // No collision
@@ -798,7 +812,7 @@ namespace Galabingus
         )
         {
             // Exit if sprites have not been defined
-            if (this.sprite == null || other.sprite == null)
+            if (this.sprite == null || other.sprite == null || this.pixels == null || other.pixels == null)
             {
                 // Exit with off-screen positions
                 return new Vector2[] { new Vector2(-1, -1), new Vector2(-1, -1), new Vector2(-1, -1) };
@@ -981,7 +995,7 @@ namespace Galabingus
                 //mtv.Y *= 0.5f;
             }
 
-            mtv = overlap*mtv+mtv;
+            mtv = overlap*mtv+mtv*100;
 
             return mtv;
         }
