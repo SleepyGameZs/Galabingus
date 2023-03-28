@@ -66,6 +66,7 @@ namespace Galabingus
         public bool Destroy
         {
             get { return destroy; }
+            set { destroy = value; }
         }
 
         /// <summary>
@@ -170,6 +171,20 @@ namespace Galabingus
             {
                 GameObject.Instance.Content = contentName;
                 SetCollider(enemyNumber, value);
+            }
+        }
+
+        /// <summary>
+        /// Allows setting and returning of this enemy's health
+        /// </summary>
+        public int Health
+        {
+            get
+            {
+                return currentHealth;
+            }
+            set { 
+                currentHealth = value; 
             }
         }
 
@@ -352,41 +367,7 @@ namespace Galabingus
                     enemyNumber
                 );
 
-                // Checks for any collisions having occured
-                foreach (Collision collision in intercepts)
-                {
-                    if (collision.other != null)
-                    { // Collision occured, now find what was collided with
-                        //Debug.WriteLine("eee");
-                        //Debug.WriteLine((collision.other as GameObject).GameObjectType == typeof(Tile));
-                        if ((collision.other as Bullet) is Bullet)
-                        { // Collided with a Bullet
-                            //Debug.WriteLine("eee");
-                            Bullet hitBullet = (Bullet)collision.other;
-
-                            if (hitBullet.Creator is Player)
-                            { // Only allow player bullets to affect the enemy
-                                currentHealth -= 1;
-                                hitBullet.Destroy = true;
-   
-                                if (currentHealth >= 0)
-                                {
-                                    destroy = true;
-                                    
-                                    //Debug.WriteLine();
-                                }
-                            } 
-
-                        } 
-                        else if (collision.other is Tile)
-                        { // Collided with a Tile (will code once movement is added)
-
-                        }
-                    }
-                }
-
                 this.Collider.Resolved = true;
-
 
             }
 

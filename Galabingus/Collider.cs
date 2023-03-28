@@ -424,6 +424,10 @@ namespace Galabingus
                                 effect,
                                 1.0f
                             );
+                            //if (self is Player) HELLO MATT
+                            //{
+                            //    Debug.WriteLine($"{scale}");
+                            //}
                             spriteBatch.End();
                             graphicsDevice.SetRenderTarget(null);
                             //this.colliderNextMTV = Vector2.Zero;

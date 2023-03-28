@@ -177,6 +177,7 @@ namespace Galabingus
                 // Checks if bullet is set to be destroyed.
                 if (activeBullets[i].Destroy)
                 {
+                    activeBullets[i].Delete(activeBullets[i].BulletNumber);
                     activeBullets.RemoveAt(i);
                     i -= 1;
                 }
