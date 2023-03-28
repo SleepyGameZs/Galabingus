@@ -734,7 +734,7 @@ namespace Galabingus
                             previousPreviousKeyboardStateY = previousKeyboardStateY;
                         }
 
-                        if (previousKeyboardState.IsKeyDown(Keys.LeftControl))
+                        if (previousKeyboardState.IsKeyDown(Keys.LeftShift))
                         {
                             boost = true;
                         }
@@ -803,7 +803,7 @@ namespace Galabingus
                     ghosts = newGhost;
                 }
                 
-                if (!currentKeyboardState.IsKeyDown(Keys.LeftControl))
+                if (!currentKeyboardState.IsKeyDown(Keys.LeftShift))
                 {
                     //boostOpacity = 1f;
                     boost = false;

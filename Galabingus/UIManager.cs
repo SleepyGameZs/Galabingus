@@ -278,8 +278,7 @@ namespace Galabingus
                     if (ds != DebugState.DebugOff)
                     {
                         //if the shift button is pressed, change the state
-                        if (SingleKeyPress(Keys.LeftShift)
-                        || SingleKeyPress(Keys.RightShift))
+                        if (SingleKeyPress(Keys.L))
                         {
                             gs = GameState.Game;
                         }
@@ -292,8 +291,7 @@ namespace Galabingus
                     if (ds != DebugState.DebugOff)
                     {
                         //if the shift button is pressed, change the state
-                        if (SingleKeyPress(Keys.LeftShift)
-                            || SingleKeyPress(Keys.RightShift))
+                        if (SingleKeyPress(Keys.L))
                         {
                             gs = GameState.Menu;
                         }
