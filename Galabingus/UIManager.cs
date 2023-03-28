@@ -351,7 +351,7 @@ namespace Galabingus
                         tempBackground,
                         Vector2.Zero,
                         new Rectangle(0, 0, tempBackground.Width, tempBackground.Height),
-                        new Color(Color.White * 0.7f, 1.0f),
+                        new Color(Color.White * 0.35f, 1.0f),
                         0,
                         Vector2.Zero,
                         new Vector2(

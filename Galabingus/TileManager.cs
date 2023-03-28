@@ -174,7 +174,7 @@ namespace Galabingus
                     GameObject.Instance.SpriteBatch,
                     tilesList[i].ScaleVector,
                     SpriteEffects.None,
-                    TileManager.Instance.LayerNumber,//GameObject.Instance.Content.tile_strip26,
+                    (ushort)CollisionGroup.Tile,//GameObject.Instance.Content.tile_strip26,
                     tilesList[i].InstanceNumber
                     );
 
@@ -182,7 +182,7 @@ namespace Galabingus
                 {
                     if (collision.other != null)
                     {
-                        if (collision.other.Index == Player.PlayerInstance.Index)
+                        if ( ((collision.other as Player) is Player) && collision.self is Tile )
                         {
                             Player.PlayerInstance.Position += collision.mtv;
                             Player.PlayerInstance.Collider.Resolved = true;

@@ -191,6 +191,7 @@ namespace Galabingus
                 // Checks if enemy is set to be destroyed.
                 if (activeEnemies[i].Destroy)
                 {
+                    activeEnemies[i].Delete((ushort)i);
                     activeEnemies.RemoveAt(i);
                     i -= 1;
                 }

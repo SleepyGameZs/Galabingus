@@ -52,6 +52,10 @@ namespace Galabingus
         private int shotWaitTime;
         private int shotWaitVariance;
 
+        // Health value of this enemy
+        private int currentHealth;
+        private int totalHealth;
+
         #endregion
 
         #region-------------------[ Properties ]-------------------
@@ -185,8 +189,9 @@ namespace Galabingus
             Vector2 position,
             ushort contentName,
             ushort enemyNumber
-        ) : base(contentName, enemyNumber)
+        ) : base(contentName, enemyNumber, CollisionGroup.Enemy)
         {
+            this.thisGameObject = this;
             // Set Sprite from given
             this.contentName = contentName;
             this.enemyNumber = enemyNumber;
@@ -212,6 +217,10 @@ namespace Galabingus
 
             // Set shot timer with some randomization
             shotTimer = rng.Next(50);
+
+            // Set Health
+            totalHealth = 3;
+            currentHealth = totalHealth;
         }
 
         #endregion
@@ -263,9 +272,9 @@ namespace Galabingus
                             }
 
                             // Shoot the 3 bullets
-                            BulletManager.Instance.CreateBullet(BulletType.Bouncing, shootPos, 0, spriteDirection);
-                            BulletManager.Instance.CreateBullet(BulletType.Bouncing, shootPos, 30, spriteDirection);
-                            BulletManager.Instance.CreateBullet(BulletType.Bouncing, shootPos, -30, spriteDirection);
+                            BulletManager.Instance.CreateBullet(BulletType.Bouncing, shootPos, 0, spriteDirection, this);
+                            BulletManager.Instance.CreateBullet(BulletType.Bouncing, shootPos, 30, spriteDirection, this);
+                            BulletManager.Instance.CreateBullet(BulletType.Bouncing, shootPos, -30, spriteDirection, this);
 
                             // Reset Shooting time
                             shotWaitTime = rng.Next(shotWaitVariance) - shotWaitVariance / 2;
@@ -285,7 +294,7 @@ namespace Galabingus
                             }
 
                             // Shoot the splitter bullet
-                            BulletManager.Instance.CreateBullet(BulletType.Splitter, shootPos, 0, spriteDirection);
+                            BulletManager.Instance.CreateBullet(BulletType.Splitter, shootPos, 0, spriteDirection, this);
 
                             // Reset Shooting time
                             shotWaitTime = rng.Next(shotWaitVariance) - shotWaitVariance / 2;
@@ -305,7 +314,7 @@ namespace Galabingus
                             }
 
                             // Shoot the BIG BULLET
-                            BulletManager.Instance.CreateBullet(BulletType.Large, shootPos, 0, spriteDirection);
+                            BulletManager.Instance.CreateBullet(BulletType.Large, shootPos, 0, spriteDirection, this);
 
                             // Reset Shooting time
                             shotWaitTime = rng.Next(shotWaitVariance);
@@ -325,7 +334,7 @@ namespace Galabingus
                             }
 
                             // Shoot the seeker bullet
-                            BulletManager.Instance.CreateBullet(BulletType.Seeker, shootPos, 0, spriteDirection);
+                            BulletManager.Instance.CreateBullet(BulletType.Seeker, shootPos, 0, spriteDirection, this);
 
                             // Reset Shooting time
                             shotWaitTime = rng.Next(shotWaitVariance) - shotWaitVariance / 2;
@@ -335,8 +344,52 @@ namespace Galabingus
                 }
                 shotTimer++;
 
+                // Creates currect collider for Enemy
+                this.Transform = this.Animation.Play(gameTime);
+
+                List<Collision> intercepts = this.Collider.UpdateTransform(
+                    (ushort)CollisionGroup.Enemy,        // Content on same collision layer won't coll
+                    enemyNumber
+                );
+
+                // Checks for any collisions having occured
+                foreach (Collision collision in intercepts)
+                {
+                    if (collision.other != null)
+                    { // Collision occured, now find what was collided with
+                        //Debug.WriteLine("eee");
+                        //Debug.WriteLine((collision.other as GameObject).GameObjectType == typeof(Tile));
+                        if ((collision.other as Bullet) is Bullet)
+                        { // Collided with a Bullet
+                            //Debug.WriteLine("eee");
+                            Bullet hitBullet = (Bullet)collision.other;
+
+                            if (hitBullet.Creator is Player)
+                            { // Only allow player bullets to affect the enemy
+                                currentHealth -= 1;
+                                hitBullet.Destroy = true;
+   
+                                if (currentHealth >= 0)
+                                {
+                                    destroy = true;
+                                    
+                                    //Debug.WriteLine();
+                                }
+                            } 
+
+                        } 
+                        else if (collision.other is Tile)
+                        { // Collided with a Tile (will code once movement is added)
+
+                        }
+                    }
+                }
+
+                this.Collider.Resolved = true;
+
 
             }
+
 
             // Manage Animation
             this.Animation.AnimationDuration = 0.03f;

@@ -8,7 +8,8 @@ using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
-// Zane Smith
+// Creator: Zane Smith
+// Purpose: A manager system for all bullets in the game, whether owned by the player or enemies.
 
 namespace Galabingus
 {
@@ -62,6 +63,10 @@ namespace Galabingus
 
         #region------------------[ Constructor ]------------------
 
+        /// <summary>
+        /// Constructor used to generate the bullet manager 
+        /// singleton (accessed via property)
+        /// </summary>
         private BulletManager()
         {
             activeBullets = new List<Bullet>();
@@ -80,9 +85,17 @@ namespace Galabingus
 
         #region------------------[ Methods ]------------------
 
-        public void CreateBullet (BulletType ability, Vector2 position, int angle, int direction)
+        /// <summary>
+        /// Method to create a bullet, and have it hooked up to the bullet manager.
+        /// </summary>
+        /// <param name="ability">The ability the bullet should have</param>
+        /// <param name="position">The position to create the bullet at</param>
+        /// <param name="angle">The angle the bullet should have</param>
+        /// <param name="direction">The direction (left or right) for the bullet</param>
+        /// <param name="creator">Reference to the creator of the bullet</param>
+        public void CreateBullet (BulletType ability, Vector2 position, int angle, int direction, object creator)
         {
-            // Normalize and set speed based on bullet type
+            // Sets the sprite to use for the bullet for GameObject storage purposes
             ushort sprite = GameObject.Instance.Content.smallbullet_strip4;
             switch (ability)
             {
@@ -133,10 +146,11 @@ namespace Galabingus
             }
 
             // Add bullet itself to list
-            activeBullets.Add(new Bullet(ability,        // Ability of the bullet to shoot
+            activeBullets.Add(new Bullet(ability,       // Ability of the bullet to shoot
                                          position,      // Position to spawn the bullet
                                          angle,         // Angle to move the bullet
                                          direction,     // Direction of the bullet
+                                         creator,       // Reference to creator of bullet
                                          sprite,        // Sprite of the bullet
                                          totalBullets   // total count of bullets
                                          )
@@ -147,6 +161,11 @@ namespace Galabingus
 
         }
 
+        /// <summary>
+        /// Runs the updates of all individual bullets, and checks to see 
+        /// if they are set to be despawned
+        /// </summary>
+        /// <param name="gameTime">The total game time variable</param>
         public void Update(GameTime gameTime)
         {
             //Debug.WriteLine(sprite);
@@ -164,6 +183,10 @@ namespace Galabingus
             }
         }
 
+        /// <summary>
+        /// Draws all existing bullets stored by the manger, and makes checks for
+        /// the angle and direction to do rotation.
+        /// </summary>
         public void Draw()
         {
             foreach (Bullet bullet in activeBullets)
@@ -175,11 +198,12 @@ namespace Galabingus
                 SpriteEffects directionSpriteEffects;
                 if (bullet.Direction < 1)
                 {
-                    directionSpriteEffects = SpriteEffects.None;
+                    //directionSpriteEffects = SpriteEffects.None;
                     direction += (float)Math.PI;
-                } else
+                }
+                else
                 {
-                    directionSpriteEffects = SpriteEffects.FlipHorizontally;
+                    //directionSpriteEffects = SpriteEffects.FlipHorizontally;
                 }
 
                 GameObject.Instance.SpriteBatch.Draw(
