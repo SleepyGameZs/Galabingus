@@ -262,7 +262,7 @@ namespace Galabingus
         /// updates the UI everyframe
         /// </summary>
         /// <param name="gameTime">the game's timer</param>
-        public void Update(GameTime gameTime)
+        public void Update()
         {
             //set the keyboardstate
             currentKBS = Keyboard.GetState();
