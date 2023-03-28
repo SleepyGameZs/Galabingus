@@ -37,6 +37,11 @@ namespace Galabingus
         #region Constructor
 
         /// <summary>
+        /// default constructor for things with no events
+        /// </summary>
+        public UIEvent() { }
+
+        /// <summary>
         /// instatiates the UIEvent class for a basic menu showing
         /// </summary>
         /// <param name="menu">the menu to be shown</param>
@@ -66,9 +71,9 @@ namespace Galabingus
         /// <param name="type">the type of event they are calling</param>
         public void Event(UIObject element, GameState gs, EventType type)
         {
-            switch(type)
+            switch (type)
             {
-                
+
                 case EventType.NoEvent:
                     //no event occurs in this case
                     break;

@@ -124,7 +124,7 @@ namespace Galabingus
                 Exit();
 
             //Update the UI
-            userInterface.Update(gameTime);
+            userInterface.Update();
 
             //update the game state
             //userInterface.Update();
@@ -144,9 +144,9 @@ namespace Galabingus
                 camera.Update(gameTime);
 
                 tileManager.Update(gameTime);
+
+                base.Update(gameTime);
             }
-        
-            base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
@@ -200,10 +200,13 @@ namespace Galabingus
                 }
             }
 
-
             // End the SpriteBatch draw
             _spriteBatch.End();
-            base.Draw(gameTime);
+
+            if (!(userInterface.GS == GameState.Pause))
+            {
+                base.Draw(gameTime);
+            }
         }
     }
 }
