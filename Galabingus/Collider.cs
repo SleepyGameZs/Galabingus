@@ -112,6 +112,7 @@ namespace Galabingus
         private Vector2 colldierCurrentMTV;
         private Vector2 colliderNextMTV;
         public GameObject self;
+        private Vector2 scale;
 
         /// <summary>
         ///  Colider that is empty
@@ -142,6 +143,18 @@ namespace Galabingus
             get
             {
                 return sprite;
+            }
+        }
+
+        public Vector2 Scale
+        {
+            get
+            {
+                return scale;
+            }
+            set
+            {
+                scale = value;
             }
         }
 
@@ -263,6 +276,7 @@ namespace Galabingus
             resolved = false;
             pixels = null;
             pixelCheck = null;
+            Scale = new Vector2(scale,scale);
 
             // Render the effects and scale
             RenderTarget2D scaledSprite = new RenderTarget2D(
@@ -348,6 +362,7 @@ namespace Galabingus
             bool active = false;  // The collider needs to check for collision
             bool updated = false; // The collider needs to update its pixel data
             this.layer = layer;   // The collider's layer
+            Scale = new Vector2(scale, scale);
 
             // Create transform from scale and position
             this.transform = new Rectangle(
@@ -504,6 +519,7 @@ namespace Galabingus
             bool active = false;  // The collider needs to check for collision
             bool updated = false; // The collider needs to update its pixel data
             this.layer = layer;   // The collider's layer
+            Scale = scale;
 
             // Create transform from scale and position
             this.transform = new Rectangle(
@@ -663,6 +679,7 @@ namespace Galabingus
             bool active = false;  // The collider needs to check for collision
             bool updated = false; // The collider needs to update its pixel data
             this.layer = layer;   // The collider's layer
+            Scale = new Vector2(scale,scale);
 
             // Create transform from scale and position
             this.transform = new Rectangle(
@@ -824,9 +841,9 @@ namespace Galabingus
 
             // Calculate the intersecting rectangle
             int x1 = Math.Max(this.transform.X, other.transform.X);
-            int x2 = Math.Min(this.transform.X + this.transform.Width, other.transform.X + other.transform.Width);
+            int x2 = Math.Min(this.transform.X + this.transform.Width * (int)this.Scale.X, other.transform.X + other.transform.Width * (int)other.Scale.X);
             int y1 = Math.Max(this.transform.Y, other.transform.Y);
-            int y2 = Math.Min(this.transform.Y + this.transform.Height, other.transform.Y + other.transform.Height);
+            int y2 = Math.Min(this.transform.Y + this.transform.Height * (int)this.Scale.Y, other.transform.Y + other.transform.Height * (int)other.Scale.Y);
 
             // For each single pixel in the intersecting rectangle
             for (int y = y1; y < y2; ++y)
