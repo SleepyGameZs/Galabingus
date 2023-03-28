@@ -21,7 +21,8 @@ namespace Galabingus
     {
         Menu,
         Game,
-        Pause
+        Pause,
+        NoState
     }
 
     /// <summary>
@@ -154,6 +155,11 @@ namespace Galabingus
         private Texture2D tempBackground;
         private Texture2D menuBackground;
 
+        // Event handling
+        private EventType currentEvent;
+        private Menu singleMenu;
+        private List<UIObject> multiMenu;
+
         #endregion
 
         #region Properties
@@ -179,6 +185,7 @@ namespace Galabingus
         public GameState GS
         {
             get { return gs; }
+            set { gs = value; }
         }
 
         #endregion
@@ -230,24 +237,10 @@ namespace Galabingus
         /// </summary>
         public void LoadContent()
         {
-            //a dictionary to store all of the values for each button
-            Dictionary<string, Vector2> buttonData = new Dictionary<string, Vector2>();
-
-            //every button being added to the dictionary (side comments are indices)
-            buttonData.Add("playbutton_strip1", new Vector2(1280/2, 720/2)); //0
-
-            //a dictionary to store all of the values for each menu
-            Dictionary<string, Vector2> menuData = new Dictionary<string, Vector2>();
-
-            //every menu being added to the dictionary (side comments are indices)
-
-            //lists of all of the UIObjects in the program
-            List<Button> buttons = CreateButtons(buttonData);
-            List<Menu> menus = CreateMenus(menuData);
-
             //creates the play button
-            AddElement(
-                buttons[0], 
+            AddButton(
+                "playbutton_strip1",
+                new Vector2(1280 / 2, 720 / 2),
                 GameState.Menu, 
                 new UIEvent(GameState.Game),
                 new List<EventType>() { EventType.StartGame }
@@ -503,54 +496,26 @@ namespace Galabingus
         }
 
         /// <summary>
-        /// create a list of buttons based on file data and a vector2
+        /// creates a UIElement and adds it to the list elements
         /// </summary>
-        /// <param name="buttonData">a dict containing a string filename and a vector2 position</param>
-        /// <returns>a list of buttons</returns>
-        public List<Button> CreateButtons(Dictionary<string, Vector2> buttonData)
+        /// <param name="uiObject">the ui object / element</param>
+        /// <param name="gs">the gamestate the element exists in</param>
+        /// <param name="uiEvent">the data which it needs for its events</param>
+        /// <param name="types">the event types it can call</param>
+        public void AddButton
+            (string filename, Vector2 position, GameState gs, UIEvent uiEvent, List<EventType> types)
         {
-            //create a new list of buttons for returning
-            List<Button> buttons = new List<Button>();
+            //create the button texture
+            Texture2D texture = cm.Load<Texture2D>(filename);
 
-            //foreach KeyValuePair, load the texture and add the button to the list
-            foreach(KeyValuePair<string, Vector2> button in buttonData)
-            {
-                Texture2D texture = cm.Load<Texture2D>(button.Key);
+            //create the button
+            Button button = new Button(texture, position);
 
-                buttons.Add(
-                    new Button(
-                        texture,
-                        button.Value
-                    )
-                );
-            }
+            //insert the default event at the from of the list (thus return 0 is always no event)
+            types.Insert(0, default(EventType));
 
-            return buttons;
-        }
-
-        /// <summary>
-        /// create a list of menus from a dictionary
-        /// </summary>
-        /// <param name="menuData">a dictionary containing a string filename and a vextor2 position</param>
-        /// <returns>a list of menu</returns>
-        public List<Menu> CreateMenus(Dictionary<string, Vector2> menuData)
-        {
-            //create a new list of menus for returning
-            List<Menu> menus = new List<Menu>();
-
-            //for each KeyValuePair load the texture and add the menu to the list
-            foreach (KeyValuePair<string, Vector2> menu in menuData)
-            {
-                Texture2D texture = cm.Load<Texture2D>(menu.Key);
-
-                menus.Add(
-                    new Menu(
-                        texture,
-                        menu.Value
-                    )
-                );
-            }
-            return menus;
+            //add the new UIElement to the list
+            elements.Add(new UIElement(button, gs, uiEvent, types));
         }
 
         /// <summary>
@@ -560,23 +525,20 @@ namespace Galabingus
         /// <param name="gs">the gamestate the element exists in</param>
         /// <param name="uiEvent">the data which it needs for its events</param>
         /// <param name="types">the event types it can call</param>
-        public void AddElement
-            (UIObject uiObject, GameState gs, UIEvent uiEvent, List<EventType> types)
+        public void AddMenu
+            (string filename, Vector2 position, GameState gs, UIEvent uiEvent, List<EventType> types)
         {
+            //loads the menus texture
+            Texture2D texture = cm.Load<Texture2D>(filename);
+
+            //creates the menu with the texture and position
+            Menu menu = new Menu(texture, position);
+
             //insert the default event at the from of the list (thus return 0 is always no event)
             types.Insert(0, default(EventType));
 
             //add the new UIElement to the list
-            elements.Add(new UIElement(uiObject, gs, uiEvent, types));
-        }
-
-        /// <summary>
-        /// changes the UIManagers gameState
-        /// </summary>
-        /// <param name="gameState">the gameState to change to</param>
-        public void ChangeState(GameState gameState)
-        {
-            gs = gameState;
+            elements.Add(new UIElement(menu, gs, uiEvent, types));
         }
 
         #endregion

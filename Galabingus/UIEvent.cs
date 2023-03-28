@@ -79,7 +79,7 @@ namespace Galabingus
                     break;
                 case EventType.StartGame:
                     //this event changes the gameState
-                    UIManager.Instance.ChangeState(returnState);
+                    UIManager.Instance.GS = returnState;
                     break;
             }
         }
