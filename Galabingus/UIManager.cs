@@ -57,7 +57,7 @@ namespace Galabingus
         private UIObject element; //the object
         private GameState gs; //its gamestate
 
-        //these represent any more complex events,
+        //these represent any more complex events
 
         //the UIEvent class holds data which it needs to 
         //execute those events and the method to do so
@@ -157,8 +157,8 @@ namespace Galabingus
 
         // Event handling
         private EventType currentEvent;
-        private Menu singleMenu;
-        private List<UIObject> multiMenu;
+        private List<UIObject> currentMenu;
+        private Stack<List<UIObject>> previousMenu;
 
         #endregion
 
@@ -187,6 +187,32 @@ namespace Galabingus
             get { return gs; }
             set { gs = value; }
         }
+
+        public DebugState DS
+        {
+            get { return ds; }
+            set { ds = value; }
+        }
+
+        public EventType CurrentEvent
+        {
+            get{ return currentEvent; }
+            set { currentEvent = value; }
+        }
+
+        public List<UIObject> CurrentMenu
+        {
+            get { return currentMenu; }
+            set { currentMenu = value; }
+        }
+
+        public List<UIObject> PreviousMenu
+        {
+            get { return previousMenu.Pop(); }
+            set { previousMenu.Push(value); }
+        }
+
+
 
         #endregion
 
@@ -357,8 +383,20 @@ namespace Galabingus
 
             }
 
-            //then draw the UI elements to the screen (second because they need to be drawn over the other stuff)
-            DrawObjects(gs);
+            switch(currentEvent)
+            {
+                case (EventType.NoEvent):
+                    //then draw the UI elements to the screen (second because they need to be drawn over the other stuff)
+                    DrawObjects(gs);
+                    break;
+                case (EventType.UpMenu):
+                    foreach(UIObject uiObject in currentMenu)
+                    {
+                        uiObject.Draw(sb);
+                    }
+                    break;
+            }
+            
         }
 
         #endregion

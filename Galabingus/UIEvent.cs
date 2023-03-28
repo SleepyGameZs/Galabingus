@@ -29,7 +29,7 @@ namespace Galabingus
         //called from an event, but not all need to be (will be) 
         //set, only those which are need for the UIObjects events
 
-        Menu menu;
+        List<UIObject> UpMenu;
         GameState returnState;
 
         #endregion
@@ -45,9 +45,9 @@ namespace Galabingus
         /// instatiates the UIEvent class for a basic menu showing
         /// </summary>
         /// <param name="menu">the menu to be shown</param>
-        public UIEvent(Menu menu)
+        public UIEvent(List<UIObject> menu)
         {
-            this.menu = menu;
+            UpMenu = menu;
         }
 
         /// <summary>
@@ -80,6 +80,13 @@ namespace Galabingus
                 case EventType.StartGame:
                     //this event changes the gameState
                     UIManager.Instance.GS = returnState;
+                    break;
+                case EventType.UpMenu:
+                    UIManager.Instance.CurrentEvent = type;
+                    UIManager.Instance.PreviousMenu = UIManager.Instance.CurrentMenu;
+                    break;
+                case EventType.DownMenu:
+                    UIManager.Instance.CurrentMenu = UIManager.Instance.PreviousMenu;
                     break;
             }
         }
