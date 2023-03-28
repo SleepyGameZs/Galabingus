@@ -228,6 +228,17 @@ namespace Galabingus
             }
         }
 
+        /// <summary>
+        /// Returns the bullet number of this bullet
+        /// </summary>
+        public ushort BulletNumber
+        {
+            get
+            {
+                return bulletNumber;
+            }
+        }
+
         #endregion
 
         #region-------------------[ Constructor ]-------------------
@@ -522,14 +533,27 @@ namespace Galabingus
                     if (((collision.other as Player) is Player) && !destroy && !((collision.self as Bullet).Creator is Player))
                     {
                         // TODO: Write Player damage stuff here
+
+                        destroy = true;
+                        velocity = Vector2.Zero;
+                    }
+                    else if (((collision.other as Enemy) is Enemy) && !destroy && !((collision.self as Bullet).Creator is Enemy))
+                    {
+                        // TODO: Write Enemy damage stuff here
+                        ((Enemy)collision.other).Health -= 1;
+                        destroy = true;
+                        velocity = Vector2.Zero;
+
+                        if (((Enemy)collision.other).Health <= 0)
+                        {
+                            ((Enemy)collision.other).Destroy = true;
+                        }
+
                     }
                 }
             }
 
-            if (destroy) 
-            {
-                Delete(bulletNumber);
-            }
+            this.Collider.Resolved = true;
         }
 
         /// <summary>
