@@ -526,10 +526,7 @@ namespace Galabingus
                 {
                     if (((collision.other as Player) is Player) && !destroy && !((collision.self as Bullet).Creator is Player))
                     {
-                        this.destroy = true;
-                        Debug.WriteLine("aaaa");
-                        Debug.WriteLine(Player.PlayerInstance.Health - 1);
-                        Player.PlayerInstance.Health--;
+                        // TODO: Write Player damage stuff here
                     }
                 }
             }
