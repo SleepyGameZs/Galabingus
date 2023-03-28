@@ -528,6 +528,7 @@ namespace Galabingus
                     {
                         this.destroy = true;
                         Debug.WriteLine("aaaa");
+                        Debug.WriteLine(Player.PlayerInstance.Health - 1);
                         Player.PlayerInstance.Health--;
                     }
                 }
