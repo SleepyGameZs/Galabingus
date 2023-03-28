@@ -348,13 +348,6 @@ namespace Galabingus
                 this.Transform = this.Animation.Play(gameTime);
 
                 List<Collision> intercepts = this.Collider.UpdateTransform(
-                    this.Sprite,                         // Enemy Sprite
-                    this.Position,                       // Enemy position
-                    this.Transform,                      // Enemy transform for sprite selection
-                    GameObject.Instance.GraphicsDevice,
-                    GameObject.Instance.SpriteBatch,
-                    this.Scale,                          // Enemy scale
-                    SpriteEffects.None,
                     (ushort)CollisionGroup.Enemy,        // Content on same collision layer won't coll
                     enemyNumber
                 );

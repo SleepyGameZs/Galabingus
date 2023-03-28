@@ -378,12 +378,12 @@ namespace Galabingus
                         if (direction < 0)
                         {
                             angle -= 90;
-                        } 
+                        }
                         else
                         {
                             angle += 90;
                         }
-                        
+
                     }
 
                     if (FloorHit)
@@ -493,7 +493,7 @@ namespace Galabingus
 
             // Creates currect collider for Enemy
             this.Transform = this.Animation.Play(gameTime);
-            this.Collider.UpdateTransform(
+            List<Collision> intercepts = this.Collider.UpdateTransform(
                 this.Sprite,                         // Bullet Sprite
                 this.Position,                       // Bullet position
                 this.Transform,                      // Bullet transform for sprite selection
@@ -518,7 +518,20 @@ namespace Galabingus
                 destroy = true;
             }
 
-            this.Collider.Resolved = destroy;
+            this.Collider.Resolved = true;
+
+            foreach (Collision collision in intercepts)
+            {
+                if (collision.other != null)
+                {
+                    if (((collision.other as Player) is Player) && !destroy && !((collision.self as Bullet).Creator is Player))
+                    {
+                        this.destroy = true;
+                        Debug.WriteLine("aaaa");
+                        Player.PlayerInstance.Health--;
+                    }
+                }
+            }
         }
 
         /// <summary>
