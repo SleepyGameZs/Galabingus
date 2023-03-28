@@ -245,7 +245,7 @@ namespace Galabingus
         /// <param name="playerSprite">player sprite image</param>
         /// <param name="speed">player translation speed</param>
         public Player(Vector2 speed, ushort contentName) :
-            base(contentName, 0)
+            base(contentName, 0, CollisionGroup.Player)
         {
             if (PlayerInstance == null)
             {
@@ -279,6 +279,7 @@ namespace Galabingus
             PlayerInstance.boostSpawnGhost = Vector2.Zero;
             PlayerInstance.shiftBoost = false;
             PlayerInstance.ghosts = new List<Ghost>();
+            this.thisGameObject = this;
         }
 
         /// <summary>
@@ -381,14 +382,14 @@ namespace Galabingus
 
             foreach (Collision collision in intercepts)
             {
-                if (collision.other != null && this.Collider.Resolved)
+                if (collision.other != null && this.Collider.Resolved && !((collision.other as Bullet) is Bullet))
                 {
                     previousVelocity = velocity;
                     acceleration = Vector2.Zero;
                     velocity = Vector2.Zero;
                     collides = true;
                 }
-                else if (collision.other != null)
+                else if (collision.other != null && !((collision.other as Bullet) is Bullet))
                 {
                     previousVelocity = velocity;
                     acceleration = Vector2.Zero;

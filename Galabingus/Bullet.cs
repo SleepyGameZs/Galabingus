@@ -250,8 +250,9 @@ namespace Galabingus
             object creator,
             ushort contentName,
             ushort bulletNumber
-        ) : base(contentName, bulletNumber)
+        ) : base(contentName, bulletNumber, CollisionGroup.Bullet)
         {
+            this.thisGameObject = this;
             // Set Sprite from given
             this.contentName = contentName;
             this.bulletNumber = bulletNumber;
@@ -517,6 +518,7 @@ namespace Galabingus
                 destroy = true;
             }
 
+            this.Collider.Resolved = destroy;
         }
 
         /// <summary>

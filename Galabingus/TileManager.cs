@@ -182,7 +182,7 @@ namespace Galabingus
                 {
                     if (collision.other != null)
                     {
-                        if (collision.other.Index == Player.PlayerInstance.Index && )
+                        if ( ((collision.other as Player) is Player) && collision.self is Tile )
                         {
                             Player.PlayerInstance.Position += collision.mtv;
                             Player.PlayerInstance.Collider.Resolved = true;

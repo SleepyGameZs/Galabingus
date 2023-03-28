@@ -36,6 +36,7 @@ namespace Galabingus
     internal struct Collision
     {
         private static Collision empty;     // Singleton for Collision
+        public object self;
         public GameObject other;            // GameObject collided with
         public Vector2 positionOfCollision; // Point of the collision Default: (-1,-1)
         public Vector2 position;            // Position of which to avoid the collison Default (-1,-1)
@@ -60,7 +61,8 @@ namespace Galabingus
         /// </summary>
         public Collision()
         {
-            this.other = null;
+            this.self = default;
+            this.other = default;
             this.positionOfCollision = new Vector2(-1, -1);
             this.position = new Vector2(-1, -1);
             this.mtv = new Vector2(-1, -1);
@@ -74,12 +76,14 @@ namespace Galabingus
         /// <param name="positionOfCollision">position of collision</param>
         /// <param name="position">position of which to avoid the collision</param>
         public Collision(
+            object self,
             GameObject other,
             Vector2 positionOfCollision,
             Vector2 position,
             Vector2 mtv
         )
         {
+            this.self = self;
             this.other = other;
             this.positionOfCollision = positionOfCollision;
             this.position = position;
@@ -105,6 +109,7 @@ namespace Galabingus
         private bool resolved;                               // If the Collider collision is resolved
         private Vector2 colldierCurrentMTV;
         private Vector2 colliderNextMTV;
+        public GameObject self;
 
         /// <summary>
         ///  Colider that is empty
@@ -244,9 +249,11 @@ namespace Galabingus
             float scale,
             GraphicsDevice graphicsDevice,
             SpriteBatch spriteBatch,
-            ushort layer
+            ushort layer,
+            GameObject self
         )
         {
+            this.self = self;
             // Set the transform
             this.transform = transform;
             this.position = position;
@@ -443,12 +450,16 @@ namespace Galabingus
                                 // Return the Collision
                                 this.resolved = false;
                                 //GameObject.Instance.SetCollider(instanceNumber,this);
+                                //if (GameObject.Instance.GetInstance<T>() is T)
+                                //{
                                 result.Add(new Collision(
-                                    GameObject.Instance,
+                                    self,
+                                    collidersR[colliderIndex].self,
                                     other[0],
                                     other[1],
                                     other[2]
                                 ));
+                                //}
                             }
                         }
                     }
@@ -592,12 +603,16 @@ namespace Galabingus
                                 // Return the Collision
                                 this.resolved = false;
                                 //GameObject.Instance.SetCollider(instanceNumber,this);
+                                //if (GameObject.Instance.GetInstance<T>() is T)
+                                //{
                                 result.Add(new Collision(
-                                    GameObject.Instance,
+                                    self,
+                                    collidersR[colliderIndex].self,
                                     other[0],
                                     other[1],
                                     other[2]
                                 ));
+                                //}
                             }
                         }
                     }

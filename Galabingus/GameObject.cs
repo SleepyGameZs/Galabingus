@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Dynamic;
 using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
@@ -47,7 +49,7 @@ namespace Galabingus
     ///  the common funtionalites 
     ///  all game objects have
     /// </summary>
-    internal class GameObject : DynamicObject
+    internal class GameObject : DynamicObject, IConvertible
     {
         private const byte animationConst = 0;
         private const byte colliderConst = 1;
@@ -56,31 +58,34 @@ namespace Galabingus
         private const byte spritesConst = 4;
         private const byte scalesConst = 5;
         private const byte objectEnumsConst = 6;
-        private static GameObject allGameObjects = null; 
-        private static List<Animation> animations = null;              
-        private static List<Collider> colliders = null;              
-        private static List<Rectangle> transforms = null;              
-        private static List<Vector2> positions = null;                 
-        private static List<Texture2D> sprites = null;                 
-        private static List<float> scales = null;                     
-        private static List<string> objectEnums = null;                
-        unsafe private static GameObjectTrie<Animation> animationsI;            
-        unsafe private static GameObjectTrie<Collider> collidersI;              
-        unsafe private static GameObjectTrie<Rectangle> transformsI;            
-        unsafe private static GameObjectTrie<Vector2> positionsI;            
-        unsafe private static GameObjectTrie<Texture2D> spritesI;                 
-        unsafe private static GameObjectTrie<float> scalesI;                      
-        unsafe private static GameObjectTrie<string> objectEnumsI;                
-        private ushort index;                            
+        private static GameObject allGameObjects = null;
+        private static List<Animation> animations = null;
+        private static List<Collider> colliders = null;
+        private static List<Rectangle> transforms = null;
+        private static List<Vector2> positions = null;
+        private static List<Texture2D> sprites = null;
+        private static List<float> scales = null;
+        private static List<string> objectEnums = null;
+        unsafe private static GameObjectTrie<Animation> animationsI;
+        unsafe private static GameObjectTrie<Collider> collidersI;
+        unsafe private static GameObjectTrie<Rectangle> transformsI;
+        unsafe private static GameObjectTrie<Vector2> positionsI;
+        unsafe private static GameObjectTrie<Texture2D> spritesI;
+        unsafe private static GameObjectTrie<float> scalesI;
+        unsafe private static GameObjectTrie<string> objectEnumsI;
+        private ushort index;
         private ushort instance;
         private ContentManager contentManager;           // Used to load in the content
         private GraphicsDevice graphicsDevice;           // Graphics Device
         private SpriteBatch spriteBatch;                 // Sprite Batch
         private static List<List<List<ushort>>> trie;
+        private List<List<CollisionGroup>> collisionGroups;
+        private System.Type typeOfObject;
+        public dynamic thisGameObject;
 
         public struct GameObjectTrie<T>
         {
-            
+
             public object GetPass(ushort layer1Find, ushort layer3Pass)
             {
                 switch (layer1Find)
@@ -135,7 +140,7 @@ namespace Galabingus
                 }
             }
 
-            #nullable disable
+#nullable disable
             public static T Get(ushort layer1Find, ushort layer3Find, List<T> data)
             {
                 if (layer1Find >= Trie.Count)
@@ -265,7 +270,7 @@ namespace Galabingus
 
                 return result;
             }
-            #nullable enable
+#nullable enable
 
             public static ushort GetLayer4Instance(ushort layer1Find, ushort layer3Find, List<T> data)
             {
@@ -286,7 +291,7 @@ namespace Galabingus
 
                 return Trie[layer1Find][GameObject.Instance.Index][layer3Find];
             }
-            #nullable enable
+#nullable enable
         }
 
         public ushort InstanceID
@@ -315,6 +320,54 @@ namespace Galabingus
                 }
                 return allGameObjects;
             }
+        }
+
+        public GameObject GetInstance<T>()
+        {
+            //Debug.WriteLine(CollisionGroupIGet(index,instance));
+            //if (this is T)
+            //{
+            //    return (T)Convert.ChangeType(this, typeof(T));
+            //}
+            //else
+            //{
+
+            if (typeof(T) == typeof(Player))
+            {
+                if (CollisionGroup.Player == CollisionGroupIGet(GameObject.Instance.Index, GameObject.Instance.instance))
+                {
+                   // return ToPlayer();
+                }
+                else
+                {
+                    return GameObject.Instance;
+                }
+            }
+            if (typeof(T) == typeof(Tile))
+            {
+                if (CollisionGroup.Tile == CollisionGroupIGet(GameObject.Instance.Index, GameObject.Instance.instance))
+                {
+                    //return ToTile();
+                }
+                else
+                {
+                    return GameObject.Instance;
+                }
+            }
+            if (typeof(T) == typeof(Bullet))
+            {
+                if (CollisionGroup.Bullet == CollisionGroupIGet(GameObject.Instance.Index, GameObject.Instance.instance))
+                {
+                    //return ToBullet();
+                }
+                else
+                {
+                    return GameObject.Instance;
+                }
+            }
+
+            return GameObject.Instance;
+            //}
         }
 
         private static List<List<List<ushort>>> Trie
@@ -447,144 +500,142 @@ namespace Galabingus
 
         public Texture2D GetSprite(ushort instancePass)
         {
-            #nullable disable
+#nullable disable
             unsafe
             {
-                return (spritesI).GetPass(spritesConst,instancePass) as Texture2D;
+                return (spritesI).GetPass(spritesConst, instancePass) as Texture2D;
             }
-            #nullable enable
+#nullable enable
         }
 
         public float GetScale(ushort instancePass)
         {
-            #nullable disable
+#nullable disable
             unsafe
             {
                 return (float)(scalesI).GetPass(scalesConst, instancePass);
             }
-            #nullable enable
+#nullable enable
         }
 
         public string GetObjectEnum(ushort instancePass)
         {
-            #nullable disable
+#nullable disable
             unsafe
             {
                 return (objectEnumsI).GetPass(objectEnumsConst, instancePass) as string;
             }
-            #nullable enable
+#nullable enable
         }
 
         public Animation GetAnimation(ushort instancePass)
         {
-            #nullable disable
+#nullable disable
             unsafe
             {
                 return (animationsI).GetPass(animationConst, instancePass) as Animation;
             }
-            #nullable enable
+#nullable enable
         }
 
         public Collider GetCollider(ushort instancePass)
         {
-            #nullable disable
+#nullable disable
             unsafe
             {
                 return (collidersI).GetPass(colliderConst, instancePass) as Collider;
             }
-            #nullable enable
+#nullable enable
         }
 
         public Rectangle GetTransform(ushort instancePass)
         {
-            #nullable disable
+#nullable disable
             unsafe
             {
                 return (Rectangle)(transformsI).GetPass(transformConst, instancePass);
             }
-            #nullable enable
+#nullable enable
         }
 
         public Vector2 GetPosition(ushort instancePass)
         {
-            #nullable disable
+#nullable disable
             unsafe
             {
                 return (Vector2)(positionsI).GetPass(positionConst, instancePass);
             }
-            #nullable enable
+#nullable enable
         }
-
-
 
         public void SetSprite(ushort instancePass, object value)
         {
-            #nullable disable
+#nullable disable
             unsafe
             {
                 (spritesI).SetPass(spritesConst, instancePass, value);
             }
-            #nullable enable
+#nullable enable
         }
 
         public void SetScale(ushort instancePass, object value)
         {
-            #nullable disable
+#nullable disable
             unsafe
             {
                 (scalesI).SetPass(scalesConst, instancePass, value);
             }
-            #nullable enable
+#nullable enable
         }
 
         public void SetObjectEnum(ushort instancePass, object value)
         {
-            #nullable disable
+#nullable disable
             unsafe
             {
                 (objectEnumsI).SetPass(objectEnumsConst, instancePass, value);
             }
-            #nullable enable
+#nullable enable
         }
 
         public void SetAnimation(ushort instancePass, object value)
         {
-            #nullable disable
+#nullable disable
             unsafe
             {
                 (animationsI).SetPass(animationConst, instancePass, value);
             }
-            #nullable enable
+#nullable enable
         }
 
         public void SetCollider(ushort instancePass, object value)
         {
-            #nullable disable
+#nullable disable
             unsafe
             {
                 (collidersI).SetPass(colliderConst, instancePass, value);
             }
-            #nullable enable
+#nullable enable
         }
 
         public void SetTransform(ushort instancePass, object value)
         {
-            #nullable disable
+#nullable disable
             unsafe
             {
                 (transformsI).SetPass(transformConst, instancePass, value);
             }
-            #nullable enable
+#nullable enable
         }
 
         public void SetPosition(ushort instancePass, object value)
         {
-            #nullable disable
+#nullable disable
             unsafe
             {
                 (positionsI).SetPass(positionConst, instancePass, value);
             }
-            #nullable enable
+#nullable enable
         }
 
         public ref List<Collider> ColliderCollisions()
@@ -599,7 +650,7 @@ namespace Galabingus
 
         public ushort ColliderLayer4Instance(ushort instanceNumber)
         {
-            return GameObjectTrie<Collider>.GetLayer4Instance(colliderConst, instanceNumber, colliders); 
+            return GameObjectTrie<Collider>.GetLayer4Instance(colliderConst, instanceNumber, colliders);
         }
 
         /// <summary>
@@ -725,20 +776,38 @@ namespace Galabingus
         /// <param name="instanceNumber">index of the instance</param>
         unsafe public GameObject(
             ushort contentName,
-            ushort instanceNumber
+            ushort instanceNumber,
+            CollisionGroup collisionGroup
         )
         {
+            switch (collisionGroup)
+            {
+                case CollisionGroup.Player:
+                    typeOfObject = typeof(Player);
+                    break;
+                case CollisionGroup.Bullet:
+                    typeOfObject = typeof(Bullet);
+                    break;
+                case CollisionGroup.Tile:
+                    typeOfObject = typeof(Tile);
+                    break;
+                case CollisionGroup.Enemy:
+                    typeOfObject = typeof(Enemy);
+                    break;
+            }
+            CollisionGroupISet(contentName, instanceNumber, collisionGroup);
             GameObject.Instance.Content = contentName;
             instance = instanceNumber;
             string path = GameObject.ObjectEnumsI[contentName];
             ushort strip = ushort.Parse(path.Split("strip")[1]);
-            GameObject.Instance.index = contentName;
-            SetSprite(instanceNumber,GameObject.Instance.contentManager.Load<Texture2D>(path));
-            SetScale(instanceNumber,1.0f);
+            this.index = contentName;
+            SetSprite(instanceNumber, GameObject.Instance.contentManager.Load<Texture2D>(path));
+            SetScale(instanceNumber, 1.0f);
             SetAnimation(instanceNumber, new Animation(GetSprite(instanceNumber).Width, GetSprite(instanceNumber).Height, strip));
             Collider newCollider = new Collider();
             newCollider.Layer = contentName;
             newCollider.Resolved = true;
+            newCollider.self = this;
             SetCollider(instanceNumber, newCollider);
             SetPosition(instanceNumber, Vector2.Zero);
             SetTransform(instanceNumber,
@@ -750,6 +819,15 @@ namespace Galabingus
                 )
             );
         }
+
+        public System.Type GameObjectType
+        {
+            get
+            {
+                return typeOfObject;
+            }
+        }
+
 
         /// <summary>
         ///  Initalizes the instance with 
@@ -766,6 +844,154 @@ namespace Galabingus
             this.spriteBatch = spriteBatch;
             this.contentManager = contentManager;
             return new GameObject();
+        }
+
+        private CollisionGroup CollisionGroupIGet(ushort contentName, ushort instance)
+        {
+            if (GameObject.Instance.collisionGroups == null)
+            {
+                GameObject.Instance.collisionGroups = new List<List<CollisionGroup>>();
+            }
+            for (int i = GameObject.Instance.collisionGroups.Count-1; i <= contentName; i++)
+            {
+                GameObject.Instance.collisionGroups.Add(new List<CollisionGroup>());
+            }
+            for (int i = GameObject.Instance.collisionGroups[contentName].Count - 1; i <= instance; i++)
+            {
+                GameObject.Instance.collisionGroups[contentName].Add(CollisionGroup.None);
+            }
+            return GameObject.Instance.collisionGroups[contentName][instance];
+        }
+
+        private CollisionGroup CollisionGroupISet(ushort contentName, ushort instance, CollisionGroup value)
+        {
+            if (GameObject.Instance.collisionGroups == null)
+            {
+                GameObject.Instance.collisionGroups = new List<List<CollisionGroup>>();
+            }
+            for (int i = GameObject.Instance.collisionGroups.Count - 1; i <= contentName; i++)
+            {
+                GameObject.Instance.collisionGroups.Add(new List<CollisionGroup>());
+            }
+            for (int i = GameObject.Instance.collisionGroups[contentName].Count - 1; i <= instance; i++)
+            {
+                GameObject.Instance.collisionGroups[contentName].Add(value);
+            }
+            return GameObject.Instance.collisionGroups[contentName][instance];
+        }
+
+
+        public TypeCode GetTypeCode()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool ToBoolean(IFormatProvider? provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public byte ToByte(IFormatProvider? provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public char ToChar(IFormatProvider? provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public DateTime ToDateTime(IFormatProvider? provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public decimal ToDecimal(IFormatProvider? provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public double ToDouble(IFormatProvider? provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public short ToInt16(IFormatProvider? provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int ToInt32(IFormatProvider? provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public long ToInt64(IFormatProvider? provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public sbyte ToSByte(IFormatProvider? provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public float ToSingle(IFormatProvider? provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string ToString(IFormatProvider? provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public object ToType(System.Type conversionType, IFormatProvider? provider)
+        {
+            if (conversionType == typeof(Player))
+            {
+                return ToPlayer();
+            }
+            if (conversionType == typeof(Tile))
+            {
+                return ToTile();
+            }
+            if (conversionType == typeof(Bullet))
+            {
+                return ToBullet();
+            }
+            return default(object);
+            //throw new NotImplementedException();
+        }
+
+        public ushort ToUInt16(IFormatProvider? provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public uint ToUInt32(IFormatProvider? provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ulong ToUInt64(IFormatProvider? provider)
+        {
+            throw new NotImplementedException();
+        }
+
+        public object ToPlayer()
+        {
+            return GameObject.Instance;
+        }
+
+        public object ToBullet()
+        {
+            return GameObject.Instance;
+        }
+
+        public object ToTile()
+        {
+            return GameObject.Instance;
         }
     }
 }

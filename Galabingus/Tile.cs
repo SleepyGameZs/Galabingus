@@ -155,8 +155,9 @@ namespace Galabingus
         // Contructors
         // -------------------------------------------------
 
-        public Tile(ushort contentName, ushort instanceNumber, ushort sprite) : base(contentName, instanceNumber)
+        public Tile(ushort contentName, ushort instanceNumber, ushort sprite) : base(contentName, instanceNumber, CollisionGroup.Tile)
         {
+            this.thisGameObject = this;
             this.contentName = contentName;
             this.instanceNumber = instanceNumber;
             this.Transform = this.Animation.GetFrame(sprite);
@@ -164,8 +165,9 @@ namespace Galabingus
             this.spriteNumber = sprite;
         }
 
-        public Tile(ushort contentName, ushort instanceNumber, ushort sprite, bool border) : base(contentName, instanceNumber)
+        public Tile(ushort contentName, ushort instanceNumber, ushort sprite, bool border) : base(contentName, instanceNumber, CollisionGroup.Tile)
         {
+            this.thisGameObject = this;
             this.contentName = contentName;
             this.instanceNumber = instanceNumber;
             this.Transform = this.Animation.GetFrame(0);

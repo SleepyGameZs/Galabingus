@@ -189,8 +189,9 @@ namespace Galabingus
             Vector2 position,
             ushort contentName,
             ushort enemyNumber
-        ) : base(contentName, enemyNumber)
+        ) : base(contentName, enemyNumber, CollisionGroup.Enemy)
         {
+            this.thisGameObject = this;
             // Set Sprite from given
             this.contentName = contentName;
             this.enemyNumber = enemyNumber;
@@ -345,7 +346,8 @@ namespace Galabingus
 
                 // Creates currect collider for Enemy
                 this.Transform = this.Animation.Play(gameTime);
-                List<Collision> intercepts = this.Collider.UpdateTransform/*<put type here>*/(
+
+                List<Collision> intercepts = this.Collider.UpdateTransform(
                     this.Sprite,                         // Enemy Sprite
                     this.Position,                       // Enemy position
                     this.Transform,                      // Enemy transform for sprite selection
@@ -356,15 +358,15 @@ namespace Galabingus
                     (ushort)CollisionGroup.Enemy,        // Content on same collision layer won't coll
                     enemyNumber
                 );
-                
+
                 // Checks for any collisions having occured
                 foreach (Collision collision in intercepts)
                 {
-                    
                     if (collision.other != null)
                     { // Collision occured, now find what was collided with
                         //Debug.WriteLine("eee");
-                        if (collision.other is Bullet)
+                        //Debug.WriteLine((collision.other as GameObject).GameObjectType == typeof(Tile));
+                        if ((collision.other as Bullet) is Bullet)
                         { // Collided with a Bullet
                             Debug.WriteLine("eee");
                             Bullet hitBullet = (Bullet)collision.other;
@@ -373,7 +375,7 @@ namespace Galabingus
                             { // Only allow player bullets to affect the enemy
                                 currentHealth -= 1;
                                 hitBullet.Destroy = true;
-
+   
                                 if (currentHealth >= 0)
                                 {
                                     destroy = true;
@@ -389,7 +391,12 @@ namespace Galabingus
                         }
                     }
                 }
+
+                this.Collider.Resolved = true;
+
+
             }
+
 
             // Manage Animation
             this.Animation.AnimationDuration = 0.03f;
