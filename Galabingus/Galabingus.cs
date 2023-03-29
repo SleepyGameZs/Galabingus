@@ -2,6 +2,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
+using System.Diagnostics;
+using static System.Formats.Asn1.AsnWriter;
 
 // Wabungus Corpsungus Duplicatungus
 // 2023, 3, 13
@@ -10,6 +12,15 @@ using System.Collections.Generic;
 
 namespace Galabingus
 {
+
+    enum CollisionGroup
+    {
+        None,
+        Player,
+        Tile,
+        Bullet,
+        Enemy
+    }
 
     public class Galabingus : Game
     {
@@ -23,10 +34,14 @@ namespace Galabingus
         private Texture2D tempBackground;
 
         // UI Object
-        private UI userInterface;
+        //private UI userInterface;
+        private UIManager userInterface;
 
         // Player GameObject
         private Player player;
+
+        // Shaders
+        private Effect shaders;
 
         private BulletManager mng_bullet;
         private EnemyManager mng_enemy;
@@ -63,7 +78,12 @@ namespace Galabingus
             content = GameObject.Instance.Initialize(Content, GraphicsDevice, _spriteBatch);
 
             //new UI class and loading its content
-            userInterface = new UI(_graphics, Content, _spriteBatch);
+            //userInterface = new UI(_graphics, Content, _spriteBatch);
+            //userInterface.LoadContent();
+
+            //creates and initializes the UIManager, and then loads its contents
+            userInterface = UIManager.Instance;
+            userInterface.Initialize(_graphics, Content, _spriteBatch);
             userInterface.LoadContent();
 
             //gets the list of enemies from the file
@@ -86,6 +106,8 @@ namespace Galabingus
 
             // Create a player
             player = new Player(new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Height * 0.00875f, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.00875f), content.player_strip5);
+            player.Position = new Vector2(Player.PlayerInstance.Transform.Width * 2, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.5f - Player.PlayerInstance.Transform.Height);
+            player.Health = 5;
 
             // Create Bullet Manager
             mng_bullet = BulletManager.Instance;
@@ -102,6 +124,8 @@ namespace Galabingus
 
             // Load the temporary background
             tempBackground = Content.Load<Texture2D>("spacebackground_strip1");
+
+            shaders = Content.Load<Effect>("shaders");
         }
 
         protected override void Update(GameTime gameTime)
@@ -110,39 +134,49 @@ namespace Galabingus
                 || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // Update the player
-            player.Update(gameTime);
-
-            // Update the enemies
-            mng_enemy.Update(gameTime);
-
-            // Update the bullets
-            mng_bullet.Update(gameTime);
-
-            //update the game state
+            //Update the UI
             userInterface.Update();
 
-            // Update the Camera
-            camera.Update(gameTime);
+            //update the game state
+            //userInterface.Update();
 
-            tileManager.Update(gameTime);
+            if (!(userInterface.GS == GameState.Pause))
+            {
+                // Update the player
+                player.Update(gameTime);
 
-            base.Update(gameTime);
+                // Update the enemies
+                mng_enemy.Update(gameTime);
+
+                // Update the bullets
+                mng_bullet.Update(gameTime);
+
+                // Update the Camera
+                camera.Update(gameTime);
+
+                tileManager.Update(gameTime);
+
+                base.Update(gameTime);
+            }
         }
 
         protected override void Draw(GameTime gameTime)
         {
             // Change the clear color to transparent and use point rendering for pixel art
-            GraphicsDevice.Clear(userInterface.ClearColor);
-            _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap);
+            //GraphicsDevice.Clear(userInterface.ClearColor);
+
+            GraphicsDevice.Clear(Color.Transparent);
+
+            _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, effect: shaders);
 
             //draw the screen
             userInterface.Draw();
 
             if (!(userInterface.GS == GameState.Menu))
             {
+
                 //draw the background using the temporary background texture
-                _spriteBatch.Draw(
+                /*_spriteBatch.Draw(
                     tempBackground,
                     Vector2.Zero,
                     new Rectangle(0, 0, tempBackground.Width, tempBackground.Height),
@@ -156,6 +190,7 @@ namespace Galabingus
                     SpriteEffects.None,
                     1
                 );
+                */
 
                 // Draws enemies
                 mng_enemy.Draw();
@@ -177,11 +212,13 @@ namespace Galabingus
                     // Draws tiles
                     tileManager.Draw();
                 }
-                
             }
+
+            GameObject.Instance.DebugDraw(_spriteBatch);
 
             // End the SpriteBatch draw
             _spriteBatch.End();
+
             base.Draw(gameTime);
         }
     }

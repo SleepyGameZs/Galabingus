@@ -37,6 +37,42 @@
 /processorParam:TextureFormat=Color
 /build:brownasteroid_strip1.png
 
+#begin buttonCredits_strip1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:buttonCredits_strip1.png
+
+#begin buttonHowToPlay_strip1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:buttonHowToPlay_strip1.png
+
+#begin buttonOptions_strip1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:buttonOptions_strip1.png
+
 #begin circlebullet_strip4.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -157,6 +193,18 @@
 /processorParam:TextureFormat=Color
 /build:enemy_yellow_strip4.png
 
+#begin galabingusLogo_strip1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:galabingusLogo_strip1.png
+
 #begin grayasteroid_strip1.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -168,6 +216,54 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:grayasteroid_strip1.png
+
+#begin heart_full_strip1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:heart_full_strip1.png
+
+#begin heart_half_strip1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:heart_half_strip1.png
+
+#begin heart_strip1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:heart_strip1.png
+
+#begin menubackground_strip1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:menubackground_strip1.png
 
 #begin playbutton_strip1.png
 /importer:TextureImporter
@@ -205,6 +301,12 @@
 /processorParam:TextureFormat=Color
 /build:player_white_strip5.png
 
+#begin shaders.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:shaders.fx
+
 #begin smallbullet_strip4.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -228,6 +330,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:spacebackground_strip1.png
+
+#begin tempMenu_strip1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:tempMenu_strip1.png
 
 #begin tile_strip26.png
 /importer:TextureImporter
