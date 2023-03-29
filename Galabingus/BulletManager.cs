@@ -25,7 +25,7 @@ namespace Galabingus
         private List<ushort> content;
 
         // Bullet Total
-        private ushort totalBullets;
+        private GalabingusLinkedList<ushort> activeBulletNumbers;
 
         // Screen data
         private Vector2 screenSize;
@@ -70,9 +70,8 @@ namespace Galabingus
         private BulletManager()
         {
             activeBullets = new List<Bullet>();
+            activeBulletNumbers = new GalabingusLinkedList<ushort>();
             content = new List<ushort>();
-
-            totalBullets = 0;
 
             screenSize = new Vector2(
                 GameObject.Instance.GraphicsDevice.Viewport.Width, // Width of screen
@@ -145,6 +144,17 @@ namespace Galabingus
                 }
             }
 
+            ushort setNumber = (ushort)activeBulletNumbers.Count;
+
+            for (int i = 0; i < activeBulletNumbers.Count; i++)
+            {
+                if (activeBulletNumbers[i] == i)
+                {
+                    setNumber = (ushort)(activeBulletNumbers[i] + 1);
+                    activeBulletNumbers[i] = setNumber;
+                }
+            }
+
             // Add bullet itself to list
             activeBullets.Add(new Bullet(ability,       // Ability of the bullet to shoot
                                          position,      // Position to spawn the bullet
@@ -152,12 +162,9 @@ namespace Galabingus
                                          direction,     // Direction of the bullet
                                          creator,       // Reference to creator of bullet
                                          sprite,        // Sprite of the bullet
-                                         totalBullets   // total count of bullets
+                                         setNumber      // total count of bullets
                                          )
                               );
-            
-            // Increment count
-            totalBullets++;
 
         }
 
@@ -168,11 +175,14 @@ namespace Galabingus
         /// <param name="gameTime">The total game time variable</param>
         public void Update(GameTime gameTime)
         {
+
+            ushort numberDeletions = 0;
+
             //Debug.WriteLine(sprite);
             for (int i = 0; i < activeBullets.Count; i++)
             {
                 // Runs the bullet's update.
-                activeBullets[i].Update(gameTime);
+                activeBullets[i].Update(gameTime, numberDeletions);
 
                 // Checks if bullet is set to be destroyed.
                 if (activeBullets[i].Destroy)
@@ -180,6 +190,8 @@ namespace Galabingus
                     activeBullets[i].Delete(activeBullets[i].BulletNumber);
                     activeBullets.RemoveAt(i);
                     i -= 1;
+                    totalBullets--;
+                    numberDeletions++;
                 }
             }
         }

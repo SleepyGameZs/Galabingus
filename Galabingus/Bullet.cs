@@ -360,10 +360,12 @@ namespace Galabingus
 
         #region-------------------[ Methods ]-------------------
 
-        public void Update(GameTime gameTime)
+        public void Update(GameTime gameTime, ushort numberDeletions)
         {
             // Get old position
             oldPosition = this.Position;
+
+            //bulletNumber -= numberDeletions;
 
             // Ability specific setting
             switch (ability)
