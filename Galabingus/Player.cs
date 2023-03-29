@@ -1000,7 +1000,7 @@ namespace Galabingus
             GameObject.Instance.SpriteBatch.Draw(
                 halfHeartSprite,                          // The sprite-sheet for the player
                 new Vector2(10, 10),                        // The position for the player
-                new Rectangle(0, 0, halfHeartSprite.Width * (int)Math.Clamp(Math.Floor(playerInstance.Health)+1,0,5), halfHeartSprite.Height),                       // The scale and bounding box for the animation
+                new Rectangle(0, 0, halfHeartSprite.Width * (int)Math.Clamp((int)Math.Round(playerInstance.Health, MidpointRounding.AwayFromZero),0,5), halfHeartSprite.Height),                       // The scale and bounding box for the animation
                 new Color(Color.White, 0.9f),                     // The color for the palyer
                 0.0f,                            // There cannot be any rotation of the player
                 Vector2.Zero,                    // Starting render position

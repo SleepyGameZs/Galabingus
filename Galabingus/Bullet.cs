@@ -534,9 +534,9 @@ namespace Galabingus
                     if (((collision.other as Player) is Player) && !destroy && !((collision.self as Bullet).Creator is Player))
                     {
                         // TODO: Write Player damage stuff here
-                        if ((Player.PlayerInstance.Health - 1) >= -1)
+                        if ((Player.PlayerInstance.Health - 0.5) >= -1)
                         {
-                            Player.PlayerInstance.Health--;
+                            Player.PlayerInstance.Health = Player.PlayerInstance.Health - 0.5f;
                         }
                         destroy = true;
                         velocity = Vector2.Zero;
