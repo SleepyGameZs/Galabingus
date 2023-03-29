@@ -239,6 +239,17 @@ namespace Galabingus
             }
         }
 
+        /// <summary>
+        /// Returns the bullet's ability
+        /// </summary>
+        public BulletType Ability
+        {
+            get
+            {
+                return ability;
+            }
+        }
+
         #endregion
 
         #region-------------------[ Constructor ]-------------------
@@ -360,24 +371,30 @@ namespace Galabingus
 
         #region-------------------[ Methods ]-------------------
 
-        public void Update(GameTime gameTime, ushort numberDeletions)
+        public void Update(GameTime gameTime)
         {
             // Get old position
             oldPosition = this.Position;
-
-            //bulletNumber -= numberDeletions;
 
             // Ability specific setting
             switch (ability)
             {
                 case BulletType.Normal:
                     // Set Current Position
-                    currentPosition = SetPosition(gameTime, 16);
+                    if (Creator == Player.PlayerInstance)
+                    {
+                        currentPosition = SetPosition(gameTime, 16, true);
+                    } 
+                    else
+                    {
+                        currentPosition = SetPosition(gameTime, 16, false);
+                    }
+                    
                     break;
 
                 case BulletType.Bouncing:
                     // Set Current Position
-                    currentPosition = SetPosition(gameTime, 3);
+                    currentPosition = SetPosition(gameTime, 3, false);
 
                     // Check for wall collison
                     bool CeilingHit = this.Position.Y < Sprite.Height;
@@ -418,31 +435,35 @@ namespace Galabingus
 
                 case BulletType.Splitter:
                     // Set Current Position
-                    currentPosition = SetPosition(gameTime, 6);
+                    currentPosition = SetPosition(gameTime, 6, false);
 
                     // X Position of the player
-                    float PlayerX = Player.PlayerInstance.Position.X;     // Base Position
-                    PlayerX = PlayerX + Player.PlayerInstance.Velocity.X; // Position shifted over by the player velocity, result: next player position to compare to
+                    float PlayerX = Player.PlayerInstance.Position.X    // Base Position
+                                    + Player.PlayerInstance.Velocity.X; // Player Velocity 
 
-                    // Each one of these allows us to shift the left by the center for comparison
-                    // This is the center coordinate of the player plus a one pixel buffer zone
-                    // Use this as the right bound or the furthest right the bullet can go
-                    float rightBound = (PlayerX + Player.PlayerInstance.Transform.Width * Player.PlayerInstance.Scale) + 1;
+                    float rightBound = PlayerX;
+                    float leftBound = PlayerX;
 
-                    // This is the furthest left coordinate of the player minus the center of the bullet
-                    // Use this as the left bound or the furthest left the bullet can go; it will never hit the player if further left than the width of the bullet
-                    float leftBound = (PlayerX + Player.PlayerInstance.Transform.Width * Player.PlayerInstance.Scale) - (Transform.Width * Scale * 0.5f);
+                    // Bullet will split when it reaches the visual center of the player
+                    // (or anywhere up to the end of the player's sprite afterward)
+
+                    if (direction < 0)
+                    { // Facing Right
+                        rightBound = (PlayerX + Player.PlayerInstance.Transform.Width * Player.PlayerInstance.Scale * 0.35f) + 1;
+                        leftBound = (PlayerX) - 1;
+                    } 
+                    else
+                    { // Facing Left
+                        rightBound = (PlayerX + Player.PlayerInstance.Transform.Width * Player.PlayerInstance.Scale) + 1;
+                        leftBound = (PlayerX + Player.PlayerInstance.Transform.Width * Player.PlayerInstance.Scale * 0.65f) - 1;
+                    }
 
                     // Split into 2 bullets
                     if (currentPosition.X < rightBound && currentPosition.X > leftBound)
                     {
-                        // Fix positions
-                        Vector2 topBullet = new Vector2(currentPosition.X - 50, currentPosition.Y);
-                        Vector2 bottomBullet = new Vector2(currentPosition.X - 30, currentPosition.Y);
-
                         // Create Bullets
-                        BulletManager.Instance.CreateBullet(BulletType.SplitSmall, topBullet, 90, direction, creatorReference);
-                        BulletManager.Instance.CreateBullet(BulletType.SplitSmall, bottomBullet, -90, direction, creatorReference);
+                        BulletManager.Instance.CreateBullet(BulletType.SplitSmall, currentPosition, 90, direction, creatorReference, true);
+                        BulletManager.Instance.CreateBullet(BulletType.SplitSmall, currentPosition, -90, direction, creatorReference, true);
 
                         // Tell Bullet Manager to delete this bullet
                         destroy = true;
@@ -451,17 +472,17 @@ namespace Galabingus
 
                 case BulletType.SplitSmall:
                     // Set Current Position
-                    currentPosition = SetPosition(gameTime, 10);
+                    currentPosition = SetPosition(gameTime, 10, true);
                     break;
 
                 case BulletType.Circle:
                     // Set Current Position
-                    currentPosition = SetPosition(gameTime, 1);
+                    currentPosition = SetPosition(gameTime, 1, false);
                     break;
 
                 case BulletType.Large:
                     // Set Current Position
-                    currentPosition = SetPosition(gameTime, 7);
+                    currentPosition = SetPosition(gameTime, 7, false);
                     break;
 
                 case BulletType.Seeker:
@@ -493,7 +514,7 @@ namespace Galabingus
                     }
 
                     // Set Current Position
-                    currentPosition = SetPosition(gameTime, 3);
+                    currentPosition = SetPosition(gameTime, 3, true);
                     break;
 
                 default:
@@ -520,7 +541,7 @@ namespace Galabingus
             );
 
             // Check if off screen
-            bool bol_bulletOffScreen = this.Position.X < 0 &&
+            bool bol_bulletOffScreen = this.Position.X < 0 ||
                                        this.Position.X > BulletManager.Instance.ScreenDimensions.X;
             if (bol_bulletOffScreen)
             {
@@ -567,12 +588,27 @@ namespace Galabingus
         /// </summary>
         /// <param name="gameTime">Game Time Data</param>
         /// <returns></returns>
-        private Vector2 SetPosition(GameTime gameTime, int abilitySpeed)
+        private Vector2 SetPosition(GameTime gameTime, int abilitySpeed, bool ignoreCamera)
         {
             int speedmulti = 1;
 
             // Sets position
-            this.Position += velocity * speedmulti * abilitySpeed * Player.PlayerInstance.TranslationRatio * (float)Animation.EllapsedTime;
+            Vector2 finalVelocity = (velocity *                                 // Actual velocity
+                                    speedmulti *                                // Speed multiplier for changing stats
+                                    abilitySpeed *                              // Ability specific speed changes
+                                    Player.PlayerInstance.TranslationRatio *    
+                                    (float)this.Animation.EllapsedTime          // Animation data
+                                    );
+
+            // Final position change, includes camera movement
+            if (ignoreCamera)
+            {
+                this.Position += finalVelocity;
+            } else
+            {
+                this.Position += finalVelocity - Camera.Instance.OffSet;
+            }
+            
 
             // Returns position
             return this.Position;

@@ -379,7 +379,7 @@ namespace Galabingus
                 GameObject.Instance.SpriteBatch,
                 PlayerInstance.Scale,                          // Player scale
                 SpriteEffects.None,
-                (ushort)CollisionGroup.Player,                                   // Content
+                (ushort)CollisionGroup.Player,                 // Content
                 0
             );
 
@@ -866,7 +866,7 @@ namespace Galabingus
                                                + velocity.Y             // Account for possible next movement
                                                );
 
-            BulletManager.Instance.CreateBullet(BulletType.Normal, vc2_shootPos, 0, 1, this);
+            BulletManager.Instance.CreateBullet(BulletType.Normal, vc2_shootPos, 0, 1, this, false);
         }
 
         /// <summary>

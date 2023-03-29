@@ -56,6 +56,9 @@ namespace Galabingus
         private int currentHealth;
         private int totalHealth;
 
+        // Reference to what thing created this enemy (can be null)
+        private object creatorReference;
+
         #endregion
 
         #region-------------------[ Properties ]-------------------
@@ -188,6 +191,17 @@ namespace Galabingus
             }
         }
 
+        /// <summary>
+        /// The object which created this bullet.
+        /// </summary>
+        public object Creator
+        {
+            get
+            {
+                return creatorReference;
+            }
+        }
+
         #endregion
 
         #region-------------------[ Constructor ]-------------------
@@ -197,11 +211,13 @@ namespace Galabingus
         /// </summary>
         /// <param name="ability">The ability of the enemy</param>
         /// <param name="position">The position of the enemy</param>
+        /// <param name="position">The thing that created this enemy (may be null)</param>
         /// <param name="contentName">Name to use for GameObject storage</param>
         /// <param name="enemyNumber">Number to give bullet in GameObject list</param>
         public Enemy (
             EnemyType ability,
             Vector2 position,
+            object creator,
             ushort contentName,
             ushort enemyNumber
         ) : base(contentName, enemyNumber, CollisionGroup.Enemy)
@@ -211,6 +227,9 @@ namespace Galabingus
             this.contentName = contentName;
             this.enemyNumber = enemyNumber;
             Animation.AnimationDuration = 0.01f;
+
+            // Set creator
+            creatorReference = creator;
 
             // Set Scale
             this.Scale = Player.PlayerInstance.Scale;
@@ -267,10 +286,10 @@ namespace Galabingus
                 float enemyShootY = (Transform.Height * this.Scale) / 2;
 
                 Vector2 shootPos = new Vector2(Position.X + // Base player X position
-                                                   enemyShootX, // Center horizontally
-                                                   Position.Y + // Base player Y position
-                                                   enemyShootY  // Center vertically
-                                                   );
+                                               enemyShootX, // Center horizontally
+                                               Position.Y + // Base player Y position
+                                               enemyShootY  // Center vertically
+                                               );
 
                 // Will only perform actions if currently on the screen
                 switch (this.ability)
@@ -283,13 +302,13 @@ namespace Galabingus
                             if (spriteDirection < 0)
                             {
                                 shootPos = new Vector2(Position.X,
-                                                           Position.Y + enemyShootY * 2 - 20);
+                                                       Position.Y + enemyShootY * 2 - 20);
                             }
 
                             // Shoot the 3 bullets
-                            BulletManager.Instance.CreateBullet(BulletType.Bouncing, shootPos, 0, spriteDirection, this);
-                            BulletManager.Instance.CreateBullet(BulletType.Bouncing, shootPos, 30, spriteDirection, this);
-                            BulletManager.Instance.CreateBullet(BulletType.Bouncing, shootPos, -30, spriteDirection, this);
+                            BulletManager.Instance.CreateBullet(BulletType.Bouncing, shootPos, 0, spriteDirection, this, false);
+                            BulletManager.Instance.CreateBullet(BulletType.Bouncing, shootPos, 30, spriteDirection, this, false);
+                            BulletManager.Instance.CreateBullet(BulletType.Bouncing, shootPos, -30, spriteDirection, this, false);
 
                             // Reset Shooting time
                             shotWaitTime = rng.Next(shotWaitVariance) - shotWaitVariance / 2;
@@ -305,11 +324,11 @@ namespace Galabingus
                             if (spriteDirection < 0)
                             {
                                 shootPos = new Vector2(Position.X,
-                                                           Position.Y + enemyShootY * 2 - 10);
+                                                       Position.Y + enemyShootY * 2 - 15);
                             }
 
                             // Shoot the splitter bullet
-                            BulletManager.Instance.CreateBullet(BulletType.Splitter, shootPos, 0, spriteDirection, this);
+                            BulletManager.Instance.CreateBullet(BulletType.Splitter, shootPos, 0, spriteDirection, this, false);
 
                             // Reset Shooting time
                             shotWaitTime = rng.Next(shotWaitVariance) - shotWaitVariance / 2;
@@ -325,11 +344,11 @@ namespace Galabingus
                             if (spriteDirection < 0)
                             {
                                 shootPos = new Vector2(Position.X,
-                                                           Position.Y + enemyShootY * 2);
+                                                       Position.Y + enemyShootY * 2 - 15);
                             }
 
                             // Shoot the BIG BULLET
-                            BulletManager.Instance.CreateBullet(BulletType.Large, shootPos, 0, spriteDirection, this);
+                            BulletManager.Instance.CreateBullet(BulletType.Large, shootPos, 0, spriteDirection, this, false);
 
                             // Reset Shooting time
                             shotWaitTime = rng.Next(shotWaitVariance);
@@ -345,11 +364,11 @@ namespace Galabingus
                             if (spriteDirection < 0)
                             {
                                 shootPos = new Vector2(Position.X,
-                                                           Position.Y + enemyShootY * 2 - 10);
+                                                       Position.Y + enemyShootY * 2 - 10);
                             }
 
                             // Shoot the seeker bullet
-                            BulletManager.Instance.CreateBullet(BulletType.Seeker, shootPos, 0, spriteDirection, this);
+                            BulletManager.Instance.CreateBullet(BulletType.Seeker, shootPos, 0, spriteDirection, this, false);
 
                             // Reset Shooting time
                             shotWaitTime = rng.Next(shotWaitVariance) - shotWaitVariance / 2;
@@ -371,6 +390,8 @@ namespace Galabingus
 
             }
 
+            // Set position of enemy
+            Position -= Camera.Instance.OffSet;
 
             // Manage Animation
             this.Animation.AnimationDuration = 0.03f;

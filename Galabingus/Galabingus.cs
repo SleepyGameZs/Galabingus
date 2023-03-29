@@ -99,10 +99,10 @@ namespace Galabingus
              * [3] -> Y Position
              */
             
-            l_a4_obj_enemyData.Add(new int[] { 1, 2, GameObject.Instance.GraphicsDevice.Viewport.Width - 67, 50 });
-            l_a4_obj_enemyData.Add(new int[] { 1, 1, GameObject.Instance.GraphicsDevice.Viewport.Width - 67, GameObject.Instance.GraphicsDevice.Viewport.Height / 4 + 50 });
-            l_a4_obj_enemyData.Add(new int[] { 1, 4, GameObject.Instance.GraphicsDevice.Viewport.Width - 67, (GameObject.Instance.GraphicsDevice.Viewport.Height / 4) * 2 + 50 });
-            l_a4_obj_enemyData.Add(new int[] { 1, 5, GameObject.Instance.GraphicsDevice.Viewport.Width - 67, (GameObject.Instance.GraphicsDevice.Viewport.Height / 4) * 3 + 50 });
+            l_a4_obj_enemyData.Add(new int[] { 1, 2, GameObject.Instance.GraphicsDevice.Viewport.Width + 100, 50 });
+            l_a4_obj_enemyData.Add(new int[] { 1, 1, GameObject.Instance.GraphicsDevice.Viewport.Width + 100, GameObject.Instance.GraphicsDevice.Viewport.Height / 4 + 50 });
+            l_a4_obj_enemyData.Add(new int[] { 1, 4, GameObject.Instance.GraphicsDevice.Viewport.Width + 100, (GameObject.Instance.GraphicsDevice.Viewport.Height / 4) * 2 + 50 });
+            l_a4_obj_enemyData.Add(new int[] { 1, 5, GameObject.Instance.GraphicsDevice.Viewport.Width + 100, (GameObject.Instance.GraphicsDevice.Viewport.Height / 4) * 3 + 50 });
 
             // Create a player
             player = new Player(new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Height * 0.00875f, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.00875f), content.player_strip5);
@@ -111,6 +111,9 @@ namespace Galabingus
 
             // Create Bullet Manager
             mng_bullet = BulletManager.Instance;
+
+            // Special Bullet (needs to spawn 1st off screen for loading)
+            BulletManager.Instance.CreateBullet(BulletType.Normal, new Vector2(400, -600), 0, 1, player, false);
 
             // Create Enemy Manager + Load data
             mng_enemy = EnemyManager.Instance.Initialize(l_a4_obj_enemyData);
@@ -136,9 +139,6 @@ namespace Galabingus
 
             //Update the UI
             userInterface.Update();
-
-            //update the game state
-            //userInterface.Update();
 
             if (!(userInterface.GS == GameState.Pause))
             {
