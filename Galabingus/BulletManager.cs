@@ -165,7 +165,7 @@ namespace Galabingus
                                          setNumber      // total count of bullets
                                          )
                               );
-
+            //e 
         }
 
         /// <summary>
