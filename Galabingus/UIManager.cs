@@ -365,20 +365,20 @@ namespace Galabingus
                 case GameState.Pause:
                 case GameState.Game:
 
-                    sb.Draw(
-                        tempBackground,
-                        Vector2.Zero,
-                        new Rectangle(0, 0, tempBackground.Width, tempBackground.Height),
-                        new Color(Color.White * 0.35f, 1.0f),
-                        0,
-                        Vector2.Zero,
-                        new Vector2(
-                            GameObject.Instance.GraphicsDevice.Viewport.Width / (float)tempBackground.Width,
-                            GameObject.Instance.GraphicsDevice.Viewport.Height / (float)tempBackground.Height
-                        ),
-                        SpriteEffects.None,
-                        1
-                    );
+                   //sb.Draw(
+                   //    tempBackground,
+                   //    Vector2.Zero,
+                   //    new Rectangle(0, 0, tempBackground.Width, tempBackground.Height),
+                   //    new Color(Color.White * 0.35f, 1.0f),
+                   //    0,
+                   //    Vector2.Zero,
+                   //    new Vector2(
+                   //        GameObject.Instance.GraphicsDevice.Viewport.Width / (float)tempBackground.Width,
+                   //        GameObject.Instance.GraphicsDevice.Viewport.Height / (float)tempBackground.Height
+                   //    ),
+                   //    SpriteEffects.None,
+                   //    1
+                   //);
 
                     break;
 

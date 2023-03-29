@@ -32,7 +32,7 @@ namespace Galabingus
 
         private int x;
         private int y;
-        private float cameraScroll;
+        private float initalCameraScroll;
         private Vector2 offSet;
         private bool cameraLock;
 
@@ -53,10 +53,10 @@ namespace Galabingus
             set { y = value; }
         }
 
-        public float CameraScroll
+        public float InitalCameraScroll
         {
-            get { return cameraScroll; }
-            set { cameraScroll = value; }
+            get { return initalCameraScroll; }
+            set { initalCameraScroll = value; }
         }
 
         public Vector2 OffSet
@@ -72,26 +72,43 @@ namespace Galabingus
         {
             x = 0;
             y = 0;
-            cameraScroll = 1;
-            offSet = new Vector2(3,0);
+            initalCameraScroll = 3f;
+            offSet = new Vector2(initalCameraScroll,0);
         }
 
         public Camera(int cameraScroll)
         {
             x = 0;
             y = 0;
-            this.cameraScroll = cameraScroll;
+            this.initalCameraScroll = cameraScroll;
         }
 
         // -------------------------------------------------
         // Meathods 
         // -------------------------------------------------
 
+        public void Start()
+        {
+            cameraLock = false;
+            offSet.X = initalCameraScroll;
+        }
+
+        public void Stop()
+        {
+            cameraLock = false;
+            offSet.X = 0;
+        }
+
         public void Update(GameTime gameTime)
         {
             if (Keyboard.GetState().IsKeyDown(Keys.F5))
             {
-                cameraScroll = Player.PlayerInstance.Velocity.X;
+                cameraLock = true;
+            }
+            if (cameraLock == true)
+            {
+                Camera.Instance.offSet.X = Player.PlayerInstance.Velocity == Vector2.Zero ? Vector2.Zero.X*5 :
+                    Vector2.Normalize(Player.PlayerInstance.Velocity).X*5;
             }
         }
     }

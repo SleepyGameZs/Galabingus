@@ -253,7 +253,7 @@ namespace Galabingus
 
                 // Check which direction the enemy is facing
                 int spriteDirection;
-                if (Camera.Instance.CameraScroll < 0)
+                if (Camera.Instance.InitalCameraScroll < 0)
                 {
                     spriteDirection = 1;
                 }

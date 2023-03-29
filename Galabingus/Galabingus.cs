@@ -123,7 +123,8 @@ namespace Galabingus
             tileManager.CreateTile(1);
 
             // Load the temporary background
-            tempBackground = Content.Load<Texture2D>("spacebackground_strip1");
+            //tempBackground = Content.Load<Texture2D>("spacebackground_strip1");
+            tileManager.CreateBackground();
 
             shaders = Content.Load<Effect>("shaders");
         }
@@ -192,14 +193,14 @@ namespace Galabingus
                 );
                 */
 
-                // Draws enemies
-                mng_enemy.Draw();
-
                 if (TileManager.Instance.CurrentSpriteNumber == 0)
                 {
                     // Draws tiles
                     tileManager.Draw();
                 }
+
+                // Draws enemies
+                mng_enemy.Draw();
 
                 // Draw the player
                 player.Draw();

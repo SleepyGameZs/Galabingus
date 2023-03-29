@@ -172,7 +172,7 @@ namespace Galabingus
         public void Update (GameTime gameTime)
         {
             // Get camera's movement direction
-            float cameraScroll = Camera.Instance.CameraScroll;
+            float cameraScroll = Camera.Instance.InitalCameraScroll;
             if (cameraScroll < 0)
             {
                 enemyDirection = SpriteEffects.None;

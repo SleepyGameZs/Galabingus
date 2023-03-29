@@ -181,7 +181,7 @@ namespace Galabingus
 
         public void Update(GameTime gameTime)
         {
-            //this.Position -= Camera.Instance.OffSet;
+            this.Position -= Camera.Instance.OffSet;
         }
 
         public void Draw()

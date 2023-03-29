@@ -33,6 +33,7 @@ namespace Galabingus
         private Vector2 screenSize;
         private Vector2 tileSize;
         private List<Tile> tilesList;
+        private List<Tile> backgroundList;
         private List<Tile> tilesBorder;
         private List<ushort> layers;
         private List<ushort> spriteNumbers;
@@ -72,6 +73,7 @@ namespace Galabingus
             spriteNumbers = new List<ushort>();
 
             tilesList = new List<Tile>();
+            backgroundList = new List<Tile>();
         }
 
         // -------------------------------------------------
@@ -144,7 +146,12 @@ namespace Galabingus
 
         public void CreateBackground()
         {
-            
+            Tile background = new Tile(GameObject.Instance.Content.spacebackground_strip1, 0, 0, true);
+            background.Position = Vector2.Zero;
+            background.Transform = new Rectangle(0, 0, background.Sprite.Width, background.Sprite.Height);
+            background.Scale = 10f;
+            background.ScaleVector = new Vector2(background.Scale, 1);
+            backgroundList.Add(background);
         }
 
         public void Update(GameTime gameTime)
@@ -153,7 +160,6 @@ namespace Galabingus
             {
                 //currentSpriteNumber = tilesList[i].SpriteNumber;
 
-                tilesList[i].Update(gameTime);
                 List<Collision> collisions = tilesList[i].Collider.UpdateTransform(
                     tilesList[i].Sprite,
                     tilesList[i].Position,
@@ -180,7 +186,7 @@ namespace Galabingus
                 tilesList[i].Collider.Resolved = true;
 
             }
-
+            backgroundList[0].Update(gameTime);
         }
 
         public void Draw()
@@ -189,6 +195,7 @@ namespace Galabingus
             {
                 tilesList[i].Draw();
             }
+            backgroundList[0].Draw();
         }
     }
 }
