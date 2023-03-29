@@ -874,7 +874,7 @@ namespace Galabingus
         /// </summary>
         public void Draw()
         {
-            if (Player.PlayerInstance.Health >= 0)
+            if (Player.PlayerInstance.Health > 0)
             {
                 //PlayerInstance.Position = new Vector2(0, 0);
                 //Debug.WriteLine(Position.X);
