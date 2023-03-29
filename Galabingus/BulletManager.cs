@@ -146,7 +146,7 @@ namespace Galabingus
             }
 
             // Add bullet itself to list
-            activeBullets.Add(new Bullet(ability,       // Ability of the bullet to shoot
+            Instance.activeBullets.Add(new Bullet(ability,       // Ability of the bullet to shoot
                                          position,      // Position to spawn the bullet
                                          angle,         // Angle to move the bullet
                                          direction,     // Direction of the bullet
@@ -155,9 +155,9 @@ namespace Galabingus
                                          totalBullets   // total count of bullets
                                          )
                               );
-            
+
             // Increment count
-            totalBullets++;
+            Instance.totalBullets++;
 
         }
 
@@ -168,17 +168,16 @@ namespace Galabingus
         /// <param name="gameTime">The total game time variable</param>
         public void Update(GameTime gameTime)
         {
-            //Debug.WriteLine(sprite);
-            for (int i = 0; i < activeBullets.Count; i++)
+            for (int i = 0; i < Instance.activeBullets.Count; i++)
             {
                 // Runs the bullet's update.
-                activeBullets[i].Update(gameTime);
+                Instance.activeBullets[i].Update(gameTime);
 
                 // Checks if bullet is set to be destroyed.
-                if (activeBullets[i].Destroy)
+                if (Instance.activeBullets[i].Destroy)
                 {
-                    activeBullets[i].Delete(activeBullets[i].BulletNumber);
-                    activeBullets.RemoveAt(i);
+                    Instance.activeBullets[i].Delete(Instance.activeBullets[i].BulletNumber);
+                    Instance.activeBullets.RemoveAt(i);
                     i -= 1;
                 }
             }
