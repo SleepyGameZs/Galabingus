@@ -510,7 +510,8 @@ namespace Galabingus
                 this.Transform,                      // Bullet transform for sprite selection
                 GameObject.Instance.GraphicsDevice,
                 GameObject.Instance.SpriteBatch,
-                this.Scale,                          // Bullet scale
+                this.direction,
+                new Vector2(this.Scale,this.Scale),                          // Bullet scale
                 SpriteEffects.None,
                 (ushort)CollisionGroup.Bullet,                           // Collision Layer
                 bulletNumber

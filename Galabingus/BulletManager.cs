@@ -213,7 +213,7 @@ namespace Galabingus
                     bullet.Transform,               // The scale and bounding box for the animation
                     bullet.Color,                   // The color for the palyer
                     direction,                      // rotation uses the velocity
-                    Vector2.Zero,                       // Starting render position
+                    new Vector2(bullet.Transform.Width * 0.5f, bullet.Transform.Height * 0.5f),                       // Starting render position
                     bullet.Scale,                   // The scale of the sprite
                     SpriteEffects.None,                 // Which direction the sprite faces
                     0.0f                                // Layer depth of the player is 0.0

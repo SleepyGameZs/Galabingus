@@ -209,6 +209,8 @@ namespace Galabingus
                 }
             }
 
+            GameObject.Instance.DebugDraw(_spriteBatch);
+
             // End the SpriteBatch draw
             _spriteBatch.End();
 
