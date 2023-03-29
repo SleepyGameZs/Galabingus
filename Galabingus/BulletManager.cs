@@ -156,7 +156,7 @@ namespace Galabingus
             }
 
             // Add bullet itself to list
-            activeBullets.Add(new Bullet(ability,       // Ability of the bullet to shoot
+            Instance.activeBullets.Add(new Bullet(ability,       // Ability of the bullet to shoot
                                          position,      // Position to spawn the bullet
                                          angle,         // Angle to move the bullet
                                          direction,     // Direction of the bullet
@@ -165,7 +165,10 @@ namespace Galabingus
                                          setNumber      // total count of bullets
                                          )
                               );
-            //e 
+            
+            // Increment count
+            totalBullets++;
+
         }
 
         /// <summary>
@@ -185,10 +188,10 @@ namespace Galabingus
                 activeBullets[i].Update(gameTime, numberDeletions);
 
                 // Checks if bullet is set to be destroyed.
-                if (activeBullets[i].Destroy)
+                if (Instance.activeBullets[i].Destroy)
                 {
-                    activeBullets[i].Delete(activeBullets[i].BulletNumber);
-                    activeBullets.RemoveAt(i);
+                    Instance.activeBullets[i].Delete(Instance.activeBullets[i].BulletNumber);
+                    Instance.activeBullets.RemoveAt(i);
                     i -= 1;
                     totalBullets--;
                     numberDeletions++;
@@ -225,7 +228,7 @@ namespace Galabingus
                     bullet.Transform,               // The scale and bounding box for the animation
                     bullet.Color,                   // The color for the palyer
                     direction,                      // rotation uses the velocity
-                    Vector2.Zero,                       // Starting render position
+                    new Vector2(bullet.Transform.Width * 0.5f, bullet.Transform.Height * 0.5f),                       // Starting render position
                     bullet.Scale,                   // The scale of the sprite
                     SpriteEffects.None,                 // Which direction the sprite faces
                     0.0f                                // Layer depth of the player is 0.0

@@ -512,7 +512,8 @@ namespace Galabingus
                 this.Transform,                      // Bullet transform for sprite selection
                 GameObject.Instance.GraphicsDevice,
                 GameObject.Instance.SpriteBatch,
-                this.Scale,                          // Bullet scale
+                this.direction,
+                new Vector2(this.Scale,this.Scale),                          // Bullet scale
                 SpriteEffects.None,
                 (ushort)CollisionGroup.Bullet,                           // Collision Layer
                 bulletNumber
@@ -535,7 +536,10 @@ namespace Galabingus
                     if (((collision.other as Player) is Player) && !destroy && !((collision.self as Bullet).Creator is Player))
                     {
                         // TODO: Write Player damage stuff here
-
+                        if ((Player.PlayerInstance.Health - 0.5) >= 0)
+                        {
+                            Player.PlayerInstance.Health = Player.PlayerInstance.Health - 0.5f;
+                        }
                         destroy = true;
                         velocity = Vector2.Zero;
                     }

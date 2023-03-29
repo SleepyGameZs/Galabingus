@@ -44,6 +44,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Galabingus
 {
+
+    public delegate void OnDebug(SpriteBatch spriteBatch);
+
     /// <summary>
     ///  GameObject contains
     ///  the common funtionalites 
@@ -51,6 +54,8 @@ namespace Galabingus
     /// </summary>
     internal class GameObject : DynamicObject, IConvertible
     {
+        public event OnDebug Debug;
+
         private const byte animationConst = 0;
         private const byte colliderConst = 1;
         private const byte transformConst = 2;
@@ -1037,6 +1042,23 @@ namespace Galabingus
         public object ToTile()
         {
             return GameObject.Instance;
+        }
+
+        public void DebugDraw(SpriteBatch spriteBatch)
+        {
+            if (Debug != null)
+            {
+                Debug(spriteBatch);
+                Debug = null;
+            }
+        }
+
+        public ContentManager ContentManager
+        {
+            get
+            {
+                return contentManager;
+            }
         }
     }
 }
