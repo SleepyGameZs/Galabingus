@@ -144,19 +144,7 @@ namespace Galabingus
 
         public void CreateBackground()
         {
-            ushort instanceCounter = 0;
-            for (ushort i = 0; i < 100; i++)
-            {
-                for (ushort j = 0; j < 100; j++)
-                {
-                    Tile tile = new Tile(GameObject.Instance.Content.tile_strip26, instanceCounter, 0);
-                    tile.Scale = 3f;
-                    tile.ScaleVector = new Vector2(1, 1);
-                    tile.Position = new Vector2(tile.Transform.Width * j, tile.Transform.Height* i);
-                    tilesList.Add(tile);
-                    instanceCounter++;
-                }
-            }
+            
         }
 
         public void Update(GameTime gameTime)
