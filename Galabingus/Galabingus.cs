@@ -164,6 +164,9 @@ namespace Galabingus
         {
             // Change the clear color to transparent and use point rendering for pixel art
             //GraphicsDevice.Clear(userInterface.ClearColor);
+
+            GraphicsDevice.Clear(Color.Transparent);
+
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, effect: shaders);
 
             //draw the screen
@@ -216,10 +219,7 @@ namespace Galabingus
             // End the SpriteBatch draw
             _spriteBatch.End();
 
-            if (!(userInterface.GS == GameState.Pause))
-            {
-                base.Draw(gameTime);
-            }
+            base.Draw(gameTime);
         }
     }
 }

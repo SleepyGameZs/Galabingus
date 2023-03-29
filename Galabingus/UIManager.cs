@@ -362,6 +362,7 @@ namespace Galabingus
 
                     break;
 
+                case GameState.Pause:
                 case GameState.Game:
 
                     sb.Draw(
