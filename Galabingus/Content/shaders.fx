@@ -50,10 +50,13 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 	}
 	float3 colorA = color.rgb;// / max(max(color.r, color.g), color.b);
 	float3 colorB = input.Color.rgb;// / max(max(input.Color.r, input.Color.g), input.Color.b);
-	float3 color2 = lerp(colorA, colorB, 0.973 * color.a);
+	float3 color2 = lerp(colorA, colorB, 0.973);
 	color.r = color.r * color2.r;
 	color.g = color.g * color2.g;
 	color.b = color.b * color2.b;
+	color.r = color.r * 0.21 + color.r * 0.79 * input.Color.a * 1.0;
+	color.g = color.g * 0.21 + color.g * 0.79 * input.Color.a * 1.0;
+	color.b = color.b * 0.21 + color.b * 0.79 * input.Color.a * 1.0;
 	color.a = color.a * input.Color.a;
 	if (color.a == 0)
 	{
