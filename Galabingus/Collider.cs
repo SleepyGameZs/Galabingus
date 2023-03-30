@@ -497,7 +497,7 @@ namespace Galabingus
             if (position.X - transform.Width * scale.Y > GameObject.Instance.GraphicsDevice.Viewport.Width ||
                 position.X + transform.Width * scale.Y < 0 ||
                 position.Y - transform.Height * scale.Y > GameObject.Instance.GraphicsDevice.Viewport.Height ||
-                position.Y + transform.Height * scale.Y < 0
+                position.Y + transform.Height * scale.Y < -1
             )
             {
                 this.sprite = null;
