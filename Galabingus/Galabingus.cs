@@ -99,10 +99,10 @@ namespace Galabingus
              * [3] -> Y Position
              */
             
-            l_a4_obj_enemyData.Add(new int[] { 1, 2, GameObject.Instance.GraphicsDevice.Viewport.Width -67, 50 });
-            l_a4_obj_enemyData.Add(new int[] { 1, 1, GameObject.Instance.GraphicsDevice.Viewport.Width -67, GameObject.Instance.GraphicsDevice.Viewport.Height / 4 + 50 });
-            l_a4_obj_enemyData.Add(new int[] { 1, 4, GameObject.Instance.GraphicsDevice.Viewport.Width -67, (GameObject.Instance.GraphicsDevice.Viewport.Height / 4) * 2 + 50 });
-            l_a4_obj_enemyData.Add(new int[] { 1, 5, GameObject.Instance.GraphicsDevice.Viewport.Width -67, (GameObject.Instance.GraphicsDevice.Viewport.Height / 4) * 3 + 50 });
+            l_a4_obj_enemyData.Add(new int[] { 1, 2, GameObject.Instance.GraphicsDevice.Viewport.Width + 300, 50 });
+            l_a4_obj_enemyData.Add(new int[] { 1, 1, GameObject.Instance.GraphicsDevice.Viewport.Width + 300, GameObject.Instance.GraphicsDevice.Viewport.Height / 4 + 50 });
+            l_a4_obj_enemyData.Add(new int[] { 1, 4, GameObject.Instance.GraphicsDevice.Viewport.Width + 300, (GameObject.Instance.GraphicsDevice.Viewport.Height / 4) * 2 + 50 });
+            l_a4_obj_enemyData.Add(new int[] { 1, 5, GameObject.Instance.GraphicsDevice.Viewport.Width + 300, (GameObject.Instance.GraphicsDevice.Viewport.Height / 4) * 3 + 50 });
 
             // Create a player
             player = new Player(new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Height * 0.00875f, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.00875f), content.player_strip5);
@@ -144,7 +144,7 @@ namespace Galabingus
                 player.Update(gameTime);
 
                 // Update the enemies
-                //mng_enemy.Update(gameTime);
+                mng_enemy.Update(gameTime);
 
                 // Update the bullets
                 mng_bullet.Update(gameTime);

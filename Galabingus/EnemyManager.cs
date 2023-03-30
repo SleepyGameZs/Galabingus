@@ -258,7 +258,7 @@ namespace Galabingus
             {
                 Instance.enemyDirection = SpriteEffects.FlipHorizontally;
             }
-
+            
             // Run enemy updates
             for (int i = 0; i < Instance.activeEnemies.Count; i++)
             {
