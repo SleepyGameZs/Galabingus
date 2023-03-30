@@ -62,6 +62,8 @@ float3 normalizeSaturation(float4 color)
 float4 MainPS(VertexShaderOutput input) : COLOR
 {
 	float4 color = tex2D(SpriteTextureSampler,input.TextureCoordinates);
+	//color = * input.Color;
+	/*
 	if (color.a == 1)
 	{
 		float3 maxBright = normalizeSaturation(color) * 1.0;
@@ -69,7 +71,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 		color.b = maxBright.b;
 		color.g = maxBright.g;
 	}
-
+	*/
 	float3 colorA = color.rgb;// / max(max(color.r, color.g), color.b);
 	float3 colorB = input.Color.rgb;// / max(max(input.Color.r, input.Color.g), input.Color.b);
 	float3 color2 = lerp(colorA, colorB, 0.973);
@@ -87,6 +89,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 		color.b = 0;
 	}
 	//color = color * 0.5;
+	//*/
 
 		// Calculate the blur strength
 	float blurStrength = 0.01 * 1280.0;
