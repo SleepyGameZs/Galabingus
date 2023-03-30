@@ -146,12 +146,19 @@ namespace Galabingus
 
         public void CreateBackground()
         {
-            Tile background = new Tile(GameObject.Instance.Content.spacebackground_strip1, 0, 0, true);
+            Tile background = new Tile(GameObject.Instance.Content.spacebackground_strip1, 0, 1, true);
             background.Position = Vector2.Zero;
             background.Transform = new Rectangle(0, 0, background.Sprite.Width, background.Sprite.Height);
-            background.Scale = 10f;
+            background.Scale = 1f;
             background.ScaleVector = new Vector2(background.Scale, 1);
             backgroundList.Add(background);
+
+            Tile background2 = new Tile(GameObject.Instance.Content.spacebackground_strip1, 1, 1, true);
+            background2.Position = new Vector2(background.Transform.Width, 0);
+            background2.Transform = new Rectangle(background.Transform.Width, 0, background2.Sprite.Width, background2.Sprite.Height);
+            background2.Scale = 1f;
+            background2.ScaleVector = new Vector2(background2.Scale, 1);
+            backgroundList.Add(background2);
         }
 
         public void Update(GameTime gameTime)
@@ -186,7 +193,18 @@ namespace Galabingus
                 tilesList[i].Collider.Resolved = true;
 
             }
-            backgroundList[0].Update(gameTime);
+            for (int i = 0; i < backgroundList.Count; i++)
+            {
+                backgroundList[i].Update(gameTime);
+                //Debug.WriteLine($"{i} {backgroundList[i].Position.X}");
+            }
+            for (int i = 0; i < backgroundList.Count; i++)
+            {
+                if (backgroundList[i].Position.X == -backgroundList[i].Transform.Width)
+                {
+                    backgroundList[i].Position = new Vector2(backgroundList[i].Transform.Width, 0);
+                }
+            }
         }
 
         public void Draw()
@@ -195,7 +213,10 @@ namespace Galabingus
             {
                 tilesList[i].Draw();
             }
-            backgroundList[0].Draw();
+            for (int i = 0; i < backgroundList.Count; i++)
+            {
+                backgroundList[i].Draw();
+            }
         }
     }
 }

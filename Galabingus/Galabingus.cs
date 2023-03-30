@@ -147,7 +147,7 @@ namespace Galabingus
                 player.Update(gameTime);
 
                 // Update the enemies
-                mng_enemy.Update(gameTime);
+                //mng_enemy.Update(gameTime);
 
                 // Update the bullets
                 mng_bullet.Update(gameTime);
