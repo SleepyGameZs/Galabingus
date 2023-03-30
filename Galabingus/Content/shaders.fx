@@ -28,7 +28,7 @@ float3 normalizeSaturation(float4 color)
 	{
 		return color;
 	}
-	if ((color.r + color.b + color.g) * color.a > 1.732050807568877293527446341505872366)
+	if ((color.r + color.b + color.g) * color.a > 2)
 	{
 		return newColor + color;
 	}
