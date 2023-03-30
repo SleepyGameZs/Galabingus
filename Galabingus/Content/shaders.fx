@@ -25,6 +25,16 @@ float3 normalizeSaturation(float4 color)
 {
 	float4 newColor = normalize(color) * 1.732050807568877293527446341505872366 * -1.732050807568877293527446341505872366 + color * 1.732050807568877293527446341505872366;
 
+	if (color.r > 0.5f && color.g > 0.25f && color.g < 0.5f)
+	{
+		color.r = color.r * 2;
+	}
+
+	if (color.b > 0.5f && color.g > 0.25f && color.g < 0.5f)
+	{
+		color.b = color.b * 2;
+	}
+
 	if ((color.r + color.b + color.g) * color.a < 0.3)
 	{
 		return color * 1.27;
@@ -63,9 +73,9 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 	color.r = color.r * color2.r;
 	color.g = color.g * color2.g;
 	color.b = color.b * color2.b;
-	color.r = color.r * 0.21 + color.r * 0.79 * input.Color.a * 1.0;
-	color.g = color.g * 0.21 + color.g * 0.79 * input.Color.a * 1.0;
-	color.b = color.b * 0.21 + color.b * 0.79 * input.Color.a * 1.0;
+	color.r = color.r * 0.125 + color.r * 0.875 * input.Color.a * 1.0;
+	color.g = color.g * 0.125 + color.g * 0.875 * input.Color.a * 1.0;
+	color.b = color.b * 0.125 + color.b * 0.875 * input.Color.a * 1.0;
 	color.a = color.a * input.Color.a;
 	if (color.a == 0)
 	{
