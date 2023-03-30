@@ -137,7 +137,7 @@ namespace Galabingus
             //Update the UI
             userInterface.Update();
 
-            if (!(userInterface.GS == GameState.Pause))
+            if (!(userInterface.GS == GameState.Pause) && !(userInterface.GS == GameState.Menu))
             {
                 // Update the player
                 player.Update(gameTime);
@@ -152,9 +152,9 @@ namespace Galabingus
                 camera.Update(gameTime);
 
                 tileManager.Update(gameTime);
-
-                base.Update(gameTime);
             }
+
+            base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)

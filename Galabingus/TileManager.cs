@@ -117,7 +117,7 @@ namespace Galabingus
             Tile tile = new Tile(GameObject.Instance.Content.white_pixel_strip1, 0, index, true);
             tile.Scale = 25f;
             tile.ScaleVector = new Vector2(screenSize.X, 20);
-            tile.Position = new Vector2(0, -20);
+            tile.Position = new Vector2(0, -21);
             tilesList.Add(tile);
 
             // Bot
