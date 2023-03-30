@@ -69,6 +69,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 		color.b = maxBright.b;
 		color.g = maxBright.g;
 	}
+
 	float3 colorA = color.rgb;// / max(max(color.r, color.g), color.b);
 	float3 colorB = input.Color.rgb;// / max(max(input.Color.r, input.Color.g), input.Color.b);
 	float3 color2 = lerp(colorA, colorB, 0.973);
@@ -86,7 +87,45 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 		color.b = 0;
 	}
 	//color = color * 0.5;
+
+		// Calculate the blur strength
+	float blurStrength = 0.01 * 1280.0;
+
+	// Apply horizontal blur
+	float4 blurColor = 0;
+	blurColor += tex2D(SpriteTextureSampler, input.TextureCoordinates + float2(-0.0004, 0) * blurStrength);
+	blurColor += tex2D(SpriteTextureSampler, input.TextureCoordinates + float2(-0.003, 0) * blurStrength);
+	blurColor += tex2D(SpriteTextureSampler, input.TextureCoordinates + float2(-0.002, 0) * blurStrength);
+	blurColor += tex2D(SpriteTextureSampler, input.TextureCoordinates + float2(-0.001, 0) * blurStrength);
+	blurColor += color;
+	blurColor += tex2D(SpriteTextureSampler, input.TextureCoordinates + float2(0.0001, 0) * blurStrength);
+	blurColor += tex2D(SpriteTextureSampler, input.TextureCoordinates + float2(0.0002, 0) * blurStrength);
+	blurColor += tex2D(SpriteTextureSampler, input.TextureCoordinates + float2(0.0003, 0) * blurStrength);
+	blurColor += tex2D(SpriteTextureSampler, input.TextureCoordinates + float2(0.0004, 0) * blurStrength);
+	blurColor /= 9;
+
+	// Apply vertical blur
+	float4 glowColor = 0;
+	glowColor += tex2D(SpriteTextureSampler, input.TextureCoordinates + float2(0, -0.0004) * blurStrength);
+	glowColor += tex2D(SpriteTextureSampler, input.TextureCoordinates + float2(0, -0.0003) * blurStrength);
+	glowColor += tex2D(SpriteTextureSampler, input.TextureCoordinates + float2(0, -0.0002) * blurStrength);
+	glowColor += tex2D(SpriteTextureSampler, input.TextureCoordinates + float2(0, -0.0001) * blurStrength);
+	glowColor += blurColor;
+	glowColor += tex2D(SpriteTextureSampler, input.TextureCoordinates + float2(0, 0.0001) * blurStrength);
+	glowColor += tex2D(SpriteTextureSampler, input.TextureCoordinates + float2(0, 0.0002) * blurStrength);
+	glowColor += tex2D(SpriteTextureSampler, input.TextureCoordinates + float2(0, 0.0003) * blurStrength);
+	glowColor += tex2D(SpriteTextureSampler, input.TextureCoordinates + float2(0, 0.0004) * blurStrength);
+	glowColor /= 9;
+
+	float4 lerpGlow = lerp(color, glowColor, 0.05);
+	color.r = lerpGlow.r;
+	color.b = lerpGlow.b;
+
+	// Combine the glow color with the original color
 	return color;
+
+	//return color;
+	//return color * input.Color;
 }
 
 technique SpriteDrawing
