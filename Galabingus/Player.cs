@@ -925,25 +925,6 @@ namespace Galabingus
 
                 else //if (totalBoostTime >= boostFrameRate * 0.5f)
                 {
-                    foreach (Ghost ghost in ghosts)
-                    {
-                        Color halfOColor = ghost.ghostColor;//new Color(ghost.ghostColor * 0.825f, 0.825f);
-                        if (halfOColor.R <= 1)
-                        {
-                            halfOColor = Color.Transparent;
-                        }
-                        GameObject.Instance.SpriteBatch.Draw(
-                            Sprite,                     // The sprite-sheet for the player
-                            ghost.Position,    // The position for the player
-                            Transform,                       // The scale and bounding box for the animation
-                            halfOColor,                     // The color for the palyer
-                            0.0f,                            // There cannot be any rotation of the player
-                            Vector2.Zero,                    // Starting render position
-                            PlayerInstance.Scale,                      // The scale of the sprite
-                            SpriteEffects.None,              // Which direction the sprite faces
-                            0.0f                             // Layer depth of the player is 0.0
-                        );
-                    }
 
                     GameObject.Instance.SpriteBatch.Draw(
                         WhiteSprite,                     // The sprite-sheet for the player
