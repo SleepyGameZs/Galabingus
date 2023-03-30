@@ -847,11 +847,12 @@ namespace Galabingus
                 totalBoostTime -= boostFrameRate;
             }
 
-            //Debug.WriteLine();
             if (currentKeyboardState.IsKeyDown(Keys.G))
             {
-                PlayerInstance.Health = 5; 
+                PlayerInstance.Health = 5;
             }
+
+            //Debug.WriteLine();
         }
 
         /// <summary>
@@ -970,7 +971,7 @@ namespace Galabingus
                 );
 
             }
-            else
+            else if (!Keyboard.GetState().IsKeyDown(Keys.G))
             {
                 Collider.Resolved = false;
                 UIManager.Instance.GS = GameState.Pause;
