@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Formats.Asn1.AsnWriter;
 using Microsoft.Xna.Framework.Input;
+using System.Security.Cryptography;
 
 namespace Galabingus
 {
@@ -462,8 +463,8 @@ namespace Galabingus
                     if (currentPosition.X < rightBound && currentPosition.X > leftBound)
                     {
                         // Create Bullets
-                        BulletManager.Instance.CreateBullet(BulletType.SplitSmall, currentPosition, 90, direction, creatorReference, true);
-                        BulletManager.Instance.CreateBullet(BulletType.SplitSmall, currentPosition, -90, direction, creatorReference, true);
+                        //BulletManager.Instance.CreateBullet(BulletType.SplitSmall, currentPosition, 90, direction, creatorReference, true);
+                        //BulletManager.Instance.CreateBullet(BulletType.SplitSmall, currentPosition, -90, direction, creatorReference, true);
 
                         // Tell Bullet Manager to delete this bullet
                         destroy = true;

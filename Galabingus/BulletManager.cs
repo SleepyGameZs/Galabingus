@@ -31,6 +31,9 @@ namespace Galabingus
         private List<int> storeDirectionBullets;
         private List<object> storeCreatorBullets;
 
+        // Bullet Total
+        private ushort bulletTotal;
+
         // Screen data
         private Vector2 screenSize;
 
@@ -81,6 +84,8 @@ namespace Galabingus
             storeAngleBullets = new List<int>();
             storeDirectionBullets = new List<int>();
             storeCreatorBullets = new List<object>();
+
+            bulletTotal = 0;
 
             content = new List<ushort>();
 
@@ -161,13 +166,19 @@ namespace Galabingus
                 }
             }
 
+            bool isReplacing = false;
             ushort setNumber = (ushort)Math.Max(0, (Instance.activeBullets.Count - 1));
+
+            Debug.WriteLine($"COUNT: {activeBullets.Count}");
 
             for (int i = 0; i < Instance.activeBullets.Count; i++)
             {
                 if (Instance.activeBullets[i] == null)
                 {
+                    Debug.WriteLine($"Found Reusable Val at: {i}");
                     setNumber = (ushort)(i);
+                    isReplacing = true;
+                    break;
                 }
             }
 
@@ -183,7 +194,24 @@ namespace Galabingus
             } 
             else
             {
-                Instance.activeBullets.Insert((ushort)(setNumber),
+                if (isReplacing == false)
+                {
+                    Instance.activeBullets.Add(new Bullet(ability,       // Ability of the bullet to shoot
+                                                         position,      // Position to spawn the bullet
+                                                         angle,         // Angle to move the bullet
+                                                         direction,     // Direction of the bullet
+                                                         creator,       // Reference to creator of bullet
+                                                         sprite,        // Sprite of the bullet
+                                                         bulletTotal    // total count of bullets
+                                                         )
+                                               );
+
+                    // Increment total
+                    bulletTotal++;
+                } 
+                else
+                {
+                    Instance.activeBullets[setNumber] =
                                               new Bullet(ability,       // Ability of the bullet to shoot
                                                          position,      // Position to spawn the bullet
                                                          angle,         // Angle to move the bullet
@@ -191,8 +219,8 @@ namespace Galabingus
                                                          creator,       // Reference to creator of bullet
                                                          sprite,        // Sprite of the bullet
                                                          setNumber      // total count of bullets
-                                                         )
-                                              );
+                                                         );
+                }
             }
         }
 
@@ -219,6 +247,7 @@ namespace Galabingus
                     {
                         Instance.activeBullets[i].Delete((ushort)i);
                         Instance.activeBullets[i] = null;
+                        //Debug.WriteLine($"bogos");
                     }
                 }
             }

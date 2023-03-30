@@ -264,8 +264,8 @@ namespace Galabingus
         public void Update (GameTime gameTime)
         {
             // Check if off screen
-            bool bulletOnScreen = !(this.Position.X < 0 &&
-                                       this.Position.X > BulletManager.Instance.ScreenDimensions.X);
+            bool bulletOnScreen = (this.Position.X > 0 &&
+                                       this.Position.X < BulletManager.Instance.ScreenDimensions.X);
             //Debug.WriteLine("e");
             if (bulletOnScreen)
             {
@@ -391,7 +391,7 @@ namespace Galabingus
             }
 
             // Set position of enemy
-            Position -= Camera.Instance.OffSet;
+            //Position -= Camera.Instance.OffSet;
 
             // Manage Animation
             this.Animation.AnimationDuration = 0.03f;

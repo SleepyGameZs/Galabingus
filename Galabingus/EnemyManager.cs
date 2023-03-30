@@ -33,7 +33,7 @@ namespace Galabingus
         private List<object> storeCreatorEnemies;
 
         // Enemy Total
-        private ushort totalEnemies;
+        private ushort enemyTotal;
 
         // Draw Direction
         private SpriteEffects enemyDirection;
@@ -80,6 +80,8 @@ namespace Galabingus
 
             activeEnemies = new List<Enemy>();
             content = new List<ushort>();
+
+            enemyTotal = 0;
 
             storeAbilityEnemies = new List<EnemyType>();
             storePositionEnemies = new List<Vector2>();
@@ -190,13 +192,19 @@ namespace Galabingus
                 }
             }
 
+            bool isReplacing = false;
             ushort setNumber = (ushort)Math.Max(0, (Instance.activeEnemies.Count - 1));
+
+            Debug.WriteLine($"COUNT: {activeEnemies.Count}");
 
             for (int i = 0; i < Instance.activeEnemies.Count; i++)
             {
                 if (Instance.activeEnemies[i] == null)
                 {
+                    Debug.WriteLine($"Found Reusable Val at: {i}");
                     setNumber = (ushort)(i);
+                    isReplacing = true;
+                    break;
                 }
             }
 
@@ -209,13 +217,28 @@ namespace Galabingus
             }
             else
             { // Add enemy itself to list
-                Instance.activeEnemies.Add(new Enemy(ability,    // Ability of the Enemy spawned
-                                            position,   // Position of Enemy
-                                            creator,    // What created this enemy
-                                            sprite,     // Sprite for Enemy
-                                            totalEnemies// Total enemies
-                                            )
-                                  );
+                if (isReplacing == false)
+                {
+                    Instance.activeEnemies.Add(new Enemy(ability,    // Ability of the Enemy spawned
+                                                         position,   // Position of Enemy
+                                                         creator,    // What created this enemy
+                                                         sprite,     // Sprite for Enemy
+                                                         enemyTotal  // Total enemies
+                                                         )
+                                               );
+
+                    // Increment total
+                    enemyTotal++;
+                }
+                else
+                {
+                    Instance.activeEnemies[setNumber] = new Enemy(ability,    // Ability of the Enemy spawned
+                                                                  position,   // Position of Enemy
+                                                                  creator,    // What created this enemy
+                                                                  sprite,     // Sprite for Enemy
+                                                                  enemyTotal  // Total enemies
+                                                                  );
+                }
             }
         }
 
