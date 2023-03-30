@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Xml.Linq;
+using Microsoft.Xna.Framework.Input;
 
 // Matthew Rodriguez
 // 2023, 3, 13
@@ -317,8 +318,8 @@ namespace Galabingus
             // Render the effects and scale
             RenderTarget2D scaledSprite = new RenderTarget2D(
                 graphicsDevice,
-                (int)(transform.Width * scale) <= 0 ? 1 : (int)(transform.Width * scale),
-                (int)(transform.Height * scale) <= 0 ? 1 : (int)(transform.Height * scale)
+                (int)Math.Round((transform.Width * scale), MidpointRounding.AwayFromZero) <= 0 ? 1 : (int)Math.Round((transform.Width * scale), MidpointRounding.AwayFromZero),
+                (int)Math.Round((transform.Height * scale), MidpointRounding.AwayFromZero) <= 0 ? 1 : (int)Math.Round((transform.Height * scale), MidpointRounding.AwayFromZero)
             );
             clearColor = Color.Transparent;
             graphicsDevice.SetRenderTarget(scaledSprite);
@@ -399,7 +400,7 @@ namespace Galabingus
                 transform,
                 graphicsDevice,
                 spriteBatch,
-                new Vector2(scale,scale),
+                new Vector2(scale, scale),
                 effect,
                 layer,
                 instanceNumber
@@ -466,13 +467,16 @@ namespace Galabingus
             float greaterSize = Math.Max((transform.Width * scale.X), (transform.Height * scale.Y)) * 3;
 
             // Create transform from scale and position
+
+            int xo = (int)(position.X - (float)Math.Round((transform.Width * Scale.X * 0.5f), MidpointRounding.AwayFromZero));
+            int xe = (int)(position.Y - (float)Math.Round((transform.Height * Scale.Y * 0.5f), MidpointRounding.AwayFromZero));
             if (direction != 0)
             {
                 this.transform = new Rectangle(
-                    (int)(position.X),
-                    (int)(position.Y),
-                    (int)transform.Width * (int)(Scale.X),
-                    (int)transform.Height * (int)(Scale.Y)
+                    xo,
+                    xe,
+                    (int)Math.Round((transform.Width * (Scale.X)), MidpointRounding.AwayFromZero),
+                    (int)Math.Round((transform.Height * (Scale.Y) * 1.05f), MidpointRounding.AwayFromZero)
                 );
             }
             else
@@ -480,10 +484,12 @@ namespace Galabingus
                 this.transform = new Rectangle(
                     (int)(position.X),
                     (int)(position.Y),
-                    (int)transform.Width * (int)(Scale.X),
-                    (int)transform.Height * (int)(Scale.Y)
+                    (int)Math.Round((transform.Width * (Scale.X)), MidpointRounding.AwayFromZero),
+                    (int)Math.Round((transform.Height * (Scale.Y) * 1.05f), MidpointRounding.AwayFromZero)
                 );
             }
+
+
 
             //
             // Determine the bounds of the collider
@@ -491,7 +497,7 @@ namespace Galabingus
             if (position.X - transform.Width * scale.Y > GameObject.Instance.GraphicsDevice.Viewport.Width ||
                 position.X + transform.Width * scale.Y < 0 ||
                 position.Y - transform.Height * scale.Y > GameObject.Instance.GraphicsDevice.Viewport.Height ||
-                position.Y + transform.Height * scale.Y < 0
+                position.Y + transform.Height * scale.Y < -1
             )
             {
                 this.sprite = null;
@@ -527,9 +533,6 @@ namespace Galabingus
                         else
                         {
                             active = false;
-                            this.colliderNextMTV = Vector2.Zero;
-                            this.colldierCurrentMTV = Vector2.Zero;
-                            //this.pixels = null;
                         }
 
                         // Only update the collider once
@@ -537,17 +540,18 @@ namespace Galabingus
                         {
                             updated = true;
                             // Setup the renderTarget
+
+                            RenderTarget2D scaledSprite = new RenderTarget2D(graphicsDevice,
+                                (int)Math.Round((transform.Width * (Scale.X)), MidpointRounding.AwayFromZero) <= 0 ? 1 : (int)Math.Round((transform.Width * (Scale.X)), MidpointRounding.AwayFromZero),
+                                (int)Math.Round((transform.Height * (Scale.Y) * 1.05f), MidpointRounding.AwayFromZero) <= 0 ? 1 : (int)Math.Round((transform.Height * (Scale.Y) * 1.05f), MidpointRounding.AwayFromZero)
+                            );
+
+                            // Render the new sprite 
+                            graphicsDevice.SetRenderTarget(scaledSprite);
+                            graphicsDevice.Clear(clearColor);
+                            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
                             if (direction != 0)
                             {
-                                RenderTarget2D scaledSprite = new RenderTarget2D(graphicsDevice,
-                                    (int)(transform.Width * Scale.X) <= 0 ? 1 : (int)(transform.Width * Scale.X),
-                                    (int)(transform.Height * Scale.Y) <= 0 ? 1 : (int)(transform.Height * Scale.Y)
-                                );
-
-                                // Render the new sprite 
-                                graphicsDevice.SetRenderTarget(scaledSprite);
-                                graphicsDevice.Clear(clearColor);
-                                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
                                 spriteBatch.Draw(
                                     sprite,
                                     new Vector2(0, 0),
@@ -559,50 +563,33 @@ namespace Galabingus
                                     effect,
                                     1.0f
                                 );
-                                spriteBatch.End();
-                                graphicsDevice.SetRenderTarget(null);
-                                //this.colliderNextMTV = Vector2.Zero;
-                                //this.colldierCurrentMTV = Vector2.Zero;
-
-                                // Update the transform with the new scale and sprite
-                                this.sprite = scaledSprite;
-                                scaledSprite = null;
-                                // Load pixel data to CPU memory
-                                Load();
                             }
                             else
                             {
-                                RenderTarget2D scaledSprite = new RenderTarget2D(graphicsDevice,
-                                    (int)(transform.Width * Scale.X) <= 0 ? 1 : (int)(transform.Width * Scale.X),
-                                    (int)(transform.Height * Scale.Y) <= 0 ? 1 : (int)(transform.Height * Scale.Y)
-                                );
-
-                                // Render the new sprite 
-                                graphicsDevice.SetRenderTarget(scaledSprite);
-                                graphicsDevice.Clear(clearColor);
-                                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
                                 spriteBatch.Draw(
                                     sprite,
                                     new Vector2(0, 0),
                                     transform,
                                     Color.Black,
                                     direction,
-                                    Vector2.Zero,
+                                    new Vector2(0, 0),
                                     Scale,
                                     effect,
                                     1.0f
                                 );
-                                spriteBatch.End();
-                                graphicsDevice.SetRenderTarget(null);
-                                //this.colliderNextMTV = Vector2.Zero;
-                                //this.colldierCurrentMTV = Vector2.Zero;
-
-                                // Update the transform with the new scale and sprite
-                                this.sprite = scaledSprite;
-                                scaledSprite = null;
-                                // Load pixel data to CPU memory
-                                Load();
                             }
+                            spriteBatch.End();
+                            graphicsDevice.SetRenderTarget(null);
+                            //this.colliderNextMTV = Vector2.Zero;
+                            //this.colldierCurrentMTV = Vector2.Zero;
+
+                            // Update the transform with the new scale and sprite
+                            this.sprite = scaledSprite;
+
+                            // Load pixel data to CPU memory
+                            Load();
+                            scaledSprite.Dispose();
+                            scaledSprite = null;
 
                         }
 
@@ -677,40 +664,40 @@ namespace Galabingus
             int x2 = Math.Min(this.transform.X + (int)(this.transform.Width), other.transform.X + (int)(other.transform.Width));
             int y1 = Math.Max(this.transform.Y, other.transform.Y);
             int y2 = Math.Min(this.transform.Y + (int)(this.transform.Height), other.transform.Y + (int)(other.transform.Height));
-           // x1 = x1 - (x2 - x1);
-           // y1 = y1 - (y2 - y1);
+            // x1 = x1 - (x2 - x1);
+            // y1 = y1 - (y2 - y1);
 
-            /*
-
-            Rectangle intercpetion = new Rectangle(0, 0, x2 - x1, y2 - y1);
-            Rectangle hitBox = new Rectangle(0, 0, transform.Width, transform.Height);
-
-            Texture2D pixelWhite = GameObject.Instance.ContentManager.Load<Texture2D>("white_pixel_strip1");
-            GameObject.Instance.Debug += delegate (SpriteBatch spriteBatch)
+            if (Keyboard.GetState().IsKeyDown(Keys.C))
             {
-                spriteBatch.Draw(
-                    pixelWhite,
-                    new Vector2(transform.X, transform.Y),
-                    hitBox,
-                    new Color(Color.Blue, 0.1f),
-                    0, Vector2.Zero,
-                    new Vector2(1, 1),
-                    SpriteEffects.None,
-                    0
-                );
-                spriteBatch.Draw(
-                    pixelWhite,
-                    new Vector2(x1, y1),
-                    intercpetion,
-                    new Color(Color.Red,0.1f),
-                    0, Vector2.Zero,
-                    new Vector2(1, 1),
-                    SpriteEffects.None,
-                    0
-                );
-            };
-            */
-            
+                Rectangle intercpetion = new Rectangle(0, 0, x2 - x1, y2 - y1);
+                Rectangle hitBox = new Rectangle(0, 0, transform.Width, transform.Height);
+
+                Texture2D pixelWhite = GameObject.Instance.ContentManager.Load<Texture2D>("white_pixel_strip1");
+                GameObject.Instance.Debug += delegate (SpriteBatch spriteBatch)
+                {
+                    spriteBatch.Draw(
+                        pixelWhite,
+                        new Vector2(transform.X, transform.Y),
+                        hitBox,
+                        new Color(Color.Blue, 0.1f),
+                        0, Vector2.Zero,
+                        new Vector2(1, 1),
+                        SpriteEffects.None,
+                        0
+                    );
+                    spriteBatch.Draw(
+                        pixelWhite,
+                        new Vector2(x1, y1),
+                        intercpetion,
+                        new Color(Color.Red, 0.1f),
+                        0, Vector2.Zero,
+                        new Vector2(1, 1),
+                        SpriteEffects.None,
+                        0
+                    );
+                };
+            }
+
             // For each single pixel in the intersecting rectangle
             for (int y = y2 - 1; y >= y1; --y)
             {
@@ -846,7 +833,7 @@ namespace Galabingus
                 //mtv.Y *= 0.5f;
             }
 
-            mtv = overlap*mtv+mtv*100;
+            mtv = overlap*mtv+mtv;
 
             return mtv;
         }

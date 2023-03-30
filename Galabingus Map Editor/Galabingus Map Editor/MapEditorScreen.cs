@@ -12,10 +12,45 @@ namespace Galabingus_Map_Editor
 {
     enum TileState 
     {
+        Empty,
+        //Enemies
         Enemy1,
         Enemy2,
         Enemy3,
         Enemy4,
+        Enemy5,
+        Enemy6,
+        Enemy7,
+        Enemy8,
+        Enemy9,
+        Boss,
+        //Tiles
+        rock1,
+        rock2,
+        rock3,
+        rock4,
+        rock5,
+        rock6,
+        rock7,
+        rock8,
+        rock9,
+        rock10,
+        rock11,
+        rock12,
+        rock13,
+        rock14,
+        rock15,
+        rock16,
+        rock17,
+        rock18,
+        rock19,
+        rock20,
+        rock21,
+        rock22,
+        rock23,
+        rock24,
+        rock25,
+
     }
     public partial class MapEditorScreen : Form
     {
@@ -23,18 +58,22 @@ namespace Galabingus_Map_Editor
 
         private int totalWidth;
         private int totalHeight;
+        private int totalDensity;
+
 
         private int tileSize;
 
         private bool saved;
 
-        public MapEditorScreen(int width, int height)
+        public MapEditorScreen(int width, int height, int pixelDensity)
         {
             InitializeComponent();
 
             totalWidth = width;
 
             totalHeight = height;
+
+            totalDensity = pixelDensity;
 
             tileSize = 60;
         }
@@ -54,7 +93,7 @@ namespace Galabingus_Map_Editor
         //Button 1
         private void button2_Click(object sender, EventArgs e)
         {
-            button2.BackgroundImage = 
+            
         }
 
         //Button 2
@@ -139,5 +178,12 @@ namespace Galabingus_Map_Editor
         {
             
         }
+
+        private void ScaleUp()
+        {
+
+        }
+
+
     }
 }

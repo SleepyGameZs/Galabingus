@@ -24,8 +24,15 @@ namespace Galabingus
         private List<Bullet> activeBullets;
         private List<ushort> content;
 
+        // Bullet Created Bullet Storage
+        private List<BulletType> storeAbilityBullets;
+        private List<Vector2> storePositionBullets;
+        private List<int> storeAngleBullets;
+        private List<int> storeDirectionBullets;
+        private List<object> storeCreatorBullets;
+
         // Bullet Total
-        private ushort totalBullets;
+        private ushort bulletTotal;
 
         // Screen data
         private Vector2 screenSize;
@@ -55,7 +62,7 @@ namespace Galabingus
         public Vector2 ScreenDimensions
         {
             get { 
-                return screenSize;
+                return Instance.screenSize;
             }
         }
 
@@ -70,9 +77,17 @@ namespace Galabingus
         private BulletManager()
         {
             activeBullets = new List<Bullet>();
-            content = new List<ushort>();
 
-            totalBullets = 0;
+            // Storage data for when a bullet spawns a bullet
+            storeAbilityBullets = new List<BulletType>(); 
+            storePositionBullets = new List<Vector2>();
+            storeAngleBullets = new List<int>();
+            storeDirectionBullets = new List<int>();
+            storeCreatorBullets = new List<object>();
+
+            bulletTotal = 0;
+
+            content = new List<ushort>();
 
             screenSize = new Vector2(
                 GameObject.Instance.GraphicsDevice.Viewport.Width, // Width of screen
@@ -93,10 +108,16 @@ namespace Galabingus
         /// <param name="angle">The angle the bullet should have</param>
         /// <param name="direction">The direction (left or right) for the bullet</param>
         /// <param name="creator">Reference to the creator of the bullet</param>
-        public void CreateBullet (BulletType ability, Vector2 position, int angle, int direction, object creator)
+        /// <param name="sourceIsBulet">If the thing spawning the bullet is itself a bullet</param>
+        public void CreateBullet (BulletType ability, 
+                                  Vector2 position, 
+                                  int angle, 
+                                  int direction, 
+                                  object creator, 
+                                  bool sourceIsBullet)
         {
             // Sets the sprite to use for the bullet for GameObject storage purposes
-            ushort sprite = GameObject.Instance.Content.smallbullet_strip4;
+            ushort sprite;
             switch (ability)
             {
                 case BulletType.Normal:
@@ -122,43 +143,91 @@ namespace Galabingus
                 case BulletType.Seeker:
                     sprite = GameObject.Instance.Content.circlebullet_strip4;
                     break;
+
+                default:
+                    sprite = GameObject.Instance.Content.smallbullet_strip4;
+                    break;
             }
 
             // Add sprite linker to list
-            if (content.Count == 0)
+            if (Instance.content.Count == 0)
             {
-                content.Add(sprite);
+                Instance.content.Add(sprite);
+                Debug.WriteLine($"bruh");
             }
             else
             {
                 bool foundSprite = false;
-                foreach (ushort asset in content)
+                foreach (ushort asset in Instance.content)
                 {
                     if (asset == sprite)
                     {
                         foundSprite = true;
+                        
                     }
                 }
                 if (!foundSprite)
                 {
-                    content.Add(sprite);
+                    Instance.content.Add(sprite);
+                }
+            }
+
+            bool isReplacing = false;
+            ushort setNumber = (ushort)Math.Max(0, (Instance.activeBullets.Count - 1));
+
+            //Debug.WriteLine($"COUNT: {activeBullets.Count}");
+
+            for (int i = 0; i < Instance.activeBullets.Count; i++)
+            {
+                if (Instance.activeBullets[i] == null)
+                {
+                    //Debug.WriteLine($"Found Reusable Val at: {i}");
+                    setNumber = (ushort)(i);
+                    isReplacing = true;
+                    break;
                 }
             }
 
             // Add bullet itself to list
-            activeBullets.Add(new Bullet(ability,       // Ability of the bullet to shoot
-                                         position,      // Position to spawn the bullet
-                                         angle,         // Angle to move the bullet
-                                         direction,     // Direction of the bullet
-                                         creator,       // Reference to creator of bullet
-                                         sprite,        // Sprite of the bullet
-                                         totalBullets   // total count of bullets
-                                         )
-                              );
-            
-            // Increment count
-            totalBullets++;
+            if (sourceIsBullet)
+            {
+                Instance.storeAbilityBullets.Add(ability);
+                Instance.storePositionBullets.Add(position);
+                Instance.storeAngleBullets.Add(angle);
+                Instance.storeDirectionBullets.Add(direction);
+                Instance.storeCreatorBullets.Add(creator);
 
+            } 
+            else
+            {
+                if (isReplacing == false)
+                {
+                    Instance.activeBullets.Add(new Bullet(ability,       // Ability of the bullet to shoot
+                                                         position,      // Position to spawn the bullet
+                                                         angle,         // Angle to move the bullet
+                                                         direction,     // Direction of the bullet
+                                                         creator,       // Reference to creator of bullet
+                                                         sprite,        // Sprite of the bullet
+                                                         bulletTotal    // total count of bullets
+                                                         )
+                                               );
+
+                    // Increment total
+                    bulletTotal++;
+                } 
+                else
+                {
+                    Instance.activeBullets[setNumber] =
+                                              new Bullet(ability,       // Ability of the bullet to shoot
+                                                         position,      // Position to spawn the bullet
+                                                         angle,         // Angle to move the bullet
+                                                         direction,     // Direction of the bullet
+                                                         creator,       // Reference to creator of bullet
+                                                         sprite,        // Sprite of the bullet
+                                                         setNumber      // total count of bullets
+                                                         );
+                }
+            }
         }
 
         /// <summary>
@@ -168,20 +237,46 @@ namespace Galabingus
         /// <param name="gameTime">The total game time variable</param>
         public void Update(GameTime gameTime)
         {
-            //Debug.WriteLine(sprite);
-            for (int i = 0; i < activeBullets.Count; i++)
-            {
-                // Runs the bullet's update.
-                activeBullets[i].Update(gameTime);
+            //Debug.WriteLine($"COUNT: {Instance.activeBullets.Count}");
 
-                // Checks if bullet is set to be destroyed.
-                if (activeBullets[i].Destroy)
+            //Debug.WriteLine(sprite);
+            for (int i = 0; i < Instance.activeBullets.Count; i++)
+            {
+
+                if (Instance.activeBullets[i] != null)
                 {
-                    activeBullets[i].Delete(activeBullets[i].BulletNumber);
-                    activeBullets.RemoveAt(i);
-                    i -= 1;
+                    // Runs the bullet's update.
+                    if (Instance.activeBullets[i] != null) {
+                        Instance.activeBullets[i].Update(gameTime);
+                    }
+
+                    // Checks if bullet is set to be destroyed.
+                    if (Instance.activeBullets[i].Destroy)
+                    {
+                        Instance.activeBullets[i].Delete((ushort)i);
+                        Instance.activeBullets[i] = null;
+                        //Debug.WriteLine($"bogos");
+                    }
                 }
             }
+
+            // Slot in stored bullets created by other bullets into main list
+            for (int i = 0; i < Instance.storeAbilityBullets.Count; i++)
+            {
+                BulletManager.Instance.CreateBullet(Instance.storeAbilityBullets[i], 
+                                                    Instance.storePositionBullets[i], 
+                                                    Instance.storeAngleBullets[i],
+                                                    Instance.storeDirectionBullets[i],
+                                                    Instance.storeCreatorBullets[i], 
+                                                    false);
+            }
+
+            // Clear all storage lists
+            Instance.storeAbilityBullets.Clear();
+            Instance.storePositionBullets.Clear();
+            Instance.storeAngleBullets.Clear();
+            Instance.storeDirectionBullets.Clear();
+            Instance.storeCreatorBullets.Clear();
         }
 
         /// <summary>
@@ -190,34 +285,31 @@ namespace Galabingus
         /// </summary>
         public void Draw()
         {
-            foreach (Bullet bullet in activeBullets)
+            foreach (Bullet bullet in Instance.activeBullets)
             {
-                // Convert angle
-                float direction = (float)MathHelper.ToRadians(bullet.Angle);
-
-                // Get direction
-                SpriteEffects directionSpriteEffects;
-                if (bullet.Direction < 1)
+                if (bullet != null)
                 {
-                    //directionSpriteEffects = SpriteEffects.None;
-                    direction += (float)Math.PI;
-                }
-                else
-                {
-                    //directionSpriteEffects = SpriteEffects.FlipHorizontally;
-                }
+                    // Convert angle
+                    float direction = (float)MathHelper.ToRadians(bullet.Angle);
 
-                GameObject.Instance.SpriteBatch.Draw(
-                    bullet.Sprite,                  // The sprite-sheet for the player
-                    bullet.Position,                // The position for the player
-                    bullet.Transform,               // The scale and bounding box for the animation
-                    bullet.Color,                   // The color for the palyer
-                    direction,                      // rotation uses the velocity
-                    new Vector2(bullet.Transform.Width * 0.5f, bullet.Transform.Height * 0.5f),                       // Starting render position
-                    bullet.Scale,                   // The scale of the sprite
-                    SpriteEffects.None,                 // Which direction the sprite faces
-                    0.0f                                // Layer depth of the player is 0.0
-                );
+                    // Get direction
+                    if (bullet.Direction < 1)
+                    {
+                        direction += (float)Math.PI;
+                    }
+
+                    GameObject.Instance.SpriteBatch.Draw(
+                        bullet.Sprite,                  // The sprite-sheet for the player
+                        bullet.Position,                // The position for the player
+                        bullet.Transform,               // The scale and bounding box for the animation
+                        bullet.Color,                   // The color for the palyer
+                        direction,                      // rotation uses the velocity
+                        new Vector2(bullet.Transform.Width * 0.5f, bullet.Transform.Height * 0.5f), // Starting render position
+                        bullet.Scale,                   // The scale of the sprite
+                        SpriteEffects.None,                 // Which direction the sprite faces
+                        0.0f                                // Layer depth of the player is 0.0
+                    );
+                }
             }
         }
 

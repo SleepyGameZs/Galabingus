@@ -57,7 +57,7 @@ namespace Galabingus
                 if (index >= count || count == 0 || index < 0)
                 {
                     // TODO: throw out of bounds exception
-                    throw new IndexOutOfRangeException($"Error: Cannot get data from invalid index {index}");
+                    throw new IndexOutOfRangeException($"Error: Cannot get data from invalid index {index}.");
                 }
 
                 // When the list is cut-off the head will be null
@@ -88,7 +88,7 @@ namespace Galabingus
                 if (index >= count || count == 0 || index < 0)
                 {
                     // TODO: throw out of bounds exception
-                    throw new IndexOutOfRangeException($"Error: Cannot get data from invalid index {index}");
+                    throw new IndexOutOfRangeException($"Error: Cannot set data at invalid index {index}.");
                 }
                 else
                 {
@@ -111,11 +111,11 @@ namespace Galabingus
         ///  The count of nodes inside the Custom Linked List
         ///  Get: Retrieves the number of nodes inside the Custom Linked List
         /// </summary>
-        public uint Count
+        public int Count
         {
             get
             {
-                return count;
+                return (int)count;
             }
         }
 
@@ -160,6 +160,8 @@ namespace Galabingus
                 // Creates the new node and update the tail
                 // sets the head to be the new node
                 head = new GalabingusLinkedNode<T>(data);
+                head.Previous = null;
+                head.Next = null;
                 tail = head;
                 count++;
             }
@@ -167,15 +169,181 @@ namespace Galabingus
             {
                 // Sets the new node to be the tail
                 // Switches the tail to be the new created node
-                tail.Next = new GalabingusLinkedNode<T>(data);
+                GalabingusLinkedNode<T> itemNode = new GalabingusLinkedNode<T>(data);
+                itemNode.Next = tail.Next;
+                itemNode.Previous = tail;
+                tail.Next = itemNode;
                 tail = tail.Next;
                 count++;
             }
             else
             {
                 // A value was inserted and the tail was not updated.
-                throw new Exception($"Error: Linked list tail was not updated when a value was inserted");
+                throw new Exception($"Error: Linked list tail was not updated when a value was inserted.");
             }
+        }
+
+        /// <summary>
+        ///  Removes an item at a given index from the Custom Linked List
+        ///  Returns the data inside the Node at the index of removal
+        /// </summary>
+        /// <param name="index">index of the Custom Linked Node in the Custom linked List</param>
+        /// <returns>Custom Linked Node's data at index of removal</returns>
+        /// <exception cref="IndexOutOfRangeException">index inputted was out of the range of the Custom Linked List</exception>
+        public T? RemoveAt(int index)
+        {
+            // Check to see if the index is out of bounds
+            if (index >= count || count == 0 || index < 0)
+            {
+                throw new IndexOutOfRangeException($"Error: Cannot remove invalid index {index}.");
+            }
+
+            // The index is the head so change the head by setting it to the head's next
+            if (index == 0)
+            {
+                // By logic current will never be null here
+#pragma warning disable CS8602
+                // Store the node that will be removed
+                T? tempData = head.Data;
+                if (count == 1)
+                {
+                    head = null;
+                    count--;
+                    return tempData;
+                }
+                head = head.Next;
+                head.Previous = null;
+#pragma warning restore CS8602
+                count--;
+                return tempData;
+            }
+
+            // The index is the last node, change the tail and set the next to null
+            if (index == (count - 1))
+            {
+                // By logic current will never be null here
+#pragma warning disable CS8602
+                T? tempData = tail.Data;
+                tail = tail.Previous;
+                tail.Next = null;
+#pragma warning restore CS8602
+                count--;
+                // Return the node's data
+                return tempData;
+            }
+
+            // The index is somewhere in the middle of the Linked List
+            // Removal is done by setting the Node at the index - 1's next to the next.next
+            {
+                // By logic current will never be null here
+#pragma warning disable CS8602
+                // Go through next Nodes until the node is the node at the index we are searching for
+                GalabingusLinkedNode<T>? current = head;
+                for (uint i = 0; i < index - 1; i++)
+                {
+                    current = current.Next;
+                }
+                T? tempData = current.Next.Data;
+                current.Next.Next.Previous = current;
+                current.Next = current.Next.Next;
+                count--;
+                // Return the node's data
+                return tempData;
+#pragma warning restore CS8602
+            }
+        }
+
+        public void Insert(T item, int index)
+        {
+            // Check to see if the index is out of bounds
+            if (index >= count + 1 && index != 0 || count == 0 && index != 0 || index < 0)
+            {
+                // TODO: throw out of bounds exception
+                throw new IndexOutOfRangeException($"Error: Cannot insert into invalid index {index}.");
+            }
+
+            // The index is the head so change the head and when at count == 1 the tail
+            if (index == 0)
+            {
+                // By logic current will never be null here
+#pragma warning disable CS8602
+                // Store the node that will be removed
+                GalabingusLinkedNode<T> itemNode = new GalabingusLinkedNode<T>(item);
+                if (head == null)
+                {
+                    head = itemNode;
+                    tail = head;
+                    count++;
+                    return;
+                }
+                itemNode.Next = head;
+                head.Previous = itemNode;
+                head = itemNode;
+#pragma warning restore CS8602
+                count++;
+                return;
+            }
+
+            // The index is the last node, change the tail
+            if (index == (count - 1))
+            {
+                // By logic current will never be null here
+#pragma warning disable CS8602
+                GalabingusLinkedNode<T> itemNode = new GalabingusLinkedNode<T>(item);
+                itemNode.Next = tail;
+                itemNode.Previous = tail.Previous;
+                tail = itemNode.Next;
+                tail.Previous = itemNode;
+#pragma warning restore CS8602
+                count++;
+                return;
+            }
+
+            // The index is the size of the count, so add the node to the end
+            if (index == count)
+            {
+                // By logic current will never be null here
+#pragma warning disable CS8602
+                GalabingusLinkedNode<T> itemNode = new GalabingusLinkedNode<T>(item);
+                tail.Next = itemNode;
+                itemNode.Previous = tail;
+                tail = itemNode;
+#pragma warning restore CS8602
+                count++;
+                return;
+            }
+
+            // The index is somewhere in the middle of the Linked List
+            {
+                // By logic current will never be null here
+#pragma warning disable CS8602
+                // Go through next Nodes until the node is the node at the index we are searching for
+                GalabingusLinkedNode<T>? current = head;
+                for (uint i = 0; i < index - 1; i++)
+                {
+                    current = current.Next;
+                }
+                GalabingusLinkedNode<T> itemNode = new GalabingusLinkedNode<T>(item);
+                itemNode.Next = current.Next;
+                itemNode.Previous = current.Next.Previous;
+                current.Next.Previous = itemNode;
+                current.Next = itemNode;
+                count++;
+                return;
+#pragma warning restore CS8602
+            }
+        }
+
+        /// <summary>
+        ///  Clears the Custom Linked List
+        ///   Sets the head and tail pointer null
+        ///   Resets the count to 0
+        /// </summary>
+        public void Clear()
+        {
+            head = null;
+            tail = null;
+            count = 0;
         }
 
         /// <summary>
@@ -217,6 +385,79 @@ namespace Galabingus
                 // Return the node's data
                 return current.Data;
 #pragma warning restore CS8602
+            }
+        }
+
+        /// <summary>
+        ///  Writes all Nodes Data to the console
+        ///  Starts at the tail goes to the head
+        /// </summary>
+        public void PrintBackward()
+        {
+            string result = "";
+#pragma warning disable CS8602
+            // Go through previous Nodes concatenating all of the data to the result
+            GalabingusLinkedNode<T>? current = tail;
+            for (uint i = 0; i < count; i++)
+            {
+                if (current != null && (i + 1) < count)
+                {
+                    result = result + current.Data + "\n";
+                    current = current.Previous;
+                }
+                else if (current != null)
+                {
+                    result = result + current.Data;
+                    current = current.Previous;
+                }
+
+            }
+            // Only show the result when there actually is info to show
+            if (count == 0)
+            {
+                Console.WriteLine("There are no items in the list.");
+            }
+            else
+            {
+                Console.WriteLine(result);
+            }
+#pragma warning restore CS8602
+        }
+
+
+        /// <summary>
+        ///  Writes all Nodes Data to the console
+        ///  Starts at the head goes to the tail
+        /// </summary>
+        public void PrintForward()
+        {
+            string result = "";
+#pragma warning disable CS8602
+            // Go through next Nodes concatenating all of the data to the result
+            GalabingusLinkedNode<T>? current = head;
+            for (uint i = 0; i < count; i++)
+            {
+                if (current != null && (i + 1) < count)
+                {
+                    result = result + current.Data + "\n";
+                    current = current.Next;
+                }
+                else if (current != null)
+                {
+                    result = result + current.Data;
+                    current = current.Next;
+                }
+
+            }
+#pragma warning restore CS8602
+            // Only show the result when there actually is info to show
+            if (count == 0)
+            {
+                Console.WriteLine("There are no items in the list.");
+            }
+            else
+            {
+                Console.WriteLine(result);
             }
         }
     }

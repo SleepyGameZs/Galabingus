@@ -379,7 +379,7 @@ namespace Galabingus
                 GameObject.Instance.SpriteBatch,
                 PlayerInstance.Scale,                          // Player scale
                 SpriteEffects.None,
-                (ushort)CollisionGroup.Player,                                   // Content
+                (ushort)CollisionGroup.Player,                 // Content
                 0
             );
 
@@ -847,6 +847,11 @@ namespace Galabingus
                 totalBoostTime -= boostFrameRate;
             }
 
+            if (currentKeyboardState.IsKeyDown(Keys.G))
+            {
+                PlayerInstance.Health = 5;
+            }
+
             //Debug.WriteLine();
         }
 
@@ -857,7 +862,7 @@ namespace Galabingus
         public void Shoot()
         {
             float flt_playerShootX = (Transform.Width * PlayerInstance.Scale) / 2;
-            float flt_playerShootY = (Transform.Height * PlayerInstance.Scale) / 2;
+            float flt_playerShootY = (Transform.Height * PlayerInstance.Scale) / 2 + 10;
             Vector2 vc2_shootPos = new Vector2(Position.X               // Base player X position
                                                + flt_playerShootX       // Center horizontally
                                                ,                        // Account for possible next movement
@@ -866,7 +871,7 @@ namespace Galabingus
                                                + velocity.Y             // Account for possible next movement
                                                );
 
-            BulletManager.Instance.CreateBullet(BulletType.Normal, vc2_shootPos, 0, 1, this);
+            BulletManager.Instance.CreateBullet(BulletType.Normal, vc2_shootPos, 0, 1, this, false);
         }
 
         /// <summary>
@@ -920,25 +925,6 @@ namespace Galabingus
 
                 else //if (totalBoostTime >= boostFrameRate * 0.5f)
                 {
-                    foreach (Ghost ghost in ghosts)
-                    {
-                        Color halfOColor = ghost.ghostColor;//new Color(ghost.ghostColor * 0.825f, 0.825f);
-                        if (halfOColor.R <= 1)
-                        {
-                            halfOColor = Color.Transparent;
-                        }
-                        GameObject.Instance.SpriteBatch.Draw(
-                            Sprite,                     // The sprite-sheet for the player
-                            ghost.Position,    // The position for the player
-                            Transform,                       // The scale and bounding box for the animation
-                            halfOColor,                     // The color for the palyer
-                            0.0f,                            // There cannot be any rotation of the player
-                            Vector2.Zero,                    // Starting render position
-                            PlayerInstance.Scale,                      // The scale of the sprite
-                            SpriteEffects.None,              // Which direction the sprite faces
-                            0.0f                             // Layer depth of the player is 0.0
-                        );
-                    }
 
                     GameObject.Instance.SpriteBatch.Draw(
                         WhiteSprite,                     // The sprite-sheet for the player
@@ -966,11 +952,13 @@ namespace Galabingus
                 );
 
             }
-            else
+            else if (!Keyboard.GetState().IsKeyDown(Keys.G))
             {
                 Collider.Resolved = false;
                 UIManager.Instance.GS = GameState.Pause;
             }
+
+
 
             GameObject.Instance.SpriteBatch.Draw(
                 heartSprite,                          // The sprite-sheet for the player
