@@ -72,7 +72,7 @@ namespace Galabingus
         {
             x = 0;
             y = 0;
-            initalCameraScroll = 2f;
+            initalCameraScroll = 8f;
             offSet = new Vector2(initalCameraScroll,0);
         }
 

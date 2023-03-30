@@ -206,9 +206,9 @@ namespace Galabingus
             // Background Loop
             for (int i = 0; i < backgroundList.Count; i++)
             {
-                if (backgroundList[i].Position.X == -backgroundList[i].Transform.Width / 4)
+                if (backgroundList[i].Position.X == -backgroundList[i].Transform.Width)
                 {
-                    backgroundList[i].Position = new Vector2(backgroundList[i].Transform.Width / 4, 0);
+                    backgroundList[i].Position = new Vector2(backgroundList[i].Transform.Width, 0);
                     counter++;
                     Debug.WriteLine(counter);
                 }
