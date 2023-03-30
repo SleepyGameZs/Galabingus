@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Xml.Linq;
+using Microsoft.Xna.Framework.Input;
 
 // Matthew Rodriguez
 // 2023, 3, 13
@@ -566,6 +567,7 @@ namespace Galabingus
 
                                 // Update the transform with the new scale and sprite
                                 this.sprite = scaledSprite;
+                                scaledSprite.Dispose();
                                 scaledSprite = null;
                                 // Load pixel data to CPU memory
                                 Load();
@@ -599,6 +601,7 @@ namespace Galabingus
 
                                 // Update the transform with the new scale and sprite
                                 this.sprite = scaledSprite;
+                                scaledSprite.Dispose();
                                 scaledSprite = null;
                                 // Load pixel data to CPU memory
                                 Load();
@@ -677,40 +680,41 @@ namespace Galabingus
             int x2 = Math.Min(this.transform.X + (int)(this.transform.Width), other.transform.X + (int)(other.transform.Width));
             int y1 = Math.Max(this.transform.Y, other.transform.Y);
             int y2 = Math.Min(this.transform.Y + (int)(this.transform.Height), other.transform.Y + (int)(other.transform.Height));
-           // x1 = x1 - (x2 - x1);
-           // y1 = y1 - (y2 - y1);
+            // x1 = x1 - (x2 - x1);
+            // y1 = y1 - (y2 - y1);
 
-            /*
 
-            Rectangle intercpetion = new Rectangle(0, 0, x2 - x1, y2 - y1);
-            Rectangle hitBox = new Rectangle(0, 0, transform.Width, transform.Height);
-
-            Texture2D pixelWhite = GameObject.Instance.ContentManager.Load<Texture2D>("white_pixel_strip1");
-            GameObject.Instance.Debug += delegate (SpriteBatch spriteBatch)
+            if (Keyboard.GetState().IsKeyDown(Keys.C))
             {
-                spriteBatch.Draw(
-                    pixelWhite,
-                    new Vector2(transform.X, transform.Y),
-                    hitBox,
-                    new Color(Color.Blue, 0.1f),
-                    0, Vector2.Zero,
-                    new Vector2(1, 1),
-                    SpriteEffects.None,
-                    0
-                );
-                spriteBatch.Draw(
-                    pixelWhite,
-                    new Vector2(x1, y1),
-                    intercpetion,
-                    new Color(Color.Red,0.1f),
-                    0, Vector2.Zero,
-                    new Vector2(1, 1),
-                    SpriteEffects.None,
-                    0
-                );
-            };
-            */
-            
+                Rectangle intercpetion = new Rectangle(0, 0, x2 - x1, y2 - y1);
+                Rectangle hitBox = new Rectangle(0, 0, transform.Width, transform.Height);
+
+                Texture2D pixelWhite = GameObject.Instance.ContentManager.Load<Texture2D>("white_pixel_strip1");
+                GameObject.Instance.Debug += delegate (SpriteBatch spriteBatch)
+                {
+                    spriteBatch.Draw(
+                        pixelWhite,
+                        new Vector2(transform.X, transform.Y),
+                        hitBox,
+                        new Color(Color.Blue, 0.1f),
+                        0, Vector2.Zero,
+                        new Vector2(1, 1),
+                        SpriteEffects.None,
+                        0
+                    );
+                    spriteBatch.Draw(
+                        pixelWhite,
+                        new Vector2(x1, y1),
+                        intercpetion,
+                        new Color(Color.Red, 0.1f),
+                        0, Vector2.Zero,
+                        new Vector2(1, 1),
+                        SpriteEffects.None,
+                        0
+                    );
+                };
+            }
+
             // For each single pixel in the intersecting rectangle
             for (int y = y2 - 1; y >= y1; --y)
             {

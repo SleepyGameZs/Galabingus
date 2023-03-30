@@ -848,6 +848,10 @@ namespace Galabingus
             }
 
             //Debug.WriteLine();
+            if (currentKeyboardState.IsKeyDown(Keys.G))
+            {
+                PlayerInstance.Health = 5; 
+            }
         }
 
         /// <summary>

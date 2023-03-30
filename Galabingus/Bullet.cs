@@ -463,8 +463,8 @@ namespace Galabingus
                     if (currentPosition.X < rightBound && currentPosition.X > leftBound)
                     {
                         // Create Bullets
-                        //BulletManager.Instance.CreateBullet(BulletType.SplitSmall, currentPosition, 90, direction, creatorReference, true);
-                        //BulletManager.Instance.CreateBullet(BulletType.SplitSmall, currentPosition, -90, direction, creatorReference, true);
+                        BulletManager.Instance.CreateBullet(BulletType.SplitSmall, currentPosition, 90, direction, creatorReference, true);
+                        BulletManager.Instance.CreateBullet(BulletType.SplitSmall, currentPosition, -90, direction, creatorReference, true);
 
                         // Tell Bullet Manager to delete this bullet
                         destroy = true;
@@ -527,7 +527,7 @@ namespace Galabingus
             stateTimer++;
             
             // Creates currect collider for Enemy
-            /*this.Transform = this.Animation.Play(gameTime);*/
+            this.Transform = this.Animation.Play(gameTime);
             List<Collision> intercepts = this.Collider.UpdateTransform(
                 this.Sprite,                         // Bullet Sprite
                 this.Position,                       // Bullet position
@@ -551,7 +551,8 @@ namespace Galabingus
 
             this.Collider.Resolved = true;
 
-            /*foreach (Collision collision in intercepts)
+
+            foreach (Collision collision in intercepts)
             {
                 if (collision.other != null)
                 {
@@ -579,7 +580,8 @@ namespace Galabingus
 
                     }
                 }
-            }*/
+            }
+
         }
 
         /// <summary>
