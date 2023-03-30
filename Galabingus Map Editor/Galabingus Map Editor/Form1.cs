@@ -15,12 +15,10 @@ namespace Galabingus_Map_Editor
         //must be divisible by 9 to get a number without a decimal (Most likely wont need this)
         private int height;
 
-        private int heightLayers;
-
         //must be divisible by 16 to get a number without a decimal
         private int width;
 
-        private int widthLayers;
+        private int pixelDensity;
 
         private Form mapEditor;
 
