@@ -63,7 +63,7 @@ namespace Galabingus_Map_Editor
 
         private bool saved;
 
-        public MapEditorScreen(int width, int height)
+        public MapEditorScreen(int width, int height, int pixelDensity)
         {
             InitializeComponent();
 
