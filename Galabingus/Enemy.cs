@@ -302,7 +302,7 @@ namespace Galabingus
                             if (spriteDirection < 0)
                             {
                                 shootPos = new Vector2(Position.X,
-                                                       Position.Y + enemyShootY * 2 - 20);
+                                                       Position.Y + enemyShootY * 2 - 25);
                             }
 
                             // Shoot the 3 bullets
@@ -324,7 +324,7 @@ namespace Galabingus
                             if (spriteDirection < 0)
                             {
                                 shootPos = new Vector2(Position.X,
-                                                       Position.Y + enemyShootY * 2 - 15);
+                                                       Position.Y + enemyShootY * 2 - 17);
                             }
 
                             // Shoot the splitter bullet
@@ -364,7 +364,7 @@ namespace Galabingus
                             if (spriteDirection < 0)
                             {
                                 shootPos = new Vector2(Position.X,
-                                                       Position.Y + enemyShootY * 2 - 10);
+                                                       Position.Y + enemyShootY * 2 - 15);
                             }
 
                             // Shoot the seeker bullet
@@ -391,7 +391,7 @@ namespace Galabingus
             }
 
             // Set position of enemy
-            //Position -= Camera.Instance.OffSet;
+            Position -= Camera.Instance.OffSet;
 
             // Manage Animation
             this.Animation.AnimationDuration = 0.03f;

@@ -861,7 +861,7 @@ namespace Galabingus
         public void Shoot()
         {
             float flt_playerShootX = (Transform.Width * PlayerInstance.Scale) / 2;
-            float flt_playerShootY = (Transform.Height * PlayerInstance.Scale) / 2;
+            float flt_playerShootY = (Transform.Height * PlayerInstance.Scale) / 2 + 10;
             Vector2 vc2_shootPos = new Vector2(Position.X               // Base player X position
                                                + flt_playerShootX       // Center horizontally
                                                ,                        // Account for possible next movement
