@@ -24,18 +24,27 @@ struct VertexShaderOutput
 float3 normalizeSaturation(float4 color)
 {
 	float4 newColor = normalize(color) * 1.732050807568877293527446341505872366 * -1.732050807568877293527446341505872366 + color * 1.732050807568877293527446341505872366;
+
 	if ((color.r + color.b + color.g) * color.a < 0.3)
 	{
-		return color;
+		return color * 1.27;
 	}
+
+	if ((color.r + color.b + color.g) * color.a < 1.9 && (color.r + color.b + color.g) * color.a > 0.5)
+	{
+		color = ((newColor * 0.5f) + color);
+	}
+
 	if ((color.r + color.b + color.g) * color.a > 2)
 	{
-		return newColor + color;
+		color = ((newColor * 0.5f) + color) * 1.4;
 	}
 	else
 	{
-		return normalize(color) * 1.5;
+		return color * 1.27;
 	}
+
+	return color;
 }
 
 float4 MainPS(VertexShaderOutput input) : COLOR
