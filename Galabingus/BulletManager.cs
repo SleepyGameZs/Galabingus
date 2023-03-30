@@ -117,7 +117,7 @@ namespace Galabingus
                                   bool sourceIsBullet)
         {
             // Sets the sprite to use for the bullet for GameObject storage purposes
-            ushort sprite = GameObject.Instance.Content.smallbullet_strip4;
+            ushort sprite;
             switch (ability)
             {
                 case BulletType.Normal:
@@ -143,12 +143,17 @@ namespace Galabingus
                 case BulletType.Seeker:
                     sprite = GameObject.Instance.Content.circlebullet_strip4;
                     break;
+
+                default:
+                    sprite = GameObject.Instance.Content.smallbullet_strip4;
+                    break;
             }
 
             // Add sprite linker to list
             if (Instance.content.Count == 0)
             {
                 Instance.content.Add(sprite);
+                Debug.WriteLine($"bruh");
             }
             else
             {
@@ -158,6 +163,7 @@ namespace Galabingus
                     if (asset == sprite)
                     {
                         foundSprite = true;
+                        
                     }
                 }
                 if (!foundSprite)
@@ -169,13 +175,13 @@ namespace Galabingus
             bool isReplacing = false;
             ushort setNumber = (ushort)Math.Max(0, (Instance.activeBullets.Count - 1));
 
-            Debug.WriteLine($"COUNT: {activeBullets.Count}");
+            //Debug.WriteLine($"COUNT: {activeBullets.Count}");
 
             for (int i = 0; i < Instance.activeBullets.Count; i++)
             {
                 if (Instance.activeBullets[i] == null)
                 {
-                    Debug.WriteLine($"Found Reusable Val at: {i}");
+                    //Debug.WriteLine($"Found Reusable Val at: {i}");
                     setNumber = (ushort)(i);
                     isReplacing = true;
                     break;
@@ -231,6 +237,8 @@ namespace Galabingus
         /// <param name="gameTime">The total game time variable</param>
         public void Update(GameTime gameTime)
         {
+            //Debug.WriteLine($"COUNT: {Instance.activeBullets.Count}");
+
             //Debug.WriteLine(sprite);
             for (int i = 0; i < Instance.activeBullets.Count; i++)
             {

@@ -275,7 +275,7 @@ namespace Galabingus
             ushort bulletNumber
         ) : base(contentName, bulletNumber, CollisionGroup.Bullet)
         {
-            this.thisGameObject = this;
+            //this.thisGameObject = this;
             // Set Sprite from given
             this.contentName = contentName;
             this.bulletNumber = bulletNumber;
@@ -323,7 +323,7 @@ namespace Galabingus
                     GameObject.Instance.Content = GameObject.Instance.Content.smallbullet_strip4;
                     break;
             }
-
+            
             // Set the owner reference
             creatorReference = creator;
 
@@ -525,9 +525,9 @@ namespace Galabingus
 
             // Increment State Timer
             stateTimer++;
-
+            
             // Creates currect collider for Enemy
-            this.Transform = this.Animation.Play(gameTime);
+            /*this.Transform = this.Animation.Play(gameTime);*/
             List<Collision> intercepts = this.Collider.UpdateTransform(
                 this.Sprite,                         // Bullet Sprite
                 this.Position,                       // Bullet position
@@ -551,7 +551,7 @@ namespace Galabingus
 
             this.Collider.Resolved = true;
 
-            foreach (Collision collision in intercepts)
+            /*foreach (Collision collision in intercepts)
             {
                 if (collision.other != null)
                 {
@@ -579,9 +579,7 @@ namespace Galabingus
 
                     }
                 }
-            }
-
-            this.Collider.Resolved = true;
+            }*/
         }
 
         /// <summary>
