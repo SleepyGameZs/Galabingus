@@ -41,7 +41,7 @@ float3 normalizeSaturation(float4 color)
 	}
 	else
 	{
-		return color * 1.27;
+		return color * 1.27 * 0.8;
 	}
 
 	return color;
