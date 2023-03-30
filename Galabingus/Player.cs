@@ -958,6 +958,8 @@ namespace Galabingus
                 UIManager.Instance.GS = GameState.Pause;
             }
 
+
+
             GameObject.Instance.SpriteBatch.Draw(
                 heartSprite,                          // The sprite-sheet for the player
                 new Vector2(10, 10),                        // The position for the player

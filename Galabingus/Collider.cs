@@ -533,9 +533,6 @@ namespace Galabingus
                         else
                         {
                             active = false;
-                            this.colliderNextMTV = Vector2.Zero;
-                            this.colldierCurrentMTV = Vector2.Zero;
-                            //this.pixels = null;
                         }
 
                         // Only update the collider once
