@@ -39,6 +39,8 @@ namespace Galabingus
         private List<ushort> spriteNumbers;
         private ushort currentSpriteNumber;
 
+        private int counter;
+
         // -------------------------------------------------
         // Properties
         // -------------------------------------------------
@@ -74,6 +76,9 @@ namespace Galabingus
 
             tilesList = new List<Tile>();
             backgroundList = new List<Tile>();
+
+            // temp counter for scroll
+            counter = 0;
         }
 
         // -------------------------------------------------
@@ -193,16 +198,23 @@ namespace Galabingus
                 tilesList[i].Collider.Resolved = true;
 
             }
+            // Background Scroll
             for (int i = 0; i < backgroundList.Count; i++)
             {
                 backgroundList[i].Update(gameTime);
-                //Debug.WriteLine($"{i} {backgroundList[i].Position.X}");
             }
+            // Background Loop
             for (int i = 0; i < backgroundList.Count; i++)
             {
                 if (backgroundList[i].Position.X == -backgroundList[i].Transform.Width)
                 {
                     backgroundList[i].Position = new Vector2(backgroundList[i].Transform.Width, 0);
+                    counter++;
+                    Debug.WriteLine(counter);
+                }
+                else if (counter == 3) 
+                {
+                    Camera.Instance.Stop();
                 }
             }
         }
