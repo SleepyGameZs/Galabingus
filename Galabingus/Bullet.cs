@@ -554,8 +554,11 @@ namespace Galabingus
 
             foreach (Collision collision in intercepts)
             {
+                System.Diagnostics.Debug.WriteLine("gg");
                 if (collision.other != null)
                 {
+                    System.Diagnostics.Debug.WriteLine("eff");
+                    break;
                     if (((collision.other as Player) is Player) && !destroy && !((collision.self as Bullet).Creator is Player))
                     {
                         // TODO: Write Player damage stuff here
@@ -563,6 +566,7 @@ namespace Galabingus
                         {
                             Player.PlayerInstance.Health = Player.PlayerInstance.Health - 0.5f;
                         }
+                        
                         destroy = true;
                         velocity = Vector2.Zero;
                     }
