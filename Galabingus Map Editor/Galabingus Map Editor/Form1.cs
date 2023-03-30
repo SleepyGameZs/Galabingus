@@ -15,12 +15,10 @@ namespace Galabingus_Map_Editor
         //must be divisible by 9 to get a number without a decimal (Most likely wont need this)
         private int height;
 
-        private int heightLayers;
-
         //must be divisible by 16 to get a number without a decimal
         private int width;
 
-        private int widthLayers;
+        private int pixelDensity;
 
         private Form mapEditor;
 
@@ -103,6 +101,20 @@ namespace Galabingus_Map_Editor
             {
                 output += "\n - Height is not Valid";
                 invalid = true;
+            }
+
+            //Pixel Density
+            if (InputCheck(textBox3))
+            {
+                if (Int32.Parse(textBox3.Text) > 0 && Int32.Parse(textBox3.Text) < 5)
+                {
+
+                }
+                else
+                {
+                    output += "\n - Pixel Density value is not Valid and must be greater then 0 and less then 5";
+                    invalid = true;
+                }
             }
 
             if (invalid == false)

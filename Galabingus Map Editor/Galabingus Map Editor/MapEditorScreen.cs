@@ -58,6 +58,8 @@ namespace Galabingus_Map_Editor
 
         private int totalWidth;
         private int totalHeight;
+        private int totalDensity;
+
 
         private int tileSize;
 
@@ -70,6 +72,8 @@ namespace Galabingus_Map_Editor
             totalWidth = width;
 
             totalHeight = height;
+
+            totalDensity = pixelDensity;
 
             tileSize = 60;
         }
@@ -174,5 +178,12 @@ namespace Galabingus_Map_Editor
         {
             
         }
+
+        private void ScaleUp()
+        {
+
+        }
+
+
     }
 }
