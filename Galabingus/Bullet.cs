@@ -608,7 +608,7 @@ namespace Galabingus
                 this.Position += finalVelocity;
             } else
             {
-                this.Position += finalVelocity - Camera.Instance.OffSet * 1.2f;
+                this.Position += finalVelocity - Camera.Instance.OffSet;
             }
             
 

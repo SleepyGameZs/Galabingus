@@ -391,7 +391,7 @@ namespace Galabingus
             }
 
             // Set position of enemy
-            Position -= Camera.Instance.OffSet * 1.2f;
+            Position -= Camera.Instance.OffSet;
 
             // Manage Animation
             this.Animation.AnimationDuration = 0.03f;
