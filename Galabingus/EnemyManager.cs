@@ -270,6 +270,7 @@ namespace Galabingus
                     // Checks if enemy is set to be destroyed.
                     if (Instance.activeEnemies[i].Destroy)
                     {
+                        Instance.activeEnemies[i].Collider.Unload();
                         Instance.activeEnemies[i].Delete((ushort)i);
                         Instance.activeEnemies[i] = null;
 

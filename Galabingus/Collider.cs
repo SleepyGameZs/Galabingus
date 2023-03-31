@@ -620,6 +620,9 @@ namespace Galabingus
                                     other[1],
                                     other[2]
                                 ));
+
+                                //this.sprite = null;
+                                //this.
                                 //}
                             }
                         }

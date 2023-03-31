@@ -253,6 +253,7 @@ namespace Galabingus
                     // Checks if bullet is set to be destroyed.
                     if (Instance.activeBullets[i].Destroy)
                     {
+                        Instance.activeBullets[i].Collider.Unload();
                         Instance.activeBullets[i].Delete((ushort)i);
                         Instance.activeBullets[i] = null;
                         //Debug.WriteLine($"bogos");
