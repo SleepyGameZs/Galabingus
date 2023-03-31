@@ -61,7 +61,13 @@ float3 normalizeSaturation(float4 color)
 
 float4 MainPS(VertexShaderOutput input) : COLOR
 {
-	float4 color = tex2D(SpriteTextureSampler,input.TextureCoordinates);
+	float2 pixelizeM = floor(input.TextureCoordinates * (640)) / (640);
+
+	float pixelize = floor(input.TextureCoordinates * (640)) / (640);
+
+	float4 color = tex2D(SpriteTextureSampler, pixelize);
+	float4 colorTrue = tex2D(SpriteTextureSampler, input.TextureCoordinates) * input.Color;
+	float4 colorP = tex2D(SpriteTextureSampler, pixelizeM) * input.Color;
 	//color = * input.Color;
 	/*
 	if (color.a == 1)
@@ -125,7 +131,22 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 	color.b = lerpGlow.b;
 
 	// Combine the glow color with the original color
-	return color;
+
+
+	float4 lerpPixels = lerp(lerp(color, colorTrue, 0.9875), colorP,0.5);
+
+	/*
+	float2 texSize = float2(1.0 / SpriteTextureSampler._Texture0_TexelSize.xy);
+	float2 pixelSize = float2(2, 2) * texSize;
+	float2 uv = input.TextureCoordinates * texSize;
+	float2 dx = ddx(uv);
+	float2 dy = ddy(uv);
+	float d = max(max(abs(dx.x), abs(dy.x)), max(abs(dx.y), abs(dy.y)));
+	d = clamp(d - 0.5 / max(texSize.x, texSize.y), 0.0, 1.0);
+
+	float4 outline = lerp(lerpPixels, float4(0, 0, 0, 1), d);
+	*/
+	return lerpPixels;
 
 	//return color;
 	//return color * input.Color;
