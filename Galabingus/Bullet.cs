@@ -473,7 +473,7 @@ namespace Galabingus
 
                 case BulletType.SplitSmall:
                     // Set Current Position
-                    currentPosition = SetPosition(gameTime, 10, true);
+                    currentPosition = SetPosition(gameTime, 10, false);
                     break;
 
                 case BulletType.Circle:
