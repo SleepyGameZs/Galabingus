@@ -151,14 +151,14 @@ namespace Galabingus
 
         public void CreateBackground()
         {
-            Tile background = new Tile(GameObject.Instance.Content.spacebackground_strip1, 0, 1, true);
+            Tile background = new Tile(GameObject.Instance.Content.newBackground_strip1, 0, 1, true);
             background.Position = Vector2.Zero;
             background.Transform = new Rectangle(0, 0, background.Sprite.Width, background.Sprite.Height);
             background.Scale = 1f;
             background.ScaleVector = new Vector2(background.Scale, 1);
             backgroundList.Add(background);
 
-            Tile background2 = new Tile(GameObject.Instance.Content.spacebackground_strip1, 1, 1, true);
+            Tile background2 = new Tile(GameObject.Instance.Content.newBackground_strip1, 1, 1, true);
             background2.Position = new Vector2(background.Transform.Width, 0);
             background2.Transform = new Rectangle(background.Transform.Width, 0, background2.Sprite.Width, background2.Sprite.Height);
             background2.Scale = 1f;
@@ -206,13 +206,13 @@ namespace Galabingus
             // Background Loop
             for (int i = 0; i < backgroundList.Count; i++)
             {
-                if (backgroundList[i].Position.X == -backgroundList[i].Transform.Width / 4)
+                if (backgroundList[i].Position.X == -backgroundList[i].Transform.Width)
                 {
-                    backgroundList[i].Position = new Vector2(backgroundList[i].Transform.Width / 4, 0);
+                    backgroundList[i].Position = new Vector2(backgroundList[i].Transform.Width, 0);
                     counter++;
-                    Debug.WriteLine(counter);
+                    //Debug.WriteLine(counter);
                 }
-                else if (counter == 1) 
+                else if (counter == 3) 
                 {
                     Camera.Instance.Stop();
                 }
