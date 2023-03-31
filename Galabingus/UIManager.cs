@@ -273,7 +273,7 @@ namespace Galabingus
             );
 
             //loads temp background
-            tempBackground = cm.Load<Texture2D>("spacebackground_strip1");
+            tempBackground = cm.Load<Texture2D>("space_only_background_strip1");
             menuBackground = cm.Load<Texture2D>("menubackground_strip1");
         }
 

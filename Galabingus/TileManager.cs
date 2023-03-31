@@ -151,18 +151,18 @@ namespace Galabingus
 
         public void CreateBackground()
         {
-            Tile background = new Tile(GameObject.Instance.Content.newBackground_strip1, 0, 1, true);
+            Tile background = new Tile(GameObject.Instance.Content.space_only_background_strip1, 0, 1, true);
             background.Position = Vector2.Zero;
             background.Transform = new Rectangle(0, 0, background.Sprite.Width, background.Sprite.Height);
-            background.Scale = 1f;
-            background.ScaleVector = new Vector2(background.Scale, 1);
+            background.Scale = GameObject.Instance.GraphicsDevice.Viewport.Height / background.Sprite.Width / Player.PlayerInstance.Scale;
+            background.ScaleVector = new Vector2(background.Scale, background.Scale);
             backgroundList.Add(background);
 
-            Tile background2 = new Tile(GameObject.Instance.Content.newBackground_strip1, 1, 1, true);
+            Tile background2 = new Tile(GameObject.Instance.Content.space_only_background_strip1, 1, 1, true);
             background2.Position = new Vector2(background.Transform.Width, 0);
             background2.Transform = new Rectangle(background.Transform.Width, 0, background2.Sprite.Width, background2.Sprite.Height);
-            background2.Scale = 1f;
-            background2.ScaleVector = new Vector2(background2.Scale, 1);
+            background2.Scale = GameObject.Instance.GraphicsDevice.Viewport.Height / background.Sprite.Width / Player.PlayerInstance.Scale;
+            background2.ScaleVector = new Vector2(background2.Scale, background2.Scale);
             backgroundList.Add(background2);
         }
 
@@ -198,6 +198,7 @@ namespace Galabingus
                 tilesList[i].Collider.Resolved = true;
 
             }
+
             // Background Scroll
             for (int i = 0; i < backgroundList.Count; i++)
             {
