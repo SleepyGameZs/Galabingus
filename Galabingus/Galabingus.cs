@@ -74,8 +74,9 @@ namespace Galabingus
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            shaders = Content.Load<Effect>("shaders");
             // Initilize the GameObject Instance and Content Dynamic (Always goes first)
-            content = GameObject.Instance.Initialize(Content, GraphicsDevice, _spriteBatch);
+            content = GameObject.Instance.Initialize(Content, GraphicsDevice, _spriteBatch, shaders);
 
             //new UI class and loading its content
             //userInterface = new UI(_graphics, Content, _spriteBatch);
@@ -136,8 +137,6 @@ namespace Galabingus
             // Load the temporary background
             //tempBackground = Content.Load<Texture2D>("spacebackground_strip1");
             tileManager.CreateBackground();
-
-            shaders = Content.Load<Effect>("shaders");
         }
 
         protected override void Update(GameTime gameTime)

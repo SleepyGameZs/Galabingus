@@ -100,10 +100,18 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 	);
 
 	*/
+	float mosaicAngle = 0.0625f * 3.141592654f;
+	float mosaicSize = 1.44f;
+	float2 mosaicCoord = floor(input.TextureCoordinates / mosaicSize) * mosaicSize;
+	float2 centerCoord = mosaicCoord + (mosaicSize / 2.0f);
+	float2 rotatedCoord = float2(
+		centerCoord.x + (input.TextureCoordinates.x - centerCoord.x) * cos(mosaicAngle) - (input.TextureCoordinates.y - centerCoord.y) * sin(mosaicAngle),
+		centerCoord.y + (input.TextureCoordinates.x - centerCoord.x) * sin(mosaicAngle) + (input.TextureCoordinates.y - centerCoord.y) * cos(mosaicAngle)
+		);
 
-	float2 pixelizeM = floor(input.TextureCoordinates * (640)) / (640);
+	float2 pixelizeM = floor(rotatedCoord * (640)) / (640);
 
-	float4 colorTrue = tex2D(SpriteTextureSampler, input.TextureCoordinates) * input.Color;
+	float4 colorTrue = tex2D(SpriteTextureSampler, rotatedCoord) * input.Color;
 	float4 colorP = tex2D(SpriteTextureSampler, pixelizeM) * input.Color;
 	//color = * input.Color;
 	/*

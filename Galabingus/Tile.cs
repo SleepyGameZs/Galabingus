@@ -151,6 +151,20 @@ namespace Galabingus
             }
         }
 
+        public Effect Effect
+        {
+            get
+            {
+                GameObject.Instance.Content = contentName;
+                return GetEffect(instanceNumber);
+            }
+            set
+            {
+                GameObject.Instance.Content = contentName;
+                SetEffect(instanceNumber, value);
+            }
+        }
+
         // -------------------------------------------------
         // Contructors
         // -------------------------------------------------
@@ -190,6 +204,9 @@ namespace Galabingus
             //Debug.WriteLine(Position.X);
             //Debug.WriteLine(Position.Y);
             //Debug.WriteLine(this.Position);
+            GameObject.Instance.SpriteBatch.End();
+            GameObject.Instance.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, effect: Effect);
+            //Effect.CurrentTechnique.Passes[0].Apply();
             GameObject.Instance.SpriteBatch.Draw(
                 this.Sprite,                          // The sprite-sheet for the player
                 this.Position,                        // The position for the player
@@ -201,10 +218,14 @@ namespace Galabingus
                 SpriteEffects.None,              // Which direction the sprite faces
                 0.0f                             // Layer depth of the player is 0.0
             );
+            GameObject.Instance.SpriteBatch.End();
+            GameObject.Instance.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, effect: GameObject.Instance.UniversalShader);
         }
 
         public void Draw(float xTimes, float yTimes)
         {
+            GameObject.Instance.SpriteBatch.End();
+            GameObject.Instance.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, effect: Effect);
             GameObject.Instance.SpriteBatch.Draw(
                 this.Sprite,                      
                 this.Position,                 
@@ -221,6 +242,8 @@ namespace Galabingus
                 SpriteEffects.None, 
                 0.0f
             );
+            GameObject.Instance.SpriteBatch.End();
+            GameObject.Instance.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, effect: GameObject.Instance.UniversalShader);
         }
     }
 }
