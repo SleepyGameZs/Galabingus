@@ -156,13 +156,16 @@ namespace Galabingus
             background.Transform = new Rectangle(0, 0, background.Sprite.Width, background.Sprite.Height);
             background.Scale = GameObject.Instance.GraphicsDevice.Viewport.Height / background.Sprite.Width / Player.PlayerInstance.Scale;
             background.ScaleVector = new Vector2(background.Scale, background.Scale);
+            background.Position -= new Vector2(0, GameObject.Instance.GraphicsDevice.Viewport.Height);
             backgroundList.Add(background);
 
+
             Tile background2 = new Tile(GameObject.Instance.Content.space_only_background_strip1, 1, 1, true);
-            background2.Position = new Vector2(background.Transform.Width, 0);
-            background2.Transform = new Rectangle(background.Transform.Width, 0, background2.Sprite.Width, background2.Sprite.Height);
+            background2.Position = Vector2.Zero;
+            
+            background2.Transform = new Rectangle(0, 0, background.Sprite.Width, background.Sprite.Height);
             background2.Scale = GameObject.Instance.GraphicsDevice.Viewport.Height / background.Sprite.Width / Player.PlayerInstance.Scale;
-            background2.ScaleVector = new Vector2(background2.Scale, background2.Scale);
+            background2.ScaleVector = new Vector2(background.Scale, background.Scale);
             backgroundList.Add(background2);
         }
 
@@ -199,11 +202,27 @@ namespace Galabingus
 
             }
 
+           
             // Background Scroll
             for (int i = 0; i < backgroundList.Count; i++)
             {
                 backgroundList[i].Update(gameTime);
+                //backgroundList[i].Position += Camera.Instance.OffSet;
             }
+
+            //Debug.WriteLine(counter);
+            if (backgroundList[1].Position.X <= 0)
+            {
+                if (counter == 3)
+                {
+                    Camera.Instance.Stop();
+                }
+                counter++;
+                backgroundList[1].Position = new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Width + backgroundList[1].Position.X, 0);
+            }
+
+
+            /*
             // Background Loop
             for (int i = 0; i < backgroundList.Count; i++)
             {
@@ -211,13 +230,14 @@ namespace Galabingus
                 {
                     backgroundList[i].Position = new Vector2(backgroundList[i].Transform.Width, 0);
                     counter++;
-                    //Debug.WriteLine(counter);
+                    Debug.WriteLine(counter);
                 }
                 else if (counter == 3) 
                 {
                     Camera.Instance.Stop();
                 }
             }
+            */
         }
 
         public void Draw()
@@ -226,10 +246,13 @@ namespace Galabingus
             {
                 tilesList[i].Draw();
             }
-            for (int i = 0; i < backgroundList.Count; i++)
-            {
-                backgroundList[i].Draw();
-            }
+            //for (int i = 0; i < backgroundList.Count; i++)
+            //{
+                backgroundList[0].Draw(
+                    GameObject.Instance.GraphicsDevice.Viewport.Width / backgroundList[0].Transform.Width / backgroundList[0].ScaleVector.X * 4, 
+                    GameObject.Instance.GraphicsDevice.Viewport.Width / backgroundList[0].Transform.Width / backgroundList[0].ScaleVector.Y * 3
+                );
+            //}
         }
     }
 }

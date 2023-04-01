@@ -202,5 +202,25 @@ namespace Galabingus
                 0.0f                             // Layer depth of the player is 0.0
             );
         }
+
+        public void Draw(float xTimes, float yTimes)
+        {
+            GameObject.Instance.SpriteBatch.Draw(
+                this.Sprite,                      
+                this.Position,                 
+                new Rectangle(
+                    this.Transform.X, 
+                    this.Transform.Y, 
+                    (int)Math.Round(this.Transform.Width * xTimes, MidpointRounding.AwayFromZero), 
+                    (int)Math.Round(this.Transform.Height * yTimes, MidpointRounding.AwayFromZero)
+                ),                     
+                Color.White,                 
+                0.0f,                        
+                Vector2.Zero,           
+                this.ScaleVector,
+                SpriteEffects.None, 
+                0.0f
+            );
+        }
     }
 }
