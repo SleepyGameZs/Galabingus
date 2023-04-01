@@ -101,7 +101,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 
 	*/
 	float mosaicAngle = 0.0625f * 3.141592654f;
-	float mosaicSize = 7.2f;
+	float mosaicSize = 1.44f;
 	float2 mosaicCoord = floor(input.TextureCoordinates / mosaicSize) * mosaicSize;
 	float2 centerCoord = mosaicCoord + (mosaicSize / 2.0f);
 	float2 rotatedCoord = float2(

@@ -854,7 +854,7 @@ namespace Galabingus
 
             if (!Camera.Instance.Stopped)
             {
-                Camera.Instance.OffSet = new Vector2(Math.Clamp((normVelocity.X + Camera.Instance.OffSet.X), 2, 2.25f), Math.Clamp((normVelocity.Y + Camera.Instance.OffSet.Y), -0.5f, 0.5f));
+                Camera.Instance.OffSet = new Vector2(Math.Clamp((normVelocity.X + Camera.Instance.OffSet.X), 2, 2.25f), Math.Clamp((normVelocity.Y), -0.5f, 0.5f)+ Math.Clamp((Camera.Instance.OffSet.Y), -0.05f, 0.05f));
             }
             else
             {
