@@ -207,10 +207,7 @@ namespace Galabingus
             for (int i = 0; i < backgroundList.Count; i++)
             {
                 backgroundList[i].Update(gameTime);
-                //backgroundList[i].Position += Camera.Instance.OffSet;
             }
-
-            //Debug.WriteLine(counter);
             if (backgroundList[1].Position.X <= 0)
             {
                 if (counter == 3)
@@ -218,7 +215,9 @@ namespace Galabingus
                     Camera.Instance.Stop();
                 }
                 counter++;
-                backgroundList[1].Position = new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Width + backgroundList[1].Position.X, 0);
+                backgroundList[1].Position = new Vector2(
+                    GameObject.Instance.GraphicsDevice.Viewport.Width + backgroundList[1].Position.X, 0
+                );
             }
 
 
@@ -250,7 +249,7 @@ namespace Galabingus
             //{
                 backgroundList[0].Draw(
                     GameObject.Instance.GraphicsDevice.Viewport.Width / backgroundList[0].Transform.Width / backgroundList[0].ScaleVector.X * 4, 
-                    GameObject.Instance.GraphicsDevice.Viewport.Width / backgroundList[0].Transform.Width / backgroundList[0].ScaleVector.Y * 3
+                    GameObject.Instance.GraphicsDevice.Viewport.Width / backgroundList[0].Transform.Width / backgroundList[0].ScaleVector.Y * 2
                 );
             //}
         }
