@@ -59,14 +59,59 @@ float3 normalizeSaturation(float4 color)
 	return  color * 1.3f;
 }
 
+float hash(float2 p)
+{
+	return frac(sin(dot(p, float2(12.9898, 78.233))) * 43758.5453);
+}
+
+float2 randomValues(float2 uv, float2 scale)
+{
+	// Generate two random values for the given texture coordinate
+	float2 noise = frac(sin(dot(uv, float2(12.9898, 78.233))) * 43758.5453);
+
+	// Scale and offset the random values to the desired range
+	return noise * scale - (scale / 2.0);
+}
+
 float4 MainPS(VertexShaderOutput input) : COLOR
 {
-	float2 pixelizeM = floor(input.TextureCoordinates * (640)) / (640);
 
-	float pixelize = floor(input.TextureCoordinates * (640)) / (640);
+
+	float pixelize = floor(input.TextureCoordinates.x * (640)) / (640);
 
 	float4 color = tex2D(SpriteTextureSampler, pixelize);
-	float4 colorTrue = tex2D(SpriteTextureSampler, input.TextureCoordinates) * input.Color;
+
+	/*
+	float2 mosaicSize = float2(640, 640);
+	float mosaicAngle = 10.0f * (input.TextureCoordinates.x + input.TextureCoordinates.y) * 0.01f;
+
+	float2 mosaicCoord = floor(input.TextureCoordinates * mosaicSize) / mosaicSize * mosaicSize;
+	float2 centerCoord = mosaicCoord + (mosaicSize / 2.0f);
+
+	float2 randomTileOffset = randomValues((mosaicCoord / float2(1280,720)), float2(1.0,1.0));
+	float randomSeed = hash(mosaicCoord);
+	float randomAngle = atan2(1, 0) + randomSeed * 2 * 3.141592654f;
+
+	float2 jittering = randomValues(input.TextureCoordinates / float2(1280, 720), float2(0.002, 0.002));
+
+	float2 rotatedCoord = float2(
+		centerCoord.x + (input.TextureCoordinates.x + jittering.x - centerCoord.x) * cos(mosaicAngle + randomAngle) - (input.TextureCoordinates.y + jittering.y - centerCoord.y) * sin(mosaicAngle + randomAngle),
+		centerCoord.y + (input.TextureCoordinates.x + jittering.x - centerCoord.x) * sin(mosaicAngle + randomAngle) + (input.TextureCoordinates.y + jittering.y - centerCoord.y) * cos(mosaicAngle + randomAngle)
+	);
+
+	*/
+	float mosaicAngle = 0.0625f * 3.141592654f;
+	float mosaicSize = 7.2f;
+	float2 mosaicCoord = floor(input.TextureCoordinates / mosaicSize) * mosaicSize;
+	float2 centerCoord = mosaicCoord + (mosaicSize / 2.0f);
+	float2 rotatedCoord = float2(
+		centerCoord.x + (input.TextureCoordinates.x - centerCoord.x) * cos(mosaicAngle) - (input.TextureCoordinates.y - centerCoord.y) * sin(mosaicAngle),
+		centerCoord.y + (input.TextureCoordinates.x - centerCoord.x) * sin(mosaicAngle) + (input.TextureCoordinates.y - centerCoord.y) * cos(mosaicAngle)
+		);
+
+	float2 pixelizeM = floor(rotatedCoord * (640)) / (640);
+
+	float4 colorTrue = tex2D(SpriteTextureSampler, rotatedCoord) * input.Color;
 	float4 colorP = tex2D(SpriteTextureSampler, pixelizeM) * input.Color;
 	//color = * input.Color;
 	/*
@@ -146,6 +191,8 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 
 	float4 outline = lerp(lerpPixels, float4(0, 0, 0, 1), d);
 	*/
+
+
 	return lerpPixels;
 
 	//return color;

@@ -390,8 +390,9 @@ namespace Galabingus
 
             }
 
-            // Set position of enemy
-            Position -= Camera.Instance.OffSet;
+            // Set position of
+            Vector2 cameraScrollX = new Vector2(Camera.Instance.OffSet.X,0);
+            Position -= cameraScrollX;
 
             // Manage Animation
             this.Animation.AnimationDuration = 0.03f;
