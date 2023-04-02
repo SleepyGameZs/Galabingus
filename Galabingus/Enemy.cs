@@ -380,15 +380,13 @@ namespace Galabingus
 
                 // Creates currect collider for Enemy
                 this.Transform = this.Animation.Play(gameTime);
-
-                List<Collision> intercepts = this.Collider.UpdateTransform(
-                    (ushort)CollisionGroup.Enemy,        // Content on same collision layer won't coll
-                    enemyNumber
-                );
-
-                this.Collider.Resolved = true;
-
             }
+
+            this.Collider.Resolved = true;
+            List<Collision> intercepts = this.Collider.UpdateTransform(
+                (ushort)CollisionGroup.Enemy,        // Content on same collision layer won't coll
+                enemyNumber
+            );
 
             // Set position of
             Vector2 cameraScrollX = new Vector2(Camera.Instance.OffSet.X,0);

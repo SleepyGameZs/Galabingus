@@ -293,6 +293,7 @@ namespace Galabingus
         /// </summary>
         public void Update(GameTime gameTime)
         {
+            PlayerInstance.Collider.Resolved = true;
             PlayerInstance.inputBufferTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
             //boostFrameRate = PlayerInstance.inputBufferTime;
             Vector2 translationAjdustedRatio = translationRatio;
@@ -388,14 +389,14 @@ namespace Galabingus
 
             foreach (Collision collision in intercepts)
             {
-                if (collision.other != null && this.Collider.Resolved && !((collision.other as Bullet) is Bullet))
+                if (collision.other != null && this.Collider.Resolved && !((collision.other as Tile) is Tile))
                 {
                     previousVelocity = velocity;
                     acceleration = Vector2.Zero;
                     velocity = Vector2.Zero;
                     collides = true;
                 }
-                else if (collision.other != null && !((collision.other as Bullet) is Bullet))
+                else if (collision.other != null && ((collision.other as Tile) is Tile))
                 {
                     previousVelocity = velocity;
                     acceleration = Vector2.Zero;

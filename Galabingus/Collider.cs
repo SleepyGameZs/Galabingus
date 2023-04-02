@@ -784,37 +784,55 @@ namespace Galabingus
             float ocx = other.position.X + other.Transform.Width / 2.0f;
             float ocy = other.position.Y + other.Transform.Height / 2.0f;
 
+            bool xComparison = ((other.position.X + other.transform.Width * 0.5f) > (this.position.X + this.transform.Width * 0.5f));
+            bool yComparison = ((other.position.Y + other.transform.Height * 0.5f) > (this.position.Y + this.transform.Height * 0.5f));
+
             mtv.X = ocx - x;
             mtv.Y = ocy - y;
 
-            if (Math.Abs(overlap.Y) > Math.Abs(overlap.X))
+            float preMTVY = mtv.Y;
+
+            if (xComparison && !yComparison)
             {
+                mtv.X = Math.Abs(mtv.X);
                 mtv.Y = 0;
+                // X +
             }
-            else if (Math.Abs(overlap.Y) < Math.Abs(overlap.X))
+            else if (!xComparison && yComparison)
             {
-                if ((ocy - y1) > 0 && (ocy != y1))
-                {
-                    //overlap = (new Vector2(Math.Abs(other.Transform.Width), Math.Abs(other.Transform.Height)));
-                    mtv.Y = Math.Abs(mtv.Y);
-                }
-                else if ((ocy - y1) != 0)
-                {
-                    //overlap = (new Vector2(Math.Abs(other.Transform.Width), Math.Abs(other.Transform.Height)));
-                    mtv.Y = -Math.Abs(mtv.Y);
-                }
+                // Y and Y +
                 mtv.X = 0;
+                mtv.Y = Math.Abs(mtv.Y);
+            }
+            else if (!xComparison && !yComparison)
+            {
+                mtv.X = -Math.Abs(mtv.X);
+                mtv.Y = -Math.Abs(mtv.Y);
+            }
+            else if (!xComparison && !yComparison)
+            {
+                Debug.WriteLine("D");
             }
             else
             {
-                if ((ocy - y1) > 0 && (ocy != y1))
+                // Y and Y -
+
+                if (Math.Abs(overlap.Y) > Math.Abs(overlap.X))
                 {
-                    mtv.Y = Math.Abs(mtv.Y);
+                    mtv.X = -Math.Abs(mtv.X);
+                    mtv.Y = 0;
                 }
-                else if ((ocy - y1) != 0)
+                else if (!yComparison)
                 {
+                    mtv.X = 0;
                     mtv.Y = -Math.Abs(mtv.Y);
                 }
+
+            }
+
+            if (yComparison)
+            {
+                mtv.Y = Math.Abs(mtv.Y);
             }
 
             if (mtv == Vector2.Zero)
@@ -822,21 +840,7 @@ namespace Galabingus
                 return Vector2.Zero;
             }
 
-            if (new Vector2(Math.Abs(other.Transform.Width), Math.Abs(other.Transform.Height)).Length() >= new Vector2(Math.Abs(this.Transform.Width),Math.Abs(this.Transform.Height)).Length())
-            {
-                // TODO: Fix size relation issues
-                //overlap = (new Vector2(Math.Abs(other.Transform.Width), Math.Abs(other.Transform.Height)));
-            }
-
             mtv = Vector2.Normalize(mtv);
-
-            if (mtv.X != 0 && mtv.Y != 0)
-            {
-                //mtv.X *= 2;
-                //mtv.Y *= 0.5f;
-            }
-
-            mtv = overlap*mtv+mtv;
 
             return mtv;
         }

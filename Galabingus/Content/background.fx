@@ -192,6 +192,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 	float4 outline = lerp(lerpPixels, float4(0, 0, 0, 1), d);
 	*/
 
+	lerpPixels.a *= 0.5;
 
 	return lerpPixels;
 
