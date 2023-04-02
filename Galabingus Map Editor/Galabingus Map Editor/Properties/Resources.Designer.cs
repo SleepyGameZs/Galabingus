@@ -63,9 +63,9 @@ namespace Galabingus_Map_Editor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Tile_1 {
+        internal static System.Drawing.Bitmap enemy_dblue_strip4_1 {
             get {
-                object obj = ResourceManager.GetObject("Tile_1", resourceCulture);
+                object obj = ResourceManager.GetObject("enemy_dblue_strip4_1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -73,9 +73,9 @@ namespace Galabingus_Map_Editor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap tile_strip26_1_png {
+        internal static System.Drawing.Bitmap enemy_green_strip4_1 {
             get {
-                object obj = ResourceManager.GetObject("tile_strip26_1_png", resourceCulture);
+                object obj = ResourceManager.GetObject("enemy_green_strip4_1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -83,9 +83,9 @@ namespace Galabingus_Map_Editor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap tile_strip26_10_png {
+        internal static System.Drawing.Bitmap enemy_lblue_strip4_1 {
             get {
-                object obj = ResourceManager.GetObject("tile_strip26_10_png", resourceCulture);
+                object obj = ResourceManager.GetObject("enemy_lblue_strip4_1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -93,9 +93,9 @@ namespace Galabingus_Map_Editor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap tile_strip26_11_png {
+        internal static System.Drawing.Bitmap enemy_orange_strip4_1 {
             get {
-                object obj = ResourceManager.GetObject("tile_strip26_11_png", resourceCulture);
+                object obj = ResourceManager.GetObject("enemy_orange_strip4_1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -103,9 +103,9 @@ namespace Galabingus_Map_Editor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap tile_strip26_12_png {
+        internal static System.Drawing.Bitmap enemy_pink_strip4_1 {
             get {
-                object obj = ResourceManager.GetObject("tile_strip26_12_png", resourceCulture);
+                object obj = ResourceManager.GetObject("enemy_pink_strip4_1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -113,9 +113,9 @@ namespace Galabingus_Map_Editor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap tile_strip26_13_png {
+        internal static System.Drawing.Bitmap enemy_purple_strip4_1 {
             get {
-                object obj = ResourceManager.GetObject("tile_strip26_13_png", resourceCulture);
+                object obj = ResourceManager.GetObject("enemy_purple_strip4_1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -123,9 +123,9 @@ namespace Galabingus_Map_Editor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap tile_strip26_14_png {
+        internal static System.Drawing.Bitmap enemy_red_strip4_1 {
             get {
-                object obj = ResourceManager.GetObject("tile_strip26_14_png", resourceCulture);
+                object obj = ResourceManager.GetObject("enemy_red_strip4_1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -133,9 +133,9 @@ namespace Galabingus_Map_Editor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap tile_strip26_15_png {
+        internal static System.Drawing.Bitmap enemy_yellow_strip4_1 {
             get {
-                object obj = ResourceManager.GetObject("tile_strip26_15_png", resourceCulture);
+                object obj = ResourceManager.GetObject("enemy_yellow_strip4_1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -143,9 +143,9 @@ namespace Galabingus_Map_Editor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap tile_strip26_16_png {
+        internal static System.Drawing.Bitmap player_strip5_1 {
             get {
-                object obj = ResourceManager.GetObject("tile_strip26_16_png", resourceCulture);
+                object obj = ResourceManager.GetObject("player_strip5_1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -153,9 +153,9 @@ namespace Galabingus_Map_Editor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap tile_strip26_17_png {
+        internal static System.Drawing.Bitmap tile_strip26_1 {
             get {
-                object obj = ResourceManager.GetObject("tile_strip26_17_png", resourceCulture);
+                object obj = ResourceManager.GetObject("tile_strip26_1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -163,9 +163,9 @@ namespace Galabingus_Map_Editor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap tile_strip26_18_png {
+        internal static System.Drawing.Bitmap tile_strip26_10 {
             get {
-                object obj = ResourceManager.GetObject("tile_strip26_18_png", resourceCulture);
+                object obj = ResourceManager.GetObject("tile_strip26_10", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -173,9 +173,9 @@ namespace Galabingus_Map_Editor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap tile_strip26_19_png {
+        internal static System.Drawing.Bitmap tile_strip26_11 {
             get {
-                object obj = ResourceManager.GetObject("tile_strip26_19_png", resourceCulture);
+                object obj = ResourceManager.GetObject("tile_strip26_11", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -183,9 +183,9 @@ namespace Galabingus_Map_Editor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap tile_strip26_2_png {
+        internal static System.Drawing.Bitmap tile_strip26_12 {
             get {
-                object obj = ResourceManager.GetObject("tile_strip26_2_png", resourceCulture);
+                object obj = ResourceManager.GetObject("tile_strip26_12", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -193,9 +193,9 @@ namespace Galabingus_Map_Editor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap tile_strip26_20_png {
+        internal static System.Drawing.Bitmap tile_strip26_13 {
             get {
-                object obj = ResourceManager.GetObject("tile_strip26_20_png", resourceCulture);
+                object obj = ResourceManager.GetObject("tile_strip26_13", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -203,9 +203,9 @@ namespace Galabingus_Map_Editor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap tile_strip26_21_png {
+        internal static System.Drawing.Bitmap tile_strip26_14 {
             get {
-                object obj = ResourceManager.GetObject("tile_strip26_21_png", resourceCulture);
+                object obj = ResourceManager.GetObject("tile_strip26_14", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -213,9 +213,9 @@ namespace Galabingus_Map_Editor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap tile_strip26_22_png {
+        internal static System.Drawing.Bitmap tile_strip26_15 {
             get {
-                object obj = ResourceManager.GetObject("tile_strip26_22_png", resourceCulture);
+                object obj = ResourceManager.GetObject("tile_strip26_15", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -223,9 +223,9 @@ namespace Galabingus_Map_Editor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap tile_strip26_23_png {
+        internal static System.Drawing.Bitmap tile_strip26_16 {
             get {
-                object obj = ResourceManager.GetObject("tile_strip26_23_png", resourceCulture);
+                object obj = ResourceManager.GetObject("tile_strip26_16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -233,9 +233,9 @@ namespace Galabingus_Map_Editor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap tile_strip26_24_png {
+        internal static System.Drawing.Bitmap tile_strip26_17 {
             get {
-                object obj = ResourceManager.GetObject("tile_strip26_24_png", resourceCulture);
+                object obj = ResourceManager.GetObject("tile_strip26_17", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -243,9 +243,9 @@ namespace Galabingus_Map_Editor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap tile_strip26_25_png {
+        internal static System.Drawing.Bitmap tile_strip26_18 {
             get {
-                object obj = ResourceManager.GetObject("tile_strip26_25_png", resourceCulture);
+                object obj = ResourceManager.GetObject("tile_strip26_18", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -253,9 +253,9 @@ namespace Galabingus_Map_Editor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap tile_strip26_26_png {
+        internal static System.Drawing.Bitmap tile_strip26_19 {
             get {
-                object obj = ResourceManager.GetObject("tile_strip26_26_png", resourceCulture);
+                object obj = ResourceManager.GetObject("tile_strip26_19", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -263,9 +263,9 @@ namespace Galabingus_Map_Editor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap tile_strip26_3_png {
+        internal static System.Drawing.Bitmap tile_strip26_2 {
             get {
-                object obj = ResourceManager.GetObject("tile_strip26_3_png", resourceCulture);
+                object obj = ResourceManager.GetObject("tile_strip26_2", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -273,9 +273,9 @@ namespace Galabingus_Map_Editor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap tile_strip26_4_png {
+        internal static System.Drawing.Bitmap tile_strip26_20 {
             get {
-                object obj = ResourceManager.GetObject("tile_strip26_4_png", resourceCulture);
+                object obj = ResourceManager.GetObject("tile_strip26_20", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -283,9 +283,9 @@ namespace Galabingus_Map_Editor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap tile_strip26_5_png {
+        internal static System.Drawing.Bitmap tile_strip26_21 {
             get {
-                object obj = ResourceManager.GetObject("tile_strip26_5_png", resourceCulture);
+                object obj = ResourceManager.GetObject("tile_strip26_21", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -293,9 +293,9 @@ namespace Galabingus_Map_Editor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap tile_strip26_6_png {
+        internal static System.Drawing.Bitmap tile_strip26_22 {
             get {
-                object obj = ResourceManager.GetObject("tile_strip26_6_png", resourceCulture);
+                object obj = ResourceManager.GetObject("tile_strip26_22", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -303,9 +303,9 @@ namespace Galabingus_Map_Editor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap tile_strip26_7_png {
+        internal static System.Drawing.Bitmap tile_strip26_23 {
             get {
-                object obj = ResourceManager.GetObject("tile_strip26_7_png", resourceCulture);
+                object obj = ResourceManager.GetObject("tile_strip26_23", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -313,9 +313,9 @@ namespace Galabingus_Map_Editor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap tile_strip26_8_png {
+        internal static System.Drawing.Bitmap tile_strip26_24 {
             get {
-                object obj = ResourceManager.GetObject("tile_strip26_8_png", resourceCulture);
+                object obj = ResourceManager.GetObject("tile_strip26_24", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -323,9 +323,89 @@ namespace Galabingus_Map_Editor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap tile_strip26_9_png {
+        internal static System.Drawing.Bitmap tile_strip26_25 {
             get {
-                object obj = ResourceManager.GetObject("tile_strip26_9_png", resourceCulture);
+                object obj = ResourceManager.GetObject("tile_strip26_25", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap tile_strip26_26 {
+            get {
+                object obj = ResourceManager.GetObject("tile_strip26_26", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap tile_strip26_3 {
+            get {
+                object obj = ResourceManager.GetObject("tile_strip26_3", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap tile_strip26_4 {
+            get {
+                object obj = ResourceManager.GetObject("tile_strip26_4", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap tile_strip26_5 {
+            get {
+                object obj = ResourceManager.GetObject("tile_strip26_5", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap tile_strip26_6 {
+            get {
+                object obj = ResourceManager.GetObject("tile_strip26_6", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap tile_strip26_7 {
+            get {
+                object obj = ResourceManager.GetObject("tile_strip26_7", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap tile_strip26_8 {
+            get {
+                object obj = ResourceManager.GetObject("tile_strip26_8", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap tile_strip26_9 {
+            get {
+                object obj = ResourceManager.GetObject("tile_strip26_9", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

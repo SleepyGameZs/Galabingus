@@ -13,6 +13,8 @@ namespace Galabingus_Map_Editor
     enum TileState 
     {
         Empty,
+        //Player
+        Player,
         //Enemies
         Enemy1,
         Enemy2,
@@ -59,33 +61,41 @@ namespace Galabingus_Map_Editor
         private int totalWidth;
         private int totalHeight;
         private int totalDensity;
+        private int totalPageNum;
 
 
         private int tileSize;
 
         private bool saved;
 
-        public MapEditorScreen(int width, int height, int pixelDensity)
+        private ImageList TileSet;
+
+        private Image currentSelected;
+
+
+
+        public MapEditorScreen(int numofPage, int pixelDensity)
         {
             InitializeComponent();
 
-            totalWidth = width;
+            totalWidth = 16;
 
-            totalHeight = height;
+            totalHeight = 9;
 
             totalDensity = pixelDensity;
 
+            totalPageNum = numofPage;
+
             tileSize = 60;
+
+            currentSelected = null;
         }
 
         public MapEditorScreen()
         {
             InitializeComponent();
 
-            ImageList tiles = new ImageList();
-
-            tiles.ImageSize = new Size(80, 80);
-            tiles.TransparentColor = Color.White;
+            currentSelected = null;
 
             tileSize = 60;
         }
@@ -172,6 +182,15 @@ namespace Galabingus_Map_Editor
         private void button12_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void ListImageAdd()
+        {
+            TileSet.Images.Add(Image.FromFile(@"...\Resources\enemy_dblue_strip4-1.png"));
+            TileSet.Images.Add(Image.FromFile(@"...\Resources\enemy_green_strip4-1.png"));
+            TileSet.Images.Add(Image.FromFile(@"...\Resources\enemy_lblue_strip4-1.png"));
+            TileSet.Images.Add(Image.FromFile(@"...\Resources\enemy_orange_strip4-1.png"));
+            TileSet.Images.Add(Image.FromFile(@""));
         }
 
         private void ChangeSelectable(int change) 
