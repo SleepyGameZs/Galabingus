@@ -75,52 +75,17 @@ float2 randomValues(float2 uv, float2 scale)
 
 float4 MainPS(VertexShaderOutput input) : COLOR
 {
-
 	const float gamma = 1.26795f;
-
 	float pixelize = floor(input.TextureCoordinates.x * (640)) / (640);
-
 	float4 color = tex2D(SpriteTextureSampler, pixelize);
 	float4 colorBefore = tex2D(SpriteTextureSampler, input.TextureCoordinates);
-
-	float4 correctedColor = exp(log(colorBefore / input.Color ) *  (1 / gamma) ) * input.Color;
-
-	/*
-	float2 mosaicSize = float2(640, 640);
-	float mosaicAngle = 10.0f * (input.TextureCoordinates.x + input.TextureCoordinates.y) * 0.01f;
-
-	float2 mosaicCoord = floor(input.TextureCoordinates * mosaicSize) / mosaicSize * mosaicSize;
-	float2 centerCoord = mosaicCoord + (mosaicSize / 2.0f);
-
-	float2 randomTileOffset = randomValues((mosaicCoord / float2(1280,720)), float2(1.0,1.0));
-	float randomSeed = hash(mosaicCoord);
-	float randomAngle = atan2(1, 0) + randomSeed * 2 * 3.141592654f;
-
-	float2 jittering = randomValues(input.TextureCoordinates / float2(1280, 720), float2(0.002, 0.002));
-
-	float2 rotatedCoord = float2(
-		centerCoord.x + (input.TextureCoordinates.x + jittering.x - centerCoord.x) * cos(mosaicAngle + randomAngle) - (input.TextureCoordinates.y + jittering.y - centerCoord.y) * sin(mosaicAngle + randomAngle),
-		centerCoord.y + (input.TextureCoordinates.x + jittering.x - centerCoord.x) * sin(mosaicAngle + randomAngle) + (input.TextureCoordinates.y + jittering.y - centerCoord.y) * cos(mosaicAngle + randomAngle)
-	);
-
-	*/
-
+	float4 correctedColor = exp(log(colorBefore / input.Color * (1.5f)) *  (1 / gamma) ) * input.Color;
 	float2 pixelizeM = floor(input.TextureCoordinates * (640)) / (640);
-
 	float4 colorTrue = tex2D(SpriteTextureSampler, input.TextureCoordinates) * input.Color;
 	float4 colorP = tex2D(SpriteTextureSampler, pixelizeM) * input.Color;
-	//color = * input.Color;
-	/*
-	if (color.a == 1)
-	{
-		float3 maxBright = normalizeSaturation(color) * 1.0;
-		color.r = maxBright.r;
-		color.b = maxBright.b;
-		color.g = maxBright.g;
-	}
-	*/
-	float3 colorA = color.rgb;// / max(max(color.r, color.g), color.b);
-	float3 colorB = input.Color.rgb;// / max(max(input.Color.r, input.Color.g), input.Color.b);
+
+	float3 colorA = color.rgb;
+	float3 colorB = input.Color.rgb;
 	float3 color2 = lerp(colorA, colorB, 0.973);
 	color.r = color.r * color2.r;
 	color.g = color.g * color2.g;
@@ -135,10 +100,8 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 		color.g = 0;
 		color.b = 0;
 	}
-	//color = color * 0.5;
-	//*/
 
-		// Calculate the blur strength
+	// Calculate the blur strength
 	float blurStrength = 0.01 * 1280.0;
 
 	// Apply horizontal blur
@@ -171,26 +134,8 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 	color.r = lerpGlow.r;
 	color.b = lerpGlow.b;
 
-	// Combine the glow color with the original color
-
-
 	float4 lerpPixels = lerp(lerp(color, colorTrue, 0.9875), colorP,0.5);
-
-	/*
-	float2 texSize = float2(1.0 / SpriteTextureSampler._Texture0_TexelSize.xy);
-	float2 pixelSize = float2(2, 2) * texSize;
-	float2 uv = input.TextureCoordinates * texSize;
-	float2 dx = ddx(uv);
-	float2 dy = ddy(uv);
-	float d = max(max(abs(dx.x), abs(dy.x)), max(abs(dx.y), abs(dy.y)));
-	d = clamp(d - 0.5 / max(texSize.x, texSize.y), 0.0, 1.0);
-
-	float4 outline = lerp(lerpPixels, float4(0, 0, 0, 1), d);
-	*/
-
-	//lerpPixels = colorBefore;
 	lerpPixels = lerpPixels * correctedColor;
-	lerpPixels.a = colorBefore.a * input.Color.a;
 
 	return lerpPixels;
 
