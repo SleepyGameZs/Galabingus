@@ -77,7 +77,7 @@ namespace Galabingus_Map_Editor
         {
             InitializeComponent();
 
-            boxes = new List<PictureBox>();
+            TileSet = new Dictionary<string, Image>();
 
             totalWidth = 16;
 
@@ -93,9 +93,10 @@ namespace Galabingus_Map_Editor
 
             TileSizeDet();
 
+            DicImageAdd();
+
             MapDraw();
 
-            currentSelected = TileSet["dblue"];
         }
 
         public MapEditorScreen()
@@ -104,9 +105,9 @@ namespace Galabingus_Map_Editor
 
             currentSelected = null;
 
-            tileSize = 60;
-
             TileSizeDet();
+
+            DicImageAdd();
 
             MapDraw();
         }
@@ -296,5 +297,12 @@ namespace Galabingus_Map_Editor
 
         }
 
+        /*
+        private Image ButtonImagesDisplay(Image image)
+        {
+            
+
+        }
+        */
     }
 }
