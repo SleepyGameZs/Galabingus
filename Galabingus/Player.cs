@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using static System.Formats.Asn1.AsnWriter;
 
 // Matthew Rodriguez
 // 2023, 3, 13
@@ -855,11 +856,11 @@ namespace Galabingus
 
             if (!Camera.Instance.Stopped)
             {
-                Camera.Instance.OffSet = new Vector2(Math.Clamp((normVelocity.X)*2 + Math.Clamp((Camera.Instance.OffSet.X), -0.05f, 0.05f), 2, 2.5f), Math.Clamp((normVelocity.Y) + Math.Clamp(Camera.Instance.OffSet.Y, -0.005f, 0.005f), -0.5f, 0.5f)) * (float)Animation.EllapsedTime;
+                Camera.Instance.OffSet = new Vector2(Math.Clamp((normVelocity.X)*2 + Math.Clamp((Camera.Instance.OffSet.X), -0.05f, 0.05f), 2, 2.5f), Math.Clamp((normVelocity.Y) + Math.Clamp(Camera.Instance.OffSet.Y, -0.005f, 0.005f), -0.5f, 0.5f)) * (float)Animation.GetElapsedTime(gameTime, velocity, Position, Transform, Scale);
             }
             else
             {
-                Camera.Instance.OffSet = new Vector2(Math.Clamp((normVelocity.X), -1f, 1f), Math.Clamp((normVelocity.Y), -0.5f, 0.5f)) * (float)Animation.EllapsedTime;
+                Camera.Instance.OffSet = new Vector2(Math.Clamp((normVelocity.X), -1f, 1f), Math.Clamp((normVelocity.Y), -0.5f, 0.5f)) * (float)Animation.GetElapsedTime(gameTime, velocity, Position, Transform, Scale);
             }
 
             //Debug.WriteLine();

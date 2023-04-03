@@ -287,6 +287,47 @@ namespace Galabingus
 
 
         /// <summary>
+        ///  Plays the animation, requires gameTime to play
+        /// </summary>
+        /// <param name="gameTime">Game Time</param>
+        /// <returns>
+        ///  Transform of the frame from the animation sprite
+        /// </returns>
+        public double GetElapsedTime(GameTime gameTime, Vector2 velocity, Vector2 position, Rectangle transform, float scale)
+        {
+            // On the sub scale adjust spacetime to Lorentz's factor
+            //float rapidity = (float)Math.Atanh(    (Math.Abs(((position.X)) / (Player.PlayerInstance.Position.X - position.X))) * 0.1f   );
+            float rapidity = (float)Math.Atanh((Math.Abs((((position)) / (Player.PlayerInstance.Position - position)).Length())) * 0.1f);
+            rapidity = (rapidity.ToString() == "NaN") ? 0 : rapidity;
+            float dilationFactor1 = (float)(1 - Math.Pow(rapidity, 2));
+            dilationFactor1 = dilationFactor1 > 0 ? dilationFactor1 : 1;
+            float dilationFactor2 = (float)(1 - (8 * Math.Pow(rapidity, 2) / dilationFactor1));
+            dilationFactor2 = dilationFactor2 > 0 ? dilationFactor2 : -dilationFactor2;
+            float timeDialiation = (float)Math.Sqrt(dilationFactor2);
+
+            if (timeDialiation < 0.7)
+            {
+                // There should never be a spacetime jump that is greater than what can be perceived
+                //timeDialiation = 0.7f;
+            }
+
+            if (timeDialiation > 1.0675f)
+            {
+                //timeDialiation = 1.0675f;
+            }
+
+            ellapsedTime = (gameTime.ElapsedGameTime.TotalSeconds * timeDialiation * 0.5f) + (gameTime.ElapsedGameTime.TotalSeconds * 0.5f) * 60 * 1.875f;
+
+            // Increase the total anmation time
+            animationTime += (ellapsedTime * 0.01666666666666666666666666666666f);
+
+            ellapsedTime = (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
+
+            return ellapsedTime;
+        }
+
+
+        /// <summary>
         ///  Use this to select a specific sprite in the sprite sheet
         /// </summary>
         /// <param name="currentFrame">Specific sprite in the sprite sheet</param>
