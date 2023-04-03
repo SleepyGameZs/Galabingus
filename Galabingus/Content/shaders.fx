@@ -76,14 +76,14 @@ float2 randomValues(float2 uv, float2 scale)
 float4 MainPS(VertexShaderOutput input) : COLOR
 {
 
-	const float gamma = 1.0f;
+	const float gamma = 1.26795f;
 
 	float pixelize = floor(input.TextureCoordinates.x * (640)) / (640);
 
 	float4 color = tex2D(SpriteTextureSampler, pixelize);
 	float4 colorBefore = tex2D(SpriteTextureSampler, input.TextureCoordinates);
 
-	float4 correctedColor = exp(log(colorBefore * input.Color) * gamma);
+	float4 correctedColor = exp(log(colorBefore / input.Color ) *  (1 / gamma) ) * input.Color;
 
 	/*
 	float2 mosaicSize = float2(640, 640);
