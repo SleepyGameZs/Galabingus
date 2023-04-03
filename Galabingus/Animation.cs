@@ -305,7 +305,7 @@ namespace Galabingus
             dilationFactor2 = dilationFactor2 > 0 ? dilationFactor2 : -dilationFactor2;
             float timeDialiation = (float)Math.Sqrt(dilationFactor2);
 
-            Debug.WriteLine(timeDialiation);
+            //Debug.WriteLine(timeDialiation);
 
             if (timeDialiation < 0.7)
             {
