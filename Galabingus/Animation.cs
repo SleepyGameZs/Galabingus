@@ -305,6 +305,8 @@ namespace Galabingus
             dilationFactor2 = dilationFactor2 > 0 ? dilationFactor2 : -dilationFactor2;
             float timeDialiation = (float)Math.Sqrt(dilationFactor2);
 
+            Debug.WriteLine(timeDialiation);
+
             if (timeDialiation < 0.7)
             {
                 // There should never be a spacetime jump that is greater than what can be perceived
