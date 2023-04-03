@@ -856,11 +856,14 @@ namespace Galabingus
 
             if (!Camera.Instance.Stopped)
             {
-                Camera.Instance.OffSet = new Vector2(Math.Clamp((normVelocity.X)*2 + Math.Clamp((Camera.Instance.OffSet.X), -0.05f, 0.05f), 2, 2.5f), Math.Clamp((normVelocity.Y) + Math.Clamp(Camera.Instance.OffSet.Y, -0.005f, 0.005f), -0.5f, 0.5f)) * (float)Animation.GetElapsedTime(gameTime, Vector2.Zero, new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Width * 0.5f, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.5f), Transform, Scale);
+                Camera.Instance.OffSet = new Vector2(Math.Clamp((normVelocity.X) * 2 + Math.Clamp((Camera.Instance.OffSet.X), -0.05f, 0.05f), 2, 2.5f), Math.Clamp((normVelocity.Y) + Math.Clamp(Camera.Instance.OffSet.Y, -0.005f, 0.005f), -0.5f, 0.5f))
+                    * (float)Animation.GetElapsedTime(gameTime, Vector2.Zero, new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Width * 0.5f, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.5f), Transform, Scale);
+
             }
             else
             {
-                Camera.Instance.OffSet = new Vector2(Math.Clamp((normVelocity.X), -1f, 1f), Math.Clamp((normVelocity.Y), -0.5f, 0.5f)) * (float)Animation.GetElapsedTime(gameTime, Vector2.Zero, new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Width * 0.5f, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.5f), Transform, Scale);
+                Camera.Instance.OffSet = new Vector2(Math.Clamp((normVelocity.X), -1f, 1f), Math.Clamp((normVelocity.Y), -0.5f, 0.5f)) 
+                    * (float)Animation.GetElapsedTime(gameTime, Vector2.Zero, new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Width * 0.5f, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.5f), Transform, Scale);
             }
 
             //Debug.WriteLine();
