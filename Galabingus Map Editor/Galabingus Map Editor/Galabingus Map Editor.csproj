@@ -93,9 +93,6 @@
     <None Include="Resources\tile_strip26-26.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\tile_strip26-8.png.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\tile_strip26-25.png" />
   </ItemGroup>
   <ItemGroup>

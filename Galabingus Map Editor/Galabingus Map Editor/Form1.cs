@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -32,9 +33,7 @@ namespace Galabingus_Map_Editor
         //Load Button
         private void button2_Click(object sender, EventArgs e)
         {
-            mapEditor = new MapEditorScreen();
-
-            mapEditor.Show();
+            
         }
 
 
@@ -86,7 +85,7 @@ namespace Galabingus_Map_Editor
             {
                 if (Int32.Parse(textBox2.Text) > 0 && Int32.Parse(textBox2.Text) < 5)
                 {
-
+                    pixelDensity = Int32.Parse(textBox2.Text);
                 }
                 else
                 {
@@ -97,7 +96,8 @@ namespace Galabingus_Map_Editor
 
             if (invalid == false)
             {
-                mapEditor = new MapEditorScreen(width, pixelDensity);
+
+                mapEditor = new MapEditorScreen(numPages, pixelDensity);
 
                 mapEditor.Show();
             }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -52,7 +53,6 @@ namespace Galabingus_Map_Editor
         rock23,
         rock24,
         rock25,
-
     }
     public partial class MapEditorScreen : Form
     {
@@ -63,12 +63,11 @@ namespace Galabingus_Map_Editor
         private int totalDensity;
         private int totalPageNum;
 
-
         private int tileSize;
 
         private bool saved;
 
-        private ImageList TileSet;
+        private Dictionary<string ,Image> TileSet;
 
         private Image currentSelected;
 
@@ -78,17 +77,25 @@ namespace Galabingus_Map_Editor
         {
             InitializeComponent();
 
+            boxes = new List<PictureBox>();
+
             totalWidth = 16;
 
             totalHeight = 9;
+
+            tileSize = 60;
 
             totalDensity = pixelDensity;
 
             totalPageNum = numofPage;
 
-            tileSize = 60;
-
             currentSelected = null;
+
+            TileSizeDet();
+
+            MapDraw();
+
+            currentSelected = TileSet["dblue"];
         }
 
         public MapEditorScreen()
@@ -98,6 +105,10 @@ namespace Galabingus_Map_Editor
             currentSelected = null;
 
             tileSize = 60;
+
+            TileSizeDet();
+
+            MapDraw();
         }
 
         //Button 1
@@ -184,13 +195,95 @@ namespace Galabingus_Map_Editor
 
         }
 
-        private void ListImageAdd()
+
+        private void ImageChanger(object tile, EventArgs click)
         {
-            TileSet.Images.Add(Image.FromFile(@"...\Resources\enemy_dblue_strip4-1.png"));
-            TileSet.Images.Add(Image.FromFile(@"...\Resources\enemy_green_strip4-1.png"));
-            TileSet.Images.Add(Image.FromFile(@"...\Resources\enemy_lblue_strip4-1.png"));
-            TileSet.Images.Add(Image.FromFile(@"...\Resources\enemy_orange_strip4-1.png"));
-            TileSet.Images.Add(Image.FromFile(@""));
+            if (tile != null)
+            {
+                PictureBox pixel = (PictureBox)tile;
+                pixel.Image = currentSelected;
+                //changed = true;
+            }
+        }
+
+        private void MapDraw()
+        {
+            for (int y = 0; y < totalHeight; y++)
+            {
+                for (int x = 0; x < totalWidth; x++)
+                {
+                    PictureBox tileBox = new PictureBox();
+
+                    tileBox.Size = new Size(tileSize, tileSize);
+                    tileBox.Location = new Point(305 + (tileSize * x), 30 + (tileSize * y));
+                    tileBox.BackColor = Color.White ;
+
+                    Controls.Add(tileBox);
+                    boxes.Add(tileBox);
+                    tileBox.BringToFront();
+                    tileBox.Click += ImageChanger;
+                    Debug.Write(x);
+                    //tileBox.Click += Change;
+                }
+            }
+        }
+
+        private void DicImageAdd()
+        {
+            //Enemy Sprites
+            TileSet.Add("dblue" ,Image.FromFile(@"../Resources/enemy_dblue_strip4-1.png"));
+            TileSet.Add("green" ,Image.FromFile(@"../Resources/enemy_green_strip4-1.png"));
+            TileSet.Add("lblue", Image.FromFile(@"../Resources/enemy_lblue_strip4-1.png"));
+            TileSet.Add("orange", Image.FromFile(@"../Resources/enemy_orange_strip4-1.png"));
+            TileSet.Add("pink", Image.FromFile(@"../Resources/enemy_pink_strip4-1.png"));
+            TileSet.Add("purple", Image.FromFile(@"../Resources/enemy_purple_strip4-1.png"));
+            TileSet.Add("red", Image.FromFile(@"../Resources/enemy_red_strip4-1.png"));
+            TileSet.Add("yellow", Image.FromFile(@"../Resources/enemy_yellow_strip4-1.png"));
+
+            //Boss Sprite
+            //TileSet.Add("boss", Image.FromFile(@"../Resources/Boss image");
+
+            //Player Sprite
+            TileSet.Add("player" , Image.FromFile(@"../Resources/player_strip5-1.png"));
+
+            //Asteroid Tiles
+            TileSet.Add("tile_1", Image.FromFile(@"../Resources/tile_strip26-1.png"));
+            TileSet.Add("tile_2", Image.FromFile(@"../Resources/tile_strip26-2.png"));
+            TileSet.Add("tile_3", Image.FromFile(@"../Resources/tile_strip26-3.png"));
+            TileSet.Add("tile_4", Image.FromFile(@"../Resources/tile_strip26-4.png"));
+            TileSet.Add("tile_5", Image.FromFile(@"../Resources/tile_strip26-5.png"));
+            TileSet.Add("tile_6", Image.FromFile(@"../Resources/tile_strip26-6.png"));
+            TileSet.Add("tile_7", Image.FromFile(@"../Resources/tile_strip26-7.png"));
+            TileSet.Add("tile_8", Image.FromFile(@"../Resources/tile_strip26-8.png"));
+            TileSet.Add("tile_9", Image.FromFile(@"../Resources/tile_strip26-9.png"));
+            TileSet.Add("tile_10", Image.FromFile(@"../Resources/tile_strip26-10.png"));
+            TileSet.Add("tile_11", Image.FromFile(@"../Resources/tile_strip26-11.png"));
+            TileSet.Add("tile_12", Image.FromFile(@"../Resources/tile_strip26-12.png"));
+            TileSet.Add("tile_13", Image.FromFile(@"../Resources/tile_strip26-13.png"));
+            TileSet.Add("tile_14", Image.FromFile(@"../Resources/tile_strip26-14.png"));
+            TileSet.Add("tile_15", Image.FromFile(@"../Resources/tile_strip26-15.png"));
+            TileSet.Add("tile_16", Image.FromFile(@"../Resources/tile_strip26-16.png"));
+            TileSet.Add("tile_17", Image.FromFile(@"../Resources/tile_strip26-17.png"));
+            TileSet.Add("tile_18", Image.FromFile(@"../Resources/tile_strip26-18.png"));
+            TileSet.Add("tile_19", Image.FromFile(@"../Resources/tile_strip26-19.png"));
+            TileSet.Add("tile_20", Image.FromFile(@"../Resources/tile_strip26-20.png"));
+            TileSet.Add("tile_21", Image.FromFile(@"../Resources/tile_strip26-21.png"));
+            TileSet.Add("tile_22", Image.FromFile(@"../Resources/tile_strip26-22.png"));
+            TileSet.Add("tile_23", Image.FromFile(@"../Resources/tile_strip26-23.png"));
+            TileSet.Add("tile_24", Image.FromFile(@"../Resources/tile_strip26-24.png"));
+            TileSet.Add("tile_25", Image.FromFile(@"../Resources/tile_strip26-25.png"));
+            TileSet.Add("tile_26", Image.FromFile(@"../Resources/tile_strip26-26.png"));
+
+            
+        }
+
+        private void TileSizeDet()
+        {
+            totalWidth = totalWidth * totalDensity;
+
+            totalHeight = totalHeight * totalDensity;
+
+            tileSize = (int) tileSize / totalDensity;
         }
 
         private void ChangeSelectable(int change) 
@@ -202,7 +295,6 @@ namespace Galabingus_Map_Editor
         {
 
         }
-
 
     }
 }
