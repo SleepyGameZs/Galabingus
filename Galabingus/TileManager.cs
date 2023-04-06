@@ -123,46 +123,49 @@ namespace Galabingus
             currentSpriteNumber = (index);
             Tile tile = new Tile(GameObject.Instance.Content.white_pixel_strip1, 0, index, true);
             tile.Scale = 25f;
-            tile.ScaleVector = new Vector2(screenSize.X, 20);
-            tile.Position = new Vector2(0, -21);
+            tile.ScaleVector = new Vector2(screenSize.X, 200);
+            tile.Position = new Vector2(0, -200);
             tilesList.Add(tile);
 
             // Bot
             tile = new Tile(GameObject.Instance.Content.white_pixel_strip1, 1, index, true);
             tile.Scale = 25f;
-            tile.ScaleVector = new Vector2(screenSize.X, 20);
-            tile.Position = new Vector2(20, screenSize.Y);
+            tile.ScaleVector = new Vector2(screenSize.X, 200);
+            tile.Position = new Vector2(0, screenSize.Y);
             tilesList.Add(tile);
 
             // Right
             tile = new Tile(GameObject.Instance.Content.white_pixel_strip1, 2, index, true);
             tile.Scale = 25f;
-            tile.ScaleVector = new Vector2(20, screenSize.Y);
+            tile.ScaleVector = new Vector2(200, screenSize.Y);
             tile.Position = new Vector2(screenSize.X, 0);
             tilesList.Add(tile);
 
             // Left
             tile = new Tile(GameObject.Instance.Content.white_pixel_strip1, 3, index, true);
             tile.Scale = 25f;
-            tile.ScaleVector = new Vector2(20, screenSize.Y);
-            tile.Position = new Vector2(-20, 0);
+            tile.ScaleVector = new Vector2(200, screenSize.Y);
+            tile.Position = new Vector2(-200, 0);
             tilesList.Add(tile);
         }
 
         public void CreateBackground()
         {
-            Tile background = new Tile(GameObject.Instance.Content.newBackground_strip1, 0, 1, true);
+            Tile background = new Tile(GameObject.Instance.Content.space_only_background_strip1, 0, 1, true);
             background.Position = Vector2.Zero;
             background.Transform = new Rectangle(0, 0, background.Sprite.Width, background.Sprite.Height);
-            background.Scale = 1f;
-            background.ScaleVector = new Vector2(background.Scale, 1);
+            background.Scale = GameObject.Instance.GraphicsDevice.Viewport.Height / background.Sprite.Width / (Player.PlayerInstance.Scale * 0.675f);
+            background.ScaleVector = new Vector2(background.Scale, background.Scale);
+            background.Position -= new Vector2(0, GameObject.Instance.GraphicsDevice.Viewport.Height);
+            background.Effect = GameObject.Instance.ContentManager.Load<Effect>("background");
             backgroundList.Add(background);
 
-            Tile background2 = new Tile(GameObject.Instance.Content.newBackground_strip1, 1, 1, true);
-            background2.Position = new Vector2(background.Transform.Width, 0);
-            background2.Transform = new Rectangle(background.Transform.Width, 0, background2.Sprite.Width, background2.Sprite.Height);
-            background2.Scale = 1f;
-            background2.ScaleVector = new Vector2(background2.Scale, 1);
+            Tile background2 = new Tile(GameObject.Instance.Content.space_only_background_strip1, 1, 1, true);
+            background2.Position = Vector2.Zero;
+            
+            background2.Transform = new Rectangle(0, 0, background.Sprite.Width, background.Sprite.Height);
+            background2.Scale = GameObject.Instance.GraphicsDevice.Viewport.Height / background.Sprite.Width / (Player.PlayerInstance.Scale * 0.675f);
+            background2.ScaleVector = new Vector2(background.Scale, background.Scale);
             backgroundList.Add(background2);
         }
 
@@ -172,6 +175,8 @@ namespace Galabingus
             {
                 //currentSpriteNumber = tilesList[i].SpriteNumber;
 
+
+                tilesList[i].Collider.Resolved = true;
                 List<Collision> collisions = tilesList[i].Collider.UpdateTransform(
                     tilesList[i].Sprite,
                     tilesList[i].Position,
@@ -198,11 +203,27 @@ namespace Galabingus
                 tilesList[i].Collider.Resolved = true;
 
             }
+
+           
             // Background Scroll
             for (int i = 0; i < backgroundList.Count; i++)
             {
                 backgroundList[i].Update(gameTime);
             }
+            if (backgroundList[1].Position.X <= 0)
+            {
+                if (counter == 3)
+                {
+                    Camera.Instance.Stop();
+                }
+                counter++;
+                backgroundList[1].Position = new Vector2(
+                    GameObject.Instance.GraphicsDevice.Viewport.Width + backgroundList[1].Position.X, 0
+                );
+            }
+
+
+            /*
             // Background Loop
             for (int i = 0; i < backgroundList.Count; i++)
             {
@@ -210,13 +231,14 @@ namespace Galabingus
                 {
                     backgroundList[i].Position = new Vector2(backgroundList[i].Transform.Width, 0);
                     counter++;
-                    //Debug.WriteLine(counter);
+                    Debug.WriteLine(counter);
                 }
                 else if (counter == 3) 
                 {
                     Camera.Instance.Stop();
                 }
             }
+            */
         }
 
         public void Draw()
@@ -225,10 +247,13 @@ namespace Galabingus
             {
                 tilesList[i].Draw();
             }
-            for (int i = 0; i < backgroundList.Count; i++)
-            {
-                backgroundList[i].Draw();
-            }
+            //for (int i = 0; i < backgroundList.Count; i++)
+            //{
+                backgroundList[0].Draw(
+                    GameObject.Instance.GraphicsDevice.Viewport.Width / backgroundList[0].Transform.Width / backgroundList[0].ScaleVector.X * 4.3f, 
+                    GameObject.Instance.GraphicsDevice.Viewport.Width / backgroundList[0].Transform.Width / backgroundList[0].ScaleVector.Y * 2
+                );
+            //}
         }
     }
 }

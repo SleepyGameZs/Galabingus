@@ -29,7 +29,8 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.button17 = new System.Windows.Forms.Button();
+            this.button16 = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.button9 = new System.Windows.Forms.Button();
             this.button8 = new System.Windows.Forms.Button();
@@ -49,7 +50,6 @@
             this.button12 = new System.Windows.Forms.Button();
             this.button13 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox3.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -57,7 +57,8 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.pictureBox1);
+            this.groupBox1.Controls.Add(this.button17);
+            this.groupBox1.Controls.Add(this.button16);
             this.groupBox1.Location = new System.Drawing.Point(238, 15);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(1095, 734);
@@ -65,13 +66,23 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "groupBox1";
             // 
-            // pictureBox1
+            // button17
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(6, 14);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(1083, 713);
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
+            this.button17.Location = new System.Drawing.Point(0, 312);
+            this.button17.Name = "button17";
+            this.button17.Size = new System.Drawing.Size(25, 75);
+            this.button17.TabIndex = 10;
+            this.button17.Text = "<";
+            this.button17.UseVisualStyleBackColor = true;
+            // 
+            // button16
+            // 
+            this.button16.Location = new System.Drawing.Point(1070, 312);
+            this.button16.Name = "button16";
+            this.button16.Size = new System.Drawing.Size(25, 75);
+            this.button16.TabIndex = 10;
+            this.button16.Text = ">";
+            this.button16.UseVisualStyleBackColor = true;
             // 
             // groupBox3
             // 
@@ -266,7 +277,6 @@
             this.Name = "MapEditorScreen";
             this.Text = "MapEditorScreen";
             this.groupBox1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.groupBox3.ResumeLayout(false);
             this.groupBox4.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
@@ -295,6 +305,7 @@
         private System.Windows.Forms.Button button13;
         private System.Windows.Forms.Button button10;
         private System.Windows.Forms.Button button11;
-        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Button button17;
+        private System.Windows.Forms.Button button16;
     }
 }

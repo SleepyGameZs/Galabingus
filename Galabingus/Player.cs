@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using static System.Formats.Asn1.AsnWriter;
 
 // Matthew Rodriguez
 // 2023, 3, 13
@@ -293,6 +294,7 @@ namespace Galabingus
         /// </summary>
         public void Update(GameTime gameTime)
         {
+            PlayerInstance.Collider.Resolved = true;
             PlayerInstance.inputBufferTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
             //boostFrameRate = PlayerInstance.inputBufferTime;
             Vector2 translationAjdustedRatio = translationRatio;
@@ -388,14 +390,14 @@ namespace Galabingus
 
             foreach (Collision collision in intercepts)
             {
-                if (collision.other != null && this.Collider.Resolved && !((collision.other as Bullet) is Bullet))
+                if (collision.other != null && this.Collider.Resolved && !((collision.other as Tile) is Tile))
                 {
                     previousVelocity = velocity;
                     acceleration = Vector2.Zero;
                     velocity = Vector2.Zero;
                     collides = true;
                 }
-                else if (collision.other != null && !((collision.other as Bullet) is Bullet))
+                else if (collision.other != null && ((collision.other as Tile) is Tile))
                 {
                     previousVelocity = velocity;
                     acceleration = Vector2.Zero;
@@ -850,6 +852,18 @@ namespace Galabingus
             if (currentKeyboardState.IsKeyDown(Keys.G))
             {
                 PlayerInstance.Health = 5;
+            }
+
+            if (!Camera.Instance.Stopped)
+            {
+                Camera.Instance.OffSet = new Vector2(Math.Clamp((normVelocity.X) * 2 + Math.Clamp((Camera.Instance.OffSet.X), -0.05f, 0.05f), 2, 2.5f), Math.Clamp((normVelocity.Y) + Math.Clamp(Camera.Instance.OffSet.Y, -0.005f, 0.005f), -0.5f, 0.5f))
+                    * (float)Animation.GetElapsedTime(gameTime, Vector2.Zero, new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Width * 0.5f, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.5f), Transform, Scale);
+
+            }
+            else
+            {
+                Camera.Instance.OffSet = new Vector2(Math.Clamp((normVelocity.X), -1f, 1f), Math.Clamp((normVelocity.Y), -0.5f, 0.5f)) 
+                    * (float)Animation.GetElapsedTime(gameTime, Vector2.Zero, new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Width * 0.5f, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.5f), Transform, Scale);
             }
 
             //Debug.WriteLine();

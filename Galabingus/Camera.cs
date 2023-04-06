@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -35,7 +36,7 @@ namespace Galabingus
         private float initalCameraScroll;
         private Vector2 offSet;
         private bool cameraLock;
-
+        private bool stop;
 
         // -------------------------------------------------
         // Properties
@@ -62,6 +63,15 @@ namespace Galabingus
         public Vector2 OffSet
         {
             get { return offSet; }
+            set { offSet = value; }
+        }
+
+        public bool Stopped
+        {
+            get 
+            {
+                return stop;
+            }
         }
 
         // -------------------------------------------------
@@ -73,7 +83,8 @@ namespace Galabingus
             x = 0;
             y = 0;
             initalCameraScroll = 2f;
-            offSet = new Vector2(initalCameraScroll,0);
+            offSet = new Vector2(initalCameraScroll, 0);
+            stop = false;
         }
 
         public Camera(int cameraScroll)
@@ -89,14 +100,17 @@ namespace Galabingus
 
         public void Start()
         {
+            stop = false;
             cameraLock = false;
             offSet.X = initalCameraScroll;
         }
 
         public void Stop()
         {
+            stop = true;
             cameraLock = false;
             offSet.X = 0;
+            offSet.Y = 0;
         }
 
         public void Update(GameTime gameTime)

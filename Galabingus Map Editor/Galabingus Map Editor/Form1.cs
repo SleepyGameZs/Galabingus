@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -12,11 +13,8 @@ namespace Galabingus_Map_Editor
 {
     public partial class Form1 : Form
     {
-        //must be divisible by 9 to get a number without a decimal (Most likely wont need this)
-        private int height;
-
-        //must be divisible by 16 to get a number without a decimal
-        private int width;
+        //16 x 9 
+        private int numPages;
 
         private int pixelDensity;
 
@@ -35,9 +33,7 @@ namespace Galabingus_Map_Editor
         //Load Button
         private void button2_Click(object sender, EventArgs e)
         {
-            mapEditor = new MapEditorScreen();
-
-            mapEditor.Show();
+            
         }
 
 
@@ -66,15 +62,15 @@ namespace Galabingus_Map_Editor
 
             bool invalid = false;
             //width
-            if (InputCheck(textBox2))
+            if (InputCheck(textBox1))
             {
-                if (DivisibleBy(Int32.Parse(textBox2.Text), 18))
+                if (Int32.Parse(textBox1.Text) > 0)
                 {
-                    width = Int32.Parse(textBox2.Text);
+                    numPages = Int32.Parse(textBox1.Text);
                 }
                 else
                 {
-                    output += "\n - Width value is not Valid and must be divisable by 18";
+                    output += "\n - Width value is not Valid and must be greater then 0";
                     invalid = true;
                 }
             }
@@ -84,31 +80,12 @@ namespace Galabingus_Map_Editor
                 invalid = true;
             }
 
-            //Height
+            //Pixel Density
             if (InputCheck(textBox2))
             {
-                if (DivisibleBy(Int32.Parse(textBox2.Text), 12))
+                if (Int32.Parse(textBox2.Text) > 0 && Int32.Parse(textBox2.Text) < 5)
                 {
-                    height = Int32.Parse(textBox2.Text);
-                }
-                else
-                {
-                    output += "\n - Height value is not Valid and must be divisable by 12";
-                    invalid = true;
-                }
-            }
-            else
-            {
-                output += "\n - Height is not Valid";
-                invalid = true;
-            }
-
-            //Pixel Density
-            if (InputCheck(textBox3))
-            {
-                if (Int32.Parse(textBox3.Text) > 0 && Int32.Parse(textBox3.Text) < 5)
-                {
-
+                    pixelDensity = Int32.Parse(textBox2.Text);
                 }
                 else
                 {
@@ -119,7 +96,8 @@ namespace Galabingus_Map_Editor
 
             if (invalid == false)
             {
-                mapEditor = new MapEditorScreen(width, height, pixelDensity);
+
+                mapEditor = new MapEditorScreen(numPages, pixelDensity);
 
                 mapEditor.Show();
             }
@@ -129,6 +107,7 @@ namespace Galabingus_Map_Editor
             }
         }
 
+        /*
         private bool DivisibleBy(double input, double divisor)
         {
             if (input != 0 && (input / divisor) % 1 == 0)
@@ -140,6 +119,7 @@ namespace Galabingus_Map_Editor
                 return false;
             }
         }
+        */
 
         
     }
