@@ -71,7 +71,7 @@ namespace Galabingus_Map_Editor
 
         private Image currentSelected;
 
-
+        private List<Image[]> spritePageSelect;
 
         public MapEditorScreen(int numofPage, int pixelDensity)
         {
@@ -115,61 +115,71 @@ namespace Galabingus_Map_Editor
         //Button 1
         private void button2_Click(object sender, EventArgs e)
         {
-            
+            button1.BackgroundImage = button2.BackgroundImage;
+            currentSelected = button2.BackgroundImage;
         }
 
         //Button 2
         private void button7_Click(object sender, EventArgs e)
         {
-
+            button1.BackgroundImage = button7.BackgroundImage;
+            currentSelected = button7.BackgroundImage;
         }
 
         //Button 3
         private void button3_Click(object sender, EventArgs e)
         {
-
+            button1.BackgroundImage = button3.BackgroundImage;
+            currentSelected = button3.BackgroundImage;
         }
 
         //Button 4
         private void button8_Click(object sender, EventArgs e)
         {
-
+            button1.BackgroundImage = button8.BackgroundImage;
+            currentSelected = button8.BackgroundImage;
         }
 
         //Button 5
         private void button4_Click(object sender, EventArgs e)
         {
-
+            button1.BackgroundImage = button4.BackgroundImage;
+            currentSelected = button4.BackgroundImage;
         }
 
         //Button 6
         private void button9_Click(object sender, EventArgs e)
         {
-
+            button1.BackgroundImage = button9.BackgroundImage;
+            currentSelected = button9.BackgroundImage;
         }
 
         //Button 7
         private void button5_Click(object sender, EventArgs e)
         {
-
+            button1.BackgroundImage = button5.BackgroundImage;
+            currentSelected = button5.BackgroundImage;
         }
 
         //Button 8
         private void button10_Click(object sender, EventArgs e)
         {
-
+            button1.BackgroundImage = button10.BackgroundImage;
+            currentSelected = button10.BackgroundImage;
         }
 
         //Button 9
         private void button6_Click(object sender, EventArgs e)
         {
-
+            button1.BackgroundImage = button6.BackgroundImage;
+            currentSelected = button6.BackgroundImage;
         }
 
         //Button 10
         private void button11_Click(object sender, EventArgs e)
         {
-
+            button1.BackgroundImage = button11.BackgroundImage;
+            currentSelected = button11.BackgroundImage;
         }
 
         //Save Button
@@ -232,8 +242,8 @@ namespace Galabingus_Map_Editor
         private void DicImageAdd()
         {
             //Enemy Sprites
-            TileSet.Add("dblue" ,Image.FromFile(@"../Resources/enemy_dblue_strip4-1.png"));
-            TileSet.Add("green" ,Image.FromFile(@"../Resources/enemy_green_strip4-1.png"));
+            TileSet.Add("dblue" ,Properties.Resources.enemy_dblue_strip4_1);
+            TileSet.Add("green" ,Properties.Resources.enemy_green_strip4_1);
             TileSet.Add("lblue", Image.FromFile(@"../Resources/enemy_lblue_strip4-1.png"));
             TileSet.Add("orange", Image.FromFile(@"../Resources/enemy_orange_strip4-1.png"));
             TileSet.Add("pink", Image.FromFile(@"../Resources/enemy_pink_strip4-1.png"));
@@ -275,7 +285,7 @@ namespace Galabingus_Map_Editor
             TileSet.Add("tile_25", Image.FromFile(@"../Resources/tile_strip26-25.png"));
             TileSet.Add("tile_26", Image.FromFile(@"../Resources/tile_strip26-26.png"));
 
-            
+            //spritePageSelect = new List<Image[]>;
         }
 
         private void TileSizeDet()
