@@ -152,11 +152,13 @@ namespace Galabingus
         public void CreateBackground()
         {
             Tile background = new Tile(GameObject.Instance.Content.space_only_background_strip1, 0, 1, true);
-            background.Position = Vector2.Zero;
+            
             background.Transform = new Rectangle(0, 0, background.Sprite.Width, background.Sprite.Height);
+          
             background.Scale = GameObject.Instance.GraphicsDevice.Viewport.Height / background.Sprite.Width / (Player.PlayerInstance.Scale * 0.675f);
             background.ScaleVector = new Vector2(background.Scale, background.Scale);
-            background.Position -= new Vector2(0, GameObject.Instance.GraphicsDevice.Viewport.Height);
+            background.Position = new Vector2(0, -GameObject.Instance.GraphicsDevice.Viewport.Height * 4.3f);
+            background.Position -= new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Width, 0);
             background.Effect = GameObject.Instance.ContentManager.Load<Effect>("background");
             backgroundList.Add(background);
 
@@ -185,7 +187,7 @@ namespace Galabingus
                     GameObject.Instance.SpriteBatch,
                     tilesList[i].ScaleVector,
                     SpriteEffects.None,
-                    (ushort)CollisionGroup.Tile,//GameObject.Instance.Content.tile_strip26,
+                    (ushort)CollisionGroup.Tile,
                     tilesList[i].InstanceNumber
                     );
 
@@ -210,7 +212,7 @@ namespace Galabingus
             {
                 backgroundList[i].Update(gameTime);
             }
-            if (backgroundList[1].Position.X <= 0)
+            if (backgroundList[1].Position.Y >= GameObject.Instance.GraphicsDevice.Viewport.Height)
             {
                 if (counter == 3)
                 {
@@ -218,7 +220,7 @@ namespace Galabingus
                 }
                 counter++;
                 backgroundList[1].Position = new Vector2(
-                    GameObject.Instance.GraphicsDevice.Viewport.Width + backgroundList[1].Position.X, 0
+                    0, backgroundList[1].Position.Y - GameObject.Instance.GraphicsDevice.Viewport.Height
                 );
             }
 
@@ -250,8 +252,9 @@ namespace Galabingus
             //for (int i = 0; i < backgroundList.Count; i++)
             //{
                 backgroundList[0].Draw(
-                    GameObject.Instance.GraphicsDevice.Viewport.Width / backgroundList[0].Transform.Width / backgroundList[0].ScaleVector.X * 4.3f, 
-                    GameObject.Instance.GraphicsDevice.Viewport.Width / backgroundList[0].Transform.Width / backgroundList[0].ScaleVector.Y * 2
+                    GameObject.Instance.GraphicsDevice.Viewport.Width / backgroundList[0].Transform.Width / backgroundList[0].ScaleVector.X * 4, 
+                    GameObject.Instance.GraphicsDevice.Viewport.Height / backgroundList[0].Transform.Height / backgroundList[0].ScaleVector.Y * 4.3f * 2
+                    
                 );
             //}
         }

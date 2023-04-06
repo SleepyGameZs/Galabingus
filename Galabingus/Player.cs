@@ -373,6 +373,7 @@ namespace Galabingus
             //Vector2 previousPosition = Position;
 
             PlayerInstance.Transform = PlayerInstance.Animation.Play(gameTime);
+
             List<Collision> intercepts = PlayerInstance.Collider.UpdateTransform(
                 PlayerInstance.Sprite,                         // Player Sprite
                 PlayerInstance.Position,                       // Player position
@@ -834,7 +835,7 @@ namespace Galabingus
                     {
                         Ghost ghostBoost = new Ghost();
                         ghostBoost.ghostColor = new Color(new Color(255, 165, 11), 1.0f);
-                        ghostBoost.Position = Position + normVelocity * (float)Animation.EllapsedTime * new Vector2(speed.X, speed.Y).LengthSquared() * ((1 - boostSpeed) * -0.1f );
+                        ghostBoost.Position = Position + normVelocity * 0.1f * (float)Animation.EllapsedTime * new Vector2(speed.X, speed.Y).LengthSquared() * ((1 - boostSpeed) * -0.1f );
                         boostSpeed *= (float)Animation.EllapsedTime;
                         boostOpacity -= 0.0005f;
                         ghostBoost.boostOpacity = boostOpacity;
@@ -856,9 +857,8 @@ namespace Galabingus
 
             if (!Camera.Instance.Stopped)
             {
-                Camera.Instance.OffSet = new Vector2(Math.Clamp((normVelocity.X) * 2 + Math.Clamp((Camera.Instance.OffSet.X), -0.05f, 0.05f), 2, 2.5f), Math.Clamp((normVelocity.Y) + Math.Clamp(Camera.Instance.OffSet.Y, -0.005f, 0.005f), -0.5f, 0.5f))
+                Camera.Instance.OffSet = new Vector2(Math.Clamp((normVelocity.X) + Math.Clamp(Camera.Instance.OffSet.X, -0.005f, 0.005f), -0.5f, 0.5f), Math.Clamp((normVelocity.Y) * 0.005f + Math.Clamp((Camera.Instance.OffSet.Y), -2.5f, 0.005f), -2.5f, 2.0f))
                     * (float)Animation.GetElapsedTime(gameTime, Vector2.Zero, new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Width * 0.5f, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.5f), Transform, Scale);
-
             }
             else
             {
@@ -895,14 +895,8 @@ namespace Galabingus
         {
             if (Player.PlayerInstance.Health > 0)
             {
-                //PlayerInstance.Position = new Vector2(0, 0);
-                //Debug.WriteLine(Position.X);
-                //Debug.WriteLine(Position.Y);
-                const float boostScale = 1.1f;
-
                 if (boost) //&& totalBoostTime >= boostFrameRate)
                 {
-
                     foreach (Ghost ghost in ghosts)
                     {
                         Color halfOColor = ghost.ghostColor;//new Color(ghost.ghostColor * 0.825f, 0.825f);
@@ -922,36 +916,8 @@ namespace Galabingus
                             0.0f                             // Layer depth of the player is 0.0
                         );
                     }
-
-                    GameObject.Instance.SpriteBatch.Draw(
-                        WhiteSprite,                     // The sprite-sheet for the player
-                        Position - new Vector2(Transform.Width, Transform.Height) * (boostScale * 0.1f + 0.0077637999f),    // The position for the player
-                        Transform,                       // The scale and bounding box for the animation
-                        new Color(new Color(255, 204, 118) * 1.0f, 0.05f),                     // The color for the palyer
-                        0.0f,                            // There cannot be any rotation of the player
-                        Vector2.Zero,                    // Starting render position
-                        PlayerInstance.Scale * boostScale,                      // The scale of the sprite
-                        SpriteEffects.None,              // Which direction the sprite faces
-                        0.0f                             // Layer depth of the player is 0.0
-                    );
-
                 }
 
-                else //if (totalBoostTime >= boostFrameRate * 0.5f)
-                {
-
-                    GameObject.Instance.SpriteBatch.Draw(
-                        WhiteSprite,                     // The sprite-sheet for the player
-                        Position - new Vector2(Transform.Width, Transform.Height) * (boostScale * 0.1f + 0.0077637999f),    // The position for the player
-                        Transform,                       // The scale and bounding box for the animation
-                        new Color(new Color(127, 127, 255) * 1.0f, 0.05f),                     // The color for the palyer
-                        0.0f,                            // There cannot be any rotation of the player
-                        Vector2.Zero,                    // Starting render position
-                        PlayerInstance.Scale * boostScale,                      // The scale of the sprite
-                        SpriteEffects.None,              // Which direction the sprite faces
-                        0.0f                             // Layer depth of the player is 0.0
-                    );
-                }
 
                 GameObject.Instance.SpriteBatch.Draw(
                     Sprite,                          // The sprite-sheet for the player
