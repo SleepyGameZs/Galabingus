@@ -179,7 +179,7 @@ namespace Galabingus_Map_Editor
         private void button11_Click(object sender, EventArgs e)
         {
             button1.BackgroundImage = button11.BackgroundImage;
-            currentSelected = button11.BackgroundImage
+            currentSelected = button11.BackgroundImage;
         }
 
         //Save Button
@@ -242,8 +242,8 @@ namespace Galabingus_Map_Editor
         private void DicImageAdd()
         {
             //Enemy Sprites
-            TileSet.Add("dblue" ,Image.FromFile(@"../Resources/enemy_dblue_strip4-1.png"));
-            TileSet.Add("green" ,Image.FromFile(@"../Resources/enemy_green_strip4-1.png"));
+            TileSet.Add("dblue" ,Properties.Resources.enemy_dblue_strip4_1);
+            TileSet.Add("green" ,Properties.Resources.enemy_green_strip4_1);
             TileSet.Add("lblue", Image.FromFile(@"../Resources/enemy_lblue_strip4-1.png"));
             TileSet.Add("orange", Image.FromFile(@"../Resources/enemy_orange_strip4-1.png"));
             TileSet.Add("pink", Image.FromFile(@"../Resources/enemy_pink_strip4-1.png"));
@@ -285,7 +285,7 @@ namespace Galabingus_Map_Editor
             TileSet.Add("tile_25", Image.FromFile(@"../Resources/tile_strip26-25.png"));
             TileSet.Add("tile_26", Image.FromFile(@"../Resources/tile_strip26-26.png"));
 
-            spritePageSelect = new List<Image[]>;
+            //spritePageSelect = new List<Image[]>;
         }
 
         private void TileSizeDet()
