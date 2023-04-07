@@ -244,46 +244,46 @@ namespace Galabingus_Map_Editor
             //Enemy Sprites
             TileSet.Add("dblue" ,Properties.Resources.enemy_dblue_strip4_1);
             TileSet.Add("green" ,Properties.Resources.enemy_green_strip4_1);
-            TileSet.Add("lblue", Image.FromFile(@"../Resources/enemy_lblue_strip4-1.png"));
-            TileSet.Add("orange", Image.FromFile(@"../Resources/enemy_orange_strip4-1.png"));
-            TileSet.Add("pink", Image.FromFile(@"../Resources/enemy_pink_strip4-1.png"));
-            TileSet.Add("purple", Image.FromFile(@"../Resources/enemy_purple_strip4-1.png"));
-            TileSet.Add("red", Image.FromFile(@"../Resources/enemy_red_strip4-1.png"));
-            TileSet.Add("yellow", Image.FromFile(@"../Resources/enemy_yellow_strip4-1.png"));
+            TileSet.Add("lblue", Properties.Resources.enemy_lblue_strip4_1);
+            TileSet.Add("orange", Properties.Resources.enemy_orange_strip4_1);
+            TileSet.Add("pink", Properties.Resources.enemy_pink_strip4_1);
+            TileSet.Add("purple", Properties.Resources.enemy_purple_strip4_1);
+            TileSet.Add("red", Properties.Resources.enemy_red_strip4_1);
+            TileSet.Add("yellow", Properties.Resources.enemy_yellow_strip4_1);
 
             //Boss Sprite
             //TileSet.Add("boss", Image.FromFile(@"../Resources/Boss image");
 
             //Player Sprite
-            TileSet.Add("player" , Image.FromFile(@"../Resources/player_strip5-1.png"));
+            TileSet.Add("player" , Properties.Resources.player_strip5_1);
 
             //Asteroid Tiles
-            TileSet.Add("tile_1", Image.FromFile(@"../Resources/tile_strip26-1.png"));
-            TileSet.Add("tile_2", Image.FromFile(@"../Resources/tile_strip26-2.png"));
-            TileSet.Add("tile_3", Image.FromFile(@"../Resources/tile_strip26-3.png"));
-            TileSet.Add("tile_4", Image.FromFile(@"../Resources/tile_strip26-4.png"));
-            TileSet.Add("tile_5", Image.FromFile(@"../Resources/tile_strip26-5.png"));
-            TileSet.Add("tile_6", Image.FromFile(@"../Resources/tile_strip26-6.png"));
-            TileSet.Add("tile_7", Image.FromFile(@"../Resources/tile_strip26-7.png"));
-            TileSet.Add("tile_8", Image.FromFile(@"../Resources/tile_strip26-8.png"));
-            TileSet.Add("tile_9", Image.FromFile(@"../Resources/tile_strip26-9.png"));
-            TileSet.Add("tile_10", Image.FromFile(@"../Resources/tile_strip26-10.png"));
-            TileSet.Add("tile_11", Image.FromFile(@"../Resources/tile_strip26-11.png"));
-            TileSet.Add("tile_12", Image.FromFile(@"../Resources/tile_strip26-12.png"));
-            TileSet.Add("tile_13", Image.FromFile(@"../Resources/tile_strip26-13.png"));
-            TileSet.Add("tile_14", Image.FromFile(@"../Resources/tile_strip26-14.png"));
-            TileSet.Add("tile_15", Image.FromFile(@"../Resources/tile_strip26-15.png"));
-            TileSet.Add("tile_16", Image.FromFile(@"../Resources/tile_strip26-16.png"));
-            TileSet.Add("tile_17", Image.FromFile(@"../Resources/tile_strip26-17.png"));
-            TileSet.Add("tile_18", Image.FromFile(@"../Resources/tile_strip26-18.png"));
-            TileSet.Add("tile_19", Image.FromFile(@"../Resources/tile_strip26-19.png"));
-            TileSet.Add("tile_20", Image.FromFile(@"../Resources/tile_strip26-20.png"));
-            TileSet.Add("tile_21", Image.FromFile(@"../Resources/tile_strip26-21.png"));
-            TileSet.Add("tile_22", Image.FromFile(@"../Resources/tile_strip26-22.png"));
-            TileSet.Add("tile_23", Image.FromFile(@"../Resources/tile_strip26-23.png"));
-            TileSet.Add("tile_24", Image.FromFile(@"../Resources/tile_strip26-24.png"));
-            TileSet.Add("tile_25", Image.FromFile(@"../Resources/tile_strip26-25.png"));
-            TileSet.Add("tile_26", Image.FromFile(@"../Resources/tile_strip26-26.png"));
+            TileSet.Add("tile_1", Properties.Resources.tile_strip26_1);
+            TileSet.Add("tile_2", Properties.Resources.tile_strip26_2);
+            TileSet.Add("tile_3", Properties.Resources.tile_strip26_3);
+            TileSet.Add("tile_4", Properties.Resources.tile_strip26_4);
+            TileSet.Add("tile_5", Properties.Resources.tile_strip26_5);
+            TileSet.Add("tile_6", Properties.Resources.tile_strip26_6);
+            TileSet.Add("tile_7", Properties.Resources.tile_strip26_7);
+            TileSet.Add("tile_8", Properties.Resources.tile_strip26_8);
+            TileSet.Add("tile_9", Properties.Resources.tile_strip26_9);
+            TileSet.Add("tile_10", Properties.Resources.tile_strip26_10);
+            TileSet.Add("tile_11", Properties.Resources.tile_strip26_11);
+            TileSet.Add("tile_12", Properties.Resources.tile_strip26_12);
+            TileSet.Add("tile_13", Properties.Resources.tile_strip26_13);
+            TileSet.Add("tile_14", Properties.Resources.tile_strip26_14);
+            TileSet.Add("tile_15", Properties.Resources.tile_strip26_15);
+            TileSet.Add("tile_16", Properties.Resources.tile_strip26_16);
+            TileSet.Add("tile_17", Properties.Resources.tile_strip26_17);
+            TileSet.Add("tile_18", Properties.Resources.tile_strip26_18);
+            TileSet.Add("tile_19", Properties.Resources.tile_strip26_19);
+            TileSet.Add("tile_20", Properties.Resources.tile_strip26_20);
+            TileSet.Add("tile_21", Properties.Resources.tile_strip26_21);
+            TileSet.Add("tile_22", Properties.Resources.tile_strip26_22);
+            TileSet.Add("tile_23", Properties.Resources.tile_strip26_23);
+            TileSet.Add("tile_24", Properties.Resources.tile_strip26_24);
+            TileSet.Add("tile_25", Properties.Resources.tile_strip26_25);
+            TileSet.Add("tile_26", Properties.Resources.tile_strip26_26);
 
             //spritePageSelect = new List<Image[]>;
         }
