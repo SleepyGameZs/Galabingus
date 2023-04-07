@@ -83,7 +83,7 @@ namespace Galabingus
             x = 0;
             y = 0;
             initalCameraScroll = 2f;
-            offSet = new Vector2(initalCameraScroll, 0);
+            offSet = new Vector2(0, -initalCameraScroll);
             stop = false;
         }
 
@@ -92,6 +92,7 @@ namespace Galabingus
             x = 0;
             y = 0;
             this.initalCameraScroll = cameraScroll;
+            offSet = new Vector2(0, -initalCameraScroll);
         }
 
         // -------------------------------------------------
@@ -102,7 +103,7 @@ namespace Galabingus
         {
             stop = false;
             cameraLock = false;
-            offSet.X = initalCameraScroll;
+            offSet.Y = initalCameraScroll;
         }
 
         public void Stop()
@@ -121,8 +122,8 @@ namespace Galabingus
             }
             if (cameraLock == true)
             {
-                Camera.Instance.offSet.X = Player.PlayerInstance.Velocity == Vector2.Zero ? Vector2.Zero.X*5 :
-                    Vector2.Normalize(Player.PlayerInstance.Velocity).X*5;
+                Camera.Instance.offSet.Y = Player.PlayerInstance.Velocity == Vector2.Zero ? Vector2.Zero.Y*5 :
+                    Vector2.Normalize(Player.PlayerInstance.Velocity).Y*5;
             }
         }
     }
