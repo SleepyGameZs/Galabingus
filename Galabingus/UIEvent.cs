@@ -29,12 +29,12 @@ namespace Galabingus
         //called from an event, but not all need to be (will be) 
         //set, only those which are need for the UIObjects events
 
-        List<UIObject> UpMenu;
+        List<UIElement> UpMenu;
         GameState returnState;
 
         #endregion
 
-        #region Constructor
+        #region Constructors
 
         /// <summary>
         /// default constructor for things with no events
@@ -45,7 +45,7 @@ namespace Galabingus
         /// instatiates the UIEvent class for a basic menu showing
         /// </summary>
         /// <param name="menu">the menu to be shown</param>
-        public UIEvent(List<UIObject> menu)
+        public UIEvent(List<UIElement> menu)
         {
             UpMenu = menu;
         }
@@ -75,18 +75,42 @@ namespace Galabingus
             {
 
                 case EventType.NoEvent:
+
                     //no event occurs in this case
+
                     break;
                 case EventType.StartGame:
+
                     //this event changes the gameState
                     UIManager.Instance.GS = returnState;
+
                     break;
                 case EventType.UpMenu:
-                    UIManager.Instance.CurrentEvent = type;
-                    UIManager.Instance.PreviousMenu = UIManager.Instance.CurrentMenu;
+
+                    if (UIManager.Instance.CurrentMenu.Count == 0)
+                    {
+                        UIManager.Instance.CurrentEvent = type;
+                    }
+                    else
+                    {
+                        UIManager.Instance.PreviousMenu = UIManager.Instance.CurrentMenu;
+                    }
+
+                    UIManager.Instance.CurrentMenu = UpMenu;
+
                     break;
                 case EventType.DownMenu:
-                    UIManager.Instance.CurrentMenu = UIManager.Instance.PreviousMenu;
+
+                    if(UIManager.Instance.PreviousMenuCount == 0)
+                    {
+                        UIManager.Instance.CurrentEvent = EventType.NoEvent;
+                        UIManager.Instance.CurrentMenu.Clear();
+                    }
+                    else
+                    {
+                        UIManager.Instance.CurrentMenu = UIManager.Instance.PreviousMenu;
+                    }
+
                     break;
             }
         }

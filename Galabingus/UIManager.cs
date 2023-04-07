@@ -145,7 +145,8 @@ namespace Galabingus
         private SpriteBatch sb;
 
         //File reading
-        StreamReader reader;
+        private StreamReader reader;
+        private StreamWriter writer;
 
         //The list of tile values to be
         //returned by the LevelReader
@@ -157,8 +158,8 @@ namespace Galabingus
 
         // Event handling
         private EventType currentEvent;
-        private List<UIObject> currentMenu;
-        private Stack<List<UIObject>> previousMenu;
+        private List<UIElement> currentMenu;
+        private Stack<List<UIElement>> previousMenu;
 
         #endregion
 
@@ -200,19 +201,22 @@ namespace Galabingus
             set { currentEvent = value; }
         }
 
-        public List<UIObject> CurrentMenu
+        public List<UIElement> CurrentMenu
         {
             get { return currentMenu; }
             set { currentMenu = value; }
         }
 
-        public List<UIObject> PreviousMenu
+        public List<UIElement> PreviousMenu
         {
             get { return previousMenu.Pop(); }
             set { previousMenu.Push(value); }
         }
 
-
+        public int PreviousMenuCount
+        {
+            get { return previousMenu.Count; }
+        }
 
         #endregion
 
@@ -234,6 +238,10 @@ namespace Galabingus
 
             //create the elements list
             elements = new List<UIElement>();
+
+            currentEvent = new EventType();
+            currentMenu = new List<UIElement>();
+            previousMenu = new Stack<List<UIElement>>();
     }
 
         #endregion
@@ -265,11 +273,50 @@ namespace Galabingus
         {
             //creates the play button
             AddButton(
-                "playbutton_strip1",
-                new Vector2(1280 / 2, 720 / 2),
+                "buttonPlay_strip1",
+                new Vector2(1280 / 2, 340),
                 GameState.Menu, 
                 new UIEvent(GameState.Game),
                 new List<EventType>() { EventType.StartGame }
+            );
+
+            //creates basic menu systems
+            AddMenu(
+                "tempMenu_strip1",
+                new Vector2(1280 / 2, 720 / 2),
+                GameState.NoState,
+                new UIEvent(),
+                new List<EventType>() { EventType.DownMenu }
+            );
+
+            //temp menu list
+            List<UIElement> tempMenu = new List<UIElement>()
+            {
+                elements[1]
+            };
+
+            AddButton(
+                "buttonCredits_strip1",
+                new Vector2(1280 / 2, 440),
+                GameState.Menu,
+                new UIEvent(tempMenu),
+                new List<EventType>() { EventType.UpMenu }
+            );
+
+            AddButton(
+                "buttonHowToPlay_strip1",
+                new Vector2(1280 / 2, 540),
+                GameState.Menu,
+                new UIEvent(tempMenu),
+                new List<EventType>() { EventType.UpMenu }
+            );
+
+            AddButton(
+                "buttonOptions_strip1",
+                new Vector2(1280 / 2, 640),
+                GameState.Menu,
+                new UIEvent(tempMenu),
+                new List<EventType>() { EventType.UpMenu }
             );
 
             //loads temp background
@@ -287,7 +334,36 @@ namespace Galabingus
             currentKBS = Keyboard.GetState();
 
             //update all of the UIObjects (we do so first because this can change the state)
-            UpdateObjects(gs);
+            switch (currentEvent)
+            {
+                case (EventType.NoEvent):
+                    UpdateObjects(gs);
+                    break;
+                case (EventType.UpMenu):
+                    try
+                    {
+                        foreach (UIElement element in currentMenu)
+                        {
+                            if (element.Element is Button)
+                            {
+                                Button button = (Button)element.Element;
+                                int currentEvent = button.Update();
+
+                                element.UIEvent(currentEvent);
+                            }
+                            else if (element.Element is Menu)
+                            {
+                                Menu menu = (Menu)element.Element;
+                                int currentEvent = menu.Update();
+
+                                element.UIEvent(currentEvent);
+                            }
+                        }
+                    }
+                    catch (Exception e) { }
+                    
+                    break;
+            }
 
             //finite state machine for the UI to update the UI based on user input
             switch (gs)
@@ -358,8 +434,6 @@ namespace Galabingus
                             menuBackground.Height),
                         Color.White);
 
-                    
-
                     break;
 
                 case GameState.Game:
@@ -390,9 +464,20 @@ namespace Galabingus
                     DrawObjects(gs);
                     break;
                 case (EventType.UpMenu):
-                    foreach(UIObject uiObject in currentMenu)
+                    foreach(UIElement element in currentMenu)
                     {
-                        uiObject.Draw(sb);
+                        if (element.Element is Button)
+                        {
+                            Button button = (Button)element.Element;
+
+                            button.Draw(sb);
+                        }
+                        else if (element.Element is Menu)
+                        {
+                            Menu menu = (Menu)element.Element;
+                            
+                            menu.Draw(sb);
+                        }
                     }
                     break;
             }
@@ -477,6 +562,7 @@ namespace Galabingus
                 //if the element is located within the current gameState
                 if (element.GS == gs)
                 {
+                    //TODO: make a seperte method for this part of the UpdateObjects and DrawObjects methods
                     //casting the object down to its original form
                     if(element.Element is Button)
                     {

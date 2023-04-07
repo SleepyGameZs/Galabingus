@@ -35,7 +35,7 @@ namespace Galabingus
         /// <param name="position">its position rectangle</param>
         public Button
             (Texture2D texture, Vector2 position)
-            : base(texture, position, 5) { }
+            : base(texture, position, 0.5f) { }
 
         #endregion
 

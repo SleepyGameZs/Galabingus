@@ -28,14 +28,14 @@ namespace Galabingus
         /// <param name="uiTexture">the objects texture</param>
         /// <param name="position">the objects position</param>
         /// <param name="scale">the size it needs to be scaled to</param>
-        public UIObject(Texture2D uiTexture, Vector2 position, int scale)
+        public UIObject(Texture2D uiTexture, Vector2 position, float scale)
         {
             //sets the texture to this classes texture
             this.uiTexture = uiTexture;
 
             //sets the length and width of the object
-            int length = (uiTexture.Width / scale);
-            int width = (uiTexture.Height / scale);
+            int length = (int)(uiTexture.Width / scale);
+            int width = (int)(uiTexture.Height / scale);
 
             //creates its position rectangle
             uiPosition =

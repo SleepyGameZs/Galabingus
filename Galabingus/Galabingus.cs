@@ -34,7 +34,6 @@ namespace Galabingus
         private Texture2D tempBackground;
 
         // UI Object
-        //private UI userInterface;
         private UIManager userInterface;
 
         // Player GameObject
@@ -43,6 +42,7 @@ namespace Galabingus
         // Shaders
         private Effect shaders;
 
+        // Enemies and Bullets
         private BulletManager mng_bullet;
         private EnemyManager mng_enemy;
 
@@ -76,10 +76,6 @@ namespace Galabingus
 
             // Initilize the GameObject Instance and Content Dynamic (Always goes first)
             content = GameObject.Instance.Initialize(Content, GraphicsDevice, _spriteBatch);
-
-            //new UI class and loading its content
-            //userInterface = new UI(_graphics, Content, _spriteBatch);
-            //userInterface.LoadContent();
 
             //creates and initializes the UIManager, and then loads its contents
             userInterface = UIManager.Instance;
@@ -135,9 +131,6 @@ namespace Galabingus
             //Update the UI
             userInterface.Update();
 
-            //update the game state
-            //userInterface.Update();
-
             if (!(userInterface.GS == GameState.Pause))
             {
                 // Update the player
@@ -169,23 +162,6 @@ namespace Galabingus
 
             if (!(userInterface.GS == GameState.Menu))
             {
-
-                //draw the background using the temporary background texture
-                /*_spriteBatch.Draw(
-                    tempBackground,
-                    Vector2.Zero,
-                    new Rectangle(0, 0, tempBackground.Width, tempBackground.Height),
-                    new Color(Color.White * 0.7f,1.0f),
-                    0,
-                    Vector2.Zero,
-                    new Vector2(
-                        GameObject.Instance.GraphicsDevice.Viewport.Width / (float)tempBackground.Width,
-                        GameObject.Instance.GraphicsDevice.Viewport.Height / (float)tempBackground.Height
-                    ),
-                    SpriteEffects.None,
-                    1
-                );
-                */
 
                 // Draws enemies
                 mng_enemy.Draw();

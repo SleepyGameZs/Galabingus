@@ -14,16 +14,11 @@ namespace Galabingus
     {
         #region Fields
 
-        private bool visible;
-
         #endregion
 
         #region Constructor
         public Menu(Texture2D texture, Vector2 position)
-            : base(texture, position, 5)
-        {
-            visible = false;
-        }
+            : base(texture, position, 1) { }
         #endregion
 
         #region Methods
@@ -42,14 +37,11 @@ namespace Galabingus
 
         public override void Draw(SpriteBatch sb)
         {
-            if(visible)
-            {
-                sb.Draw(
-                    uiTexture,
-                    uiPosition,
-                    clearColor
-                );
-            }
+            sb.Draw(
+                uiTexture,
+                uiPosition,
+                Color.White
+            );
         }
         #endregion
     }
