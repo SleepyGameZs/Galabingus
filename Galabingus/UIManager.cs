@@ -43,77 +43,15 @@ namespace Galabingus
         Tile
     }
 
-    #endregion
-
-    #region Structs
-
     /// <summary>
-    /// holds the basic elements of a UI Object
+    /// the list of all event types which can be triggered
     /// </summary>
-    struct UIElement
+    public enum EventType
     {
-        //Fields
-
-        private UIObject element; //the object
-        private GameState gs; //its gamestate
-
-        //these represent any more complex events
-
-        //the UIEvent class holds data which it needs to 
-        //execute those events and the method to do so
-        private UIEvent uiEvent;
-
-        //these are a list of the specfic methods which
-        //will be envoked by each function of the object
-        //(ex: click, hold, etc) of the element 
-        private List<EventType> type;
-
-        //Properties
-
-        /// <summary>
-        /// returns the game object (or element)
-        /// </summary>
-        public UIObject Element
-        {
-            get { return element; }
-        }
-
-        /// <summary>
-        /// returns the gameState the element exists in
-        /// </summary>
-        public GameState GS
-        {
-            get { return gs;}
-        }
-
-        //Constructor
-
-        /// <summary>
-        /// instantiates a member of the UIElement structure
-        /// </summary>
-        /// <param name="element">the game object</param>
-        /// <param name="gs">the gameState</param>
-        /// <param name="uiEvent">the event data</param>
-        /// <param name="type">the envokable events</param>
-        public UIElement(UIObject element, GameState gs, 
-            UIEvent uiEvent, List<EventType> type) 
-        {
-            this.element = element;
-            this.gs = gs;
-            this.uiEvent = uiEvent;
-            this.type = type;
-        }
-
-        //Methods
-
-        /// <summary>
-        /// runs a the UIEvent related to the specified index
-        /// </summary>
-        /// <param name="index">the index of the event to be invoked</param>
-        public void UIEvent(int index)
-        {
-            uiEvent.Event(element, gs, type[index]);
-        }
+        NoEvent,
+        UpMenu,
+        DownMenu,
+        StartGame
     }
 
     #endregion
@@ -147,6 +85,10 @@ namespace Galabingus
         //File reading
         StreamReader reader;
 
+        //Screen Dimensions
+        int width;
+        int height;
+
         //The list of tile values to be
         //returned by the LevelReader
         List<int[]> objectData;
@@ -157,8 +99,8 @@ namespace Galabingus
 
         // Event handling
         private EventType currentEvent;
-        private List<UIObject> currentMenu;
-        private Stack<List<UIObject>> previousMenu;
+        private List<UIElement> currentMenu;
+        private Stack<List<UIElement>> previousMenu;
 
         #endregion
 
@@ -200,13 +142,13 @@ namespace Galabingus
             set { currentEvent = value; }
         }
 
-        public List<UIObject> CurrentMenu
+        public List<UIElement> CurrentMenu
         {
             get { return currentMenu; }
             set { currentMenu = value; }
         }
 
-        public List<UIObject> PreviousMenu
+        public List<UIElement> PreviousMenu
         {
             get { return previousMenu.Pop(); }
             set { previousMenu.Push(value); }
@@ -255,6 +197,10 @@ namespace Galabingus
             this.gr = gr;
             this.cm = cm;
             this.sb = sb;
+
+            //set the viewport size to the current screen width and height
+            width = gr.GraphicsDevice.Viewport.Width;
+            height = gr.GraphicsDevice.Viewport.Height;
         }
 
         /// <summary>
@@ -263,24 +209,27 @@ namespace Galabingus
         /// </summary>
         public void LoadContent()
         {
-            //creates the play button
-            AddButton(
-                "playbutton_strip1",
-                new Vector2(1280 / 2, 720 / 2),
-                GameState.Menu, 
-                new UIEvent(GameState.Game),
-                new List<EventType>() { EventType.StartGame }
-            );
+            Button button;
+            Menu menu;
 
-            //loads temp background
-            tempBackground = cm.Load<Texture2D>("space_only_background_strip1");
+            EventDelegate event1;
+            EventDelegate event2;
+
+            //Play Button
+            event1 = StartGame;
+
+            AddButton("playbutton_strip1",
+            new Vector2(width / 2, height / 2),
+            GameState.Menu, event1);
+
+            //add the backgrounddddd
             menuBackground = cm.Load<Texture2D>("menubackground_strip1");
+
         }
 
         /// <summary>
-        /// updates the UI everyframe
+        /// updates the UI every frame
         /// </summary>
-        /// <param name="gameTime">the game's timer</param>
         public void Update()
         {
             //set the keyboardstate
@@ -365,21 +314,6 @@ namespace Galabingus
                 case GameState.Pause:
                 case GameState.Game:
 
-                   //sb.Draw(
-                   //    tempBackground,
-                   //    Vector2.Zero,
-                   //    new Rectangle(0, 0, tempBackground.Width, tempBackground.Height),
-                   //    new Color(Color.White * 0.35f, 1.0f),
-                   //    0,
-                   //    Vector2.Zero,
-                   //    new Vector2(
-                   //        GameObject.Instance.GraphicsDevice.Viewport.Width / (float)tempBackground.Width,
-                   //        GameObject.Instance.GraphicsDevice.Viewport.Height / (float)tempBackground.Height
-                   //    ),
-                   //    SpriteEffects.None,
-                   //    1
-                   //);
-
                     break;
 
             }
@@ -391,7 +325,7 @@ namespace Galabingus
                     DrawObjects(gs);
                     break;
                 case (EventType.UpMenu):
-                    foreach(UIObject uiObject in currentMenu)
+                    foreach(UIElement uiObject in currentMenu)
                     {
                         uiObject.Draw(sb);
                     }
@@ -402,7 +336,121 @@ namespace Galabingus
 
         #endregion
 
-        #region Helpers
+        #region Event Methods
+
+        public void StartGame(object sender)
+        {
+            gs = GameState.Game;
+        }
+
+        #endregion
+
+        #region Element Creation and Updates
+
+        /// <summary>
+        /// creates a UIElement and adds it to the list elements
+        /// </summary>
+        /// <param name="uiObject">the ui object / element</param>
+        /// <param name="gs">the gamestate the element exists in</param>
+        /// <param name="uiEvent">the data which it needs for its events</param>
+        /// <param name="types">the event types it can call</param>
+        public void AddButton
+            (string filename, Vector2 position, GameState gs, EventDelegate clickEvent)
+        {
+            //create the button texture
+            Texture2D texture = cm.Load<Texture2D>(filename);
+
+            //create the button
+            Button button = new Button(texture, position, gs);
+
+            button.OnClick += clickEvent;
+
+            elements.Add(button);
+        }
+
+        /// <summary>
+        /// creates a UIElement and adds it to the list elements
+        /// </summary>
+        /// <param name="uiObject">the ui object / element</param>
+        /// <param name="gs">the gamestate the element exists in</param>
+        /// <param name="uiEvent">the data which it needs for its events</param>
+        /// <param name="types">the event types it can call</param>
+        public void AddMenu
+            (string filename, Vector2 position, GameState gs, UIEvent uiEvent, List<EventType> types)
+        {
+            //create the menus texture
+            Texture2D texture = cm.Load<Texture2D>(filename);
+
+            //create the button
+            Menu menu = new Menu(texture, position, gs);
+
+            elements.Add(menu);
+        }
+
+        /// <summary>
+        /// updates all of the objects within the list of UIElements
+        /// </summary>
+        /// <param name="gs">the current gameState</param>
+        public void UpdateObjects(GameState gs)
+        {
+            foreach (UIElement element in elements)
+            {
+                //if the element is located within the current gameState
+                if (element.GS == gs)
+                {
+                    //casting the object down to its original form
+                    if(element is Button)
+                    {
+                        Button button = (Button)element;
+
+                        //run the update of the button and store what event it returns
+                        button.Update();
+                    }
+                    else if (element is Menu)
+                    {
+                        Menu menu = (Menu)element;
+
+                        //run the update of the menu and store what event it returns
+                        menu.Update();
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// draw every object in the current game state to the screen
+        /// </summary>
+        /// <param name="gs">the current gameState</param>
+        public void DrawObjects(GameState gs)
+        {
+            foreach (UIElement element in elements)
+            {
+                //if the current element is in the current gameState
+                if (element.GS == gs)
+                {
+                    //cast it down to its original form
+                    if (element is Button)
+                    {
+                        Button button = (Button)element;
+
+                        //and draw it
+                        button.Draw(sb);
+                    }
+                    else if (element is Menu)
+                    {
+                        Menu menu = (Menu)element;
+
+                        //and draw it
+                        menu.Draw(sb);
+                    }
+                }
+            }
+            
+        }
+
+        #endregion
+
+        #region Input Helpers
 
         /// <summary>
         /// determines if a the key was click on the prior frame
@@ -420,6 +468,10 @@ namespace Galabingus
                 return false;
             }
         }
+
+        #endregion
+
+        #region FileIO Helpers
 
         /// <summary>
         /// reads in a level file and creates a list of a certain element within it
@@ -465,119 +517,6 @@ namespace Galabingus
 
             //returns the list of desired values
             return returnList;
-        }
-
-        /// <summary>
-        /// updates all of the objects within the list of UIElements
-        /// </summary>
-        /// <param name="gs">the current gameState</param>
-        public void UpdateObjects(GameState gs)
-        {
-            foreach (UIElement element in elements)
-            {
-                //if the element is located within the current gameState
-                if (element.GS == gs)
-                {
-                    //casting the object down to its original form
-                    if(element.Element is Button)
-                    {
-                        Button button = (Button)element.Element;
-
-                        //run the update of the button and store what event it returns
-                        int currentEvent = button.Update();
-
-                        //run the event it returns
-                        element.UIEvent(currentEvent);
-                    }
-                    else if (element.Element is Menu)
-                    {
-                        Menu menu = (Menu)element.Element;
-
-                        //run the update of the menu and store what event it returns
-                        int currentEvent = menu.Update();
-
-                        //run the event it returns
-                        element.UIEvent(currentEvent);
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// draw every object in the current game state to the screen
-        /// </summary>
-        /// <param name="gs">the current gameState</param>
-        public void DrawObjects(GameState gs)
-        {
-            foreach (UIElement element in elements)
-            {
-                //if the current element is in the current gameState
-                if (element.GS == gs)
-                {
-                    //cast it down to its original form
-                    if (element.Element is Button)
-                    {
-                        Button button = (Button)element.Element;
-
-                        //and draw it
-                        button.Draw(sb);
-                    }
-                    else if (element.Element is Menu)
-                    {
-                        Menu menu = (Menu)element.Element;
-
-                        //and draw it
-                        menu.Draw(sb);
-                    }
-                }
-            }
-            
-        }
-
-        /// <summary>
-        /// creates a UIElement and adds it to the list elements
-        /// </summary>
-        /// <param name="uiObject">the ui object / element</param>
-        /// <param name="gs">the gamestate the element exists in</param>
-        /// <param name="uiEvent">the data which it needs for its events</param>
-        /// <param name="types">the event types it can call</param>
-        public void AddButton
-            (string filename, Vector2 position, GameState gs, UIEvent uiEvent, List<EventType> types)
-        {
-            //create the button texture
-            Texture2D texture = cm.Load<Texture2D>(filename);
-
-            //create the button
-            Button button = new Button(texture, position);
-
-            //insert the default event at the from of the list (thus return 0 is always no event)
-            types.Insert(0, default(EventType));
-
-            //add the new UIElement to the list
-            elements.Add(new UIElement(button, gs, uiEvent, types));
-        }
-
-        /// <summary>
-        /// creates a UIElement and adds it to the list elements
-        /// </summary>
-        /// <param name="uiObject">the ui object / element</param>
-        /// <param name="gs">the gamestate the element exists in</param>
-        /// <param name="uiEvent">the data which it needs for its events</param>
-        /// <param name="types">the event types it can call</param>
-        public void AddMenu
-            (string filename, Vector2 position, GameState gs, UIEvent uiEvent, List<EventType> types)
-        {
-            //loads the menus texture
-            Texture2D texture = cm.Load<Texture2D>(filename);
-
-            //creates the menu with the texture and position
-            Menu menu = new Menu(texture, position);
-
-            //insert the default event at the from of the list (thus return 0 is always no event)
-            types.Insert(0, default(EventType));
-
-            //add the new UIElement to the list
-            elements.Add(new UIElement(menu, gs, uiEvent, types));
         }
 
         #endregion

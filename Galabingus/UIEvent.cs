@@ -8,17 +8,6 @@ namespace Galabingus
 {
     #region Enums
 
-    /// <summary>
-    /// the list of all event types which can be triggered
-    /// </summary>
-    public enum EventType
-    {
-        NoEvent,
-        UpMenu,
-        DownMenu,
-        StartGame
-    }
-
     #endregion
 
     internal class UIEvent
@@ -29,7 +18,7 @@ namespace Galabingus
         //called from an event, but not all need to be (will be) 
         //set, only those which are need for the UIObjects events
 
-        List<UIObject> UpMenu;
+        List<UIElement> UpMenu;
         GameState returnState;
 
         #endregion
@@ -45,7 +34,7 @@ namespace Galabingus
         /// instatiates the UIEvent class for a basic menu showing
         /// </summary>
         /// <param name="menu">the menu to be shown</param>
-        public UIEvent(List<UIObject> menu)
+        public UIEvent(List<UIElement> menu)
         {
             UpMenu = menu;
         }
@@ -69,7 +58,7 @@ namespace Galabingus
         /// <param name="element">the element which is calling the event</param>
         /// <param name="gs">the gameState they are in</param>
         /// <param name="type">the type of event they are calling</param>
-        public void Event(UIObject element, GameState gs, EventType type)
+        public void Event(UIElement element, GameState gs, EventType type)
         {
             switch (type)
             {

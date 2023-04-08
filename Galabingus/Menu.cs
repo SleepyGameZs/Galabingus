@@ -10,8 +10,14 @@ using System.Threading.Tasks;
 
 namespace Galabingus
 {
-    internal class Menu : UIObject
+    internal class Menu : UIElement
     {
+        #region Event
+
+        public event EventDelegate OnMenuBack;
+
+        #endregion
+
         #region Fields
 
         private bool visible;
@@ -19,8 +25,8 @@ namespace Galabingus
         #endregion
 
         #region Constructor
-        public Menu(Texture2D texture, Vector2 position)
-            : base(texture, position, 5)
+        public Menu(Texture2D texture, Vector2 position, GameState gs)
+            : base(texture, position, gs, 5)
         {
             visible = false;
         }
@@ -28,15 +34,11 @@ namespace Galabingus
 
         #region Methods
 
-        public override int Update()
+        public override void Update()
         {
             if(UIManager.Instance.SingleKeyPress(Keys.Back))
             {
-                return 1;
-            }
-            else
-            {
-                return 0;
+                OnMenuBack(this);
             }
         }
 

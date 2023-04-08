@@ -10,13 +10,31 @@ using System.Threading.Tasks;
 
 namespace Galabingus
 {
-    abstract class UIObject
+    #region Delegates
+
+    public delegate void EventDelegate(object sender);
+
+    #endregion
+
+    abstract class UIElement
     {
         #region Fields
 
         protected Texture2D uiTexture; //its texture
         protected Rectangle uiPosition; //its position rect
         protected Color clearColor; //its tint
+
+        //the gameState which this element can appear under
+        protected GameState gs;
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// returns the gameState which the elements falls under
+        /// </summary>
+        public GameState GS { get; }
 
         #endregion
 
@@ -28,7 +46,7 @@ namespace Galabingus
         /// <param name="uiTexture">the objects texture</param>
         /// <param name="position">the objects position</param>
         /// <param name="scale">the size it needs to be scaled to</param>
-        public UIObject(Texture2D uiTexture, Vector2 position, int scale)
+        public UIElement(Texture2D uiTexture, Vector2 position, GameState gameState, int scale)
         {
             //sets the texture to this classes texture
             this.uiTexture = uiTexture;
@@ -45,12 +63,14 @@ namespace Galabingus
                     length,
                     width
                 );
+
+            gs = gameState;
         }
         #endregion
 
         #region Methods
 
-        public abstract int Update();
+        public abstract void Update();
 
         public abstract void Draw(SpriteBatch sb);
         #endregion
