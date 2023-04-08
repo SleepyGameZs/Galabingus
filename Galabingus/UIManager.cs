@@ -117,6 +117,10 @@ namespace Galabingus
         private KeyboardState currentKBS;
         private KeyboardState previousKBS;
 
+        //the current mouseState
+        private MouseState currentMS;
+        private MouseState previousMS;
+
         //the Game1 / Galabingus class' managers
         //for updating the game
         private GraphicsDeviceManager gr;
@@ -276,7 +280,7 @@ namespace Galabingus
             //add the background
             menuBackground = cm.Load<Texture2D>("menubackground_strip1");
 
-            //
+            //dd all of the levels to the level list
             levels.Add(new UILevel(menu1, GameState.Menu, 1));
             levels.Add(new UILevel(menu2, GameState.Menu, 2));
             levels.Add(new UILevel(game1, GameState.Menu, 1));
@@ -292,8 +296,22 @@ namespace Galabingus
         {
             //set the keyboardstate
             currentKBS = Keyboard.GetState();
+            currentMS = Mouse.GetState();
 
-            foreach(UILevel level in levels)
+            if (currentMS != previousMS)
+            {
+                cs = UIControlState.Mouse;
+            }
+            else if(
+                currentKBS.IsKeyDown(Keys.W) && currentKBS.IsKeyDown(Keys.A) &&
+                currentKBS.IsKeyDown(Keys.S) && currentKBS.IsKeyDown(Keys.D) &&
+                currentKBS.IsKeyDown(Keys.Up) && currentKBS.IsKeyDown(Keys.Down) &&
+                currentKBS.IsKeyDown(Keys.Left) && currentKBS.IsKeyDown(Keys.Right))
+            {
+                cs = UIControlState.Keys;
+            }
+
+            foreach (UILevel level in levels)
             {
                 if(level.Level == currentLevel && level.GS == gs)
                 {
@@ -319,8 +337,6 @@ namespace Galabingus
                     break;
 
                 case GameState.Game:
-
-
 
                     if (ds != DebugState.DebugOff)
                     {
@@ -355,6 +371,7 @@ namespace Galabingus
 
             //set the previous KeyboardState to the current one for next frame
             previousKBS = currentKBS;
+            previousMS = currentMS;
         }
 
         /// <summary>
@@ -376,8 +393,6 @@ namespace Galabingus
                             menuBackground.Width,
                             menuBackground.Height),
                         Color.White);
-
-                    
 
                     break;
 
