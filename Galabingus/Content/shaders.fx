@@ -7,6 +7,10 @@
 #define PS_SHADERMODEL ps_4_0_level_9_1
 #endif
 
+uniform float fade;
+uniform bool fadeIn;
+uniform bool fadeOut;
+
 Texture2D SpriteTexture;
 
 sampler2D SpriteTextureSampler = sampler_state
@@ -73,6 +77,38 @@ float2 randomValues(float2 uv, float2 scale)
 	return noise * scale - (scale / 2.0);
 }
 
+
+float4 FadeIn(float4 inColor)
+{
+	if (fadeIn)
+	{
+		inColor.r *= (1 - fade);
+		inColor.g *= (1 - fade);
+		inColor.b *= (1 - fade);
+		return float4(inColor.r, inColor.g, inColor.b, inColor.a * (1 - fade));
+	}
+	else
+	{
+		return inColor;
+	}
+}
+
+float4 FadeOut(float4 inColor)
+{
+
+	if (fadeOut)
+	{
+		inColor.r *= fade;
+		inColor.g *= fade;
+		inColor.b *= fade;
+		return float4(inColor.r, inColor.g, inColor.b, inColor.a * fade);
+	}
+	else
+	{
+		return inColor;
+	}
+}
+
 float4 MainPS(VertexShaderOutput input) : COLOR
 {
 	const float gamma = 1.26795f;
@@ -137,7 +173,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 	float4 lerpPixels = lerp(lerp(color, colorTrue, 0.9875), colorP,0.5);
 	lerpPixels = lerpPixels * correctedColor;
 
-	return lerpPixels;
+	return FadeIn(FadeOut(lerpPixels));
 
 	//return color;
 	//return color * input.Color;
