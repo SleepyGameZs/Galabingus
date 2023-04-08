@@ -17,6 +17,10 @@ namespace Galabingus
         #region Events
 
         public event EventDelegate OnClick;
+        public event EventDelegate OnHover;
+        public event EventDelegate OnHold;
+        public event EventDelegate OnRelease;
+        public event EventDelegate OnDblClick;
 
         #endregion
 
@@ -25,10 +29,11 @@ namespace Galabingus
         //the current mouseState
         private MouseState mouseState;
 
-        //objects which represent what the button will do
-        //(show a menu, change a state, etc)
-        private Menu menu;
-        private GameState returnState;
+        #endregion
+
+        #region Properties
+
+        public List<UIElement> DisplayMenu { get; set; }
 
         #endregion
 
@@ -40,8 +45,8 @@ namespace Galabingus
         /// <param name="texture">its texure</param>
         /// <param name="position">its position rectangle</param>
         public Button
-            (Texture2D texture, Vector2 position, GameState gs)
-            : base(texture, position, gs, 5) { }
+            (Texture2D texture, Vector2 position, int scale)
+            : base(texture, position, scale) { }
 
         #endregion
 

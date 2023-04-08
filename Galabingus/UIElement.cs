@@ -24,17 +24,11 @@ namespace Galabingus
         protected Rectangle uiPosition; //its position rect
         protected Color clearColor; //its tint
 
-        //the gameState which this element can appear under
-        protected GameState gs;
-
         #endregion
 
         #region Properties
 
-        /// <summary>
-        /// returns the gameState which the elements falls under
-        /// </summary>
-        public GameState GS { get; }
+        public Color ClearColor { get { return clearColor; } set { clearColor = value; } }
 
         #endregion
 
@@ -46,7 +40,7 @@ namespace Galabingus
         /// <param name="uiTexture">the objects texture</param>
         /// <param name="position">the objects position</param>
         /// <param name="scale">the size it needs to be scaled to</param>
-        public UIElement(Texture2D uiTexture, Vector2 position, GameState gameState, int scale)
+        public UIElement(Texture2D uiTexture, Vector2 position, int scale)
         {
             //sets the texture to this classes texture
             this.uiTexture = uiTexture;
@@ -63,8 +57,6 @@ namespace Galabingus
                     length,
                     width
                 );
-
-            gs = gameState;
         }
         #endregion
 

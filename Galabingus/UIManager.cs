@@ -22,6 +22,7 @@ namespace Galabingus
         Menu,
         Game,
         Pause,
+        GameOver,
         NoState
     }
 
@@ -34,24 +35,60 @@ namespace Galabingus
         DebugOff
     }
 
+    public enum UIControlState
+    {
+        Keys,
+        Mouse
+    }
+
     /// <summary>
     /// represents the type of level data which should be retrieved
     /// </summary>
-    public enum Type
+    public enum TileType
     {
         Enemy,
         Tile
     }
 
-    /// <summary>
-    /// the list of all event types which can be triggered
-    /// </summary>
-    public enum EventType
+
+    #endregion
+
+    #region Struct
+
+    struct UILevel
     {
-        NoEvent,
-        UpMenu,
-        DownMenu,
-        StartGame
+        //Fields
+
+        private List<UIElement> menu;
+        private GameState gs;
+        private int level;
+
+        //Properties
+
+        public List<UIElement> Menu
+        {
+            get { return menu; }
+        }
+
+        public GameState GS
+        {
+            get { return gs; }
+        }
+
+        public int Level
+        {
+            get { return level; }
+        }
+
+        //CTOR
+
+        public UILevel(List<UIElement> menu, GameState gs, int level)
+        {
+            this.menu = menu;
+            this.gs = gs;
+            this.level = level;
+        }
+
     }
 
     #endregion
@@ -64,13 +101,17 @@ namespace Galabingus
         private static UIManager instance = null;
 
         //the list of UIObjects it manages
-        private List<UIElement> elements;
+        private List<UILevel> levels;
+        int currentLevel;
 
         //variable containing the current gamestate
         private GameState gs;
 
         //variable containing the debugstate
         private DebugState ds;
+
+        //controls whether the user naviagtes with mouse or keyboard
+        private UIControlState cs;
 
         //create a current and previous keyboardstate variable
         private KeyboardState currentKBS;
@@ -94,13 +135,7 @@ namespace Galabingus
         List<int[]> objectData;
 
         // Temporary Backgrounds
-        private Texture2D tempBackground;
         private Texture2D menuBackground;
-
-        // Event handling
-        private EventType currentEvent;
-        private List<UIElement> currentMenu;
-        private Stack<List<UIElement>> previousMenu;
 
         #endregion
 
@@ -136,25 +171,11 @@ namespace Galabingus
             set { ds = value; }
         }
 
-        public EventType CurrentEvent
+        public UIControlState CS
         {
-            get{ return currentEvent; }
-            set { currentEvent = value; }
+            get { return cs; }
+            set { cs = value;  }
         }
-
-        public List<UIElement> CurrentMenu
-        {
-            get { return currentMenu; }
-            set { currentMenu = value; }
-        }
-
-        public List<UIElement> PreviousMenu
-        {
-            get { return previousMenu.Pop(); }
-            set { previousMenu.Push(value); }
-        }
-
-
 
         #endregion
 
@@ -169,13 +190,16 @@ namespace Galabingus
             //initialize the gamestate variable
             gs = new GameState();
             ds = new DebugState();
+            cs = new UIControlState();
 
             //set the base game and debug states
             gs = GameState.Menu;
             ds = DebugState.DebugOn;
+            cs = UIControlState.Mouse;
 
-            //create the elements list
-            elements = new List<UIElement>();
+            //list of menu levels
+            levels = new List<UILevel>();
+            currentLevel = 1;
     }
 
         #endregion
@@ -209,21 +233,55 @@ namespace Galabingus
         /// </summary>
         public void LoadContent()
         {
-            Button button;
-            Menu menu;
+            //the sets of menus in the game
+            List<UIElement> menu1 = new List<UIElement>();
+            List<UIElement> menu2 = new List<UIElement>();
+            List<UIElement> game1 = new List<UIElement>();
+            List<UIElement> pause1 = new List<UIElement>();
+            List<UIElement> gameOver1 = new List<UIElement>();
 
+            //dummy variables
+            Button button;
+            Background menu;
+
+            //more dummy variables
             EventDelegate event1;
             EventDelegate event2;
 
-            //Play Button
+            //Create the Play Button
             event1 = StartGame;
 
-            AddButton("playbutton_strip1",
+            AddButton("playbutton_strip1", 5,
             new Vector2(width / 2, height / 2),
-            GameState.Menu, event1);
+            event1, menu1);
 
-            //add the backgrounddddd
+            //Create the Options Button
+            event1 = null;
+            event2 = UpMenu;
+            
+            //create buttons to go in the menu it displays and add them to the list
+            AddButton("buttonHowToPlay_strip1", 1,
+                new Vector2(width / 2, height / 2 - 100),
+                event1, menu2);
+
+            AddButton("buttonCredits_strip1", 1,
+                new Vector2(width / 2, height / 2 + 100),
+                event1, menu2);
+
+            //create the options button in the main list
+            AddButton("buttonOptions_strip1", 1,
+                new Vector2(width / 2, height / 2 + 200),
+                event2, menu1);
+
+            //add the background
             menuBackground = cm.Load<Texture2D>("menubackground_strip1");
+
+            //
+            levels.Add(new UILevel(menu1, GameState.Menu, 1));
+            levels.Add(new UILevel(menu2, GameState.Menu, 2));
+            levels.Add(new UILevel(game1, GameState.Menu, 1));
+            levels.Add(new UILevel(pause1, GameState.Menu, 1));
+            levels.Add(new UILevel(gameOver1, GameState.Menu, 1));
 
         }
 
@@ -235,8 +293,13 @@ namespace Galabingus
             //set the keyboardstate
             currentKBS = Keyboard.GetState();
 
-            //update all of the UIObjects (we do so first because this can change the state)
-            UpdateObjects(gs);
+            foreach(UILevel level in levels)
+            {
+                if(level.Level == currentLevel && level.GS == gs)
+                {
+                    UpdateObjects(level.Menu);
+                }
+            }
 
             //finite state machine for the UI to update the UI based on user input
             switch (gs)
@@ -249,12 +312,15 @@ namespace Galabingus
                         if (SingleKeyPress(Keys.L))
                         {
                             gs = GameState.Game;
+
                         }
                     }
 
                     break;
 
                 case GameState.Game:
+
+
 
                     if (ds != DebugState.DebugOff)
                     {
@@ -278,6 +344,10 @@ namespace Galabingus
                     {
                         gs = GameState.Game;
                     }
+
+                    break;
+
+                case GameState.GameOver:
 
                     break;
 
@@ -318,20 +388,14 @@ namespace Galabingus
 
             }
 
-            switch(currentEvent)
+            foreach (UILevel level in levels)
             {
-                case (EventType.NoEvent):
-                    //then draw the UI elements to the screen (second because they need to be drawn over the other stuff)
-                    DrawObjects(gs);
-                    break;
-                case (EventType.UpMenu):
-                    foreach(UIElement uiObject in currentMenu)
-                    {
-                        uiObject.Draw(sb);
-                    }
-                    break;
+                if (level.Level == currentLevel && level.GS == gs)
+                {
+                    DrawObjects(level.Menu);
+                }
             }
-            
+
         }
 
         #endregion
@@ -341,6 +405,23 @@ namespace Galabingus
         public void StartGame(object sender)
         {
             gs = GameState.Game;
+        }
+
+        public void UpMenu(object sender)
+        {
+            currentLevel++;
+        }
+
+        public void DownMenu(object sender)
+        {
+            currentLevel--;
+        }
+
+        public void HoverLightGray(object sender)
+        {
+            Button button = (Button)sender;
+
+            button.ClearColor = Color.LightGray;
         }
 
         #endregion
@@ -355,17 +436,17 @@ namespace Galabingus
         /// <param name="uiEvent">the data which it needs for its events</param>
         /// <param name="types">the event types it can call</param>
         public void AddButton
-            (string filename, Vector2 position, GameState gs, EventDelegate clickEvent)
+            (string filename, int scale, Vector2 position, EventDelegate clickEvent, List<UIElement> listToAdd)
         {
             //create the button texture
             Texture2D texture = cm.Load<Texture2D>(filename);
 
             //create the button
-            Button button = new Button(texture, position, gs);
+            Button button = new Button(texture, position, scale);
 
             button.OnClick += clickEvent;
 
-            elements.Add(button);
+            listToAdd.Add(button);
         }
 
         /// <summary>
@@ -375,44 +456,40 @@ namespace Galabingus
         /// <param name="gs">the gamestate the element exists in</param>
         /// <param name="uiEvent">the data which it needs for its events</param>
         /// <param name="types">the event types it can call</param>
-        public void AddMenu
-            (string filename, Vector2 position, GameState gs, UIEvent uiEvent, List<EventType> types)
+        public void AddBackground
+            (string filename, int scale, Vector2 position,  List<UIElement> listToAdd)
         {
             //create the menus texture
             Texture2D texture = cm.Load<Texture2D>(filename);
 
             //create the button
-            Menu menu = new Menu(texture, position, gs);
+            Background background = new Background(texture, position, gs);
 
-            elements.Add(menu);
+            listToAdd.Add(background);
         }
 
         /// <summary>
         /// updates all of the objects within the list of UIElements
         /// </summary>
         /// <param name="gs">the current gameState</param>
-        public void UpdateObjects(GameState gs)
+        public void UpdateObjects(List<UIElement> elementList)
         {
-            foreach (UIElement element in elements)
+            foreach (UIElement element in elementList)
             {
-                //if the element is located within the current gameState
-                if (element.GS == gs)
+                //casting the object down to its original form
+                if(element is Button)
                 {
-                    //casting the object down to its original form
-                    if(element is Button)
-                    {
-                        Button button = (Button)element;
+                    Button button = (Button)element;
 
-                        //run the update of the button and store what event it returns
-                        button.Update();
-                    }
-                    else if (element is Menu)
-                    {
-                        Menu menu = (Menu)element;
+                    //run the update of the button and store what event it returns
+                    button.Update();
+                }
+                else if (element is Background)
+                {
+                    Background background = (Background)element;
 
-                        //run the update of the menu and store what event it returns
-                        menu.Update();
-                    }
+                    //run the update of the menu and store what event it returns
+                    background.Update();
                 }
             }
         }
@@ -421,28 +498,24 @@ namespace Galabingus
         /// draw every object in the current game state to the screen
         /// </summary>
         /// <param name="gs">the current gameState</param>
-        public void DrawObjects(GameState gs)
+        public void DrawObjects(List<UIElement> elementList)
         {
-            foreach (UIElement element in elements)
+            foreach (UIElement element in elementList)
             {
-                //if the current element is in the current gameState
-                if (element.GS == gs)
+                //cast it down to its original form
+                if (element is Button)
                 {
-                    //cast it down to its original form
-                    if (element is Button)
-                    {
-                        Button button = (Button)element;
+                    Button button = (Button)element;
 
-                        //and draw it
-                        button.Draw(sb);
-                    }
-                    else if (element is Menu)
-                    {
-                        Menu menu = (Menu)element;
+                    //and draw it
+                    button.Draw(sb);
+                }
+                else if (element is Background)
+                {
+                    Background background = (Background)element;
 
-                        //and draw it
-                        menu.Draw(sb);
-                    }
+                    //and draw it
+                    background.Draw(sb);
                 }
             }
             
@@ -478,7 +551,7 @@ namespace Galabingus
         /// </summary>
         /// <param name="type">the type of data you want returned</param>
         /// <returns>a list of a certain type of data</returns>
-        public List<int[]> LevelReader(Type type)
+        public List<int[]> LevelReader(TileType type)
         {
             //a new stream reader from a level file
             reader = new StreamReader("Content/level1.level");
