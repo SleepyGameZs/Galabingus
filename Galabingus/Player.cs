@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using static System.Formats.Asn1.AsnWriter;
 
 // Matthew Rodriguez
 // 2023, 3, 13
@@ -73,6 +74,9 @@ namespace Galabingus
         private float boostOpacity;
         private bool shiftBoost;
         private double totalBoostTime;
+        private Texture2D heartSprite;
+        private Texture2D halfHeartSprite;
+        private Texture2D fullHeartSprite;
 
         public static Player PlayerInstance
         {
@@ -280,6 +284,9 @@ namespace Galabingus
             PlayerInstance.shiftBoost = false;
             PlayerInstance.ghosts = new List<Ghost>();
             this.thisGameObject = this;
+            PlayerInstance.fullHeartSprite = GameObject.Instance.ContentManager.Load<Texture2D>("heart_full_strip1");
+            PlayerInstance.halfHeartSprite = GameObject.Instance.ContentManager.Load<Texture2D>("heart_half_strip1");
+            PlayerInstance.heartSprite = GameObject.Instance.ContentManager.Load<Texture2D>("heart_strip1");
         }
 
         /// <summary>
@@ -287,6 +294,7 @@ namespace Galabingus
         /// </summary>
         public void Update(GameTime gameTime)
         {
+            PlayerInstance.Collider.Resolved = true;
             PlayerInstance.inputBufferTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
             //boostFrameRate = PlayerInstance.inputBufferTime;
             Vector2 translationAjdustedRatio = translationRatio;
@@ -365,6 +373,7 @@ namespace Galabingus
             //Vector2 previousPosition = Position;
 
             PlayerInstance.Transform = PlayerInstance.Animation.Play(gameTime);
+
             List<Collision> intercepts = PlayerInstance.Collider.UpdateTransform(
                 PlayerInstance.Sprite,                         // Player Sprite
                 PlayerInstance.Position,                       // Player position
@@ -373,7 +382,7 @@ namespace Galabingus
                 GameObject.Instance.SpriteBatch,
                 PlayerInstance.Scale,                          // Player scale
                 SpriteEffects.None,
-                (ushort)CollisionGroup.Player,                                   // Content
+                (ushort)CollisionGroup.Player,                 // Content
                 0
             );
 
@@ -382,14 +391,14 @@ namespace Galabingus
 
             foreach (Collision collision in intercepts)
             {
-                if (collision.other != null && this.Collider.Resolved && !((collision.other as Bullet) is Bullet))
+                if (collision.other != null && this.Collider.Resolved && !((collision.other as Tile) is Tile))
                 {
                     previousVelocity = velocity;
                     acceleration = Vector2.Zero;
                     velocity = Vector2.Zero;
                     collides = true;
                 }
-                else if (collision.other != null && !((collision.other as Bullet) is Bullet))
+                else if (collision.other != null && ((collision.other as Tile) is Tile))
                 {
                     previousVelocity = velocity;
                     acceleration = Vector2.Zero;
@@ -826,7 +835,7 @@ namespace Galabingus
                     {
                         Ghost ghostBoost = new Ghost();
                         ghostBoost.ghostColor = new Color(new Color(255, 165, 11), 1.0f);
-                        ghostBoost.Position = Position + normVelocity * (float)Animation.EllapsedTime * new Vector2(speed.X, speed.Y).LengthSquared() * ((1 - boostSpeed) * -0.1f );
+                        ghostBoost.Position = Position + normVelocity * 0.1f * (float)Animation.EllapsedTime * new Vector2(speed.X, speed.Y).LengthSquared() * ((1 - boostSpeed) * -0.1f );
                         boostSpeed *= (float)Animation.EllapsedTime;
                         boostOpacity -= 0.0005f;
                         ghostBoost.boostOpacity = boostOpacity;
@@ -841,6 +850,22 @@ namespace Galabingus
                 totalBoostTime -= boostFrameRate;
             }
 
+            if (currentKeyboardState.IsKeyDown(Keys.G))
+            {
+                PlayerInstance.Health = 5;
+            }
+
+            if (!Camera.Instance.Stopped)
+            {
+                Camera.Instance.OffSet = new Vector2(Math.Clamp((normVelocity.X) + Math.Clamp(Camera.Instance.OffSet.X, -0.005f, 0.005f), -0.5f, 0.5f), Math.Clamp((normVelocity.Y) * 0.005f + Math.Clamp((Camera.Instance.OffSet.Y), -2.5f, 0.005f), -2.5f, 2.0f))
+                    * (float)Animation.GetElapsedTime(gameTime, Vector2.Zero, new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Width * 0.5f, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.5f), Transform, Scale);
+            }
+            else
+            {
+                Camera.Instance.OffSet = new Vector2(Math.Clamp((normVelocity.X), -1f, 1f), Math.Clamp((normVelocity.Y), -0.5f, 0.5f)) 
+                    * (float)Animation.GetElapsedTime(gameTime, Vector2.Zero, new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Width * 0.5f, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.5f), Transform, Scale);
+            }
+
             //Debug.WriteLine();
         }
 
@@ -851,7 +876,7 @@ namespace Galabingus
         public void Shoot()
         {
             float flt_playerShootX = (Transform.Width * PlayerInstance.Scale) / 2;
-            float flt_playerShootY = (Transform.Height * PlayerInstance.Scale) / 2;
+            float flt_playerShootY = (Transform.Height * PlayerInstance.Scale) / 2 + 10;
             Vector2 vc2_shootPos = new Vector2(Position.X               // Base player X position
                                                + flt_playerShootX       // Center horizontally
                                                ,                        // Account for possible next movement
@@ -860,7 +885,7 @@ namespace Galabingus
                                                + velocity.Y             // Account for possible next movement
                                                );
 
-            BulletManager.Instance.CreateBullet(BulletType.Normal, vc2_shootPos, 0, 1, this);
+            BulletManager.Instance.CreateBullet(BulletType.Normal, vc2_shootPos, 0, 1, this, false);
         }
 
         /// <summary>
@@ -868,103 +893,88 @@ namespace Galabingus
         /// </summary>
         public void Draw()
         {
-            //PlayerInstance.Position = new Vector2(0, 0);
-            //Debug.WriteLine(Position.X);
-            //Debug.WriteLine(Position.Y);
-            const float boostScale = 1.1f;
-
-            if (boost) //&& totalBoostTime >= boostFrameRate)
+            if (Player.PlayerInstance.Health > 0)
             {
-
-                foreach (Ghost ghost in ghosts)
+                if (boost) //&& totalBoostTime >= boostFrameRate)
                 {
-                    Color halfOColor = ghost.ghostColor;//new Color(ghost.ghostColor * 0.825f, 0.825f);
-                    if (halfOColor.R <= 7)
+                    foreach (Ghost ghost in ghosts)
                     {
-                        halfOColor = Color.Transparent;
+                        Color halfOColor = ghost.ghostColor;//new Color(ghost.ghostColor * 0.825f, 0.825f);
+                        if (halfOColor.R <= 7)
+                        {
+                            halfOColor = Color.Transparent;
+                        }
+                        GameObject.Instance.SpriteBatch.Draw(
+                            WhiteSprite,                     // The sprite-sheet for the player
+                            ghost.Position,    // The position for the player
+                            Transform,                       // The scale and bounding box for the animation
+                            halfOColor,                     // The color for the palyer
+                            0.0f,                            // There cannot be any rotation of the player
+                            Vector2.Zero,                    // Starting render position
+                            PlayerInstance.Scale,                      // The scale of the sprite
+                            SpriteEffects.None,              // Which direction the sprite faces
+                            0.0f                             // Layer depth of the player is 0.0
+                        );
                     }
-                    GameObject.Instance.SpriteBatch.Draw(
-                        WhiteSprite,                     // The sprite-sheet for the player
-                        ghost.Position,    // The position for the player
-                        Transform,                       // The scale and bounding box for the animation
-                        halfOColor,                     // The color for the palyer
-                        0.0f,                            // There cannot be any rotation of the player
-                        Vector2.Zero,                    // Starting render position
-                        PlayerInstance.Scale,                      // The scale of the sprite
-                        SpriteEffects.None,              // Which direction the sprite faces
-                        0.0f                             // Layer depth of the player is 0.0
-                    );
                 }
 
+
                 GameObject.Instance.SpriteBatch.Draw(
-                    WhiteSprite,                     // The sprite-sheet for the player
-                    Position - new Vector2(Transform.Width, Transform.Height) * (boostScale * 0.1f + 0.0077637999f),    // The position for the player
+                    Sprite,                          // The sprite-sheet for the player
+                    Position,                        // The position for the player
                     Transform,                       // The scale and bounding box for the animation
-                    new Color(new Color(255, 204, 118) * 1.0f, 0.05f),                     // The color for the palyer
+                    Color.White,                     // The color for the palyer
                     0.0f,                            // There cannot be any rotation of the player
                     Vector2.Zero,                    // Starting render position
-                    PlayerInstance.Scale * boostScale,                      // The scale of the sprite
+                    PlayerInstance.Scale,                      // The scale of the sprite
                     SpriteEffects.None,              // Which direction the sprite faces
                     0.0f                             // Layer depth of the player is 0.0
                 );
 
             }
-
-            else //if (totalBoostTime >= boostFrameRate * 0.5f)
+            else if (!Keyboard.GetState().IsKeyDown(Keys.G))
             {
-                foreach (Ghost ghost in ghosts)
-                {
-                    Color halfOColor = ghost.ghostColor;//new Color(ghost.ghostColor * 0.825f, 0.825f);
-                    if (halfOColor.R <= 1)
-                    {
-                        halfOColor = Color.Transparent;
-                    }
-                    GameObject.Instance.SpriteBatch.Draw(
-                        Sprite,                     // The sprite-sheet for the player
-                        ghost.Position,    // The position for the player
-                        Transform,                       // The scale and bounding box for the animation
-                        halfOColor,                     // The color for the palyer
-                        0.0f,                            // There cannot be any rotation of the player
-                        Vector2.Zero,                    // Starting render position
-                        PlayerInstance.Scale,                      // The scale of the sprite
-                        SpriteEffects.None,              // Which direction the sprite faces
-                        0.0f                             // Layer depth of the player is 0.0
-                    );
-                }
-
-                GameObject.Instance.SpriteBatch.Draw(
-                    WhiteSprite,                     // The sprite-sheet for the player
-                    Position - new Vector2(Transform.Width, Transform.Height) * (boostScale * 0.1f + 0.0077637999f),    // The position for the player
-                    Transform,                       // The scale and bounding box for the animation
-                    new Color(new Color(127, 127, 255) * 1.0f, 0.05f),                     // The color for the palyer
-                    0.0f,                            // There cannot be any rotation of the player
-                    Vector2.Zero,                    // Starting render position
-                    PlayerInstance.Scale * boostScale,                      // The scale of the sprite
-                    SpriteEffects.None,              // Which direction the sprite faces
-                    0.0f                             // Layer depth of the player is 0.0
-                );
+                Collider.Resolved = false;
+                UIManager.Instance.GS = GameState.Pause;
             }
+
+
 
             GameObject.Instance.SpriteBatch.Draw(
-                Sprite,                          // The sprite-sheet for the player
-                Position,                        // The position for the player
-                Transform,                       // The scale and bounding box for the animation
-                Color.White,                     // The color for the palyer
+                heartSprite,                          // The sprite-sheet for the player
+                new Vector2(10, 10),                        // The position for the player
+                new Rectangle(0,0,halfHeartSprite.Width * 5, halfHeartSprite.Height),                       // The scale and bounding box for the animation
+                new Color(Color.Gray,1.0f),                     // The color for the palyer
                 0.0f,                            // There cannot be any rotation of the player
                 Vector2.Zero,                    // Starting render position
-                PlayerInstance.Scale,                      // The scale of the sprite
+                0.7f,                      // The scale of the sprite
                 SpriteEffects.None,              // Which direction the sprite faces
                 0.0f                             // Layer depth of the player is 0.0
             );
 
-        }
 
-        public void DrawEffect()
-        {
             GameObject.Instance.SpriteBatch.Draw(
-                Sprite,                          // The sprite-sheet for the player
-                Position,                        // The position for the player
-                Color.White                     // The color for the palyer
+                fullHeartSprite,                          // The sprite-sheet for the player
+                new Vector2(10, 10),                        // The position for the player
+                new Rectangle(0, 0, halfHeartSprite.Width * (int)Math.Clamp(Math.Floor(playerInstance.Health),0,5), halfHeartSprite.Height),                       // The scale and bounding box for the animation
+                new Color(Color.White, 0.9f),                     // The color for the palyer
+                0.0f,                            // There cannot be any rotation of the player
+                Vector2.Zero,                    // Starting render position
+                0.7f,                      // The scale of the sprite
+                SpriteEffects.None,              // Which direction the sprite faces
+                0.0f                             // Layer depth of the player is 0.0
+            );
+
+            GameObject.Instance.SpriteBatch.Draw(
+                halfHeartSprite,                          // The sprite-sheet for the player
+                new Vector2(10, 10),                        // The position for the player
+                new Rectangle(0, 0, halfHeartSprite.Width * (int)Math.Clamp((int)Math.Round(playerInstance.Health, MidpointRounding.AwayFromZero),0,5), halfHeartSprite.Height),                       // The scale and bounding box for the animation
+                new Color(Color.White, 0.9f),                     // The color for the palyer
+                0.0f,                            // There cannot be any rotation of the player
+                Vector2.Zero,                    // Starting render position
+                0.7f,                      // The scale of the sprite
+                SpriteEffects.None,              // Which direction the sprite faces
+                0.0f                             // Layer depth of the player is 0.0
             );
         }
     }

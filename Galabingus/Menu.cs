@@ -10,28 +10,33 @@ using System.Threading.Tasks;
 
 namespace Galabingus
 {
-    internal class Menu : UIObject
+    internal class Menu : UIElement
     {
+        #region Event
+
+        public event EventDelegate OnMenuBack;
+
+        #endregion
+
         #region Fields
 
         #endregion
 
         #region Constructor
-        public Menu(Texture2D texture, Vector2 position)
-            : base(texture, position, 1) { }
+        public Menu(Texture2D texture, Vector2 position, GameState gs)
+            : base(texture, position, gs, 5)
+        {
+            visible = false;
+        }
         #endregion
 
         #region Methods
 
-        public override int Update()
+        public override void Update()
         {
             if(UIManager.Instance.SingleKeyPress(Keys.Back))
             {
-                return 1;
-            }
-            else
-            {
-                return 0;
+                OnMenuBack(this);
             }
         }
 

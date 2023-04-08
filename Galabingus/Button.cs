@@ -12,8 +12,14 @@ using System.IO;
 
 namespace Galabingus
 {
-    internal class Button : UIObject
+    internal class Button : UIElement
     {
+        #region Events
+
+        public event EventDelegate OnClick;
+
+        #endregion
+
         #region Fields
 
         //the current mouseState
@@ -34,14 +40,14 @@ namespace Galabingus
         /// <param name="texture">its texure</param>
         /// <param name="position">its position rectangle</param>
         public Button
-            (Texture2D texture, Vector2 position)
-            : base(texture, position, 0.5f) { }
+            (Texture2D texture, Vector2 position, GameState gs)
+            : base(texture, position, gs, 5) { }
 
         #endregion
 
         #region Methods
 
-        public override int Update()
+        public override void Update()
         {
             mouseState = Mouse.GetState();
 
@@ -49,19 +55,16 @@ namespace Galabingus
             {
                 if(mouseState.LeftButton == ButtonState.Pressed)
                 {
-                    return 1;
-
+                    OnClick(this);
                 }
                 else
                 {
                     clearColor = Color.LightGray;
-                    return 0;
                 }
             }
             else
             {
                 clearColor = Color.White;
-                return 0;
             }
         }
 

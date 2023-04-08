@@ -33,10 +33,13 @@ namespace Galabingus
         private Vector2 screenSize;
         private Vector2 tileSize;
         private List<Tile> tilesList;
+        private List<Tile> backgroundList;
         private List<Tile> tilesBorder;
         private List<ushort> layers;
         private List<ushort> spriteNumbers;
         private ushort currentSpriteNumber;
+
+        private int counter;
 
         // -------------------------------------------------
         // Properties
@@ -72,6 +75,10 @@ namespace Galabingus
             spriteNumbers = new List<ushort>();
 
             tilesList = new List<Tile>();
+            backgroundList = new List<Tile>();
+
+            // temp counter for scroll
+            counter = 0;
         }
 
         // -------------------------------------------------
@@ -116,47 +123,52 @@ namespace Galabingus
             currentSpriteNumber = (index);
             Tile tile = new Tile(GameObject.Instance.Content.white_pixel_strip1, 0, index, true);
             tile.Scale = 25f;
-            tile.ScaleVector = new Vector2(screenSize.X, 20);
-            tile.Position = new Vector2(0, -20);
+            tile.ScaleVector = new Vector2(screenSize.X, 200);
+            tile.Position = new Vector2(0, -200);
             tilesList.Add(tile);
 
             // Bot
             tile = new Tile(GameObject.Instance.Content.white_pixel_strip1, 1, index, true);
             tile.Scale = 25f;
-            tile.ScaleVector = new Vector2(screenSize.X, 20);
-            tile.Position = new Vector2(20, screenSize.Y);
+            tile.ScaleVector = new Vector2(screenSize.X, 200);
+            tile.Position = new Vector2(0, screenSize.Y);
             tilesList.Add(tile);
 
             // Right
             tile = new Tile(GameObject.Instance.Content.white_pixel_strip1, 2, index, true);
             tile.Scale = 25f;
-            tile.ScaleVector = new Vector2(20, screenSize.Y);
+            tile.ScaleVector = new Vector2(200, screenSize.Y);
             tile.Position = new Vector2(screenSize.X, 0);
             tilesList.Add(tile);
 
             // Left
             tile = new Tile(GameObject.Instance.Content.white_pixel_strip1, 3, index, true);
             tile.Scale = 25f;
-            tile.ScaleVector = new Vector2(20, screenSize.Y);
-            tile.Position = new Vector2(-20, 0);
+            tile.ScaleVector = new Vector2(200, screenSize.Y);
+            tile.Position = new Vector2(-200, 0);
             tilesList.Add(tile);
         }
 
         public void CreateBackground()
         {
-            ushort instanceCounter = 0;
-            for (ushort i = 0; i < 100; i++)
-            {
-                for (ushort j = 0; j < 100; j++)
-                {
-                    Tile tile = new Tile(GameObject.Instance.Content.tile_strip26, instanceCounter, 0);
-                    tile.Scale = 3f;
-                    tile.ScaleVector = new Vector2(1, 1);
-                    tile.Position = new Vector2(tile.Transform.Width * j, tile.Transform.Height* i);
-                    tilesList.Add(tile);
-                    instanceCounter++;
-                }
-            }
+            Tile background = new Tile(GameObject.Instance.Content.space_only_background_strip1, 0, 1, true);
+            
+            background.Transform = new Rectangle(0, 0, background.Sprite.Width, background.Sprite.Height);
+          
+            background.Scale = GameObject.Instance.GraphicsDevice.Viewport.Height / background.Sprite.Width / (Player.PlayerInstance.Scale * 0.675f);
+            background.ScaleVector = new Vector2(background.Scale, background.Scale);
+            background.Position = new Vector2(0, -GameObject.Instance.GraphicsDevice.Viewport.Height * 4.3f);
+            background.Position -= new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Width, 0);
+            background.Effect = GameObject.Instance.ContentManager.Load<Effect>("background");
+            backgroundList.Add(background);
+
+            Tile background2 = new Tile(GameObject.Instance.Content.space_only_background_strip1, 1, 1, true);
+            background2.Position = Vector2.Zero;
+            
+            background2.Transform = new Rectangle(0, 0, background.Sprite.Width, background.Sprite.Height);
+            background2.Scale = GameObject.Instance.GraphicsDevice.Viewport.Height / background.Sprite.Width / (Player.PlayerInstance.Scale * 0.675f);
+            background2.ScaleVector = new Vector2(background.Scale, background.Scale);
+            backgroundList.Add(background2);
         }
 
         public void Update(GameTime gameTime)
@@ -165,7 +177,8 @@ namespace Galabingus
             {
                 //currentSpriteNumber = tilesList[i].SpriteNumber;
 
-                tilesList[i].Update(gameTime);
+
+                tilesList[i].Collider.Resolved = true;
                 List<Collision> collisions = tilesList[i].Collider.UpdateTransform(
                     tilesList[i].Sprite,
                     tilesList[i].Position,
@@ -174,7 +187,7 @@ namespace Galabingus
                     GameObject.Instance.SpriteBatch,
                     tilesList[i].ScaleVector,
                     SpriteEffects.None,
-                    (ushort)CollisionGroup.Tile,//GameObject.Instance.Content.tile_strip26,
+                    (ushort)CollisionGroup.Tile,
                     tilesList[i].InstanceNumber
                     );
 
@@ -193,6 +206,41 @@ namespace Galabingus
 
             }
 
+           
+            // Background Scroll
+            for (int i = 0; i < backgroundList.Count; i++)
+            {
+                backgroundList[i].Update(gameTime);
+            }
+            if (backgroundList[1].Position.Y >= GameObject.Instance.GraphicsDevice.Viewport.Height)
+            {
+                if (counter == 3)
+                {
+                    Camera.Instance.Stop();
+                }
+                counter++;
+                backgroundList[1].Position = new Vector2(
+                    0, backgroundList[1].Position.Y - GameObject.Instance.GraphicsDevice.Viewport.Height
+                );
+            }
+
+
+            /*
+            // Background Loop
+            for (int i = 0; i < backgroundList.Count; i++)
+            {
+                if (backgroundList[i].Position.X == -backgroundList[i].Transform.Width)
+                {
+                    backgroundList[i].Position = new Vector2(backgroundList[i].Transform.Width, 0);
+                    counter++;
+                    Debug.WriteLine(counter);
+                }
+                else if (counter == 3) 
+                {
+                    Camera.Instance.Stop();
+                }
+            }
+            */
         }
 
         public void Draw()
@@ -201,6 +249,14 @@ namespace Galabingus
             {
                 tilesList[i].Draw();
             }
+            //for (int i = 0; i < backgroundList.Count; i++)
+            //{
+                backgroundList[0].Draw(
+                    GameObject.Instance.GraphicsDevice.Viewport.Width / backgroundList[0].Transform.Width / backgroundList[0].ScaleVector.X * 4, 
+                    GameObject.Instance.GraphicsDevice.Viewport.Height / backgroundList[0].Transform.Height / backgroundList[0].ScaleVector.Y * 4.3f * 2
+                    
+                );
+            //}
         }
     }
 }
