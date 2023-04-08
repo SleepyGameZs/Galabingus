@@ -256,5 +256,11 @@ namespace Galabingus
 
             base.Draw(gameTime);
         }
+
+        public void MouseVisibility(bool visibility)
+        {
+            IsMouseVisible = visibility;
+        }
+
     }
 }
