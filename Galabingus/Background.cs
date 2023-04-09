@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Galabingus
 {
-    internal class Menu : UIElement
+    internal class Background : UIElement
     {
         #region Event
 
@@ -23,11 +23,8 @@ namespace Galabingus
         #endregion
 
         #region Constructor
-        public Menu(Texture2D texture, Vector2 position, GameState gs)
-            : base(texture, position, gs, 5)
-        {
-            visible = false;
-        }
+        public Background(Texture2D texture, Vector2 position, GameState gs)
+            : base(texture, position, 5) { }
         #endregion
 
         #region Methods
@@ -45,7 +42,7 @@ namespace Galabingus
             sb.Draw(
                 uiTexture,
                 uiPosition,
-                Color.White
+                clearColor
             );
         }
         #endregion

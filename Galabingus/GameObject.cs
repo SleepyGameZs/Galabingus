@@ -90,6 +90,7 @@ namespace Galabingus
         private List<List<CollisionGroup>> collisionGroups;
         private System.Type typeOfObject;
         private Effect universalShader;
+        private static float fade;
         public dynamic thisGameObject;
 
         public struct GameObjectTrie<T>
@@ -818,6 +819,18 @@ namespace Galabingus
             }
         }
 
+        public static float Fade
+        {
+            get
+            {
+                return fade;
+            }
+            set
+            {
+                fade = value;
+            }
+        }
+
         /// <summary>
         ///  Generates a index for the instance Content 
         ///  property that cannot be found
@@ -917,11 +930,6 @@ namespace Galabingus
             SetSprite(instanceNumber, GameObject.Instance.contentManager.Load<Texture2D>(path));
             SetScale(instanceNumber, 1.0f);
             SetAnimation(instanceNumber, new Animation(GetSprite(instanceNumber).Width, GetSprite(instanceNumber).Height, strip));
-            Collider newCollider = new Collider();
-            newCollider.Layer = contentName;
-            newCollider.Resolved = true;
-            newCollider.self = this;
-            SetCollider(instanceNumber, newCollider);
             SetPosition(instanceNumber, Vector2.Zero);
             SetTransform(instanceNumber,
                 new Rectangle(
@@ -931,6 +939,12 @@ namespace Galabingus
                     GetSprite(instanceNumber).Height                   // Height of the sprite
                 )
             );
+            Collider newCollider = new Collider();
+            newCollider.Layer = contentName;
+            newCollider.Resolved = true;
+            newCollider.self = this;
+            SetCollider(instanceNumber, newCollider);
+
         }
 
         public System.Type GameObjectType
@@ -957,6 +971,7 @@ namespace Galabingus
             this.graphicsDevice = graphicsDevice;
             this.spriteBatch = spriteBatch;
             this.contentManager = contentManager;
+            GameObject.fade = 1;
             return new GameObject();
         }
 

@@ -41,6 +41,7 @@ namespace Galabingus
 
         // Shaders
         private Effect shaders;
+        private bool transition;
 
         // Enemies and Bullets
         private BulletManager mng_bullet;
@@ -147,9 +148,13 @@ namespace Galabingus
 
             //Update the UI
             userInterface.Update();
-
+            bool shiftBefore = transition;
+            transition = (userInterface.GS == GameState.Pause);
             if (!(userInterface.GS == GameState.Pause) && !(userInterface.GS == GameState.Menu))
             {
+                shaders.Parameters["fadeIn"].SetValue(true);
+                shaders.Parameters["fadeOut"].SetValue(false);
+
                 // Update the player
                 player.Update(gameTime);
 
@@ -164,6 +169,16 @@ namespace Galabingus
 
                 tileManager.Update(gameTime);
             }
+            else if (userInterface.GS == GameState.Pause)
+            {
+                shaders.Parameters["fadeIn"].SetValue(false);
+                shaders.Parameters["fadeOut"].SetValue(true);
+            }
+
+            if (transition != shiftBefore)
+            {
+                GameObject.Fade = 1;
+            }
 
             base.Update(gameTime);
         }
@@ -177,6 +192,8 @@ namespace Galabingus
 
             if (!(userInterface.GS == GameState.Menu))
             {
+                GameObject.Fade = GameObject.Fade * 0.96f;
+                shaders.Parameters["fade"].SetValue(GameObject.Fade);
                 _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, effect: shaders);
             }
             else
@@ -235,5 +252,11 @@ namespace Galabingus
 
             base.Draw(gameTime);
         }
+
+        public void MouseVisibility(bool visibility)
+        {
+            IsMouseVisible = visibility;
+        }
+
     }
 }

@@ -17,18 +17,20 @@ namespace Galabingus
         #region Events
 
         public event EventDelegate OnClick;
+        public event EventDelegate OnHover;
+        public event EventDelegate OnRelease;
 
         #endregion
 
         #region Fields
 
         //the current mouseState
-        private MouseState mouseState;
+        private MouseState currentMS;
+        private MouseState prevMS;
 
-        //objects which represent what the button will do
-        //(show a menu, change a state, etc)
-        private Menu menu;
-        private GameState returnState;
+        #endregion
+
+        #region Properties
 
         #endregion
 
@@ -40,8 +42,8 @@ namespace Galabingus
         /// <param name="texture">its texure</param>
         /// <param name="position">its position rectangle</param>
         public Button
-            (Texture2D texture, Vector2 position, GameState gs)
-            : base(texture, position, gs, 5) { }
+            (Texture2D texture, Vector2 position, int scale)
+            : base(texture, position, scale) { }
 
         #endregion
 
@@ -49,23 +51,29 @@ namespace Galabingus
 
         public override void Update()
         {
-            mouseState = Mouse.GetState();
+            currentMS = Mouse.GetState();
 
-            if(uiPosition.Contains(mouseState.Position))
+            if (uiPosition.Contains(currentMS.Position))
             {
-                if(mouseState.LeftButton == ButtonState.Pressed)
+                if (currentMS.LeftButton == ButtonState.Pressed)
                 {
-                    OnClick(this);
+                    if (OnClick != null)
+                        OnClick(this);
+
                 }
                 else
                 {
-                    clearColor = Color.LightGray;
+                    if (OnHover != null)
+                        OnHover(this);
                 }
             }
             else
             {
-                clearColor = Color.White;
+                if (OnRelease != null)
+                    OnRelease(this);
             }
+
+            prevMS = currentMS;
         }
 
         public override void Draw(SpriteBatch sb)

@@ -389,8 +389,8 @@ namespace Galabingus
             );
 
             // Set position of
-            Vector2 cameraScrollX = new Vector2(Camera.Instance.OffSet.X,0);
-            Position -= cameraScrollX;
+            Vector2 cameraScrollY = new Vector2(0, Camera.Instance.OffSet.Y);
+            Position -= cameraScrollY;
 
             // Manage Animation
             this.Animation.AnimationDuration = 0.03f;

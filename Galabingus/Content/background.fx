@@ -75,7 +75,7 @@ float2 randomValues(float2 uv, float2 scale)
 
 float4 MainPS(VertexShaderOutput input) : COLOR
 {
-
+	//floa radn_1_05();
 
 	float pixelize = floor(input.TextureCoordinates.x * (640)) / (640);
 
@@ -123,6 +123,9 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 		color.g = maxBright.g;
 	}
 	*/
+
+	float2 randomColor = randomValues( float2 (color.r,color.b),  100 );
+
 	float3 colorA = color.rgb;// / max(max(color.r, color.g), color.b);
 	float3 colorB = input.Color.rgb;// / max(max(input.Color.r, input.Color.g), input.Color.b);
 	float3 color2 = lerp(colorA, colorB, 0.973);
@@ -194,7 +197,10 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 
 	lerpPixels.a *= 0.5;
 
-	return lerpPixels;
+
+	float4 lerpColorOffset = lerp(lerpPixels, colorTrue*0.1, 0.2);
+
+	return lerpColorOffset;
 
 	//return color;
 	//return color * input.Color;
