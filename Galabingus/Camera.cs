@@ -116,22 +116,28 @@ namespace Galabingus
 
         public void Reverse()
         {
-            offSet.Y -= initalCameraScroll*2;
-
+            offSet.Y = -initalCameraScroll;
         }
 
         public void Update(GameTime gameTime)
         {
-            Camera.Instance.offSet.Y = MathHelper.Lerp(Camera.Instance.offSet.Y, Camera.Instance.offSet.Y*2, 0.1f);
+            Camera.Instance.offSet.Y = MathHelper.Lerp(Camera.Instance.offSet.Y, Camera.Instance.offSet.Y*1.2f, 0.1f);
+
+            if (Camera.Instance.OffSet.Y > 2.5)
+            {
+                offSet.Y = 2.5f;
+            }
+
             if (Keyboard.GetState().IsKeyDown(Keys.F5))
             {
                 cameraLock = true;
             }
             if (cameraLock == true)
             {
-                Player.PlayerInstance.Position -= new Vector2(0,Camera.instance.offSet.Y);
+                Player.PlayerInstance.CameraLock = false;
                 Camera.Instance.offSet.Y = Player.PlayerInstance.Velocity == Vector2.Zero ? Vector2.Zero.Y :
-                    Vector2.Normalize(Player.PlayerInstance.Velocity).Y;
+                    Player.PlayerInstance.Translation.Y;
+                Player.PlayerInstance.Position -= new Vector2(0, Camera.instance.offSet.Y);
                 Debug.WriteLine(Player.PlayerInstance.Velocity.Y);
                 //Debug.WriteLine(Camera.Instance.OffSet.Y);
             }

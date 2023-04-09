@@ -41,6 +41,7 @@ namespace Galabingus
         private ushort currentSpriteNumber;
 
         private int counter;
+        private bool turn = false;
 
         // -------------------------------------------------
         // Properties
@@ -231,23 +232,30 @@ namespace Galabingus
 
             }
 
-           
             // Background Scroll
             for (int i = 0; i < backgroundList.Count; i++)
             {
                 backgroundList[i].Update(gameTime);
             }
-            if (backgroundList[1].Position.Y >= GameObject.Instance.GraphicsDevice.Viewport.Height)
+
+            if (turn == false)
             {
-                if (counter == 3)
+                if (backgroundList[1].Position.Y >= GameObject.Instance.GraphicsDevice.Viewport.Height)
                 {
-                    Camera.Instance.Stop();
+                    if (counter == 2)
+                    {
+                        //Camera.Instance.Stop();
+                        Player.PlayerInstance.CameraLock = false;
+                        Camera.Instance.Reverse();
+                        turn = true;
+                    }
+                    counter++;
+                    backgroundList[1].Position = new Vector2(
+                        0, backgroundList[1].Position.Y - GameObject.Instance.GraphicsDevice.Viewport.Height
+                    );
                 }
-                counter++;
-                backgroundList[1].Position = new Vector2(
-                    0, backgroundList[1].Position.Y - GameObject.Instance.GraphicsDevice.Viewport.Height
-                );
             }
+
 
 
             /*
