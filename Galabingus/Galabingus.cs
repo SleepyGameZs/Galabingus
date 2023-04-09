@@ -142,6 +142,7 @@ namespace Galabingus
             // Load the temporary background
             //tempBackground = Content.Load<Texture2D>("spacebackground_strip1");
             tileManager.CreateBackground();
+            //tileManager.CreateAsteriod();
         }
 
         protected override void Update(GameTime gameTime)
