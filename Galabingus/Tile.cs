@@ -179,7 +179,14 @@ namespace Galabingus
             this.spriteNumber = sprite;
         }
 
-        public Tile(ushort contentName, ushort instanceNumber, ushort sprite, bool border) : base(contentName, instanceNumber, CollisionGroup.Tile)
+        /// <summary>
+        /// Creates static tiles
+        /// </summary>
+        /// <param name="contentName"></param>
+        /// <param name="instanceNumber"></param>
+        /// <param name="sprite"></param>
+        /// <param name="single"> If the tile is static </param>
+        public Tile(ushort contentName, ushort instanceNumber, ushort sprite, bool single) : base(contentName, instanceNumber, CollisionGroup.Tile)
         {
             this.thisGameObject = this;
             this.contentName = contentName;

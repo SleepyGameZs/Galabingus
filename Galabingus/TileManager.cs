@@ -32,7 +32,8 @@ namespace Galabingus
         
         private Vector2 screenSize;
         private Vector2 tileSize;
-        private List<Tile> tilesList;
+        private List<Tile> tileList;
+        private List<Tile> borderList;
         private List<Tile> backgroundList;
         private List<Tile> tilesBorder;
         private List<ushort> layers;
@@ -73,8 +74,8 @@ namespace Galabingus
 
             layers = new List<ushort>();
             spriteNumbers = new List<ushort>();
-
-            tilesList = new List<Tile>();
+            tileList = new List<Tile>();
+            borderList = new List<Tile>();
             backgroundList = new List<Tile>();
 
             // temp counter for scroll
@@ -85,6 +86,10 @@ namespace Galabingus
         // Meathods 
         // -------------------------------------------------
 
+        /// <summary>
+        /// Creates borders
+        /// </summary>
+        /// <param name="spriteNumber"></param>
         public void CreateTile(ushort spriteNumber)
         {
             ushort index = 0;
@@ -125,37 +130,40 @@ namespace Galabingus
             tile.Scale = 25f;
             tile.ScaleVector = new Vector2(screenSize.X, 200);
             tile.Position = new Vector2(0, -200);
-            tilesList.Add(tile);
+            borderList.Add(tile);
 
             // Bot
             tile = new Tile(GameObject.Instance.Content.white_pixel_strip1, 1, index, true);
             tile.Scale = 25f;
             tile.ScaleVector = new Vector2(screenSize.X, 200);
             tile.Position = new Vector2(0, screenSize.Y);
-            tilesList.Add(tile);
+            borderList.Add(tile);
 
             // Right
             tile = new Tile(GameObject.Instance.Content.white_pixel_strip1, 2, index, true);
             tile.Scale = 25f;
             tile.ScaleVector = new Vector2(200, screenSize.Y);
             tile.Position = new Vector2(screenSize.X, 0);
-            tilesList.Add(tile);
+            borderList.Add(tile);
 
             // Left
             tile = new Tile(GameObject.Instance.Content.white_pixel_strip1, 3, index, true);
             tile.Scale = 25f;
             tile.ScaleVector = new Vector2(200, screenSize.Y);
             tile.Position = new Vector2(-200, 0);
-            tilesList.Add(tile);
+            borderList.Add(tile);
         }
 
+        /// <summary>
+        /// Creates the background
+        /// </summary>
         public void CreateBackground()
         {
             Tile background = new Tile(GameObject.Instance.Content.space_only_background_strip1, 0, 1, true);
             
             background.Transform = new Rectangle(0, 0, background.Sprite.Width, background.Sprite.Height);
           
-            background.Scale = GameObject.Instance.GraphicsDevice.Viewport.Height / background.Sprite.Width / (Player.PlayerInstance.Scale * 0.675f);
+            background.Scale = GameObject.Instance.GraphicsDevice.Viewport.Height / background.Sprite.Width / (Player.PlayerInstance.Scale * 0.975f);
             background.ScaleVector = new Vector2(background.Scale, background.Scale);
             background.Position = new Vector2(0, -GameObject.Instance.GraphicsDevice.Viewport.Height * 4.3f);
             background.Position -= new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Width, 0);
@@ -166,29 +174,44 @@ namespace Galabingus
             background2.Position = Vector2.Zero;
             
             background2.Transform = new Rectangle(0, 0, background.Sprite.Width, background.Sprite.Height);
-            background2.Scale = GameObject.Instance.GraphicsDevice.Viewport.Height / background.Sprite.Width / (Player.PlayerInstance.Scale * 0.675f);
+            background2.Scale = GameObject.Instance.GraphicsDevice.Viewport.Height / background.Sprite.Width / (Player.PlayerInstance.Scale * 0.975f);
             background2.ScaleVector = new Vector2(background.Scale, background.Scale);
             backgroundList.Add(background2);
         }
 
+        /// <summary>
+        /// Creates asteriod objects
+        /// </summary>
+        /// <param name="position"> The position of the asteriod </param>
+        public void CreateAsteriod(Vector2 position)
+        {
+            Tile asteriod = new Tile(GameObject.Instance.Content.grayasteroid_strip1, 0, 1, true);
+            asteriod.Transform = new Rectangle(0, 0, asteriod.Sprite.Width, asteriod.Sprite.Height);
+            asteriod.Scale = 1f;
+            asteriod.Position = position;
+            //asteriod.Position = new Vector2((Player.PlayerInstance.Transform.Width * 2)+200, (GameObject.Instance.GraphicsDevice.Viewport.Height * 0.5f - Player.PlayerInstance.Transform.Height));
+            asteriod.ScaleVector = new Vector2(asteriod.Scale, asteriod.Scale);
+            tileList.Add(asteriod);
+        }
+
         public void Update(GameTime gameTime)
         {
-            for (int i = 0; i < tilesList.Count; i++)
+            for (int i = 0; i < borderList.Count; i++)
             {
                 //currentSpriteNumber = tilesList[i].SpriteNumber;
 
 
-                tilesList[i].Collider.Resolved = true;
-                List<Collision> collisions = tilesList[i].Collider.UpdateTransform(
-                    tilesList[i].Sprite,
-                    tilesList[i].Position,
-                    tilesList[i].Transform,
+                borderList[i].Collider.Resolved = true;
+                List<Collision> collisions = borderList[i].Collider.UpdateTransform(
+                    borderList[i].Sprite,
+                    borderList[i].Position,
+                    borderList[i].Transform,
                     GameObject.Instance.GraphicsDevice,
                     GameObject.Instance.SpriteBatch,
-                    tilesList[i].ScaleVector,
+                    borderList[i].ScaleVector,
                     SpriteEffects.None,
                     (ushort)CollisionGroup.Tile,
-                    tilesList[i].InstanceNumber
+                    borderList[i].InstanceNumber
                     );
 
                 foreach (Collision collision in collisions)
@@ -202,7 +225,7 @@ namespace Galabingus
                         }
                     }
                 }
-                tilesList[i].Collider.Resolved = true;
+                borderList[i].Collider.Resolved = true;
 
             }
 
@@ -245,18 +268,21 @@ namespace Galabingus
 
         public void Draw()
         {
-            for (int i = 0; i < tilesList.Count; i++)
+            backgroundList[0].Draw(
+                GameObject.Instance.GraphicsDevice.Viewport.Width / backgroundList[0].Transform.Width / backgroundList[0].ScaleVector.X * 4,
+                GameObject.Instance.GraphicsDevice.Viewport.Height / backgroundList[0].Transform.Height / backgroundList[0].ScaleVector.Y * 4.3f * 2
+
+            );
+
+           //for (int i = 0; i < tileList.Count; i++)
+           //{
+           //    tileList[i].Draw();
+           //}
+
+            for (int i = 0; i < borderList.Count; i++)
             {
-                tilesList[i].Draw();
+                borderList[i].Draw();
             }
-            //for (int i = 0; i < backgroundList.Count; i++)
-            //{
-                backgroundList[0].Draw(
-                    GameObject.Instance.GraphicsDevice.Viewport.Width / backgroundList[0].Transform.Width / backgroundList[0].ScaleVector.X * 4, 
-                    GameObject.Instance.GraphicsDevice.Viewport.Height / backgroundList[0].Transform.Height / backgroundList[0].ScaleVector.Y * 4.3f * 2
-                    
-                );
-            //}
         }
     }
 }
