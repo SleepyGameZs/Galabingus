@@ -246,7 +246,7 @@ namespace Galabingus
 
             //dummy variables
             Button button;
-            Background menu;
+            Background background;
 
             //more dummy variables
             EventDelegate event1;
@@ -259,6 +259,11 @@ namespace Galabingus
             new Vector2(width / 2, height / 2),
             event1, menu1);
 
+            AddText("arial_36", "Hello Welcome to Game",
+                new Vector2(width / 2 - 200, 
+                height / 2 - 200), menu1);
+
+            /*
             //Create the Options Button
             event1 = null;
             event2 = UpMenu;
@@ -276,6 +281,8 @@ namespace Galabingus
             AddButton("buttonOptions_strip1", 1,
                 new Vector2(width / 2, height / 2 + 200),
                 event2, menu1);
+
+            */
 
             //add the background
             menuBackground = cm.Load<Texture2D>("menubackground_strip1");
@@ -302,7 +309,7 @@ namespace Galabingus
             {
                 cs = UIControlState.Mouse;
             }
-            else if(
+            else if (
                 currentKBS.IsKeyDown(Keys.W) && currentKBS.IsKeyDown(Keys.A) &&
                 currentKBS.IsKeyDown(Keys.S) && currentKBS.IsKeyDown(Keys.D) &&
                 currentKBS.IsKeyDown(Keys.Up) && currentKBS.IsKeyDown(Keys.Down) &&
@@ -310,6 +317,8 @@ namespace Galabingus
             {
                 cs = UIControlState.Keys;
             }
+
+
 
             foreach (UILevel level in levels)
             {
@@ -390,8 +399,8 @@ namespace Galabingus
                         new Rectangle(
                             0,
                             0,
-                            menuBackground.Width,
-                            menuBackground.Height),
+                            gr.GraphicsDevice.Viewport.Width,
+                            gr.GraphicsDevice.Viewport.Height),
                         Color.White);
 
                     break;
@@ -483,6 +492,96 @@ namespace Galabingus
             listToAdd.Add(background);
         }
 
+        public void AddText(string filename, string content, Vector2 position, List<UIElement> listToAdd)
+        {
+            SpriteFont font = cm.Load<SpriteFont>(filename);
+
+            Text text = new Text(font, content, position);
+
+            listToAdd.Add(text);
+        }
+
+        public void AddText(string filename, string content, Vector2 position, Color tint, List<UIElement> listToAdd)
+        {
+            SpriteFont font = cm.Load<SpriteFont>(filename);
+
+            Text text = new Text(font, content, position, tint);
+
+            listToAdd.Add(text);
+        }
+
+        public void AddText(string filename, string content, Vector2 position, int lineCapacity, int spacing, List<UIElement> listToAdd)
+        {
+            SpriteFont font = cm.Load<SpriteFont>(filename);
+
+            List<string> contentDivided = new List<string>();
+
+            while(content != null)
+            {
+                int finalPoint = 0;
+
+                for (int i = 0; i < lineCapacity; i++)
+                {
+                    if (content[i] == ' ' || i - 1 == content.Length)
+                    {
+                        finalPoint = i;
+                    }
+                }
+
+                string dividedPortion = content.Substring(0, finalPoint + 1);
+                contentDivided.Add(dividedPortion);
+
+                if(content.Length != 0)
+                {
+                    content = content.Substring(finalPoint + 2, content.Length - 1);
+                }
+            }
+
+            for(int i = 0; i < contentDivided.Count; i++)
+            {
+                Text text = new Text(font, contentDivided[i], 
+                    new Vector2 (position.X + spacing, position.Y));
+
+                listToAdd.Add(text);
+            }
+        }
+
+        public void AddText(string filename, string content, Vector2 position, int lineCapacity, int spacing, Color tint, List<UIElement> listToAdd)
+        {
+            SpriteFont font = cm.Load<SpriteFont>(filename);
+
+            List<string> contentDivided = new List<string>();
+
+            while (content != null)
+            {
+                int finalPoint = 0;
+
+                for (int i = 0; i < lineCapacity; i++)
+                {
+                    if (content[i] == ' ' || i - 1 == content.Length)
+                    {
+                        finalPoint = i;
+                    }
+                }
+
+                string dividedPortion = content.Substring(0, finalPoint + 1);
+                contentDivided.Add(dividedPortion);
+
+                if (content.Length != 0)
+                {
+                    content = content.Substring(finalPoint + 2, content.Length - 1);
+                }
+            }
+
+            for (int i = 0; i < contentDivided.Count; i++)
+            {
+                Text text = new Text(font, contentDivided[i],
+                    new Vector2(position.X + spacing, position.Y), tint);
+
+                listToAdd.Add(text);
+            }
+        }
+
         /// <summary>
         /// updates all of the objects within the list of UIElements
         /// </summary>
@@ -505,6 +604,12 @@ namespace Galabingus
 
                     //run the update of the menu and store what event it returns
                     background.Update();
+                }
+                else if (element is Text)
+                {
+                    Text text = (Text)element;
+
+                    text.Update();
                 }
             }
         }
@@ -531,6 +636,12 @@ namespace Galabingus
 
                     //and draw it
                     background.Draw(sb);
+                }
+                else if (element is Text)
+                {
+                    Text text = (Text)element;
+
+                    text.Draw(sb);
                 }
             }
             

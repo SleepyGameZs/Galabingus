@@ -28,12 +28,17 @@ namespace Galabingus
 
         //the current mouseState
         private MouseState mouseState;
+        private bool hover;
 
         #endregion
 
         #region Properties
 
-        public List<UIElement> DisplayMenu { get; set; }
+        public bool Hover
+        {
+            get { return hover; }
+            set { hover = value; }
+        }
 
         #endregion
 
@@ -47,7 +52,6 @@ namespace Galabingus
         public Button
             (Texture2D texture, Vector2 position, int scale)
             : base(texture, position, scale) { }
-
         #endregion
 
         #region Methods
@@ -56,9 +60,9 @@ namespace Galabingus
         {
             mouseState = Mouse.GetState();
 
-            if(uiPosition.Contains(mouseState.Position))
+            if (uiPosition.Contains(mouseState.Position))
             {
-                if(mouseState.LeftButton == ButtonState.Pressed)
+                if (mouseState.LeftButton == ButtonState.Pressed)
                 {
                     OnClick(this);
                 }
