@@ -61,25 +61,27 @@ namespace Galabingus_Map_Editor
         private int totalWidth;
         private int totalHeight;
         private int totalDensity;
-        private int totalPageNum;
-
+        private int totalEditorPageNum;
         private int tileSize;
+        private int selectablePage;
 
         private bool saved;
 
-        private List<Image> TileSet;
+        private List<Image> tileSet;
 
         private Image currentSelected;
 
         private List<Image[]> spritePageSelect;
 
-        private Image[] imageArray; 
+        private Image[] imageArray;
+
+        private Button[] buttonList; 
 
         public MapEditorScreen(int numofPage, int pixelDensity)
         {
             InitializeComponent();
 
-            TileSet = new Dictionary<string, Image>();
+            tileSet = new List<Image>();
 
             totalWidth = 16;
 
@@ -89,17 +91,19 @@ namespace Galabingus_Map_Editor
 
             totalDensity = pixelDensity;
 
-            totalPageNum = numofPage;
+            totalEditorPageNum = numofPage;
 
             currentSelected = null;
 
+            selectablePage = 1;
+
             TileSizeDet();
 
-            DicImageAdd();
+            ImageAdd();
 
             MapDraw();
 
-            currentSelected = Properties.Resources.enemy_dblue_strip4_1;
+            //currentSelected = Properties.Resources.enemy_dblue_strip4_1;
 
         }
 
@@ -111,7 +115,7 @@ namespace Galabingus_Map_Editor
 
             TileSizeDet();
 
-            DicImageAdd();
+            ImageAdd();
 
             MapDraw();
         }
@@ -201,13 +205,13 @@ namespace Galabingus_Map_Editor
         //Left Change Selectable
         private void button13_Click(object sender, EventArgs e)
         {
-
+            ChangeSelectable(-1);
         }
 
         //Right Change Selectable
         private void button12_Click(object sender, EventArgs e)
         {
-
+            ChangeSelectable(1);
         }
 
         //Change Level Section Left
@@ -254,69 +258,84 @@ namespace Galabingus_Map_Editor
             }
         }
 
-        private void DicImageAdd()
+        private void ImageAdd()
         {
             //Enemy Sprites
-            TileSet.Add(Properties.Resources.enemy_dblue_strip4_1);
-            TileSet.Add(Properties.Resources.enemy_green_strip4_1);
-            TileSet.Add(Properties.Resources.enemy_lblue_strip4_1);
-            TileSet.Add(Properties.Resources.enemy_orange_strip4_1);
-            TileSet.Add(Properties.Resources.enemy_pink_strip4_1);
-            TileSet.Add(Properties.Resources.enemy_purple_strip4_1);
-            TileSet.Add(Properties.Resources.enemy_red_strip4_1);
-            TileSet.Add(Properties.Resources.enemy_yellow_strip4_1);
+            tileSet.Add(Properties.Resources.enemy_dblue_strip4_1);
+            tileSet.Add(Properties.Resources.enemy_green_strip4_1);
+            tileSet.Add(Properties.Resources.enemy_lblue_strip4_1);
+            tileSet.Add(Properties.Resources.enemy_orange_strip4_1);
+            tileSet.Add(Properties.Resources.enemy_pink_strip4_1);
+            tileSet.Add(Properties.Resources.enemy_purple_strip4_1);
+            tileSet.Add(Properties.Resources.enemy_red_strip4_1);
+            tileSet.Add(Properties.Resources.enemy_yellow_strip4_1);
 
             //Boss Sprite
             //TileSet.Add(Image.FromFile(@"../Resources/Boss image");
 
             //Player Sprite
-            TileSet.Add(Properties.Resources.player_strip5_1);
+            tileSet.Add(Properties.Resources.player_strip5_1);
 
             //Asteroid Tiles
-            TileSet.Add(Properties.Resources.tile_strip26_1);
-            TileSet.Add(Properties.Resources.tile_strip26_2);
-            TileSet.Add(Properties.Resources.tile_strip26_3);
-            TileSet.Add(Properties.Resources.tile_strip26_4);
-            TileSet.Add(Properties.Resources.tile_strip26_5);
-            TileSet.Add(Properties.Resources.tile_strip26_6);
-            TileSet.Add(Properties.Resources.tile_strip26_7);
-            TileSet.Add(Properties.Resources.tile_strip26_8);
-            TileSet.Add(Properties.Resources.tile_strip26_9);
-            TileSet.Add(Properties.Resources.tile_strip26_10);
-            TileSet.Add(Properties.Resources.tile_strip26_11);
-            TileSet.Add(Properties.Resources.tile_strip26_12);
-            TileSet.Add(Properties.Resources.tile_strip26_13);
-            TileSet.Add(Properties.Resources.tile_strip26_14);
-            TileSet.Add(Properties.Resources.tile_strip26_15);
-            TileSet.Add(Properties.Resources.tile_strip26_16);
-            TileSet.Add(Properties.Resources.tile_strip26_17);
-            TileSet.Add(Properties.Resources.tile_strip26_18);
-            TileSet.Add(Properties.Resources.tile_strip26_19);
-            TileSet.Add(Properties.Resources.tile_strip26_20);
-            TileSet.Add(Properties.Resources.tile_strip26_21);
-            TileSet.Add(Properties.Resources.tile_strip26_22);
-            TileSet.Add(Properties.Resources.tile_strip26_23);
-            TileSet.Add(Properties.Resources.tile_strip26_24);
-            TileSet.Add(Properties.Resources.tile_strip26_25);
-            TileSet.Add(Properties.Resources.tile_strip26_26);
+            tileSet.Add(Properties.Resources.tile_strip26_1);
+            tileSet.Add(Properties.Resources.tile_strip26_2);
+            tileSet.Add(Properties.Resources.tile_strip26_3);
+            tileSet.Add(Properties.Resources.tile_strip26_4);
+            tileSet.Add(Properties.Resources.tile_strip26_5);
+            tileSet.Add(Properties.Resources.tile_strip26_6);
+            tileSet.Add(Properties.Resources.tile_strip26_7);
+            tileSet.Add(Properties.Resources.tile_strip26_8);
+            tileSet.Add(Properties.Resources.tile_strip26_9);
+            tileSet.Add(Properties.Resources.tile_strip26_10);
+            tileSet.Add(Properties.Resources.tile_strip26_11);
+            tileSet.Add(Properties.Resources.tile_strip26_12);
+            tileSet.Add(Properties.Resources.tile_strip26_13);
+            tileSet.Add(Properties.Resources.tile_strip26_14);
+            tileSet.Add(Properties.Resources.tile_strip26_15);
+            tileSet.Add(Properties.Resources.tile_strip26_16);
+            tileSet.Add(Properties.Resources.tile_strip26_17);
+            tileSet.Add(Properties.Resources.tile_strip26_18);
+            tileSet.Add(Properties.Resources.tile_strip26_19);
+            tileSet.Add(Properties.Resources.tile_strip26_20);
+            tileSet.Add(Properties.Resources.tile_strip26_21);
+            tileSet.Add(Properties.Resources.tile_strip26_22);
+            tileSet.Add(Properties.Resources.tile_strip26_23);
+            tileSet.Add(Properties.Resources.tile_strip26_24);
+            tileSet.Add(Properties.Resources.tile_strip26_25);
+            tileSet.Add(Properties.Resources.tile_strip26_26);
 
             spritePageSelect = new List<Image[]>();
 
-            for ()
+            for (int x = 0; x < 4; x++)
             {
                 imageArray = new Image[10];
                 for (int y = 0; y < 10; y++)
                 {
-                    imageArray[y] = 
+                    if ((10 * x) + y < 35)
+                    {
+                        imageArray[y] = tileSet[(10 * x) + y];
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
+                spritePageSelect.Add(imageArray);
             }
-            imageArray = new Image[] 
-            { 
-                
+
+            buttonList = new Button[]
+            {
+                button2,
+                button7,
+                button3,
+                button8,
+                button4,
+                button9,
+                button5,
+                button10,
+                button6,
+                button11
             };
-
-            spritePageSelect.Add(imageArray);
-
         }
 
         private void TileSizeDet()
@@ -330,7 +349,15 @@ namespace Galabingus_Map_Editor
 
         private void ChangeSelectable(int change) 
         {
-            
+            selectablePage = selectablePage + change;
+            if (selectablePage > 0 && selectablePage < 5)
+            {
+                Image[] temp = spritePageSelect[selectablePage];
+                for (int x = 0; x < buttonList.Length; x++)
+                {
+                    buttonList[x].BackgroundImage = temp[x];
+                }
+            }
         }
 
         private void ChangeLevelSection(int change)

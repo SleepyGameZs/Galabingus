@@ -210,24 +210,6 @@ namespace Galabingus
 
             if (!(userInterface.GS == GameState.Menu))
             {
-
-                //draw the background using the temporary background texture
-                /*_spriteBatch.Draw(
-                    tempBackground,
-                    Vector2.Zero,
-                    new Rectangle(0, 0, tempBackground.Width, tempBackground.Height),
-                    new Color(Color.White * 0.7f,1.0f),
-                    0,
-                    Vector2.Zero,
-                    new Vector2(
-                        GameObject.Instance.GraphicsDevice.Viewport.Width / (float)tempBackground.Width,
-                        GameObject.Instance.GraphicsDevice.Viewport.Height / (float)tempBackground.Height
-                    ),
-                    SpriteEffects.None,
-                    1
-                );
-                */
-
                 if (TileManager.Instance.CurrentSpriteNumber == 0)
                 {
                     // Draws tiles
@@ -257,5 +239,11 @@ namespace Galabingus
 
             base.Draw(gameTime);
         }
+
+        public void MouseVisibility(bool visibility)
+        {
+            IsMouseVisible = visibility;
+        }
+
     }
 }

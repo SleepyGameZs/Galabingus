@@ -168,6 +168,7 @@ namespace Galabingus
             background.Position = new Vector2(0, -GameObject.Instance.GraphicsDevice.Viewport.Height * 4.3f);
             background.Position -= new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Width, 0);
             background.Effect = GameObject.Instance.ContentManager.Load<Effect>("background");
+            background.Collider.Unload();
             backgroundList.Add(background);
 
             Tile background2 = new Tile(GameObject.Instance.Content.space_only_background_strip1, 1, 1, true);
@@ -176,6 +177,7 @@ namespace Galabingus
             background2.Transform = new Rectangle(0, 0, background.Sprite.Width, background.Sprite.Height);
             background2.Scale = GameObject.Instance.GraphicsDevice.Viewport.Height / background.Sprite.Width / (Player.PlayerInstance.Scale * 0.975f);
             background2.ScaleVector = new Vector2(background.Scale, background.Scale);
+            background2.Collider.Unload();
             backgroundList.Add(background2);
         }
 

@@ -930,11 +930,6 @@ namespace Galabingus
             SetSprite(instanceNumber, GameObject.Instance.contentManager.Load<Texture2D>(path));
             SetScale(instanceNumber, 1.0f);
             SetAnimation(instanceNumber, new Animation(GetSprite(instanceNumber).Width, GetSprite(instanceNumber).Height, strip));
-            Collider newCollider = new Collider();
-            newCollider.Layer = contentName;
-            newCollider.Resolved = true;
-            newCollider.self = this;
-            SetCollider(instanceNumber, newCollider);
             SetPosition(instanceNumber, Vector2.Zero);
             SetTransform(instanceNumber,
                 new Rectangle(
@@ -944,6 +939,12 @@ namespace Galabingus
                     GetSprite(instanceNumber).Height                   // Height of the sprite
                 )
             );
+            Collider newCollider = new Collider();
+            newCollider.Layer = contentName;
+            newCollider.Resolved = true;
+            newCollider.self = this;
+            SetCollider(instanceNumber, newCollider);
+
         }
 
         public System.Type GameObjectType
