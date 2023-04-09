@@ -20,10 +20,16 @@ namespace Galabingus
     {
         #region Fields
 
+        //most objects
         protected Texture2D uiTexture; //its texture
-        protected Rectangle uiPosition; //its position rect
         protected Color clearColor; //its tint
+        protected Rectangle uiPosition; //its position rect
 
+        //text
+        protected SpriteFont uiFont; //the font type
+        protected string uiText; //the text
+        protected Vector2 uiTextPosition; //the position
+         
         #endregion
 
         #region Properties
@@ -57,7 +63,18 @@ namespace Galabingus
                     length,
                     width
                 );
+
+            clearColor = Color.White;
         }
+
+        public UIElement(SpriteFont uiFont, string uiText, Vector2 position)
+        {
+            this.uiFont = uiFont;
+            this.uiText = uiText;
+            this.uiTextPosition = position;
+            clearColor = Color.Black;
+        }
+
         #endregion
 
         #region Methods
