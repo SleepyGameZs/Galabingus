@@ -26,10 +26,10 @@ namespace Galabingus
         protected Rectangle uiPosition; //its position rect
 
         //text
-        protected SpriteFont uiFont;
-        protected string uiText;
-        protected Vector2 uiTextPosition;
-
+        protected SpriteFont uiFont; //the font type
+        protected string uiText; //the text
+        protected Vector2 uiTextPosition; //the position
+         
         #endregion
 
         #region Properties
@@ -63,6 +63,8 @@ namespace Galabingus
                     length,
                     width
                 );
+
+            clearColor = Color.White;
         }
 
         public UIElement(SpriteFont uiFont, string uiText, Vector2 position)

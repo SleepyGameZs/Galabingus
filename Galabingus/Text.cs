@@ -12,8 +12,13 @@ using System.IO;
 
 namespace Galabingus
 {
+
+    public delegate string TextEvent();
+
     internal class Text : UIElement
     {
+
+        public event TextEvent UpdateText;
 
         #region CTOR
 
@@ -38,8 +43,8 @@ namespace Galabingus
 
         public override void Update()
         {
-            //don't really need to update text for the most part, but hey who knows,
-            //maybe a scrolling text box will be in order some day
+            if(UpdateText != null)
+                UpdateText();
         }
 
         public override void Draw(SpriteBatch sb)

@@ -18,27 +18,19 @@ namespace Galabingus
 
         public event EventDelegate OnClick;
         public event EventDelegate OnHover;
-        public event EventDelegate OnHold;
         public event EventDelegate OnRelease;
-        public event EventDelegate OnDblClick;
 
         #endregion
 
         #region Fields
 
         //the current mouseState
-        private MouseState mouseState;
-        private bool hover;
+        private MouseState currentMS;
+        private MouseState prevMS;
 
         #endregion
 
         #region Properties
-
-        public bool Hover
-        {
-            get { return hover; }
-            set { hover = value; }
-        }
 
         #endregion
 
@@ -52,29 +44,36 @@ namespace Galabingus
         public Button
             (Texture2D texture, Vector2 position, int scale)
             : base(texture, position, scale) { }
+
         #endregion
 
         #region Methods
 
         public override void Update()
         {
-            mouseState = Mouse.GetState();
+            currentMS = Mouse.GetState();
 
-            if (uiPosition.Contains(mouseState.Position))
+            if (uiPosition.Contains(currentMS.Position))
             {
-                if (mouseState.LeftButton == ButtonState.Pressed)
+                if (currentMS.LeftButton == ButtonState.Pressed)
                 {
-                    OnClick(this);
+                    if (OnClick != null)
+                        OnClick(this);
+
                 }
                 else
                 {
-                    clearColor = Color.LightGray;
+                    if (OnHover != null)
+                        OnHover(this);
                 }
             }
             else
             {
-                clearColor = Color.White;
+                if (OnRelease != null)
+                    OnRelease(this);
             }
+
+            prevMS = currentMS;
         }
 
         public override void Draw(SpriteBatch sb)
