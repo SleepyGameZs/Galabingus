@@ -63,11 +63,6 @@ float3 normalizeSaturation(float4 color)
 	return  color * 1.3f;
 }
 
-cbuffer Collider
-{
-	float2 positon;
-};
-
 float4 FadeIn(float4 inColor)
 {
 	if (fadeIn)

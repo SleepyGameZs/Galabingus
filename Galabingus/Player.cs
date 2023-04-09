@@ -834,8 +834,8 @@ namespace Galabingus
                     if (totalBoostTime >= boostFrameRate * 0.3333333f)
                     {
                         Ghost ghostBoost = new Ghost();
-                        ghostBoost.ghostColor = new Color(new Color(255, 165, 11), 1.0f);
-                        ghostBoost.Position = Position + normVelocity * 0.1f * (float)Animation.EllapsedTime * new Vector2(speed.X, speed.Y).LengthSquared() * ((1 - boostSpeed) * -0.1f );
+                        ghostBoost.ghostColor = new Color(new Color(0, 155, 255), 1.0f);
+                        ghostBoost.Position = Position;// + normVelocity * 0.1f * (float)Animation.EllapsedTime * new Vector2(speed.X, speed.Y).LengthSquared() * ((1 - boostSpeed) * -0.1f );
                         boostSpeed *= (float)Animation.EllapsedTime;
                         boostOpacity -= 0.0005f;
                         ghostBoost.boostOpacity = boostOpacity;
@@ -900,7 +900,7 @@ namespace Galabingus
                     foreach (Ghost ghost in ghosts)
                     {
                         Color halfOColor = ghost.ghostColor;//new Color(ghost.ghostColor * 0.825f, 0.825f);
-                        if (halfOColor.R <= 7)
+                        if (halfOColor.B <= 7)
                         {
                             halfOColor = Color.Transparent;
                         }

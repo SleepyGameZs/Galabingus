@@ -112,6 +112,12 @@
 /processorParam:TextureFormat=Color
 /build:circlebullet_strip4.png
 
+#begin Collider.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Collider.fx
+
 #begin enemy_dblue_strip4.png
 /importer:TextureImporter
 /processor:TextureProcessor

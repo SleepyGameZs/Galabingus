@@ -114,7 +114,7 @@ namespace Galabingus
         public GameObject self;
         private Vector2 scale;
         private SpriteEffects? spriteEffects;
-        Texture2D copyOfSprite;
+        public RenderTarget2D targetSprite;
 
         /// <summary>
         ///  Colider that is empty
@@ -304,13 +304,13 @@ namespace Galabingus
             Scale = new Vector2(scale, scale);
 
             // Render the effects and scale
-            RenderTarget2D scaledSprite = new RenderTarget2D(
+            targetSprite = new RenderTarget2D(
                 graphicsDevice,
                 (int)Math.Round((transform.Width * scale), MidpointRounding.AwayFromZero) <= 0 ? 1 : (int)Math.Round((transform.Width * scale), MidpointRounding.AwayFromZero),
                 (int)Math.Round((transform.Height * scale), MidpointRounding.AwayFromZero) <= 0 ? 1 : (int)Math.Round((transform.Height * scale), MidpointRounding.AwayFromZero)
             );
             clearColor = Color.Transparent;
-            graphicsDevice.SetRenderTarget(scaledSprite);
+            graphicsDevice.SetRenderTarget(targetSprite);
             graphicsDevice.Clear(clearColor);
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
             spriteBatch.Draw(
@@ -331,7 +331,7 @@ namespace Galabingus
             // Scale the transform
             // Load pixel data to CPU memory
             this.spriteEffects = SpriteEffects.None;
-            Load(scaledSprite);
+            Load(targetSprite);
         }
 
         /// <summary>
@@ -343,12 +343,12 @@ namespace Galabingus
             {
                 pixels = new Color[renderTarget2D.Width * renderTarget2D.Height];
                 renderTarget2D.GetData(pixels);
-                renderTarget2D.Dispose();
+                //renderTarget2D.Dispose();
                 GC.Collect();
             }
             else
             {
-                renderTarget2D.Dispose();
+                //renderTarget2D.Dispose();
             }
         }
 
@@ -509,13 +509,13 @@ namespace Galabingus
                             if (pixels == null || spriteEffects != effect && spriteEffects != null && effect != null)
                             {
                                 // Setup the renderTarget
-                                RenderTarget2D scaledSprite = new RenderTarget2D(graphicsDevice,
+                                targetSprite = new RenderTarget2D(graphicsDevice,
                                     (int)Math.Round((transform.Width * (Scale.X)), MidpointRounding.AwayFromZero) <= 0 ? 1 : (int)Math.Round((transform.Width * (Scale.X)), MidpointRounding.AwayFromZero),
                                     (int)Math.Round((transform.Height * (Scale.Y)), MidpointRounding.AwayFromZero) <= 0 ? 1 : (int)Math.Round((transform.Height * (Scale.Y)), MidpointRounding.AwayFromZero)
                                 );
 
                                 // Render the new sprite 
-                                graphicsDevice.SetRenderTarget(scaledSprite);
+                                graphicsDevice.SetRenderTarget(targetSprite);
                                 graphicsDevice.Clear(clearColor);
                                 spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
                                 spriteBatch.Draw(
@@ -535,7 +535,7 @@ namespace Galabingus
                                 this.colldierCurrentMTV = Vector2.Zero;
 
                                 // Update the transform with the new scale and sprite
-                                Load(scaledSprite);
+                                Load(targetSprite);
                             }
                         }
 
