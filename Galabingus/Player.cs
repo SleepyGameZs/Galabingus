@@ -78,6 +78,15 @@ namespace Galabingus
         private Texture2D halfHeartSprite;
         private Texture2D fullHeartSprite;
         private bool cameraLock;
+        private Vector2 translation;
+
+        public Vector2 Translation
+        {
+            get
+            {
+                return translation;
+            }
+        }
 
         public Vector2 Speed
         {
@@ -460,7 +469,8 @@ namespace Galabingus
             {
                 if (!collides && !previousCollision)
                 {
-                    Position += (velocity == Vector2.Zero ? velocity : Vector2.Normalize(velocity) * (float)Animation.EllapsedTime * ((boost) ? boostSpeed : 1) * speed * translationAjdustedRatio);
+                    translation = (velocity == Vector2.Zero ? velocity : Vector2.Normalize(velocity) * (float)Animation.EllapsedTime * ((boost) ? boostSpeed : 1) * speed * translationAjdustedRatio);
+                    Position += translation;
                 }
             }
 
@@ -801,8 +811,6 @@ namespace Galabingus
             {
 
                 previousKeyboardState = currentKeyboardState;
-
-
 
                 if (currentKeyboardState.IsKeyDown(Keys.A) || currentKeyboardState.IsKeyDown(Keys.D) || currentKeyboardState.IsKeyUp(Keys.A) || currentKeyboardState.IsKeyUp(Keys.D))
                 {
