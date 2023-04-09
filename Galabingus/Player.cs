@@ -79,6 +79,14 @@ namespace Galabingus
         private Texture2D fullHeartSprite;
         private bool cameraLock;
 
+        public Vector2 Speed
+        {
+            get
+            {
+                return speed;
+            }
+        }
+
         public bool CameraLock
         {
             get
