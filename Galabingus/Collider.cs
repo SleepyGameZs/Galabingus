@@ -469,6 +469,10 @@ namespace Galabingus
             )
             {
                 //pixels = null;
+                if (targetSprite != null)
+                {
+                    targetSprite.Dispose();
+                }
                 return new List<Collision>();
             }
 
