@@ -733,9 +733,8 @@ namespace Galabingus
             if (xComparison && !yComparison)
             {
                 mtv.X = Math.Abs(mtv.X);
-                mtv.Y = -Math.Abs(mtv.Y);
+                mtv.Y = 0;
                 // X +
-               // Debug.WriteLine("AAA");
             }
             else if (!xComparison && yComparison)
             {
@@ -755,9 +754,11 @@ namespace Galabingus
             else
             {
                 // Y and Y -
+
                 if (Math.Abs(overlap.Y) > Math.Abs(overlap.X))
                 {
                     mtv.X = -Math.Abs(mtv.X);
+                    mtv.Y = 0;
                 }
                 else if (!yComparison)
                 {
@@ -765,20 +766,6 @@ namespace Galabingus
                     mtv.Y = -Math.Abs(mtv.Y);
                 }
 
-                // X and X -
-                if (xComparison && yComparison)
-                {
-                    mtv.X = Math.Abs(mtv.X);
-                    mtv.Y = 0;
-                }
-                if (xComparison)
-                {
-                    mtv.X = -Math.Abs(mtv.X);
-                }
-                if (yComparison)
-                {
-                    mtv.Y = Math.Abs(mtv.Y);
-                }
             }
 
             if (yComparison)
