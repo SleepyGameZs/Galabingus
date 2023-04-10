@@ -242,7 +242,7 @@ namespace Galabingus
             {
                 if (backgroundList[1].Position.Y >= GameObject.Instance.GraphicsDevice.Viewport.Height)
                 {
-                    if (counter == 2)
+                    if (counter == 3)
                     {
                         //Camera.Instance.Stop();
                         Player.PlayerInstance.CameraLock = false;

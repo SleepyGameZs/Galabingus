@@ -476,6 +476,24 @@ namespace Galabingus
                 return new List<Collision>();
             }
 
+            if (Keyboard.GetState().IsKeyDown(Keys.C) && targetSprite != null)
+            {
+                GameObject.Instance.Debug += delegate (SpriteBatch spriteBatch)
+                {
+                    spriteBatch.Draw(
+                        targetSprite,
+                        new Vector2(position.X, position.Y),
+                        new Rectangle(0,0,this.transform.Width, this.transform.Height),
+                        Color.Red,
+                        0.0f,
+                        Vector2.Zero,
+                        1.0f,
+                        effect,
+                        1.0f
+                    );
+                };
+            }
+
             List<Collision> result = new List<Collision>();
             ushort layer4 = GameObject.Instance.ColliderLayer4Instance(instanceNumber);
             unsafe
@@ -508,7 +526,7 @@ namespace Galabingus
                         if (active && !updated)
                         {
                             updated = true;
-                            
+
                             // Load pixel data to CPU memory
                             if (pixels == null || spriteEffects != effect && spriteEffects != null && effect != null)
                             {
