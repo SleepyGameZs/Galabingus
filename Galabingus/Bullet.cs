@@ -515,7 +515,7 @@ namespace Galabingus
                     }
 
                     // Set Current Position
-                    currentPosition = SetPosition(gameTime, 3, true);
+                    currentPosition = SetPosition(gameTime, 3, false);
                     break;
 
                 default:
