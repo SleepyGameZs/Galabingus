@@ -36,11 +36,6 @@ float3 normalizeSaturation(float4 color)
 		color.g = color.g * 0.8;
 	}
 
-	if (color.b > 0.5f && color.g > 0.25f && color.g < 0.5f)
-	{
-		//color.b = color.b * 2;
-	}
-
 	if ((color.r + color.b + color.g) * color.a < 0.3)
 	{
 		color = color * 1.27;
@@ -112,14 +107,14 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 	color.b = color.b * 0.125 + color.b * 0.875 * input.Color.a * 1.0;
 	color.a = color.a * input.Color.a;
 	color = color * input.Color;
-	
+
 	if (color.a == 0)
 	{
 		color.r = 0;
 		color.g = 0;
 		color.b = 0;
 	}
-	float4 lerpPixels = lerp(lerp(color, colorTrue, 0.9875), colorP,0.5);
+	float4 lerpPixels = lerp(lerp(color, colorTrue, 0.059875), colorP,0.5);
 	lerpPixels = lerpPixels * correctedColor;
 	return FadeIn(FadeOut(lerpPixels));
 }
