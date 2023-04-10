@@ -205,8 +205,6 @@ namespace Galabingus
             {
                 _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap);
             }
-            //draw the screen
-            userInterface.Draw();
 
             if (!(userInterface.GS == GameState.Menu))
             {
@@ -234,8 +232,13 @@ namespace Galabingus
 
             GameObject.Instance.DebugDraw(_spriteBatch);
 
+            //draw the screen
+            userInterface.Draw();
+
             // End the SpriteBatch draw
             _spriteBatch.End();
+
+
 
             base.Draw(gameTime);
         }
