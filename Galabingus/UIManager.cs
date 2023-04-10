@@ -299,7 +299,7 @@ namespace Galabingus
 
             AddText("arial_36", "LOLLLLL :skull_emoji", 
                 new Vector2(width / 2 - 100,
-                height / 2 - 150), gameOver1);
+                height / 2 - 150), Color.White, gameOver1);
 
             //add the background
             menuBackground = cm.Load<Texture2D>("menubackground_strip1");

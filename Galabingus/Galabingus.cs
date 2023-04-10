@@ -174,7 +174,7 @@ namespace Galabingus
 
                 tileManager.Update(gameTime);
             }
-            else if (userInterface.GS == GameState.Pause)
+            else if ( userInterface.GS == GameState.Pause || userInterface.GS == GameState.GameOver )
             {
                 shaders.Parameters["fadeIn"].SetValue(false);
                 shaders.Parameters["fadeOut"].SetValue(true);
