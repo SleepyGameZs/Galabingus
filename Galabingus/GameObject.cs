@@ -63,6 +63,7 @@ namespace Galabingus
         private const byte spritesConst = 4;
         private const byte scalesConst = 5;
         private const byte objectEnumsConst = 6;
+        private const byte effectConst = 7;
         private static GameObject allGameObjects = null;
         private static List<Animation> animations = null;
         private static List<Collider> colliders = null;
@@ -71,6 +72,7 @@ namespace Galabingus
         private static List<Texture2D> sprites = null;
         private static List<float> scales = null;
         private static List<string> objectEnums = null;
+        private static List<Effect> effects = null;
         unsafe private static GameObjectTrie<Animation> animationsI;
         unsafe private static GameObjectTrie<Collider> collidersI;
         unsafe private static GameObjectTrie<Rectangle> transformsI;
@@ -78,6 +80,7 @@ namespace Galabingus
         unsafe private static GameObjectTrie<Texture2D> spritesI;
         unsafe private static GameObjectTrie<float> scalesI;
         unsafe private static GameObjectTrie<string> objectEnumsI;
+        unsafe private static GameObjectTrie<Effect> effectI;
         private ushort index;
         private ushort instance;
         private ContentManager contentManager;           // Used to load in the content
@@ -86,6 +89,8 @@ namespace Galabingus
         private static List<List<List<ushort>>> trie;
         private List<List<CollisionGroup>> collisionGroups;
         private System.Type typeOfObject;
+        private Effect universalShader;
+        private static float fade;
         public dynamic thisGameObject;
 
         public struct GameObjectTrie<T>
@@ -108,6 +113,8 @@ namespace Galabingus
                         return GameObjectTrie<string>.Get(layer1Find, layer3Pass, GameObject.ObjectEnumsI);
                     case scalesConst:
                         return GameObjectTrie<float>.Get(layer1Find, layer3Pass, GameObject.ScalesI);
+                    case effectConst:
+                        return GameObjectTrie<Effect>.Get(layer1Find, layer3Pass, GameObject.EffectI);
                     default:
                         return GameObjectTrie<Texture2D>.Get(layer1Find, layer3Pass, GameObject.SpritesI);
                 }
@@ -137,6 +144,9 @@ namespace Galabingus
                         break;
                     case scalesConst:
                         GameObjectTrie<float>.Set(layer1Pass, layer3Pass, GameObject.ScalesI, (float)value);
+                        break;
+                    case effectConst:
+                        GameObjectTrie<Effect>.Set(layer1Pass, layer3Pass, GameObject.EffectI, (Effect)value);
                         break;
                     default:
                         GameObjectTrie<float>.Set(layer1Pass, layer3Pass, GameObject.ScalesI, (float)value);
@@ -340,7 +350,7 @@ namespace Galabingus
             {
                 if (CollisionGroup.Player == CollisionGroupIGet(GameObject.Instance.Index, GameObject.Instance.instance))
                 {
-                   // return ToPlayer();
+                    // return ToPlayer();
                 }
                 else
                 {
@@ -502,6 +512,34 @@ namespace Galabingus
             }
         }
 
+        private static List<Effect> EffectI
+        {
+            get
+            {
+                if (effects == null)
+                {
+                    effects = new List<Effect>();
+                }
+                return effects;
+            }
+            set
+            {
+                effects = value;
+            }
+        }
+
+        public Effect UniversalShader
+        {
+            get
+            {
+                return universalShader;
+            }
+            set
+            {
+                universalShader = value;
+            }
+        }
+
         public Texture2D GetSprite(ushort instancePass)
         {
 #nullable disable
@@ -568,6 +606,16 @@ namespace Galabingus
             unsafe
             {
                 return (Vector2)(positionsI).GetPass(positionConst, instancePass);
+            }
+#nullable enable
+        }
+
+        public Effect GetEffect(ushort instancePass)
+        {
+#nullable disable
+            unsafe
+            {
+                return (Effect)(effectI).GetPass(effectConst, instancePass);
             }
 #nullable enable
         }
@@ -642,6 +690,16 @@ namespace Galabingus
 #nullable enable
         }
 
+        public void SetEffect(ushort instancePass, object value)
+        {
+#nullable disable
+            unsafe
+            {
+                (effectI).SetPass(effectConst, instancePass, value);
+            }
+#nullable enable
+        }
+
         public ref List<Collider> ColliderCollisions()
         {
             return ref colliders;
@@ -666,6 +724,7 @@ namespace Galabingus
             (collidersI).SetPass(colliderConst, instanceNumber, default(Collider));
             (transformsI).SetPass(transformConst, instanceNumber, default(Rectangle));
             (positionsI).SetPass(positionConst, instanceNumber, default(Vector2));
+            (effectI).SetPass(effectConst, instanceNumber, default(Effect));
         }
 
         public void DeleteCollider(ushort instanceNumber)
@@ -701,6 +760,11 @@ namespace Galabingus
         public void DeletePosition(ushort instanceNumber)
         {
             (positionsI).SetPass(positionConst, instanceNumber, default(Vector2));
+        }
+
+        public void DeleteEffect(ushort instanceNumber)
+        {
+            (effectI).SetPass(effectConst, instanceNumber, default(Effect));
         }
 
         /// <summary>
@@ -752,6 +816,18 @@ namespace Galabingus
             get
             {
                 return GameObject.Instance.spriteBatch;
+            }
+        }
+
+        public static float Fade
+        {
+            get
+            {
+                return fade;
+            }
+            set
+            {
+                fade = value;
             }
         }
 
@@ -854,11 +930,6 @@ namespace Galabingus
             SetSprite(instanceNumber, GameObject.Instance.contentManager.Load<Texture2D>(path));
             SetScale(instanceNumber, 1.0f);
             SetAnimation(instanceNumber, new Animation(GetSprite(instanceNumber).Width, GetSprite(instanceNumber).Height, strip));
-            Collider newCollider = new Collider();
-            newCollider.Layer = contentName;
-            newCollider.Resolved = true;
-            newCollider.self = this;
-            SetCollider(instanceNumber, newCollider);
             SetPosition(instanceNumber, Vector2.Zero);
             SetTransform(instanceNumber,
                 new Rectangle(
@@ -868,6 +939,12 @@ namespace Galabingus
                     GetSprite(instanceNumber).Height                   // Height of the sprite
                 )
             );
+            Collider newCollider = new Collider();
+            newCollider.Layer = contentName;
+            newCollider.Resolved = true;
+            newCollider.self = this;
+            SetCollider(instanceNumber, newCollider);
+
         }
 
         public System.Type GameObjectType
@@ -888,11 +965,13 @@ namespace Galabingus
         /// <param name="graphicsDevice">Any: GraphicsDevice</param>
         /// <param name="spriteBatch">Any: SpriteBatch</param>
         /// <returns></returns>
-        public dynamic Initialize(ContentManager contentManager, GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
+        public dynamic Initialize(ContentManager contentManager, GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, Effect effect)
         {
+            this.universalShader = effect;
             this.graphicsDevice = graphicsDevice;
             this.spriteBatch = spriteBatch;
             this.contentManager = contentManager;
+            GameObject.fade = 1;
             return new GameObject();
         }
 

@@ -90,85 +90,109 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\tile_strip26-2.png.png" />
+    <None Include="Resources\tile_strip26-26.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Tile 1.png" />
+    <None Include="Resources\tile_strip26-25.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\tile_strip26-1.png.png" />
+    <None Include="Resources\tile_strip26-24.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\tile_strip26-3.png.png" />
+    <None Include="Resources\tile_strip26-23.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\tile_strip26-4.png.png" />
+    <None Include="Resources\tile_strip26-22.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\tile_strip26-5.png.png" />
+    <None Include="Resources\tile_strip26-21.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\tile_strip26-6.png.png" />
+    <None Include="Resources\tile_strip26-20.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\tile_strip26-7.png.png" />
+    <None Include="Resources\tile_strip26-19.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\tile_strip26-8.png.png" />
+    <None Include="Resources\tile_strip26-18.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\tile_strip26-9.png.png" />
+    <None Include="Resources\tile_strip26-17.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\tile_strip26-10.png.png" />
+    <None Include="Resources\tile_strip26-16.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\tile_strip26-11.png.png" />
+    <None Include="Resources\tile_strip26-15.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\tile_strip26-12.png.png" />
+    <None Include="Resources\tile_strip26-14.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\tile_strip26-13.png.png" />
+    <None Include="Resources\tile_strip26-13.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\tile_strip26-14.png.png" />
+    <None Include="Resources\tile_strip26-12.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\tile_strip26-15.png.png" />
+    <None Include="Resources\tile_strip26-11.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\tile_strip26-16.png.png" />
+    <None Include="Resources\tile_strip26-10.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\tile_strip26-17.png.png" />
+    <None Include="Resources\tile_strip26-9.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\tile_strip26-18.png.png" />
+    <None Include="Resources\tile_strip26-8.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\tile_strip26-19.png.png" />
+    <None Include="Resources\tile_strip26-7.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\tile_strip26-20.png.png" />
+    <None Include="Resources\tile_strip26-6.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\tile_strip26-21.png.png" />
+    <None Include="Resources\tile_strip26-5.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\tile_strip26-22.png.png" />
+    <None Include="Resources\tile_strip26-4.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\tile_strip26-23.png.png" />
+    <None Include="Resources\tile_strip26-3.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\tile_strip26-24.png.png" />
+    <None Include="Resources\tile_strip26-2.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\tile_strip26-25.png.png" />
+    <None Include="Resources\tile_strip26-1.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\tile_strip26-26.png.png" />
+    <None Include="Resources\player_strip5-1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\enemy_yellow_strip4-1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\enemy_red_strip4-1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\enemy_purple_strip4-1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\enemy_pink_strip4-1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\enemy_orange_strip4-1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\enemy_lblue_strip4-1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\enemy_green_strip4-1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\enemy_dblue_strip4-1.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

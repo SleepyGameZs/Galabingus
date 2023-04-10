@@ -530,7 +530,7 @@ namespace Galabingus
             this.Transform = this.Animation.Play(gameTime);
             List<Collision> intercepts = this.Collider.UpdateTransform(
                 this.Sprite,                         // Bullet Sprite
-                this.Position,                       // Bullet position
+                this.Position - new Vector2(this.Transform.Width, this.Transform.Height),                       // Bullet position
                 this.Transform,                      // Bullet transform for sprite selection
                 GameObject.Instance.GraphicsDevice,
                 GameObject.Instance.SpriteBatch,

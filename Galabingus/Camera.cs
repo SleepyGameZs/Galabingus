@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -35,7 +36,7 @@ namespace Galabingus
         private float initalCameraScroll;
         private Vector2 offSet;
         private bool cameraLock;
-
+        private bool stop;
 
         // -------------------------------------------------
         // Properties
@@ -62,6 +63,15 @@ namespace Galabingus
         public Vector2 OffSet
         {
             get { return offSet; }
+            set { offSet = value; }
+        }
+
+        public bool Stopped
+        {
+            get 
+            {
+                return stop;
+            }
         }
 
         // -------------------------------------------------
@@ -73,7 +83,8 @@ namespace Galabingus
             x = 0;
             y = 0;
             initalCameraScroll = 2f;
-            offSet = new Vector2(initalCameraScroll,0);
+            offSet = new Vector2(0, -initalCameraScroll);
+            stop = false;
         }
 
         public Camera(int cameraScroll)
@@ -81,6 +92,7 @@ namespace Galabingus
             x = 0;
             y = 0;
             this.initalCameraScroll = cameraScroll;
+            offSet = new Vector2(0, -initalCameraScroll);
         }
 
         // -------------------------------------------------
@@ -89,26 +101,45 @@ namespace Galabingus
 
         public void Start()
         {
+            stop = false;
             cameraLock = false;
-            offSet.X = initalCameraScroll;
+            offSet.Y = initalCameraScroll;
         }
 
         public void Stop()
         {
+            stop = true;
             cameraLock = false;
             offSet.X = 0;
+            offSet.Y = 0;
+        }
+
+        public void Reverse()
+        {
+            offSet.Y = -initalCameraScroll;
         }
 
         public void Update(GameTime gameTime)
         {
+            Camera.Instance.offSet.Y = MathHelper.Lerp(Camera.Instance.offSet.Y, Camera.Instance.offSet.Y*1.2f, 0.1f);
+
+            if (Camera.Instance.OffSet.Y > 2.5)
+            {
+                offSet.Y = 2.5f;
+            }
+
             if (Keyboard.GetState().IsKeyDown(Keys.F5))
             {
                 cameraLock = true;
             }
             if (cameraLock == true)
             {
-                Camera.Instance.offSet.X = Player.PlayerInstance.Velocity == Vector2.Zero ? Vector2.Zero.X*5 :
-                    Vector2.Normalize(Player.PlayerInstance.Velocity).X*5;
+                Player.PlayerInstance.CameraLock = false;
+                Camera.Instance.offSet.Y = Player.PlayerInstance.Velocity == Vector2.Zero ? Vector2.Zero.Y :
+                    Player.PlayerInstance.Translation.Y;
+                Player.PlayerInstance.Position -= new Vector2(0, Camera.instance.offSet.Y);
+                Debug.WriteLine(Player.PlayerInstance.Velocity.Y);
+                //Debug.WriteLine(Camera.Instance.OffSet.Y);
             }
         }
     }

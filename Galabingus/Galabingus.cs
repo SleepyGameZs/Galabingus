@@ -42,6 +42,7 @@ namespace Galabingus
 
         // Shaders
         private Effect shaders;
+        private bool transition;
 
         private BulletManager mng_bullet;
         private EnemyManager mng_enemy;
@@ -64,8 +65,8 @@ namespace Galabingus
 
         protected override void Initialize()
         {
-            _graphics.PreferredBackBufferWidth = 1280;
-            _graphics.PreferredBackBufferHeight = 720;
+            _graphics.PreferredBackBufferWidth = 1000;
+            _graphics.PreferredBackBufferHeight = 920;
             _graphics.ApplyChanges();
             base.Initialize();
         }
@@ -74,8 +75,9 @@ namespace Galabingus
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            shaders = Content.Load<Effect>("shaders");
             // Initilize the GameObject Instance and Content Dynamic (Always goes first)
-            content = GameObject.Instance.Initialize(Content, GraphicsDevice, _spriteBatch);
+            content = GameObject.Instance.Initialize(Content, GraphicsDevice, _spriteBatch, shaders);
 
             //new UI class and loading its content
             //userInterface = new UI(_graphics, Content, _spriteBatch);
@@ -100,20 +102,23 @@ namespace Galabingus
              */
 
 
-            l_a4_obj_enemyData.Add(new int[] { 1, 1, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 1.4) - 67, 50 });
-            l_a4_obj_enemyData.Add(new int[] { 1, 2, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 1.4) - 67, (GameObject.Instance.GraphicsDevice.Viewport.Height / 4) * 3 + 50 });
+            l_a4_obj_enemyData.Add(new int[] { 1, 1, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 1 - 172), (GameObject.Instance.GraphicsDevice.Viewport.Height * -0) + 10 });
+            l_a4_obj_enemyData.Add(new int[] { 1, 2, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 0 + 100), (GameObject.Instance.GraphicsDevice.Viewport.Height * -0) + 10 });
 
-            l_a4_obj_enemyData.Add(new int[] { 1, 4, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 2.4) - 67, 50 });
-            l_a4_obj_enemyData.Add(new int[] { 1, 2, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 2.4) - 67, (GameObject.Instance.GraphicsDevice.Viewport.Height / 4) * 3 + 50 });
+            l_a4_obj_enemyData.Add(new int[] { 1, 2, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 1 - 172), (GameObject.Instance.GraphicsDevice.Viewport.Height * -1) + 10 });
+            l_a4_obj_enemyData.Add(new int[] { 1, 4, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 0 + 100), (GameObject.Instance.GraphicsDevice.Viewport.Height * -1) + 10 });
 
-            l_a4_obj_enemyData.Add(new int[] { 1, 5, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 3.4) - 67, 50 });
-            l_a4_obj_enemyData.Add(new int[] { 1, 4, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 3.4) - 67, (GameObject.Instance.GraphicsDevice.Viewport.Height / 4) * 3 + 50 });
+            l_a4_obj_enemyData.Add(new int[] { 1, 4, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 1 - 172), (GameObject.Instance.GraphicsDevice.Viewport.Height * -2) + 10 });
+            l_a4_obj_enemyData.Add(new int[] { 1, 5, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 0 + 100), (GameObject.Instance.GraphicsDevice.Viewport.Height * -2) + 10 });
 
-            l_a4_obj_enemyData.Add(new int[] { 1, 5, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 4.4) - 67, 50 });
-            l_a4_obj_enemyData.Add(new int[] { 1, 4, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 4.4) - 67, GameObject.Instance.GraphicsDevice.Viewport.Height / 4 + 50 });
-            l_a4_obj_enemyData.Add(new int[] { 1, 2, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 4.4) - 67, (GameObject.Instance.GraphicsDevice.Viewport.Height / 4) * 2 + 50 });
-            l_a4_obj_enemyData.Add(new int[] { 1, 1, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 4.4) - 67, (GameObject.Instance.GraphicsDevice.Viewport.Height / 4) * 3 + 50 });
-            
+            l_a4_obj_enemyData.Add(new int[] { 1, 4, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 1 - 172), (GameObject.Instance.GraphicsDevice.Viewport.Height * -3) + 10 });
+            l_a4_obj_enemyData.Add(new int[] { 1, 5, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 0 + 100), (GameObject.Instance.GraphicsDevice.Viewport.Height * -3) + 10 });
+
+            l_a4_obj_enemyData.Add(new int[] { 1, 1, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 1 - 172), (GameObject.Instance.GraphicsDevice.Viewport.Height * -4) + 10 });
+            l_a4_obj_enemyData.Add(new int[] { 1, 2, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 0 + 240), (GameObject.Instance.GraphicsDevice.Viewport.Height * -4) + 10 });
+            l_a4_obj_enemyData.Add(new int[] { 1, 4, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 1 - 172), (GameObject.Instance.GraphicsDevice.Viewport.Height * -4) + 10 });
+            l_a4_obj_enemyData.Add(new int[] { 1, 5, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 1 - 240), (GameObject.Instance.GraphicsDevice.Viewport.Height * -4) + 10 });
+
 
             // Create a player
             player = new Player(new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Height * 0.00875f, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.00875f), content.player_strip5);
@@ -128,6 +133,7 @@ namespace Galabingus
 
             // Create Camera
             camera = Camera.Instance;
+            camera.InitalCameraScroll = -2;
 
             // Create Tile Manager
             tileManager = TileManager.Instance;
@@ -136,8 +142,7 @@ namespace Galabingus
             // Load the temporary background
             //tempBackground = Content.Load<Texture2D>("spacebackground_strip1");
             tileManager.CreateBackground();
-
-            shaders = Content.Load<Effect>("shaders");
+            //tileManager.CreateAsteriod();
         }
 
         protected override void Update(GameTime gameTime)
@@ -148,9 +153,13 @@ namespace Galabingus
 
             //Update the UI
             userInterface.Update();
-
+            bool shiftBefore = transition;
+            transition = (userInterface.GS == GameState.Pause);
             if (!(userInterface.GS == GameState.Pause) && !(userInterface.GS == GameState.Menu))
             {
+                shaders.Parameters["fadeIn"].SetValue(true);
+                shaders.Parameters["fadeOut"].SetValue(false);
+
                 // Update the player
                 player.Update(gameTime);
 
@@ -165,6 +174,16 @@ namespace Galabingus
 
                 tileManager.Update(gameTime);
             }
+            else if ( userInterface.GS == GameState.Pause || userInterface.GS == GameState.GameOver )
+            {
+                shaders.Parameters["fadeIn"].SetValue(false);
+                shaders.Parameters["fadeOut"].SetValue(true);
+            }
+
+            if (transition != shiftBefore)
+            {
+                GameObject.Fade = 1;
+            }
 
             base.Update(gameTime);
         }
@@ -178,35 +197,17 @@ namespace Galabingus
 
             if (!(userInterface.GS == GameState.Menu))
             {
-                _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, effect: shaders);
+                GameObject.Fade = GameObject.Fade * 0.96f;
+                shaders.Parameters["fade"].SetValue(GameObject.Fade);
+                _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, effect: shaders);
             }
             else
             {
-                _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap);
+                _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap);
             }
-            //draw the screen
-            userInterface.Draw();
 
             if (!(userInterface.GS == GameState.Menu))
             {
-
-                //draw the background using the temporary background texture
-                /*_spriteBatch.Draw(
-                    tempBackground,
-                    Vector2.Zero,
-                    new Rectangle(0, 0, tempBackground.Width, tempBackground.Height),
-                    new Color(Color.White * 0.7f,1.0f),
-                    0,
-                    Vector2.Zero,
-                    new Vector2(
-                        GameObject.Instance.GraphicsDevice.Viewport.Width / (float)tempBackground.Width,
-                        GameObject.Instance.GraphicsDevice.Viewport.Height / (float)tempBackground.Height
-                    ),
-                    SpriteEffects.None,
-                    1
-                );
-                */
-
                 if (TileManager.Instance.CurrentSpriteNumber == 0)
                 {
                     // Draws tiles
@@ -231,10 +232,21 @@ namespace Galabingus
 
             GameObject.Instance.DebugDraw(_spriteBatch);
 
+            //draw the screen
+            userInterface.Draw();
+
             // End the SpriteBatch draw
             _spriteBatch.End();
 
+
+
             base.Draw(gameTime);
         }
+
+        public void MouseVisibility(bool visibility)
+        {
+            IsMouseVisible = visibility;
+        }
+
     }
 }

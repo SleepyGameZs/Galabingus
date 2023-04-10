@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using static System.Formats.Asn1.AsnWriter;
 
 // Matthew Rodriguez
 // 2023, 3, 13
@@ -76,6 +77,36 @@ namespace Galabingus
         private Texture2D heartSprite;
         private Texture2D halfHeartSprite;
         private Texture2D fullHeartSprite;
+        private bool cameraLock;
+        private Vector2 translation;
+
+        public Vector2 Translation
+        {
+            get
+            {
+                return translation;
+            }
+        }
+
+        public Vector2 Speed
+        {
+            get
+            {
+                return speed;
+            }
+        }
+
+        public bool CameraLock
+        {
+            get
+            {
+                return cameraLock;
+            }
+            set
+            {
+                cameraLock = value;
+            }
+        }
 
         public static Player PlayerInstance
         {
@@ -286,6 +317,7 @@ namespace Galabingus
             PlayerInstance.fullHeartSprite = GameObject.Instance.ContentManager.Load<Texture2D>("heart_full_strip1");
             PlayerInstance.halfHeartSprite = GameObject.Instance.ContentManager.Load<Texture2D>("heart_half_strip1");
             PlayerInstance.heartSprite = GameObject.Instance.ContentManager.Load<Texture2D>("heart_strip1");
+            PlayerInstance.cameraLock = true;
         }
 
         /// <summary>
@@ -293,6 +325,7 @@ namespace Galabingus
         /// </summary>
         public void Update(GameTime gameTime)
         {
+            PlayerInstance.Collider.Resolved = true;
             PlayerInstance.inputBufferTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
             //boostFrameRate = PlayerInstance.inputBufferTime;
             Vector2 translationAjdustedRatio = translationRatio;
@@ -371,6 +404,7 @@ namespace Galabingus
             //Vector2 previousPosition = Position;
 
             PlayerInstance.Transform = PlayerInstance.Animation.Play(gameTime);
+
             List<Collision> intercepts = PlayerInstance.Collider.UpdateTransform(
                 PlayerInstance.Sprite,                         // Player Sprite
                 PlayerInstance.Position,                       // Player position
@@ -388,14 +422,14 @@ namespace Galabingus
 
             foreach (Collision collision in intercepts)
             {
-                if (collision.other != null && this.Collider.Resolved && !((collision.other as Bullet) is Bullet))
+                if (collision.other != null && this.Collider.Resolved && !((collision.other as Tile) is Tile))
                 {
                     previousVelocity = velocity;
                     acceleration = Vector2.Zero;
                     velocity = Vector2.Zero;
                     collides = true;
                 }
-                else if (collision.other != null && !((collision.other as Bullet) is Bullet))
+                else if (collision.other != null && ((collision.other as Tile) is Tile))
                 {
                     previousVelocity = velocity;
                     acceleration = Vector2.Zero;
@@ -435,7 +469,8 @@ namespace Galabingus
             {
                 if (!collides && !previousCollision)
                 {
-                    Position += (velocity == Vector2.Zero ? velocity : Vector2.Normalize(velocity) * (float)Animation.EllapsedTime * ((boost) ? boostSpeed : 1) * speed * translationAjdustedRatio);
+                    translation = (velocity == Vector2.Zero ? velocity : Vector2.Normalize(velocity) * (float)Animation.EllapsedTime * ((boost) ? boostSpeed : 1) * speed * translationAjdustedRatio);
+                    Position += translation;
                 }
             }
 
@@ -777,8 +812,6 @@ namespace Galabingus
 
                 previousKeyboardState = currentKeyboardState;
 
-
-
                 if (currentKeyboardState.IsKeyDown(Keys.A) || currentKeyboardState.IsKeyDown(Keys.D) || currentKeyboardState.IsKeyUp(Keys.A) || currentKeyboardState.IsKeyUp(Keys.D))
                 {
                     previousKeyboardStateX = currentKeyboardState;
@@ -831,8 +864,8 @@ namespace Galabingus
                     if (totalBoostTime >= boostFrameRate * 0.3333333f)
                     {
                         Ghost ghostBoost = new Ghost();
-                        ghostBoost.ghostColor = new Color(new Color(255, 165, 11), 1.0f);
-                        ghostBoost.Position = Position + normVelocity * (float)Animation.EllapsedTime * new Vector2(speed.X, speed.Y).LengthSquared() * ((1 - boostSpeed) * -0.1f );
+                        ghostBoost.ghostColor = new Color(new Color(0, 155, 255), 1.0f);
+                        ghostBoost.Position = Position;// + normVelocity * 0.1f * (float)Animation.EllapsedTime * new Vector2(speed.X, speed.Y).LengthSquared() * ((1 - boostSpeed) * -0.1f );
                         boostSpeed *= (float)Animation.EllapsedTime;
                         boostOpacity -= 0.0005f;
                         ghostBoost.boostOpacity = boostOpacity;
@@ -850,6 +883,20 @@ namespace Galabingus
             if (currentKeyboardState.IsKeyDown(Keys.G))
             {
                 PlayerInstance.Health = 5;
+            }
+
+            if (cameraLock)
+            {
+                if (!Camera.Instance.Stopped)
+                {
+                    Camera.Instance.OffSet = new Vector2(Math.Clamp((normVelocity.X) + Math.Clamp(Camera.Instance.OffSet.X, -0.005f, 0.005f), -0.5f, 0.5f), Math.Clamp((normVelocity.Y) * 0.005f + Math.Clamp((Camera.Instance.OffSet.Y), -2.5f, 2.5f), -2.5f, 2.5f))
+                        * (float)Animation.GetElapsedTime(gameTime, Vector2.Zero, new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Width * 0.5f, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.5f), Transform, Scale);
+                }
+                else
+                {
+                    Camera.Instance.OffSet = new Vector2(Math.Clamp((normVelocity.X), -1f, 1f), Math.Clamp((normVelocity.Y), -0.5f, 0.5f))
+                        * (float)Animation.GetElapsedTime(gameTime, Vector2.Zero, new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Width * 0.5f, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.5f), Transform, Scale);
+                }
             }
 
             //Debug.WriteLine();
@@ -881,18 +928,12 @@ namespace Galabingus
         {
             if (Player.PlayerInstance.Health > 0)
             {
-                //PlayerInstance.Position = new Vector2(0, 0);
-                //Debug.WriteLine(Position.X);
-                //Debug.WriteLine(Position.Y);
-                const float boostScale = 1.1f;
-
                 if (boost) //&& totalBoostTime >= boostFrameRate)
                 {
-
                     foreach (Ghost ghost in ghosts)
                     {
                         Color halfOColor = ghost.ghostColor;//new Color(ghost.ghostColor * 0.825f, 0.825f);
-                        if (halfOColor.R <= 7)
+                        if (halfOColor.B <= 7)
                         {
                             halfOColor = Color.Transparent;
                         }
@@ -908,36 +949,8 @@ namespace Galabingus
                             0.0f                             // Layer depth of the player is 0.0
                         );
                     }
-
-                    GameObject.Instance.SpriteBatch.Draw(
-                        WhiteSprite,                     // The sprite-sheet for the player
-                        Position - new Vector2(Transform.Width, Transform.Height) * (boostScale * 0.1f + 0.0077637999f),    // The position for the player
-                        Transform,                       // The scale and bounding box for the animation
-                        new Color(new Color(255, 204, 118) * 1.0f, 0.05f),                     // The color for the palyer
-                        0.0f,                            // There cannot be any rotation of the player
-                        Vector2.Zero,                    // Starting render position
-                        PlayerInstance.Scale * boostScale,                      // The scale of the sprite
-                        SpriteEffects.None,              // Which direction the sprite faces
-                        0.0f                             // Layer depth of the player is 0.0
-                    );
-
                 }
 
-                else //if (totalBoostTime >= boostFrameRate * 0.5f)
-                {
-
-                    GameObject.Instance.SpriteBatch.Draw(
-                        WhiteSprite,                     // The sprite-sheet for the player
-                        Position - new Vector2(Transform.Width, Transform.Height) * (boostScale * 0.1f + 0.0077637999f),    // The position for the player
-                        Transform,                       // The scale and bounding box for the animation
-                        new Color(new Color(127, 127, 255) * 1.0f, 0.05f),                     // The color for the palyer
-                        0.0f,                            // There cannot be any rotation of the player
-                        Vector2.Zero,                    // Starting render position
-                        PlayerInstance.Scale * boostScale,                      // The scale of the sprite
-                        SpriteEffects.None,              // Which direction the sprite faces
-                        0.0f                             // Layer depth of the player is 0.0
-                    );
-                }
 
                 GameObject.Instance.SpriteBatch.Draw(
                     Sprite,                          // The sprite-sheet for the player
@@ -955,7 +968,8 @@ namespace Galabingus
             else if (!Keyboard.GetState().IsKeyDown(Keys.G))
             {
                 Collider.Resolved = false;
-                UIManager.Instance.GS = GameState.Pause;
+                UIManager.Instance.GS = GameState.GameOver;
+                //UIManager.Instance.GS = GameState.Pause;
             }
 
 
