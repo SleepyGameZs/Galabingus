@@ -115,6 +115,7 @@ namespace Galabingus
         private Vector2 scale;
         private SpriteEffects? spriteEffects;
         public RenderTarget2D targetSprite;
+        public Texture2D copyOfTarget;
 
         /// <summary>
         ///  Colider that is empty
@@ -303,6 +304,12 @@ namespace Galabingus
             pixelCheck = null;
             Scale = new Vector2(scale, scale);
 
+            if (graphicsDevice == null || graphicsDevice.IsDisposed || graphicsDevice.GraphicsDeviceStatus != GraphicsDeviceStatus.Normal)
+            {
+                // The graphics device is not ready, so don't try to render anything.
+                return;
+            }
+
             // Render the effects and scale
             targetSprite = new RenderTarget2D(
                 graphicsDevice,
@@ -312,7 +319,7 @@ namespace Galabingus
             clearColor = Color.Transparent;
             graphicsDevice.SetRenderTarget(targetSprite);
             graphicsDevice.Clear(clearColor);
-            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
+            spriteBatch.Begin(SpriteSortMode.Texture, BlendState.NonPremultiplied, SamplerState.PointClamp);
             spriteBatch.Draw(
                 sprite,
                 Vector2.Zero,
@@ -327,6 +334,7 @@ namespace Galabingus
             spriteBatch.End();
             graphicsDevice.SetRenderTarget(null);
 
+            copyOfTarget = new Texture2D(graphicsDevice, this.transform.Width, this.transform.Height);
 
             // Scale the transform
             // Load pixel data to CPU memory
@@ -343,12 +351,16 @@ namespace Galabingus
             {
                 pixels = new Color[renderTarget2D.Width * renderTarget2D.Height];
                 renderTarget2D.GetData(pixels);
-                //renderTarget2D.Dispose();
+                renderTarget2D.Dispose();
                 GC.Collect();
             }
             else
             {
-                //renderTarget2D.Dispose();
+                renderTarget2D.Dispose();
+            }
+            if (copyOfTarget != null)
+            {
+                copyOfTarget.SetData(pixels);
             }
         }
 
@@ -460,6 +472,12 @@ namespace Galabingus
                 (int)Math.Round((transform.Height * (Scale.Y)), MidpointRounding.AwayFromZero)
             );
 
+            if (copyOfTarget == null)
+            {
+                copyOfTarget = new Texture2D(graphicsDevice, this.transform.Width, this.transform.Height);
+            }
+
+
             // Determine the bounds of the collider
             this.position = position;
             if (position.X - transform.Width * scale.Y > GameObject.Instance.GraphicsDevice.Viewport.Width ||
@@ -476,12 +494,12 @@ namespace Galabingus
                 return new List<Collision>();
             }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.C) && targetSprite != null)
+            if (Keyboard.GetState().IsKeyDown(Keys.C) && copyOfTarget != null)
             {
                 GameObject.Instance.Debug += delegate (SpriteBatch spriteBatch)
                 {
                     spriteBatch.Draw(
-                        targetSprite,
+                        copyOfTarget,
                         new Vector2(position.X, position.Y),
                         new Rectangle(0,0,this.transform.Width, this.transform.Height),
                         Color.Red,
@@ -539,7 +557,7 @@ namespace Galabingus
                                 // Render the new sprite 
                                 graphicsDevice.SetRenderTarget(targetSprite);
                                 graphicsDevice.Clear(clearColor);
-                                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
+                                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointWrap);
                                 spriteBatch.Draw(
                                     sprite,
                                     new Vector2(0, 0),
@@ -790,9 +808,24 @@ namespace Galabingus
 
             }
 
+            if (xComparison)
+            {
+                mtv.X = Math.Abs(mtv.X);
+            }
+
             if (yComparison)
             {
                 mtv.Y = Math.Abs(mtv.Y);
+            }
+
+            if (!xComparison)
+            {
+                mtv.X = -Math.Abs(mtv.X);
+            }
+
+            if (!yComparison)
+            {
+                mtv.Y = -Math.Abs(mtv.Y);
             }
 
             if (mtv == Vector2.Zero)
@@ -800,7 +833,7 @@ namespace Galabingus
                 return Vector2.Zero;
             }
 
-            mtv = Vector2.Normalize(mtv);
+            mtv = Vector2.Normalize(mtv) * Player.PlayerInstance.Speed;
 
             return mtv;
         }

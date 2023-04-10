@@ -199,11 +199,11 @@ namespace Galabingus
             {
                 GameObject.Fade = GameObject.Fade * 0.96f;
                 shaders.Parameters["fade"].SetValue(GameObject.Fade);
-                _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, effect: shaders);
+                _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, effect: shaders);
             }
             else
             {
-                _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap);
+                _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap);
             }
             //draw the screen
             userInterface.Draw();

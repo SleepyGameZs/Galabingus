@@ -226,13 +226,13 @@ namespace Galabingus
                 0.0f                             // Layer depth of the player is 0.0
             );
             GameObject.Instance.SpriteBatch.End();
-            GameObject.Instance.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, effect: GameObject.Instance.UniversalShader);
+            GameObject.Instance.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, effect: GameObject.Instance.UniversalShader);
         }
 
         public void Draw(float xTimes, float yTimes)
         {
             GameObject.Instance.SpriteBatch.End();
-            GameObject.Instance.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, effect: Effect);
+            GameObject.Instance.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, effect: Effect);
             GameObject.Instance.SpriteBatch.Draw(
                 this.Sprite,                      
                 this.Position,                 
@@ -250,7 +250,7 @@ namespace Galabingus
                 0.0f
             );
             GameObject.Instance.SpriteBatch.End();
-            GameObject.Instance.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, effect: GameObject.Instance.UniversalShader);
+            GameObject.Instance.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, effect: GameObject.Instance.UniversalShader);
         }
     }
 }
