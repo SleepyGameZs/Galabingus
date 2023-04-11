@@ -158,7 +158,7 @@ namespace Galabingus
             if (GraphicsDevice.GraphicsDeviceStatus == GraphicsDeviceStatus.Normal && colliderTimer == 0)
             {
                 GameObject.Instance.HoldCollider = false;
-                colliderTimer = 3;
+                colliderTimer = 2;
             }
 
             colliderTimer--;

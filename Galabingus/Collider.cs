@@ -352,21 +352,23 @@ namespace Galabingus
         /// </summary>
         public void Load(RenderTarget2D renderTarget2D)
         {
-            if (copyOfTarget == null || copyOfTarget.Width != renderTarget2D.Width || copyOfTarget.Height != renderTarget2D.Height)
+            if (!renderTarget2D.IsContentLost && !GameObject.Instance.HoldCollider)
             {
-                copyOfTarget = new Texture2D(GameObject.Instance.GraphicsDevice, renderTarget2D.Width, renderTarget2D.Height);
+                if (copyOfTarget == null || copyOfTarget.Width != renderTarget2D.Width || copyOfTarget.Height != renderTarget2D.Height)
+                {
+                    copyOfTarget = new Texture2D(GameObject.Instance.GraphicsDevice, renderTarget2D.Width, renderTarget2D.Height);
+                }
+                if (pixels == null || pixels.Length != (renderTarget2D.Width * renderTarget2D.Height))
+                {
+                    pixels = new Color[renderTarget2D.Width * renderTarget2D.Height];
+                    renderTarget2D.GetData(pixels);
+                }
             }
-            if (pixels == null || pixels.Length != (renderTarget2D.Width * renderTarget2D.Height))
+            else
             {
-                pixels = new Color[renderTarget2D.Width * renderTarget2D.Height];
-                renderTarget2D.GetData(pixels);
+                GameObject.Instance.HoldCollider = true;
+                renderTarget2D.Dispose();
             }
-            if (copyOfTarget != null)
-            {
-                copyOfTarget.SetData(pixels);
-            }
-            renderTarget2D.Dispose();
-            GC.Collect();
         }
 
         /// <summary>
@@ -528,13 +530,18 @@ namespace Galabingus
                         // When the bounds are intercepting and the layer isn't the same and all collisions have been resolved
                         // Then we can activate the collider
                         if (this.resolved &&
-                            otherCollider.layer != this.layer && 
+                            otherCollider.layer != this.layer &&
                             (
                                 (this.layer == (ushort)CollisionGroup.FromPlayer && otherCollider.layer != (ushort)CollisionGroup.Bullet && otherCollider.layer != (ushort)CollisionGroup.Player && otherCollider.layer != (ushort)CollisionGroup.Tile) ||
                                 (
-                                    this.layer != (ushort)CollisionGroup.FromPlayer && (this.layer != (ushort)CollisionGroup.Bullet || 
-                                    ((otherCollider.layer != (ushort)CollisionGroup.Tile) && 
-                                    otherCollider.layer != (ushort)CollisionGroup.Enemy))
+                                    this.layer != (ushort)CollisionGroup.FromPlayer &&
+                                    (this.layer != (ushort)CollisionGroup.Bullet ||
+                                    ((otherCollider.layer != (ushort)CollisionGroup.Tile) &&
+                                    otherCollider.layer != (ushort)CollisionGroup.Enemy)) && 
+                                    this.layer != (ushort)CollisionGroup.Bullet ||
+                                    (this.layer == (ushort)CollisionGroup.Bullet && 
+                                    otherCollider.layer != (ushort)CollisionGroup.Tile &&
+                                    otherCollider.layer != (ushort)CollisionGroup.Enemy)
                                 ) 
                             ) &&
                             collidersR[colliderIndex].transform.Intersects(this.transform)
@@ -556,7 +563,7 @@ namespace Galabingus
                             // Load pixel data to CPU memory
                             if (!GameObject.Instance.HoldCollider && (pixels == null || spriteEffects != effect))
                             {
-                                GameObject.Instance.HoldCollider = true;
+                                
                                 // Setup the renderTarget
                                 targetSprite = new RenderTarget2D(graphicsDevice,
                                     (int)Math.Round((transform.Width * (Scale.X)), MidpointRounding.AwayFromZero) <= 0 ? 1 : (int)Math.Round((transform.Width * (Scale.X)), MidpointRounding.AwayFromZero),
@@ -587,6 +594,13 @@ namespace Galabingus
 
                                 // Update the transform with the new scale and sprite
                                 Load(targetSprite);
+
+                                if (pixels != null && copyOfTarget != null)
+                                {
+                                    copyOfTarget.SetData(pixels);
+                                }
+
+                                GameObject.Instance.HoldCollider = true;
                             }
                         }
 
