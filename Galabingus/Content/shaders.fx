@@ -96,7 +96,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 	float2 offsets[11];
 
 	// Calculate the texel size
-	float2 texelSize = 1.0f/ float2(400, 400);
+	float2 texelSize = 1.0f/ float2(1050, 1050);
 
 	// Calculate the Gaussian weights and offsets
 	float sigma = 10 / 3.0f;
@@ -173,7 +173,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 
 	if (lerpPixels.a == 0 && lerpPixels.b == 0 && lerpPixels.r == 0 && lerpPixels.g == 0)
 	{
-		halationLerp = lerp(halation, lerpPixels, 0.175) * 1.5;
+		halationLerp = lerp(halation, lerpPixels, 0.75) * 1.5;
 	}
 	else
 	{
