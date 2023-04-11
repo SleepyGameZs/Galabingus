@@ -273,7 +273,7 @@ namespace Galabingus
             object creator,
             ushort contentName,
             ushort bulletNumber
-        ) : base(contentName, bulletNumber, CollisionGroup.Bullet)
+        ) : base(contentName, bulletNumber, (creator is Player) ? CollisionGroup.FromPlayer : CollisionGroup.Bullet)
         {
             //this.thisGameObject = this;
             // Set Sprite from given

@@ -17,6 +17,8 @@ namespace Galabingus
     {
         None,
         Player,
+        FromPlayer,
+        Destroyable,
         Tile,
         Bullet,
         Enemy

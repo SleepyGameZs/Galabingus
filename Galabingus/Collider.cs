@@ -530,15 +530,14 @@ namespace Galabingus
                         if (this.resolved &&
                             otherCollider.layer != this.layer && 
                             (
+                                (this.layer == (ushort)CollisionGroup.FromPlayer) ||
                                 (
                                     otherCollider.layer != (ushort)CollisionGroup.Tile && 
                                     this.layer != (ushort)CollisionGroup.Tile && 
-                                    (
-                                        this.layer != (ushort)CollisionGroup.Bullet || 
-                                        otherCollider.layer == (ushort)CollisionGroup.Player)) || 
-                                        ( 
-                                            otherCollider.layer == (ushort)CollisionGroup.Tile && 
-                                            this.layer != (ushort)CollisionGroup.Bullet && this.layer != (ushort)CollisionGroup.Enemy)
+                                    (this.layer != (ushort)CollisionGroup.Bullet || 
+                                    ((otherCollider.layer != (ushort)CollisionGroup.Tile) && 
+                                    otherCollider.layer != (ushort)CollisionGroup.Enemy))
+                                ) 
                             ) &&
                             collidersR[colliderIndex].transform.Intersects(this.transform)
                         )
