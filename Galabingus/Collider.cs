@@ -232,6 +232,7 @@ namespace Galabingus
             clearColor = Color.Transparent;
             layer = 0;
             resolved = false;
+            spriteEffects = null;
         }
 
         /// <summary>
@@ -338,7 +339,7 @@ namespace Galabingus
 
             // Scale the transform
             // Load pixel data to CPU memory
-            this.spriteEffects = SpriteEffects.None;
+            this.spriteEffects = null;
             Load(targetSprite);
         }
 
@@ -347,21 +348,21 @@ namespace Galabingus
         /// </summary>
         public void Load(RenderTarget2D renderTarget2D)
         {
-            if (pixels == null)
+            if (copyOfTarget == null)
+            {
+                copyOfTarget = new Texture2D(GameObject.Instance.GraphicsDevice, this.transform.Width, this.transform.Height);
+            }
+            if (pixels == null || pixels.Length != renderTarget2D.Width * renderTarget2D.Height)
             {
                 pixels = new Color[renderTarget2D.Width * renderTarget2D.Height];
-                renderTarget2D.GetData(pixels);
-                renderTarget2D.Dispose();
-                GC.Collect();
             }
-            else
-            {
-                renderTarget2D.Dispose();
-            }
+            renderTarget2D.GetData(pixels);
             if (copyOfTarget != null)
             {
                 copyOfTarget.SetData(pixels);
             }
+            renderTarget2D.Dispose();
+            GC.Collect();
         }
 
         /// <summary>
@@ -472,12 +473,6 @@ namespace Galabingus
                 (int)Math.Round((transform.Height * (Scale.Y)), MidpointRounding.AwayFromZero)
             );
 
-            if (copyOfTarget == null)
-            {
-                copyOfTarget = new Texture2D(graphicsDevice, this.transform.Width, this.transform.Height);
-            }
-
-
             // Determine the bounds of the collider
             this.position = position;
             if (position.X - transform.Width * scale.Y > GameObject.Instance.GraphicsDevice.Viewport.Width ||
@@ -506,7 +501,7 @@ namespace Galabingus
                         0.0f,
                         Vector2.Zero,
                         1.0f,
-                        effect,
+                        SpriteEffects.None,
                         1.0f
                     );
                 };
@@ -546,8 +541,10 @@ namespace Galabingus
                             updated = true;
 
                             // Load pixel data to CPU memory
-                            if (pixels == null || spriteEffects != effect && spriteEffects != null && effect != null)
+                            if (pixels == null || spriteEffects != effect)
                             {
+                                Debug.WriteLine(effect);
+
                                 // Setup the renderTarget
                                 targetSprite = new RenderTarget2D(graphicsDevice,
                                     (int)Math.Round((transform.Width * (Scale.X)), MidpointRounding.AwayFromZero) <= 0 ? 1 : (int)Math.Round((transform.Width * (Scale.X)), MidpointRounding.AwayFromZero),
@@ -573,6 +570,8 @@ namespace Galabingus
                                 graphicsDevice.SetRenderTarget(null);
                                 this.colliderNextMTV = Vector2.Zero;
                                 this.colldierCurrentMTV = Vector2.Zero;
+
+                                spriteEffects = effect;
 
                                 // Update the transform with the new scale and sprite
                                 Load(targetSprite);
