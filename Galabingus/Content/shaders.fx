@@ -96,7 +96,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 	float2 offsets[11];
 
 	// Calculate the texel size
-	float2 texelSize = 1.0f/ float2(1050, 1050);
+	float2 texelSize = 1.0f/ float2(210, 210);
 
 	// Calculate the Gaussian weights and offsets
 	float sigma = 10 / 3.0f;
