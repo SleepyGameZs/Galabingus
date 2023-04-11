@@ -530,7 +530,7 @@ namespace Galabingus
                         if (this.resolved &&
                             otherCollider.layer != this.layer && 
                             (
-                                (this.layer == (ushort)CollisionGroup.FromPlayer) ||
+                                (this.layer == (ushort)CollisionGroup.FromPlayer && otherCollider.layer != (ushort)CollisionGroup.Bullet || otherCollider.layer == (ushort)CollisionGroup.FromPlayer && (ushort)this.layer != (ushort)CollisionGroup.Bullet ) ||
                                 (
                                     otherCollider.layer != (ushort)CollisionGroup.Tile && 
                                     this.layer != (ushort)CollisionGroup.Tile && 
