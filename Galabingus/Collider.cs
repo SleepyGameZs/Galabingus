@@ -311,6 +311,8 @@ namespace Galabingus
                 return;
             }
 
+            /*
+
             // Render the effects and scale
             targetSprite = new RenderTarget2D(
                 graphicsDevice,
@@ -341,6 +343,8 @@ namespace Galabingus
             // Load pixel data to CPU memory
             this.spriteEffects = null;
             Load(targetSprite);
+
+            */
         }
 
         /// <summary>
@@ -348,15 +352,15 @@ namespace Galabingus
         /// </summary>
         public void Load(RenderTarget2D renderTarget2D)
         {
-            if (copyOfTarget == null)
+            if (copyOfTarget == null || copyOfTarget.Width != renderTarget2D.Width || copyOfTarget.Height != renderTarget2D.Height)
             {
-                copyOfTarget = new Texture2D(GameObject.Instance.GraphicsDevice, this.transform.Width, this.transform.Height);
+                copyOfTarget = new Texture2D(GameObject.Instance.GraphicsDevice, renderTarget2D.Width, renderTarget2D.Height);
             }
-            if (pixels == null || pixels.Length != renderTarget2D.Width * renderTarget2D.Height)
+            if (pixels == null || pixels.Length != (renderTarget2D.Width * renderTarget2D.Height))
             {
                 pixels = new Color[renderTarget2D.Width * renderTarget2D.Height];
+                renderTarget2D.GetData(pixels);
             }
-            renderTarget2D.GetData(pixels);
             if (copyOfTarget != null)
             {
                 copyOfTarget.SetData(pixels);
@@ -524,7 +528,18 @@ namespace Galabingus
                         // When the bounds are intercepting and the layer isn't the same and all collisions have been resolved
                         // Then we can activate the collider
                         if (this.resolved &&
-                            otherCollider.layer != this.layer &&
+                            otherCollider.layer != this.layer && 
+                            (
+                                (
+                                    otherCollider.layer != (ushort)CollisionGroup.Tile && 
+                                    this.layer != (ushort)CollisionGroup.Tile && 
+                                    (
+                                        this.layer != (ushort)CollisionGroup.Bullet || 
+                                        otherCollider.layer == (ushort)CollisionGroup.Player)) || 
+                                        ( 
+                                            otherCollider.layer == (ushort)CollisionGroup.Tile && 
+                                            this.layer != (ushort)CollisionGroup.Bullet && this.layer != (ushort)CollisionGroup.Enemy)
+                            ) &&
                             collidersR[colliderIndex].transform.Intersects(this.transform)
                         )
                         {

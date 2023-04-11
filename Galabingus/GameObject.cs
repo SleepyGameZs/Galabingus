@@ -939,7 +939,7 @@ namespace Galabingus
                     GetSprite(instanceNumber).Height                   // Height of the sprite
                 )
             );
-            Collider newCollider = new Collider();
+            Collider newCollider = new Collider(GetSprite(instanceNumber),GetPosition(instanceNumber),GetTransform(instanceNumber),SpriteEffects.None,GetScale(instanceNumber),GraphicsDevice,SpriteBatch,(ushort)collisionGroup,this);
             newCollider.Layer = contentName;
             newCollider.Resolved = true;
             newCollider.self = this;
