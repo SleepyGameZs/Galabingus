@@ -155,6 +155,14 @@ namespace Galabingus
                 || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+            if (GraphicsDevice.GraphicsDeviceStatus == GraphicsDeviceStatus.Normal && colliderTimer == 0)
+            {
+                GameObject.Instance.HoldCollider = false;
+                colliderTimer = 3;
+            }
+
+            colliderTimer--;
+
             //Update the UI
             userInterface.Update();
             bool shiftBefore = transition;
@@ -188,14 +196,6 @@ namespace Galabingus
             {
                 GameObject.Fade = 1;
             }
-
-            if (GraphicsDevice.GraphicsDeviceStatus == GraphicsDeviceStatus.Normal)
-            {
-                GameObject.Instance.HoldCollider = false;
-                colliderTimer = 3;
-            }
-
-            colliderTimer--;
 
             base.Update(gameTime);
         }
