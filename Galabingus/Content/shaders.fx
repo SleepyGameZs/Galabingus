@@ -96,7 +96,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 	float2 offsets[11];
 
 	// Calculate the texel size
-	float2 texelSize = 1.0f/ float2(210, 210);
+	float2 texelSize = 1.0f/ float2(75, 75);
 
 	// Calculate the Gaussian weights and offsets
 	float sigma = 10 / 3.0f;
@@ -135,7 +135,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 	const float4 maxHalationColor = float4(0.5f, 0.5f, 0.5f, 1.0f);
 	//halation.r = min(halation.r, maxColor.r);
 	//halation.g = min(halation.g, maxColor.g);
-	halation.b = min(halation.b, maxHalationColor.b);
+	//halation.b = min(halation.b, maxHalationColor.b);
 
 
 	const float gamma = 1.26795f;
