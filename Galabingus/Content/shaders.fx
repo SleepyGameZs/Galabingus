@@ -88,8 +88,56 @@ float4 FadeOut(float4 inColor)
 	}
 }
 
+
+
 float4 MainPS(VertexShaderOutput input) : COLOR
 {
+	float weights[11];
+	float2 offsets[11];
+
+	// Calculate the texel size
+	float2 texelSize = 1.0f/ float2(155, 155);
+
+	// Calculate the Gaussian weights and offsets
+	float sigma = 10 / 3.0f;
+	float twoSigma2 = 2.0f * sigma * sigma;
+	float weightSum = 0;
+	for (int i = 0; i < 11; i++)
+	{
+		float offset = float(i - 5);
+		weights[i] = exp(-(offset * offset) / twoSigma2);
+		weightSum += weights[i];
+		offsets[i] = float2(offset,0);
+	}
+	for (int i = 0; i < 11; i++)
+	{
+		weights[i] /= weightSum;
+	}
+
+	// Blur horizontally
+	float4 halation = float4(0, 0, 0, 0);
+	for (int i = 0; i < 11; i++)
+	{
+		float2 offset = float2(offsets[i].x, 0) * texelSize;
+		float4 texColor = tex2D(SpriteTextureSampler, input.TextureCoordinates + offset);
+		halation += weights[i] * texColor;
+	}
+
+	// Blur vertically
+	for (int i = 0; i < 11; i++)
+	{
+		float2 offset = float2(0, offsets[i].x) * texelSize;
+		float4 texColor = tex2D(SpriteTextureSampler, input.TextureCoordinates + offset);
+		halation += weights[i] * texColor;
+	}
+
+	// Clamp the maximum brightness value of the red color channel to create a red hue halation effect
+	const float4 maxHalationColor = float4(0.5f, 0.5f, 0.5f, 1.0f);
+	//halation.r = min(halation.r, maxColor.r);
+	//halation.g = min(halation.g, maxColor.g);
+	halation.b = min(halation.b, maxHalationColor.b);
+
+
 	const float gamma = 1.26795f;
 	float4 color = tex2D(SpriteTextureSampler, input.TextureCoordinates);
 	float4 colorBefore = tex2D(SpriteTextureSampler, input.TextureCoordinates);
@@ -116,7 +164,27 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 	}
 	float4 lerpPixels = lerp(lerp(color, colorTrue, 0.059875), colorP,0.5);
 	lerpPixels = lerpPixels * correctedColor;
-	return FadeIn(FadeOut(lerpPixels));
+	
+	halation.r = halation.r * 0.75;
+	halation.g = halation.g * 0.75;
+	halation.b = halation.b * 0.75;
+
+	float4 halationLerp;
+
+	if (lerpPixels.a == 0 && lerpPixels.b == 0 && lerpPixels.r == 0 && lerpPixels.g == 0)
+	{
+		halationLerp = lerp(halation, lerpPixels, 0.75) * 1.5;
+	}
+	else
+	{
+		halationLerp = lerpPixels;
+	}
+
+
+
+	halationLerp.a = lerpPixels.a;
+
+	return FadeIn(FadeOut(halationLerp));
 }
 
 technique SpriteDrawing
