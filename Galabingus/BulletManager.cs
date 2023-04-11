@@ -125,23 +125,27 @@ namespace Galabingus
                     break;
 
                 case BulletType.Bouncing:
-                    sprite = GameObject.Instance.Content.tinybullet_strip4;
+                    sprite = GameObject.Instance.Content.enemy_orange_bullet_45_strip4;
                     break;
 
                 case BulletType.Splitter:
-                    sprite = GameObject.Instance.Content.smallbullet_strip4;
+                    sprite = GameObject.Instance.Content.enemy_green_bullet_main_strip4;
                     break;
 
                 case BulletType.Circle:
-                    sprite = GameObject.Instance.Content.smallbullet_strip4;
+                    sprite = GameObject.Instance.Content.enemy_violet_bullet_strip4;
                     break;
 
                 case BulletType.Large:
-                    sprite = GameObject.Instance.Content.bigbullet_strip4;
+                    sprite = GameObject.Instance.Content.enemy_yellow_bullet_strip3;
                     break;
 
                 case BulletType.Seeker:
-                    sprite = GameObject.Instance.Content.circlebullet_strip4;
+                    sprite = GameObject.Instance.Content.enemy_violet_bullet_strip4;
+                    break;
+
+                case BulletType.SplitSmall:
+                    sprite = GameObject.Instance.Content.enemy_green_bullet_split_strip4;
                     break;
 
                 default:

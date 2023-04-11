@@ -121,7 +121,7 @@ namespace Galabingus
 
 
             // Create a player
-            player = new Player(new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Height * 0.00875f, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.00875f), content.player_strip5);
+            player = new Player(new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Height * 0.00875f, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.00875f), content.player_strip4);
             player.Position = new Vector2(Player.PlayerInstance.Transform.Width * 2, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.5f - Player.PlayerInstance.Transform.Height);
             player.Health = 5;
 
@@ -154,7 +154,7 @@ namespace Galabingus
             //Update the UI
             userInterface.Update();
             bool shiftBefore = transition;
-            transition = (userInterface.GS == GameState.Pause);
+            transition = (userInterface.GS == GameState.Pause || userInterface.GS == GameState.GameOver);
             if (!(userInterface.GS == GameState.Pause) && !(userInterface.GS == GameState.Menu))
             {
                 shaders.Parameters["fadeIn"].SetValue(true);

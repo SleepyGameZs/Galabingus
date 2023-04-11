@@ -284,38 +284,38 @@ namespace Galabingus
             switch (ability)
             {
                 case BulletType.Normal:
-                    bulletColor = Color.LightBlue;
+                    bulletColor = Color.White;
                     GameObject.Instance.Content = GameObject.Instance.Content.smallbullet_strip4;
                     break;
 
                 case BulletType.Bouncing:
-                    bulletColor = Color.Orange;
-                    GameObject.Instance.Content = GameObject.Instance.Content.tinybullet_strip4;
+                    bulletColor = Color.White;
+                    GameObject.Instance.Content = GameObject.Instance.Content.enemy_orange_bullet_45_strip4;
                     break;
 
                 case BulletType.Splitter:
-                    bulletColor = Color.LimeGreen;
-                    GameObject.Instance.Content = GameObject.Instance.Content.smallbullet_strip4;
+                    bulletColor = Color.White;
+                    GameObject.Instance.Content = GameObject.Instance.Content.enemy_green_bullet_main_strip4;
                     break;
 
                 case BulletType.SplitSmall:
-                    bulletColor = Color.LimeGreen;
-                    GameObject.Instance.Content = GameObject.Instance.Content.smallbullet_strip4;
+                    bulletColor = Color.White;
+                    GameObject.Instance.Content = GameObject.Instance.Content.enemy_green_bullet_split_strip4;
                     break;
 
                 case BulletType.Circle:
-                    bulletColor = Color.DarkMagenta;
-                    GameObject.Instance.Content = GameObject.Instance.Content.smallbullet_strip4;
+                    bulletColor = Color.White;
+                    GameObject.Instance.Content = GameObject.Instance.Content.enemy_violet_bullet_strip4;
                     break;
 
                 case BulletType.Large:
-                    bulletColor = Color.Yellow;
-                    GameObject.Instance.Content = GameObject.Instance.Content.bigbullet_strip4;
+                    bulletColor = Color.White;
+                    GameObject.Instance.Content = GameObject.Instance.Content.enemy_yellow_bullet_strip3;
                     break;
 
                 case BulletType.Seeker:
-                    bulletColor = Color.Violet;
-                    GameObject.Instance.Content = GameObject.Instance.Content.circlebullet_strip4;
+                    bulletColor = Color.White;
+                    GameObject.Instance.Content = GameObject.Instance.Content.enemy_violet_bullet_strip4;
                     break;
 
                 default:
@@ -530,7 +530,7 @@ namespace Galabingus
             this.Transform = this.Animation.Play(gameTime);
             List<Collision> intercepts = this.Collider.UpdateTransform(
                 this.Sprite,                         // Bullet Sprite
-                this.Position - new Vector2(this.Transform.Width, this.Transform.Height),                       // Bullet position
+                this.Position,                       // Bullet position
                 this.Transform,                      // Bullet transform for sprite selection
                 GameObject.Instance.GraphicsDevice,
                 GameObject.Instance.SpriteBatch,

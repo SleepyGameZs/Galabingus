@@ -145,10 +145,10 @@ namespace Galabingus
         {
             get
             {
-                GameObject.Instance.Content = GameObject.Instance.Content.player_white_strip5;
+                GameObject.Instance.Content = GameObject.Instance.Content.player_white_strip4;
                 if (GetSprite(0) == null)
                 {
-                    LoadSprite(GameObject.Instance.Content.player_white_strip5, 0);
+                    LoadSprite(GameObject.Instance.Content.player_white_strip4, 0);
                 }
                 return GetSprite(0);
             }

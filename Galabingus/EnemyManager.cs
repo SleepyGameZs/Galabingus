@@ -143,7 +143,7 @@ namespace Galabingus
             switch (ability)
             {
                 case EnemyType.Normal:
-                    sprite = GameObject.Instance.Content.enemy_dblue_strip4;
+                    sprite = GameObject.Instance.Content.enemy_violet_strip4;
                     break;
 
                 case EnemyType.Bouncing:
@@ -155,7 +155,7 @@ namespace Galabingus
                     break;
 
                 case EnemyType.Circle:
-                    sprite = GameObject.Instance.Content.enemy_purple_strip4;
+                    sprite = GameObject.Instance.Content.enemy_violet_strip4;
                     break;
 
                 case EnemyType.Large:
@@ -167,7 +167,7 @@ namespace Galabingus
                     break;
 
                 default:
-                    sprite = GameObject.Instance.Content.enemy_lblue_strip4;
+                    sprite = GameObject.Instance.Content.enemy_violet_strip4;
                     break;
             }
 
