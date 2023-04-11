@@ -530,9 +530,9 @@ namespace Galabingus
                         if (this.resolved &&
                             otherCollider.layer != this.layer && 
                             (
-                                (this.layer == (ushort)CollisionGroup.FromPlayer && otherCollider.layer != (ushort)CollisionGroup.Bullet || otherCollider.layer == (ushort)CollisionGroup.FromPlayer && (ushort)this.layer != (ushort)CollisionGroup.Bullet ) ||
+                                (this.layer == (ushort)CollisionGroup.FromPlayer && otherCollider.layer != (ushort)CollisionGroup.Bullet && otherCollider.layer != (ushort)CollisionGroup.Player && otherCollider.layer != (ushort)CollisionGroup.Tile) ||
                                 (
-                                    (this.layer != (ushort)CollisionGroup.Bullet || 
+                                    this.layer != (ushort)CollisionGroup.FromPlayer && (this.layer != (ushort)CollisionGroup.Bullet || 
                                     ((otherCollider.layer != (ushort)CollisionGroup.Tile) && 
                                     otherCollider.layer != (ushort)CollisionGroup.Enemy))
                                 ) 
@@ -540,6 +540,7 @@ namespace Galabingus
                             collidersR[colliderIndex].transform.Intersects(this.transform)
                         )
                         {
+                            //Debug.WriteLineIf(this.layer == (ushort)CollisionGroup.FromPlayer, "AAA");
                             active = true;
                         }
                         else
@@ -677,6 +678,7 @@ namespace Galabingus
                         SpriteEffects.None,
                         0
                     );
+
                     spriteBatch.Draw(
                         pixelWhite,
                         new Vector2(x1, y1),
@@ -687,7 +689,7 @@ namespace Galabingus
                         SpriteEffects.None,
                         0
                     );
-                    */
+                                        */
                 };
             }
 

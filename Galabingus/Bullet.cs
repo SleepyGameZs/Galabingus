@@ -33,7 +33,6 @@ namespace Galabingus
     {
 
         #region-------------------[ Fields ]-------------------
-
         // Is this bullet ready to be destroyed?
         private bool destroy;
 
@@ -62,7 +61,10 @@ namespace Galabingus
         // Reference to the object that created the bullet
         private object creatorReference;
 
-        #endregion 
+        // Collision layer of the bullet
+        private CollisionGroup collisionLayer;
+
+        #endregion
 
         #region-------------------[ Properties ]-------------------
 
@@ -279,6 +281,8 @@ namespace Galabingus
             // Set Sprite from given
             this.contentName = contentName;
             this.bulletNumber = bulletNumber;
+            // Determine the collision layer for the bullet
+            collisionLayer = ((creator is Player) ? CollisionGroup.FromPlayer : CollisionGroup.Bullet);
 
             // Establish bullet color and link to game object correct image
             switch (ability)
@@ -537,7 +541,7 @@ namespace Galabingus
                 this.direction,
                 new Vector2(this.Scale,this.Scale),                          // Bullet scale
                 SpriteEffects.None,
-                (ushort)CollisionGroup.Bullet,                           // Collision Layer
+                (ushort)collisionLayer,                           // Collision Layer
                 bulletNumber
             );
 
@@ -550,7 +554,6 @@ namespace Galabingus
             }
 
             this.Collider.Resolved = true;
-
 
             foreach (Collision collision in intercepts)
             {
