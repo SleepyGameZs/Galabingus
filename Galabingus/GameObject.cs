@@ -92,6 +92,7 @@ namespace Galabingus
         private Effect universalShader;
         private static float fade;
         public dynamic thisGameObject;
+        private bool holdCollider;
 
         public struct GameObjectTrie<T>
         {
@@ -831,6 +832,18 @@ namespace Galabingus
             }
         }
 
+        public bool HoldCollider
+        {
+            get
+            {
+                return holdCollider;
+            }
+            set
+            {
+                holdCollider = value;
+            }
+        }
+
         /// <summary>
         ///  Generates a index for the instance Content 
         ///  property that cannot be found
@@ -972,6 +985,7 @@ namespace Galabingus
             this.spriteBatch = spriteBatch;
             this.contentManager = contentManager;
             GameObject.fade = 1;
+            GameObject.Instance.holdCollider = false;
             return new GameObject();
         }
 

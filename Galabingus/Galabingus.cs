@@ -44,6 +44,7 @@ namespace Galabingus
 
         // Shaders
         private Effect shaders;
+        private byte colliderTimer;
         private bool transition;
 
         private BulletManager mng_bullet;
@@ -69,6 +70,7 @@ namespace Galabingus
         {
             _graphics.PreferredBackBufferWidth = 1000;
             _graphics.PreferredBackBufferHeight = 920;
+            colliderTimer = 0;
             _graphics.ApplyChanges();
             base.Initialize();
         }
@@ -186,6 +188,14 @@ namespace Galabingus
             {
                 GameObject.Fade = 1;
             }
+
+            if (GraphicsDevice.GraphicsDeviceStatus == GraphicsDeviceStatus.Normal)
+            {
+                GameObject.Instance.HoldCollider = false;
+                colliderTimer = 3;
+            }
+
+            colliderTimer--;
 
             base.Update(gameTime);
         }

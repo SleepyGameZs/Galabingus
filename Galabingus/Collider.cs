@@ -554,9 +554,9 @@ namespace Galabingus
                             updated = true;
 
                             // Load pixel data to CPU memory
-                            if (pixels == null || spriteEffects != effect)
+                            if (!GameObject.Instance.HoldCollider && (pixels == null || spriteEffects != effect))
                             {
-
+                                GameObject.Instance.HoldCollider = true;
                                 // Setup the renderTarget
                                 targetSprite = new RenderTarget2D(graphicsDevice,
                                     (int)Math.Round((transform.Width * (Scale.X)), MidpointRounding.AwayFromZero) <= 0 ? 1 : (int)Math.Round((transform.Width * (Scale.X)), MidpointRounding.AwayFromZero),
