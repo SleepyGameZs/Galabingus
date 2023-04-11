@@ -543,7 +543,6 @@ namespace Galabingus
                             // Load pixel data to CPU memory
                             if (pixels == null || spriteEffects != effect)
                             {
-                                Debug.WriteLine(effect);
 
                                 // Setup the renderTarget
                                 targetSprite = new RenderTarget2D(graphicsDevice,
