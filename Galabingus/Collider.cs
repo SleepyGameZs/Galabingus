@@ -532,8 +532,6 @@ namespace Galabingus
                             (
                                 (this.layer == (ushort)CollisionGroup.FromPlayer && otherCollider.layer != (ushort)CollisionGroup.Bullet || otherCollider.layer == (ushort)CollisionGroup.FromPlayer && (ushort)this.layer != (ushort)CollisionGroup.Bullet ) ||
                                 (
-                                    otherCollider.layer != (ushort)CollisionGroup.Tile && 
-                                    this.layer != (ushort)CollisionGroup.Tile && 
                                     (this.layer != (ushort)CollisionGroup.Bullet || 
                                     ((otherCollider.layer != (ushort)CollisionGroup.Tile) && 
                                     otherCollider.layer != (ushort)CollisionGroup.Enemy))
