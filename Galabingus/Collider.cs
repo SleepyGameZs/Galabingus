@@ -367,8 +367,8 @@ namespace Galabingus
             else
             {
                 GameObject.Instance.HoldCollider = true;
-                renderTarget2D.Dispose();
             }
+            renderTarget2D.Dispose();
         }
 
         /// <summary>
@@ -686,13 +686,13 @@ namespace Galabingus
                         pixelWhite,
                         new Vector2(transform.X, transform.Y),
                         hitBox,
-                        new Color(Color.Blue, 0.1f),
+                        new Color(Color.DarkBlue, 0.001f),
                         0, Vector2.Zero,
                         new Vector2(1, 1),
                         SpriteEffects.None,
                         0
                     );
-
+                    /*
                     spriteBatch.Draw(
                         pixelWhite,
                         new Vector2(x1, y1),
@@ -703,7 +703,7 @@ namespace Galabingus
                         SpriteEffects.None,
                         0
                     );
-                                        */
+                    */
                 };
             }
 
