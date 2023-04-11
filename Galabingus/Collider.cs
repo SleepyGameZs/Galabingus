@@ -655,6 +655,7 @@ namespace Galabingus
                 Texture2D pixelWhite = GameObject.Instance.ContentManager.Load<Texture2D>("white_pixel_strip1");
                 GameObject.Instance.Debug += delegate (SpriteBatch spriteBatch)
                 {
+                    /*
                     spriteBatch.Draw(
                         pixelWhite,
                         new Vector2(transform.X, transform.Y),
@@ -675,6 +676,7 @@ namespace Galabingus
                         SpriteEffects.None,
                         0
                     );
+                    */
                 };
             }
 
