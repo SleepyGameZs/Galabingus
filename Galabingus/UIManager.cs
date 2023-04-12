@@ -151,6 +151,13 @@ namespace Galabingus
         // Temporary Backgrounds
         private Texture2D menuBackground;
 
+        //the sets of menus in the game
+        List<UIElement> menu1;
+        List<UIElement> menu2;
+        List<UIElement> game1;
+        List<UIElement> pause1;
+        List<UIElement> gameOver1;
+
         #endregion
 
         #region Properties
@@ -249,11 +256,11 @@ namespace Galabingus
         public void LoadContent()
         {
             //the sets of menus in the game
-            List<UIElement> menu1 = new List<UIElement>();
-            List<UIElement> menu2 = new List<UIElement>();
-            List<UIElement> game1 = new List<UIElement>();
-            List<UIElement> pause1 = new List<UIElement>();
-            List<UIElement> gameOver1 = new List<UIElement>();
+            menu1 = new List<UIElement>();
+            menu2 = new List<UIElement>();
+            game1 = new List<UIElement>();
+            pause1 = new List<UIElement>();
+            gameOver1 = new List<UIElement>();
 
             //dummy variables
             Button button;
@@ -570,18 +577,39 @@ namespace Galabingus
             listToAdd.Add(background);
         }
 
-        public void AddSmallText(string content, Vector2 position, UIState uIState)
+        public void AddText(string content, Vector2 position, int scale, UIState uIState)
         {
+
+            if(scale < 14 && scale > 0)
+            {
+                scale = 12;
+            }
+            else if(scale < 24 && scale > 15)
+            {
+                scale = 18;
+            }
+            else if(scale > 25)
+            {
+                scale = 36;
+            }
+            else
+            {
+                scale = 12;
+            }
+
             switch(uIState)
             {
                 case UIState.BaseMenu:
-                    AddText("arial_12", content, position, null, UIManager.Instance.Menu1);
+                    AddText($"arial_{scale}", content, position, Color.White, null, menu1);
                     break;
                 case UIState.BaseGame:
+                    AddText($"arial_{scale}", content, position, Color.White, null, game1);
                     break;
                 case UIState.BasePause:
+                    AddText($"arial_{scale}", content, position, Color.White, null, pause1);
                     break;
                 case UIState.BaseGameOver:
+                    AddText($"arial_{scale}", content, position, Color.White, null, gameOver1);
                     break;
             }
         }
