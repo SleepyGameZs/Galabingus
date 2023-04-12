@@ -636,9 +636,9 @@ namespace Galabingus
 
             text.UpdateText += changeText;
 
-            return text;
-
             listToAdd.Add(text);
+
+            return text;
         }
 
         private void AddText(string filename, string content, Vector2 position, int lineCapacity, int spacing,  List<UIElement> listToAdd)
