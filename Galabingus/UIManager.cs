@@ -277,7 +277,7 @@ namespace Galabingus
             event1 = StartGame;
             textEvent1 = null;
 
-            AddButton("buttonPlay_strip1", 5,
+            AddButton("buttonPlay_strip1", 1,
             new Vector2(width / 2, height / 2),
             event1, menu1);
 
