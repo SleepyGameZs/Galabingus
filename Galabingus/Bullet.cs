@@ -586,9 +586,9 @@ namespace Galabingus
                 flipping = SpriteEffects.FlipHorizontally;
             }
 
-            if (Direction.Y == -1)
+            if (Direction.Y == 1)
             { // Flip Vertically
-                flipping = flipping | SpriteEffects.FlipHorizontally;
+                flipping = flipping | SpriteEffects.FlipVertically;
             }
 
             List<Collision> intercepts = this.Collider.UpdateTransform(

@@ -355,8 +355,12 @@ namespace Galabingus
         {
             // Check if off screen
             bool enemyOnScreen = (this.Position.Y > 0 &&
-                                       this.Position.Y < BulletManager.Instance.ScreenDimensions.Y);
-            
+                                  this.Position.Y < BulletManager.Instance.ScreenDimensions.Y);
+
+            // Move enemy with Y camera scrolling
+            Vector2 cameraScroll = new Vector2(0, Camera.Instance.OffSet.Y);
+            Position -= cameraScroll;
+
             if (enemyOnScreen)
             { // Only does these while on the screen
                 if (!destroy)
@@ -408,16 +412,6 @@ namespace Galabingus
                     if (ShouldMove)
                     {
                         this.Position += new Vector2(3 * direction.X, 0);
-
-                        /*if (this.Position.X <= 0)
-                        {
-                            EnemyManager.Instance.FlipEnemies(initialY);
-                        }
-
-                        if (this.Position.X + this.Transform.Width * this.Scale > EnemyManager.Instance.ScreenDimensions.X)
-                        {
-                            EnemyManager.Instance.FlipEnemies(initialY);
-                        }*/
                     }
                 }
                 else
@@ -433,10 +427,6 @@ namespace Galabingus
 
                 // Creates currect collider for Enemy
                 this.Transform = this.Animation.Play(gameTime);
-
-                // Move enemy with Y camera scrolling
-                Vector2 cameraScroll = new Vector2(0, Camera.Instance.OffSet.Y);
-                Position -= cameraScroll;
 
                 this.Collider.Resolved = true;
 
@@ -500,15 +490,14 @@ namespace Galabingus
                         } 
                         else if ((collision.other as Tile) is Tile)
                         { // Collided with Tile
-                            ///Vector2 overlapZone = new Vector2(((Tile)collision.other).Sprite,
-                            ///                                   ((Tile)collision.other).Sprite);
+                            Vector2 overlapZone = ((Tile)collision.other).ScaleVector;
 
-                            ///System.Diagnostics.Debug.WriteLine(overlapZone.X);
-                            ///System.Diagnostics.Debug.WriteLine(overlapZone.Y);
-                            ///if (overlapZone.X > overlapZone.Y)
-                            ///{
+                            System.Diagnostics.Debug.WriteLine(overlapZone.X);
+                            System.Diagnostics.Debug.WriteLine(overlapZone.Y);
+                            if (overlapZone.X < overlapZone.Y)
+                            {
                                 EnemyManager.Instance.FlipEnemies(initialY);
-                            ///}
+                            }
                         }
                     }
                 }
@@ -523,7 +512,6 @@ namespace Galabingus
                 this.Collider.Unload();
             }
 
-            
         }
 
         #region Bullet Creation Methods
@@ -592,8 +580,6 @@ namespace Galabingus
                 shotWaitTime = rng.Next(shotWaitVariance) - shotWaitVariance / 2;
                 shotTimer = 0;
             }
-
-            
         }
 
         /// <summary>
