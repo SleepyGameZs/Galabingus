@@ -93,6 +93,7 @@ namespace Galabingus
         private static float fade;
         public dynamic thisGameObject;
         private bool holdCollider;
+        private ushort contentName;
 
         public struct GameObjectTrie<T>
         {
@@ -313,11 +314,11 @@ namespace Galabingus
         {
             get
             {
-                return instance;
+                return GameObject.Instance.instance;
             }
             set
             {
-                instance = value;
+                GameObject.Instance.instance = value;
             }
         }
 
@@ -768,6 +769,14 @@ namespace Galabingus
             (effectI).SetPass(effectConst, instanceNumber, default(Effect));
         }
 
+        public ushort ContentName
+        {
+            get
+            {
+                return contentName;
+            }
+        }
+
         /// <summary>
         ///  Current index relation to all of the content arrays
         /// </summary>
@@ -894,7 +903,7 @@ namespace Galabingus
         public void LoadSprite(ushort contentName, ushort instanceNumber)
         {
             GameObject.Instance.Content = contentName;
-            instance = instanceNumber;
+            GameObject.Instance.instance = instanceNumber;
             string path = GameObject.ObjectEnumsI[contentName];
             GameObject.Instance.index = contentName;
             SetSprite(instanceNumber, GameObject.Instance.contentManager.Load<Texture2D>(path));
@@ -934,9 +943,10 @@ namespace Galabingus
                     typeOfObject = typeof(Enemy);
                     break;
             }
+            this.contentName = contentName;
             CollisionGroupISet(contentName, instanceNumber, collisionGroup);
             GameObject.Instance.Content = contentName;
-            instance = instanceNumber;
+            //instance = instanceNumber;
             string path = GameObject.ObjectEnumsI[contentName];
             ushort strip = ushort.Parse(path.Split("strip")[1]);
             this.index = contentName;

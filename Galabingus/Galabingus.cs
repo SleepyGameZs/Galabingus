@@ -36,7 +36,6 @@ namespace Galabingus
         private Texture2D tempBackground;
 
         // UI Object
-        //private UI userInterface;
         private UIManager userInterface;
 
         // Player GameObject
@@ -47,6 +46,7 @@ namespace Galabingus
         private byte colliderTimer;
         private bool transition;
 
+        // Enemies and Bullets
         private BulletManager mng_bullet;
         private EnemyManager mng_enemy;
 
@@ -83,10 +83,6 @@ namespace Galabingus
             // Initilize the GameObject Instance and Content Dynamic (Always goes first)
             content = GameObject.Instance.Initialize(Content, GraphicsDevice, _spriteBatch, shaders);
 
-            //new UI class and loading its content
-            //userInterface = new UI(_graphics, Content, _spriteBatch);
-            //userInterface.LoadContent();
-
             //creates and initializes the UIManager, and then loads its contents
             userInterface = UIManager.Instance;
             userInterface.Initialize(_graphics, Content, _spriteBatch);
@@ -109,11 +105,11 @@ namespace Galabingus
             l_a4_obj_enemyData.Add(new int[] { 1, 2, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 0 + 200), (GameObject.Instance.GraphicsDevice.Viewport.Height * -0) + 10, 1 });
             l_a4_obj_enemyData.Add(new int[] { 1, 5, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 0 + 50), (GameObject.Instance.GraphicsDevice.Viewport.Height * -0) + 10, 0 });
 
-            l_a4_obj_enemyData.Add(new int[] { 1, 2, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 1 - 172), (GameObject.Instance.GraphicsDevice.Viewport.Height * -1) + 10, 1 });
-            l_a4_obj_enemyData.Add(new int[] { 1, 4, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 0 + 100), (GameObject.Instance.GraphicsDevice.Viewport.Height * -1) + 10, 1 });
+            l_a4_obj_enemyData.Add(new int[] { 1, 1, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 1 - 172), (GameObject.Instance.GraphicsDevice.Viewport.Height * -1) + 10, 1 });
+            l_a4_obj_enemyData.Add(new int[] { 1, 2, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 0 + 100), (GameObject.Instance.GraphicsDevice.Viewport.Height * -1) + 10, 1 });
 
-            l_a4_obj_enemyData.Add(new int[] { 1, 4, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 1 - 172), (GameObject.Instance.GraphicsDevice.Viewport.Height * -2) + 10, 0 });
-            l_a4_obj_enemyData.Add(new int[] { 1, 5, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 0 + 100), (GameObject.Instance.GraphicsDevice.Viewport.Height * -2) + 10, 0 });
+            l_a4_obj_enemyData.Add(new int[] { 1, 3, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 1 - 172), (GameObject.Instance.GraphicsDevice.Viewport.Height * -2) + 10, 0 });
+            l_a4_obj_enemyData.Add(new int[] { 1, 4, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 0 + 100), (GameObject.Instance.GraphicsDevice.Viewport.Height * -2) + 10, 0 });
 
             l_a4_obj_enemyData.Add(new int[] { 1, 4, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 1 - 172), (GameObject.Instance.GraphicsDevice.Viewport.Height * -3) + 10, 0 });
             l_a4_obj_enemyData.Add(new int[] { 1, 5, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 0 + 100), (GameObject.Instance.GraphicsDevice.Viewport.Height * -3) + 10, 0 });
@@ -146,7 +142,7 @@ namespace Galabingus
             // Load the temporary background
             //tempBackground = Content.Load<Texture2D>("spacebackground_strip1");
             tileManager.CreateBackground();
-            //tileManager.CreateAsteriod();
+            //tileManager.CreateObject(GameObject.Instance.Content.grayasteroid_strip1, new Vector2(Player.PlayerInstance.Transform.Width * 2 + 100, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.5f - Player.PlayerInstance.Transform.Height + 100));
         }
 
         protected override void Update(GameTime gameTime)
@@ -249,8 +245,6 @@ namespace Galabingus
 
             // End the SpriteBatch draw
             _spriteBatch.End();
-
-
 
             base.Draw(gameTime);
         }

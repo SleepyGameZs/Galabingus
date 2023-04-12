@@ -52,8 +52,8 @@ namespace Galabingus
             this.uiTexture = uiTexture;
 
             //sets the length and width of the object
-            int length = (uiTexture.Width / scale);
-            int width = (uiTexture.Height / scale);
+            int length = (int)(uiTexture.Width / scale);
+            int width = (int)(uiTexture.Height / scale);
 
             //creates its position rectangle
             uiPosition =
