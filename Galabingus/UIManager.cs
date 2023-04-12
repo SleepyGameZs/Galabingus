@@ -191,11 +191,6 @@ namespace Galabingus
             set { cs = value;  }
         }
 
-        public List<UIElement> Menu1
-        {
-            get { return menu1;}
-        }
-
         #endregion
 
         #region Constructor
