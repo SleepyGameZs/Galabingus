@@ -777,7 +777,6 @@ namespace Galabingus
             }
         }
 
-
         /// <summary>
         ///  Current index relation to all of the content arrays
         /// </summary>
