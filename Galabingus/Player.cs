@@ -943,7 +943,7 @@ namespace Galabingus
         {
             ///textTest;
             textTest.UIText = "AA";
-            textTest.UIPosition = new Rectangle((int)Position.X, (int)Position.Y, textTest.UIPosition.Width, textTest.UIPosition.Height);
+            textTest.UITextPosition = Position;
             if (Player.PlayerInstance.Health > 0)
             {
                 if (boost) //&& totalBoostTime >= boostFrameRate)
