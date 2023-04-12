@@ -918,7 +918,7 @@ namespace Galabingus
                                                + velocity.Y             // Account for possible next movement
                                                );
 
-            BulletManager.Instance.CreateBullet(BulletType.Normal, vc2_shootPos, 0, 1, this, false);
+            BulletManager.Instance.CreateBullet(BulletType.PlayerNormal, Position, new Vector2(0, -1), this, false);
         }
 
         /// <summary>

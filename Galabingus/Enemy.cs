@@ -8,7 +8,13 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-// Zane Smith
+// ENEMY CLASS - By Zane Smith
+/* The Enemy Class manages all spawned enemies, most of which are placed at the 
+ * start of the game, via file loading. Enemies have various types which in turn
+ * link in with the bullets they can shoot. Some special enemies have added abilities,
+ * such as exploding when killed, damaging everything around them! Enemies may also be
+ * set to be placed in rows or remain still, with moving enemies in the same row turning
+ * as a group, rather than constantly bouncing off eachother. */
 
 namespace Galabingus
 {
@@ -20,9 +26,9 @@ namespace Galabingus
         Normal,
         Bouncing,
         Splitter,
-        Circle,
-        Large,
-        Seeker
+        Wave,
+        Seeker,
+        Bomb
     }
 
     internal class Enemy : GameObject
@@ -36,7 +42,7 @@ namespace Galabingus
 
         // State data
         private EnemyType ability;
-        private int stateTimer;
+        private Vector2 direction;
 
         // Name used to find values from GameObject dynamic
         private ushort contentName;
@@ -46,6 +52,10 @@ namespace Galabingus
 
         // Time between each shot
         private int shotTimer;
+
+        // Whether or not the enemy can Move
+        private bool shouldMove;
+        private int initialY;
 
         // Randomizer for time between shots
         private Random rng;
@@ -63,14 +73,7 @@ namespace Galabingus
 
         #region-------------------[ Properties ]-------------------
 
-        /// <summary>
-        /// Used to see if this bullet should be destroyed now
-        /// </summary>
-        public bool Destroy
-        {
-            get { return destroy; }
-            set { destroy = value; }
-        }
+        #region GAME OBJECT PROPERTIES
 
         /// <summary>
         /// Accesses dynamic singleton GameObject class, using ushort contentName to find
@@ -177,8 +180,21 @@ namespace Galabingus
             }
         }
 
+        #endregion
+
+        #region ENEMY SPECIFIC PROPERTIES
+
         /// <summary>
-        /// Allows setting and returning of this enemy's health
+        /// Used to see if this bullet should be destroyed now.
+        /// </summary>
+        public bool Destroy
+        {
+            get { return destroy; }
+            set { destroy = value; }
+        }
+
+        /// <summary>
+        /// Allows setting and returning of this enemy's health.
         /// </summary>
         public int Health
         {
@@ -186,13 +202,31 @@ namespace Galabingus
             {
                 return currentHealth;
             }
-            set { 
-                currentHealth = value; 
+            set
+            {
+                currentHealth = value;
             }
         }
 
         /// <summary>
-        /// The object which created this bullet.
+        /// The direction of the bullet on being spawned. 
+        /// Affects Sprite's visuals and movement for some bullets
+        /// X Slot:
+        ///     1 = Right
+        ///     -1 = Left
+        /// Y Slot:
+        ///     1 = Up
+        ///     -1 = Down
+        /// </summary>
+        public Vector2 Direction
+        {
+            get { return direction; }
+            set { direction = value; }
+        }
+
+        /// <summary>
+        /// What object owns this enemy?
+        /// If enemy was spawned from file then this will be null.
         /// </summary>
         public object Creator
         {
@@ -201,6 +235,37 @@ namespace Galabingus
                 return creatorReference;
             }
         }
+
+        /// <summary>
+        /// Does this enemy move back and forth?
+        /// </summary>
+        public bool ShouldMove
+        {
+            get
+            {
+                return shouldMove;
+            }
+        }
+
+        /// <summary>
+        /// Returns the initial Y position of the enemy, for the dictionary
+        /// in EnemyManager's keys
+        /// </summary>
+        public int InitialY
+        {
+            get { return initialY; }
+        }
+
+        /// <summary>
+        /// Returns the enemy number of this enemy (matches with Enemy Manager).
+        /// </summary>
+        public ushort EnemyNumber
+        {
+            get { return enemyNumber; }
+        }
+
+
+        #endregion
 
         #endregion
 
@@ -218,28 +283,44 @@ namespace Galabingus
             EnemyType ability,
             Vector2 position,
             object creator,
+            bool shouldMove,
             ushort contentName,
             ushort enemyNumber
-        ) : base(contentName, enemyNumber, CollisionGroup.Enemy)
+        ) : base(contentName, 
+            enemyNumber, 
+            CollisionGroup.Enemy)
         {
+           
+            #region GAME OBJECT DATA
+
+            // Set to GameObject
             this.thisGameObject = this;
+
             // Set Sprite from given
             this.contentName = contentName;
             this.enemyNumber = enemyNumber;
-            Animation.AnimationDuration = 0.01f;
 
-            // Set creator
-            creatorReference = creator;
+            // Sets animations speed
+            Animation.AnimationDuration = 0.01f;
 
             // Set Scale
             this.Scale = Player.PlayerInstance.Scale;
 
-            // Set bullet state & timer
-            this.ability = ability;
-            stateTimer = 0;
-
             // Set Position
             this.Position = new Vector2(position.X, position.Y);
+
+            #endregion
+
+            #region ENEMY SPECIFIC DATA
+
+            // Set creator
+            creatorReference = creator;
+
+            // Set type of enemy for its abilities
+            this.ability = ability;
+
+            // Set base direction
+            direction = new Vector2(1, 1);
 
             // Set velocity to zero at start
             velocity = Vector2.Zero;
@@ -255,6 +336,15 @@ namespace Galabingus
             // Set Health
             totalHealth = 3;
             currentHealth = totalHealth;
+
+            // Set if enemy should move
+            this.shouldMove = shouldMove;
+
+            // Set base position to be stored for dictionary keys
+            initialY = (int)Position.Y;
+
+            #endregion
+
         }
 
         #endregion
@@ -266,136 +356,233 @@ namespace Galabingus
             // Check if off screen
             bool enemyOnScreen = (this.Position.X > 0 &&
                                        this.Position.X < BulletManager.Instance.ScreenDimensions.X);
-            //Debug.WriteLine("e");
+            
             if (enemyOnScreen)
-            {
+            { // Only does these while on the screen
+                if (!destroy)
+                { // Actions while Enemy is alive
+                    switch (this.ability)
+                    {
+                        case EnemyType.Normal:
+                            // Shooting (3 Bullets)
+                            BulletSpawning(100, BulletType.EnemyNormal, new Vector2(-25, 0), 0);
+                            break;
 
-                // Check which direction the enemy is facing
-                int spriteDirection;
-                if (Camera.Instance.OffSet.X < 0)
-                {
-                    spriteDirection = 1;
+                        case EnemyType.Bouncing:
+                            // Shooting (3 Bullets)
+                            BulletSpawning(140,
+                                           new BulletType[]
+                                           {
+                                           BulletType.BouncingSide,
+                                           BulletType.BouncingCenter,
+                                           BulletType.BouncingSide
+                                           },
+                                           new Vector2[]
+                                           {
+                                           new Vector2(-14, 0),
+                                           new Vector2(-14, 0),
+                                           new Vector2(-24, 0)
+                                           },
+                                           new int[] { -1, 0, 1 }
+                                           );
+                            break;
+
+                        case EnemyType.Splitter:
+                            // Shoots
+                            BulletSpawning(140, BulletType.Splitter, new Vector2(-42, 0), 0);
+                            break;
+
+                        case EnemyType.Wave:
+                            // Shoots
+                            BulletSpawning(150, BulletType.Wave, new Vector2(-115, 0), 0);
+                            break;
+
+                        case EnemyType.Seeker:
+                            // Shoots
+                            BulletSpawning(190, BulletType.Seeker, new Vector2(-15, 0), 0);
+                            break;
+                    }
+                    shotTimer++;
+
+                    // Movement
+                    if (ShouldMove)
+                    {
+                        this.Position += new Vector2(3 * direction.X, 0);
+
+                        if (this.Position.X <= 0)
+                        {
+                            EnemyManager.Instance.FlipEnemies(initialY, 1);
+                        }
+
+                        if (this.Position.X + this.Transform.Width * this.Scale > EnemyManager.Instance.ScreenDimensions.X)
+                        {
+                            EnemyManager.Instance.FlipEnemies(initialY, -1);
+                        }
+                    }
                 }
                 else
-                {
-                    spriteDirection = -1;
+                { // On kill effects
+                    switch (this.ability)
+                    {
+                        case EnemyType.Bomb:
+                            // Creates an explosion
+                            BulletSpawning(0, BulletType.Explosion, new Vector2(-180, 0), 0);
+                            break;
+                    }
                 }
-
-                // Get shooting position
-                float enemyShootX = (Transform.Width * this.Scale) / 2;
-                float enemyShootY = (Transform.Height * this.Scale) / 2;
-
-                Vector2 shootPos = new Vector2(Position.X + // Base player X position
-                                               enemyShootX, // Center horizontally
-                                               Position.Y + // Base player Y position
-                                               enemyShootY  // Center vertically
-                                               );
-
-                // Will only perform actions if currently on the screen
-                switch (this.ability)
-                {
-                    case EnemyType.Bouncing:
-                        // Shooting Delay
-                        if (shotTimer > (int)(140 * (1 + (0.1 * shotWaitTime))))
-                        {
-                            // Fix rotation errors when flipped
-                            if (spriteDirection < 0)
-                            {
-                                shootPos = new Vector2(Position.X,
-                                                       Position.Y + enemyShootY * 2 - 25);
-                            }
-
-                            // Shoot the 3 bullets
-                            BulletManager.Instance.CreateBullet(BulletType.Bouncing, shootPos, 0, spriteDirection, this, false);
-                            BulletManager.Instance.CreateBullet(BulletType.Bouncing, shootPos, 30, spriteDirection, this, false);
-                            BulletManager.Instance.CreateBullet(BulletType.Bouncing, shootPos, -30, spriteDirection, this, false);
-
-                            // Reset Shooting time
-                            shotWaitTime = rng.Next(shotWaitVariance) - shotWaitVariance / 2;
-                            shotTimer = 0;
-                        }
-                        break;
-
-                    case EnemyType.Splitter:
-                        // Shooting Delay
-                        if (shotTimer > (int)(140 * (1 + (0.1 * shotWaitTime))))
-                        {
-                            // Fix rotation errors when flipped
-                            if (spriteDirection < 0)
-                            {
-                                shootPos = new Vector2(Position.X,
-                                                       Position.Y + enemyShootY * 2 - 17);
-                            }
-
-                            // Shoot the splitter bullet
-                            BulletManager.Instance.CreateBullet(BulletType.Splitter, shootPos, 0, spriteDirection, this, false);
-
-                            // Reset Shooting time
-                            shotWaitTime = rng.Next(shotWaitVariance) - shotWaitVariance / 2;
-                            shotTimer = 0;
-                        }
-                        break;
-
-                    case EnemyType.Large:
-                        // Shooting Delay
-                        if (shotTimer > (int)(120 * (1 + (0.1 * shotWaitTime))))
-                        {
-                            // Fix rotation errors when flipped
-                            if (spriteDirection < 0)
-                            {
-                                shootPos = new Vector2(Position.X,
-                                                       Position.Y + enemyShootY * 2 - 15);
-                            }
-
-                            // Shoot the BIG BULLET
-                            BulletManager.Instance.CreateBullet(BulletType.Large, shootPos, 0, spriteDirection, this, false);
-
-                            // Reset Shooting time
-                            shotWaitTime = rng.Next(shotWaitVariance);
-                            shotTimer = 0;
-                        }
-                        break;
-
-                    case EnemyType.Seeker:
-                        // Shooting Delay
-                        if (shotTimer > (int)(190 * (1 + (0.1 * shotWaitTime))))
-                        {
-                            // Fix rotation errors when flipped
-                            if (spriteDirection < 0)
-                            {
-                                shootPos = new Vector2(Position.X,
-                                                       Position.Y + enemyShootY * 2 - 15);
-                            }
-
-                            // Shoot the seeker bullet
-                            BulletManager.Instance.CreateBullet(BulletType.Seeker, shootPos, 0, spriteDirection, this, false);
-
-                            // Reset Shooting time
-                            shotWaitTime = rng.Next(shotWaitVariance) - shotWaitVariance / 2;
-                            shotTimer = 0;
-                        }
-                        break;
-                }
-                shotTimer++;
-
-                // Creates currect collider for Enemy
-                this.Transform = this.Animation.Play(gameTime);
             }
 
+            // Creates currect collider for Enemy
+            this.Transform = this.Animation.Play(gameTime);
+
+            // Move enemy with Y camera scrolling
+            Vector2 cameraScroll = new Vector2(0, Camera.Instance.OffSet.Y);
+            Position -= cameraScroll;
+
             this.Collider.Resolved = true;
+
+            SpriteEffects flipper = (Direction.Y < 0) ? SpriteEffects.None : SpriteEffects.FlipVertically;
+
             List<Collision> intercepts = this.Collider.UpdateTransform(
-                (ushort)CollisionGroup.Enemy,        // Content on same collision layer won't coll
-                enemyNumber
+                this.Sprite,                            // Enemy Sprite itself
+                this.Position,                          // Position
+                this.Transform,                         // Enemy transform for sprite selection
+                GameObject.Instance.GraphicsDevice,     // Graphics Device Info
+                GameObject.Instance.SpriteBatch,        // Sprite Batcher (carries through)
+                1,                                      // Removed old variant of direction (bully Matt to remove this)
+                new Vector2(this.Scale, this.Scale),    // Scale
+                flipper,                              // Sprite Effects
+                (ushort)CollisionGroup.Enemy,           // Collision Layer
+                enemyNumber                             // Enemy Number (tied to Manager)
             );
 
-            // Set position of
-            Vector2 cameraScrollY = new Vector2(0, Camera.Instance.OffSet.Y);
-            Position -= cameraScrollY;
+            // Get camera's movement direction
+            float cameraScrollY = Camera.Instance.OffSet.Y;
+            if (Player.PlayerInstance.CameraLock == true)
+            {
+                if (cameraScroll.Y > 0)
+                {
+                    direction.Y = -1;
+                }
+                else if (cameraScroll.Y < 0)
+                {
+                    direction.Y = 1;
+                }
+            }
 
             // Manage Animation
             this.Animation.AnimationDuration = 0.03f;
             this.Transform = this.Animation.Play(gameTime);
         }
+
+        #region Bullet Creation Methods
+
+        /// <summary>
+        /// Handles the delay between spawning a bullet for the enemy.
+        /// </summary>
+        /// <param name="shootDelay">Time between each shot</param>
+        /// <param name="ability">The ability to give this Bullet</param>
+        /// <param name="shootOffset">Spawning offset from Enemy's position</param>
+        /// <param name="horizontalDirection">Which way does the bullet face Horizontally?
+        ///                                   -1: Left
+        ///                                   0: No Direction
+        ///                                   1: Right
+        ///                                   </param>
+        private void BulletSpawning (int shootDelay,
+                                    BulletType ability,
+                                    Vector2 shootOffset,
+                                    int horizontalDirection)
+        {
+            double percentageChange = 1 + (0.1 * shotWaitTime);
+
+            if (shotTimer > (int)(shootDelay * percentageChange))
+            {
+                CreateBullet(ability, shootOffset, horizontalDirection);
+
+                // Reset Shooting time
+                shotWaitTime = rng.Next(shotWaitVariance) - shotWaitVariance / 2;
+                shotTimer = 0;
+            }
+
+            
+        }
+
+        /// <summary>
+        /// Handles the delay between spawning bullets for the enemy. Allows for spawning
+        /// of multiple bullets at once
+        /// </summary>
+        /// <param name="shootDelay">Time between the shots</param>
+        /// <param name="ability">The ability to give these Bullets</param>
+        /// <param name="shootOffset">Spawning offset from Enemy's position</param>
+        /// <param name="horizontalDirection">Which way do the bullets face Horizontally?
+        ///                                   -1: Left
+        ///                                   0: No Direction
+        ///                                   1: Right
+        ///                                   </param>
+        private void BulletSpawning (int shootDelay,
+                                    BulletType[] ability,
+                                    Vector2[] shootOffset,
+                                    int[] horizontalDirection)
+        {
+            double percentageChange = 1 + (0.1 * shotWaitTime);
+
+            if (shotTimer > (int)(shootDelay * percentageChange))
+            {
+                // Makes sure it will never run extra times if given unequal count of values in Lists
+                if (ability.Length == shootOffset.Length && ability.Length == horizontalDirection.Length)
+                {
+                    for (int i = 0; i < ability.Length; i++)
+                    { // Create all bullets
+                        CreateBullet(ability[i], shootOffset[i], horizontalDirection[i]);
+                    }
+                }
+
+                // Reset Shooting time
+                shotWaitTime = rng.Next(shotWaitVariance) - shotWaitVariance / 2;
+                shotTimer = 0;
+            }
+
+            
+        }
+
+        /// <summary>
+        /// More consice version of creating bullets, which manages
+        /// positions and camera data.
+        /// </summary>
+        /// <param name="ability">The ability to give this Bullet</param>
+        /// <param name="shootOffset">Spawning offset from Enemy's position</param>
+        /// <param name="horizontalDirection">Which way does the bullet face Horizontally?
+        ///                                   -1: Left
+        ///                                   0: No Direction
+        ///                                   1: Right
+        ///                                   </param>
+        private void CreateBullet (BulletType ability, Vector2 shootOffset, int horizontalDirection)
+        {
+            // Check which direction the enemy is facing
+
+            // Get shooting position
+            float enemyShootX = (Transform.Width * this.Scale) / 2;
+            float enemyShootY = (direction.Y > 0) ? Transform.Height * this.Scale : 0f;
+
+            Vector2 shootPos = new Vector2(Position.X + // Base player X position
+                                           enemyShootX, // Center horizontally
+                                           Position.Y + // Base player Y position
+                                           enemyShootY  // Center vertically
+                                           );
+
+            // Check if offset is to be added to Bullet
+            shootPos += (direction.Y > 0) ? shootOffset : Vector2.Zero;
+            
+            // Create the Bullet
+            BulletManager.Instance.CreateBullet(ability,                        // Bullet's Ability
+                                                shootPos,                       // Spawn Position
+                                                new Vector2(horizontalDirection,// Horizontal Direction
+                                                            direction.Y),       // Vertical Direction
+                                                this,                           // Creator Reference
+                                                false);                         // Screen Scrolling
+        }
+
+        #endregion
 
         #endregion
     }

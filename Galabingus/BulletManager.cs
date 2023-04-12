@@ -27,8 +27,7 @@ namespace Galabingus
         // Bullet Created Bullet Storage
         private List<BulletType> storeAbilityBullets;
         private List<Vector2> storePositionBullets;
-        private List<int> storeAngleBullets;
-        private List<int> storeDirectionBullets;
+        private List<Vector2> storeDirectionBullets;
         private List<object> storeCreatorBullets;
 
         // Bullet Total
@@ -81,14 +80,14 @@ namespace Galabingus
             // Storage data for when a bullet spawns a bullet
             storeAbilityBullets = new List<BulletType>(); 
             storePositionBullets = new List<Vector2>();
-            storeAngleBullets = new List<int>();
-            storeDirectionBullets = new List<int>();
+            storeDirectionBullets = new List<Vector2>();
             storeCreatorBullets = new List<object>();
 
             bulletTotal = 0;
 
             content = new List<ushort>();
 
+            // Gets size of screen
             screenSize = new Vector2(
                 GameObject.Instance.GraphicsDevice.Viewport.Width, // Width of screen
                 GameObject.Instance.GraphicsDevice.Viewport.Height // Height of screen
@@ -110,33 +109,41 @@ namespace Galabingus
         /// <param name="creator">Reference to the creator of the bullet</param>
         /// <param name="sourceIsBulet">If the thing spawning the bullet is itself a bullet</param>
         public void CreateBullet (BulletType ability, 
-                                  Vector2 position, 
-                                  int angle, 
-                                  int direction, 
+                                  Vector2 position,
+                                  Vector2 direction, 
                                   object creator, 
                                   bool sourceIsBullet)
         {
+
             // Sets the sprite to use for the bullet for GameObject storage purposes
             ushort sprite;
             switch (ability)
             {
-                case BulletType.Normal:
+                case BulletType.PlayerNormal:
                     sprite = GameObject.Instance.Content.smallbullet_strip4;
                     break;
 
-                case BulletType.Bouncing:
+                case BulletType.EnemyNormal:
+                    sprite = GameObject.Instance.Content.enemy_red_bullet_strip4;
+                    break;
+
+                case BulletType.BouncingSide:
                     sprite = GameObject.Instance.Content.enemy_orange_bullet_45_strip4;
+                    break;
+
+                case BulletType.BouncingCenter:
+                    sprite = GameObject.Instance.Content.enemy_orange_bullet_90_strip4;
                     break;
 
                 case BulletType.Splitter:
                     sprite = GameObject.Instance.Content.enemy_green_bullet_main_strip4;
                     break;
 
-                case BulletType.Circle:
-                    sprite = GameObject.Instance.Content.enemy_violet_bullet_strip4;
+                case BulletType.SplitOff:
+                    sprite = GameObject.Instance.Content.enemy_green_bullet_split_strip4;
                     break;
 
-                case BulletType.Large:
+                case BulletType.Wave:
                     sprite = GameObject.Instance.Content.enemy_yellow_bullet_strip3;
                     break;
 
@@ -144,8 +151,8 @@ namespace Galabingus
                     sprite = GameObject.Instance.Content.enemy_violet_bullet_strip4;
                     break;
 
-                case BulletType.SplitSmall:
-                    sprite = GameObject.Instance.Content.enemy_green_bullet_split_strip4;
+                case BulletType.Explosion:
+                    sprite = GameObject.Instance.Content.bomb_explosion_strip5;
                     break;
 
                 default:
@@ -157,7 +164,6 @@ namespace Galabingus
             if (Instance.content.Count == 0)
             {
                 Instance.content.Add(sprite);
-                Debug.WriteLine($"bruh");
             }
             else
             {
@@ -179,13 +185,10 @@ namespace Galabingus
             bool isReplacing = false;
             ushort setNumber = (ushort)Math.Max(0, (Instance.activeBullets.Count - 1));
 
-            //Debug.WriteLine($"COUNT: {activeBullets.Count}");
-
             for (int i = 0; i < Instance.activeBullets.Count; i++)
             {
                 if (Instance.activeBullets[i] == null)
                 {
-                    //Debug.WriteLine($"Found Reusable Val at: {i}");
                     setNumber = (ushort)(i);
                     isReplacing = true;
                     break;
@@ -197,22 +200,19 @@ namespace Galabingus
             {
                 Instance.storeAbilityBullets.Add(ability);
                 Instance.storePositionBullets.Add(position);
-                Instance.storeAngleBullets.Add(angle);
                 Instance.storeDirectionBullets.Add(direction);
                 Instance.storeCreatorBullets.Add(creator);
-
             } 
             else
             {
                 if (isReplacing == false)
                 {
-                    Instance.activeBullets.Add(new Bullet(ability,       // Ability of the bullet to shoot
+                    Instance.activeBullets.Add(new Bullet(ability,      // Ability of the bullet to shoot
                                                          position,      // Position to spawn the bullet
-                                                         angle,         // Angle to move the bullet
                                                          direction,     // Direction of the bullet
                                                          creator,       // Reference to creator of bullet
-                                                         sprite,        // Sprite of the bullet
-                                                         bulletTotal    // total count of bullets
+                                                         sprite,        // Ushort for Sprite (GameObject)
+                                                         bulletTotal    // Total count of bullets
                                                          )
                                                );
 
@@ -224,11 +224,10 @@ namespace Galabingus
                     Instance.activeBullets[setNumber] =
                                               new Bullet(ability,       // Ability of the bullet to shoot
                                                          position,      // Position to spawn the bullet
-                                                         angle,         // Angle to move the bullet
                                                          direction,     // Direction of the bullet
                                                          creator,       // Reference to creator of bullet
-                                                         sprite,        // Sprite of the bullet
-                                                         setNumber      // total count of bullets
+                                                         sprite,        // Ushort for Sprite (GameObject)
+                                                         setNumber      // Total count of bullets
                                                          );
                 }
             }
@@ -241,9 +240,6 @@ namespace Galabingus
         /// <param name="gameTime">The total game time variable</param>
         public void Update(GameTime gameTime)
         {
-            //Debug.WriteLine($"COUNT: {Instance.activeBullets.Count}");
-
-            //Debug.WriteLine(sprite);
             for (int i = 0; i < Instance.activeBullets.Count; i++)
             {
 
@@ -254,13 +250,17 @@ namespace Galabingus
                         Instance.activeBullets[i].Update(gameTime);
                     }
 
+                    if (Instance.activeBullets[i].Ability == BulletType.Explosion)
+                    {
+                        System.Diagnostics.Debug.WriteLine(Instance.activeBullets[i].Destroy);
+                    }
+
                     // Checks if bullet is set to be destroyed.
                     if (Instance.activeBullets[i].Destroy)
                     {
                         Instance.activeBullets[i].Collider.Unload();
                         Instance.activeBullets[i].Delete((ushort)i);
                         Instance.activeBullets[i] = null;
-                        //Debug.WriteLine($"bogos");
                     }
                 }
             }
@@ -270,7 +270,6 @@ namespace Galabingus
             {
                 BulletManager.Instance.CreateBullet(Instance.storeAbilityBullets[i], 
                                                     Instance.storePositionBullets[i], 
-                                                    Instance.storeAngleBullets[i],
                                                     Instance.storeDirectionBullets[i],
                                                     Instance.storeCreatorBullets[i], 
                                                     false);
@@ -279,7 +278,6 @@ namespace Galabingus
             // Clear all storage lists
             Instance.storeAbilityBullets.Clear();
             Instance.storePositionBullets.Clear();
-            Instance.storeAngleBullets.Clear();
             Instance.storeDirectionBullets.Clear();
             Instance.storeCreatorBullets.Clear();
         }
@@ -294,25 +292,29 @@ namespace Galabingus
             {
                 if (bullet != null)
                 {
-                    // Convert angle
-                    float direction = (float)MathHelper.ToRadians(bullet.Angle);
 
-                    // Get direction
-                    if (bullet.Direction < 1)
-                    {
-                        direction += (float)Math.PI;
+                    SpriteEffects flipping = SpriteEffects.None;
+
+                    if (bullet.Direction.X == -1)
+                    { // Flip Horizontally
+                        flipping = SpriteEffects.FlipHorizontally;
+                    }
+
+                    if (bullet.Direction.Y == 1)
+                    { // Flip Vertically
+                        flipping = flipping | SpriteEffects.FlipVertically;
                     }
 
                     GameObject.Instance.SpriteBatch.Draw(
                         bullet.Sprite,                  // The sprite-sheet for the player
                         bullet.Position,                // The position for the player
                         bullet.Transform,               // The scale and bounding box for the animation
-                        bullet.Color,                   // The color for the palyer
-                        direction,                      // rotation uses the velocity
-                        new Vector2(bullet.Transform.Width * 0.5f, bullet.Transform.Height * 0.5f), // Starting render position
+                        Color.White,                    // The color for the palyer
+                        0,                              // rotation uses the velocity
+                        Vector2.Zero,                   // Starting render position
                         bullet.Scale,                   // The scale of the sprite
-                        SpriteEffects.None,                 // Which direction the sprite faces
-                        0.0f                                // Layer depth of the player is 0.0
+                        flipping,                       // Which direction the sprite faces
+                        0.0f                            // Layer depth of the player is 0.0
                     );
                 }
             }

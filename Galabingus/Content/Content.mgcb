@@ -40,7 +40,7 @@
 /processorParam:DebugMode=Auto
 /build:background.fx
 
-#begin bomb_explosion_strip4.png
+#begin bomb_explosion_strip5.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -50,19 +50,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:bomb_explosion_strip4.png
-
-#begin bomb_strip4.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:bomb_strip4.png
+/build:bomb_explosion_strip5.png
 
 #begin bomb_strip4.png
 /importer:TextureImporter
@@ -202,30 +190,6 @@
 /processorParam:TextureFormat=Color
 /build:enemy_green_bullet_main_strip4.png
 
-#begin enemy_green_bullet_main_strip4.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:enemy_green_bullet_main_strip4.png
-
-#begin enemy_green_bullet_split_strip4.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:enemy_green_bullet_split_strip4.png
-
 #begin enemy_green_bullet_split_strip4.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -297,18 +261,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:enemy_orange_strip4.png
-
-#begin enemy_red_bullet_strip4.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:enemy_red_bullet_strip4.png
 
 #begin enemy_red_bullet_strip4.png
 /importer:TextureImporter
@@ -454,18 +406,6 @@
 /processorParam:TextureFormat=Color
 /build:laser_bullet_full_strip11.png
 
-#begin laser_bullet_full_strip11.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:laser_bullet_full_strip11.png
-
 #begin laser_bullet_prep_strip6.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -477,30 +417,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:laser_bullet_prep_strip6.png
-
-#begin laser_bullet_prep_strip6.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:laser_bullet_prep_strip6.png
-
-#begin laser_bullet_spawn_strip3.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:laser_bullet_spawn_strip3.png
 
 #begin laser_bullet_spawn_strip3.png
 /importer:TextureImporter

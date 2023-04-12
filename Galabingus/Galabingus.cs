@@ -105,23 +105,22 @@ namespace Galabingus
              * [3] -> Y Position
              */
 
+            l_a4_obj_enemyData.Add(new int[] { 1, 0, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 1 - 172), (GameObject.Instance.GraphicsDevice.Viewport.Height * -0) + 10, 0 });
+            l_a4_obj_enemyData.Add(new int[] { 1, 5, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 0 + 100), (GameObject.Instance.GraphicsDevice.Viewport.Height * -0) + 10, 1 });
 
-            l_a4_obj_enemyData.Add(new int[] { 1, 1, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 1 - 172), (GameObject.Instance.GraphicsDevice.Viewport.Height * -0) + 10 });
-            l_a4_obj_enemyData.Add(new int[] { 1, 2, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 0 + 100), (GameObject.Instance.GraphicsDevice.Viewport.Height * -0) + 10 });
+            l_a4_obj_enemyData.Add(new int[] { 1, 2, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 1 - 172), (GameObject.Instance.GraphicsDevice.Viewport.Height * -1) + 10, 1 });
+            l_a4_obj_enemyData.Add(new int[] { 1, 4, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 0 + 100), (GameObject.Instance.GraphicsDevice.Viewport.Height * -1) + 10, 1 });
 
-            l_a4_obj_enemyData.Add(new int[] { 1, 2, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 1 - 172), (GameObject.Instance.GraphicsDevice.Viewport.Height * -1) + 10 });
-            l_a4_obj_enemyData.Add(new int[] { 1, 4, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 0 + 100), (GameObject.Instance.GraphicsDevice.Viewport.Height * -1) + 10 });
+            l_a4_obj_enemyData.Add(new int[] { 1, 4, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 1 - 172), (GameObject.Instance.GraphicsDevice.Viewport.Height * -2) + 10, 0 });
+            l_a4_obj_enemyData.Add(new int[] { 1, 5, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 0 + 100), (GameObject.Instance.GraphicsDevice.Viewport.Height * -2) + 10, 0 });
 
-            l_a4_obj_enemyData.Add(new int[] { 1, 4, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 1 - 172), (GameObject.Instance.GraphicsDevice.Viewport.Height * -2) + 10 });
-            l_a4_obj_enemyData.Add(new int[] { 1, 5, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 0 + 100), (GameObject.Instance.GraphicsDevice.Viewport.Height * -2) + 10 });
+            l_a4_obj_enemyData.Add(new int[] { 1, 4, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 1 - 172), (GameObject.Instance.GraphicsDevice.Viewport.Height * -3) + 10, 0 });
+            l_a4_obj_enemyData.Add(new int[] { 1, 5, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 0 + 100), (GameObject.Instance.GraphicsDevice.Viewport.Height * -3) + 10, 0 });
 
-            l_a4_obj_enemyData.Add(new int[] { 1, 4, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 1 - 172), (GameObject.Instance.GraphicsDevice.Viewport.Height * -3) + 10 });
-            l_a4_obj_enemyData.Add(new int[] { 1, 5, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 0 + 100), (GameObject.Instance.GraphicsDevice.Viewport.Height * -3) + 10 });
-
-            l_a4_obj_enemyData.Add(new int[] { 1, 1, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 1 - 172), (GameObject.Instance.GraphicsDevice.Viewport.Height * -4) + 10 });
-            l_a4_obj_enemyData.Add(new int[] { 1, 2, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 0 + 240), (GameObject.Instance.GraphicsDevice.Viewport.Height * -4) + 10 });
-            l_a4_obj_enemyData.Add(new int[] { 1, 4, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 1 - 172), (GameObject.Instance.GraphicsDevice.Viewport.Height * -4) + 10 });
-            l_a4_obj_enemyData.Add(new int[] { 1, 5, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 1 - 240), (GameObject.Instance.GraphicsDevice.Viewport.Height * -4) + 10 });
+            l_a4_obj_enemyData.Add(new int[] { 1, 1, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 1 - 172), (GameObject.Instance.GraphicsDevice.Viewport.Height * -4) + 10, 0 });
+            l_a4_obj_enemyData.Add(new int[] { 1, 2, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 0 + 240), (GameObject.Instance.GraphicsDevice.Viewport.Height * -4) + 10, 0 });
+            l_a4_obj_enemyData.Add(new int[] { 1, 4, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 1 - 172), (GameObject.Instance.GraphicsDevice.Viewport.Height * -4) + 10, 0 });
+            l_a4_obj_enemyData.Add(new int[] { 1, 5, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 1 - 240), (GameObject.Instance.GraphicsDevice.Viewport.Height * -4) + 10, 0 });
 
 
             // Create a player
