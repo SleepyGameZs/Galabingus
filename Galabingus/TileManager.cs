@@ -189,7 +189,7 @@ namespace Galabingus
         public void CreateObject(dynamic content, Vector2 position)
         {
             GameObject.Instance.Content = content;
-            Tile tile = new Tile(GameObject.Instance.InstanceID, 0, 1, true);
+            Tile tile = new Tile(GameObject.Instance.ContentName, 0, 1, true);
             tile.Transform = new Rectangle(0, 0, tile.Sprite.Width, tile.Sprite.Height);
             tile.Scale = 1f;
             tile.Position = position;
