@@ -35,6 +35,9 @@ namespace Galabingus
         #region Properties
 
         public Color ClearColor { get { return clearColor; } set { clearColor = value; } }
+        public string UIText { get { return uiText; } set { uiText = value; } }
+
+        public Rectangle UIPosition { get { return uiPosition; } set { uiPosition = value; } }
 
         #endregion
 

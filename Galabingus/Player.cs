@@ -79,6 +79,7 @@ namespace Galabingus
         private Texture2D fullHeartSprite;
         private bool cameraLock;
         private Vector2 translation;
+        private Text textTest;
 
         public Vector2 Translation
         {
@@ -318,6 +319,8 @@ namespace Galabingus
             PlayerInstance.halfHeartSprite = GameObject.Instance.ContentManager.Load<Texture2D>("heart_half_strip1");
             PlayerInstance.heartSprite = GameObject.Instance.ContentManager.Load<Texture2D>("heart_strip1");
             PlayerInstance.cameraLock = true;
+            textTest = UIManager.Instance.AddText("Testing", Vector2.Zero, 1231231, Color.White, UIState.BaseGame);
+
         }
 
         /// <summary>
@@ -938,6 +941,9 @@ namespace Galabingus
         /// </summary>
         public void Draw()
         {
+            ///textTest;
+            textTest.UIText = "AA";
+            textTest.UIPosition = new Rectangle((int)Position.X, (int)Position.Y, textTest.UIPosition.Width, textTest.UIPosition.Height);
             if (Player.PlayerInstance.Health > 0)
             {
                 if (boost) //&& totalBoostTime >= boostFrameRate)
