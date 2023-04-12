@@ -313,11 +313,11 @@ namespace Galabingus
         {
             get
             {
-                return instance;
+                return GameObject.Instance.instance;
             }
             set
             {
-                instance = value;
+                GameObject.Instance.instance = value;
             }
         }
 
@@ -894,7 +894,7 @@ namespace Galabingus
         public void LoadSprite(ushort contentName, ushort instanceNumber)
         {
             GameObject.Instance.Content = contentName;
-            instance = instanceNumber;
+            GameObject.Instance.instance = instanceNumber;
             string path = GameObject.ObjectEnumsI[contentName];
             GameObject.Instance.index = contentName;
             SetSprite(instanceNumber, GameObject.Instance.contentManager.Load<Texture2D>(path));
