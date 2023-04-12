@@ -50,6 +50,14 @@ namespace Galabingus
         Tile
     }
 
+    public enum UIState
+    {
+        BaseMenu,
+        BaseGame,
+        BasePause,
+        BaseGameOver
+    }
+
 
     #endregion
 
@@ -183,6 +191,11 @@ namespace Galabingus
             set { cs = value;  }
         }
 
+        public List<UIElement> Menu1
+        {
+            get { return menu1;}
+        }
+
         #endregion
 
         #region Constructor
@@ -254,23 +267,26 @@ namespace Galabingus
             //more dummy variables
             EventDelegate event1;
             EventDelegate event2;
+            TextEvent textEvent1;
 
             #region Normal Game UI
 
             //Create the Play Button
             event1 = StartGame;
+            textEvent1 = null;
 
-            AddButton("playbutton_strip1", 5,
+            AddButton("buttonPlay_strip1", 5,
             new Vector2(width / 2, height / 2),
             event1, menu1);
 
             AddText("arial_36", "Hello Welcome to Game",
                 new Vector2(width / 2 - 200,
-                height / 2 - 200), menu1);
+                height / 2 - 200), textEvent1, menu1);
 
             //Create the Options Button
             event1 = null;
             event2 = UpMenu;
+            textEvent1 = null;
             
             //create buttons to go in the menu it displays and add them to the list
             AddButton("buttonHowToPlay_strip1", 1,
@@ -283,24 +299,27 @@ namespace Galabingus
 
             AddText("arial_18", "use backspace to go back",
                 new Vector2(width / 2 - 200,
-                height / 2 - 200), menu2);
+                height / 2 - 200), textEvent1, menu2);
 
             //create the options button in the main list
             AddButton("buttonOptions_strip1", 1,
                 new Vector2(width / 2, height / 2 + 200),
                 event2, menu1);
 
+            /*
             //Pause
 
             AddText("arial_36", "hello there you are now paused",
                 new Vector2(width / 2 - 200,
-                height / 2 - 200), pause1);
+                height / 2 - 200), textEvent1, pause1);
 
             //GameOver
 
             AddText("arial_36", "LOLLLLL :skull_emoji", 
                 new Vector2(width / 2 - 100,
-                height / 2 - 150), gameOver1);
+                height / 2 - 150), textEvent1, gameOver1);
+
+            */
 
             //add the background
             menuBackground = cm.Load<Texture2D>("menubackground_strip1");
@@ -490,22 +509,22 @@ namespace Galabingus
 
         #region Event Methods
 
-        public void StartGame(object sender)
+        private void StartGame(object sender)
         {
             gs = GameState.Game;
         }
 
-        public void UpMenu(object sender)
+        private void UpMenu(object sender)
         {
             currentLevel++;
         }
 
-        public void DownMenu(object sender)
+        private void DownMenu(object sender)
         {
             currentLevel--;
         }
 
-        public void HoverLightGray(object sender)
+        private void HoverLightGray(object sender)
         {
             Button button = (Button)sender;
 
@@ -523,7 +542,7 @@ namespace Galabingus
         /// <param name="gs">the gamestate the element exists in</param>
         /// <param name="uiEvent">the data which it needs for its events</param>
         /// <param name="types">the event types it can call</param>
-        public void AddButton
+        private void AddButton
             (string filename, int scale, Vector2 position, EventDelegate clickEvent, List<UIElement> listToAdd)
         {
             //create the button texture
@@ -544,7 +563,7 @@ namespace Galabingus
         /// <param name="gs">the gamestate the element exists in</param>
         /// <param name="uiEvent">the data which it needs for its events</param>
         /// <param name="types">the event types it can call</param>
-        public void AddBackground
+        private void AddBackground
             (string filename, int scale, Vector2 position,  List<UIElement> listToAdd)
         {
             //create the menus texture
@@ -556,25 +575,45 @@ namespace Galabingus
             listToAdd.Add(background);
         }
 
-        public void AddText(string filename, string content, Vector2 position, List<UIElement> listToAdd)
+        public void AddSmallText(string content, Vector2 position, UIState uIState)
+        {
+            switch(uIState)
+            {
+                case UIState.BaseMenu:
+                    AddText("arial_12", content, position, null, UIManager.Instance.Menu1);
+                    break;
+                case UIState.BaseGame:
+                    break;
+                case UIState.BasePause:
+                    break;
+                case UIState.BaseGameOver:
+                    break;
+            }
+        }
+
+        private void AddText(string filename, string content, Vector2 position, TextEvent changeText, List<UIElement> listToAdd)
         {
             SpriteFont font = cm.Load<SpriteFont>(filename);
 
             Text text = new Text(font, content, position);
 
+            text.UpdateText += changeText;
+
             listToAdd.Add(text);
         }
 
-        public void AddText(string filename, string content, Vector2 position, Color tint, List<UIElement> listToAdd)
+        private void AddText(string filename, string content, Vector2 position, Color tint, TextEvent changeText, List<UIElement> listToAdd)
         {
             SpriteFont font = cm.Load<SpriteFont>(filename);
 
             Text text = new Text(font, content, position, tint);
 
+            text.UpdateText += changeText;
+
             listToAdd.Add(text);
         }
 
-        public void AddText(string filename, string content, Vector2 position, int lineCapacity, int spacing, List<UIElement> listToAdd)
+        private void AddText(string filename, string content, Vector2 position, int lineCapacity, int spacing,  List<UIElement> listToAdd)
         {
             SpriteFont font = cm.Load<SpriteFont>(filename);
 
@@ -611,7 +650,7 @@ namespace Galabingus
             }
         }
 
-        public void AddText(string filename, string content, Vector2 position, int lineCapacity, int spacing, Color tint, List<UIElement> listToAdd)
+        private void AddText(string filename, string content, Vector2 position, int lineCapacity, int spacing, Color tint, List<UIElement> listToAdd)
         {
             SpriteFont font = cm.Load<SpriteFont>(filename);
 
@@ -651,7 +690,7 @@ namespace Galabingus
         /// updates all of the objects within the list of UIElements
         /// </summary>
         /// <param name="gs">the current gameState</param>
-        public void UpdateObjects(List<UIElement> elementList)
+        private void UpdateObjects(List<UIElement> elementList)
         {
             foreach (UIElement element in elementList)
             {
@@ -683,7 +722,7 @@ namespace Galabingus
         /// draw every object in the current game state to the screen
         /// </summary>
         /// <param name="gs">the current gameState</param>
-        public void DrawObjects(List<UIElement> elementList)
+        private void DrawObjects(List<UIElement> elementList)
         {
             foreach (UIElement element in elementList)
             {
