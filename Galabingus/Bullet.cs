@@ -442,13 +442,13 @@ namespace Galabingus
 
                     // Check for wall collison
                     bool LeftWallHit = this.Position.X < Sprite.Width;
-                    bool RightWallHit = this.Position.X > BulletManager.Instance.ScreenDimensions.X - Sprite.Width * this.Scale;
+                    bool RightWallHit = this.Position.X > BulletManager.Instance.ScreenDimensions.X;
 
-                    /*if (LeftWallHit || RightWallHit)
+                    if (LeftWallHit || RightWallHit)
                     { // Flip bullet
                         velocity.X *= -1;
                         direction.X *= -1;
-                    }*/
+                    }
 
                     break;
 

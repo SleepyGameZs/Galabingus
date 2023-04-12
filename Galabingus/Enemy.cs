@@ -474,15 +474,18 @@ namespace Galabingus
                     }
                 }
                 
+                
+
                 // Checks what kind of things can be collided with
                 foreach (Collision collision in intercepts)
                 {
                     if (collision.other != null && !destroy)
                     {
+                        //System.Diagnostics.Debug.WriteLine("eee"+intercepts.Count);
                         if ((collision.other as Enemy) is Enemy)
                         { // Collided with Enemy
                             // Check to see if collided enemy isn't in this Enemy's row
-                            System.Diagnostics.Debug.WriteLine("eee");
+
                             if (!EnemyManager.Instance.InSameRow(initialY, ((Enemy)collision.other).EnemyNumber))
                             {
                                 EnemyManager.Instance.FlipEnemies(initialY);
@@ -492,8 +495,8 @@ namespace Galabingus
                         { // Collided with Tile
                             Vector2 overlapZone = ((Tile)collision.other).ScaleVector;
 
-                            System.Diagnostics.Debug.WriteLine(overlapZone.X);
-                            System.Diagnostics.Debug.WriteLine(overlapZone.Y);
+                            //System.Diagnostics.Debug.WriteLine(overlapZone.X);
+                            //System.Diagnostics.Debug.WriteLine(overlapZone.Y);
                             if (overlapZone.X < overlapZone.Y)
                             {
                                 EnemyManager.Instance.FlipEnemies(initialY);

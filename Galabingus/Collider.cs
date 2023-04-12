@@ -529,7 +529,7 @@ namespace Galabingus
                     {
                         // When the bounds are intercepting and the layer isn't the same and all collisions have been resolved
                         // Then we can activate the collider
-                        if (this.resolved &&
+                        if (active || this.resolved &&
                             otherCollider.layer != this.layer &&
                             (
                                 (this.layer == (ushort)CollisionGroup.FromPlayer && otherCollider.layer != (ushort)CollisionGroup.Bullet && otherCollider.layer != (ushort)CollisionGroup.Player && otherCollider.layer != (ushort)CollisionGroup.Tile) ||
@@ -556,7 +556,7 @@ namespace Galabingus
                         }
 
                         // Only update the collider once
-                        if (active && !updated)
+                        if (active && !updated )
                         {
                             updated = true;
 
