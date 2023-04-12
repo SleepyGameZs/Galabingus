@@ -555,6 +555,18 @@ namespace Galabingus
             totalBoostTime += gameTime.ElapsedGameTime.TotalSeconds;
             totalTime += gameTime.ElapsedGameTime.TotalSeconds;
 
+            intercepts = PlayerInstance.Collider.UpdateTransform(
+                PlayerInstance.Sprite,                         // Player Sprite
+                PlayerInstance.Position,                       // Player position
+                PlayerInstance.Transform,                      // Player transform for sprite selection
+                GameObject.Instance.GraphicsDevice,
+                GameObject.Instance.SpriteBatch,
+                PlayerInstance.Scale,                          // Player scale
+                SpriteEffects.None,
+                (ushort)CollisionGroup.Player,                 // Content
+                0
+            );
+
             currentKeyboardState = Keyboard.GetState();
             if (!previousCollision || currentKeyboardState != previousKeyboardState )
             {

@@ -186,15 +186,15 @@ namespace Galabingus
         /// Creates asteriod objects
         /// </summary>
         /// <param name="position"> The position of the asteriod </param>
-        public void CreateAsteriod(Vector2 position)
+        public void CreateObject(dynamic content, Vector2 position)
         {
-            Tile asteriod = new Tile(GameObject.Instance.Content.grayasteroid_strip1, 0, 1, true);
-            asteriod.Transform = new Rectangle(0, 0, asteriod.Sprite.Width, asteriod.Sprite.Height);
-            asteriod.Scale = 1f;
-            asteriod.Position = position;
-            //asteriod.Position = new Vector2((Player.PlayerInstance.Transform.Width * 2)+200, (GameObject.Instance.GraphicsDevice.Viewport.Height * 0.5f - Player.PlayerInstance.Transform.Height));
-            asteriod.ScaleVector = new Vector2(asteriod.Scale, asteriod.Scale);
-            tileList.Add(asteriod);
+            GameObject.Instance.Content = content;
+            Tile tile = new Tile(GameObject.Instance.InstanceID, 0, 1, true);
+            tile.Transform = new Rectangle(0, 0, tile.Sprite.Width, tile.Sprite.Height);
+            tile.Scale = 1f;
+            tile.Position = position;
+            tile.ScaleVector = new Vector2(tile.Scale, tile.Scale);
+            tileList.Add(tile);
         }
 
         public void Update(GameTime gameTime)
