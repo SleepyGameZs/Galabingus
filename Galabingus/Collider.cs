@@ -792,37 +792,44 @@ namespace Galabingus
 
             bool xComparison = ((other.position.X + other.transform.Width * 0.5f) > (this.position.X + this.transform.Width * 0.5f));
             bool yComparison = ((other.position.Y + other.transform.Height * 0.5f) > (this.position.Y + this.transform.Height * 0.5f));
+            bool xDiff = ((other.position.X + other.transform.Width * 0.5f) > (this.position.X + this.transform.Width * 0.5f));
+            bool yDiff = ((other.position.Y + other.transform.Height * 0.5f) > (this.position.Y + this.transform.Height * 0.5f));
 
             mtv.X = ocx - x;
             mtv.Y = ocy - y;
 
             float preMTVY = mtv.Y;
 
+            /*
             if (xComparison && !yComparison)
             {
                 mtv.X = Math.Abs(mtv.X);
                 mtv.Y = 0;
                 // X +
+                //Debug.WriteLine("A");
             }
             else if (!xComparison && yComparison)
             {
                 // Y and Y +
                 mtv.X = 0;
                 mtv.Y = Math.Abs(mtv.Y);
+                //Debug.WriteLine("B");
             }
             else if (!xComparison && !yComparison)
             {
                 mtv.X = -Math.Abs(mtv.X);
                 mtv.Y = -Math.Abs(mtv.Y);
+                //Debug.WriteLine("C");
             }
             else if (!xComparison && !yComparison)
             {
-                Debug.WriteLine("D");
+                //Debug.WriteLine("D");
             }
             else
             {
                 // Y and Y -
 
+                //Debug.WriteLine("D");
                 if (Math.Abs(overlap.Y) > Math.Abs(overlap.X))
                 {
                     mtv.X = -Math.Abs(mtv.X);
@@ -833,9 +840,10 @@ namespace Galabingus
                     mtv.X = 0;
                     mtv.Y = -Math.Abs(mtv.Y);
                 }
-
             }
+            */
 
+            /*
             if (xComparison)
             {
                 mtv.X = Math.Abs(mtv.X);
@@ -846,6 +854,7 @@ namespace Galabingus
                 mtv.Y = Math.Abs(mtv.Y);
             }
 
+            /*
             if (!xComparison)
             {
                 mtv.X = -Math.Abs(mtv.X);
@@ -855,6 +864,8 @@ namespace Galabingus
             {
                 mtv.Y = -Math.Abs(mtv.Y);
             }
+
+            */
 
             if (mtv == Vector2.Zero)
             {
