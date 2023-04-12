@@ -13,6 +13,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Galabingus
 {
+
     public sealed class EnemyManager
     {
         #region-------------------[ Fields ]-------------------
@@ -23,6 +24,9 @@ namespace Galabingus
         // Fileplaced enemy positions (used as base)
         private List<int[]> enemyData;
 
+        // Making Enemy Lines
+        private Dictionary<int, List<Enemy>> enemyRows;
+
         // List existing of enemies
         private List<Enemy> activeEnemies;
         private List<ushort> content;
@@ -31,12 +35,13 @@ namespace Galabingus
         private List<EnemyType> storeAbilityEnemies;
         private List<Vector2> storePositionEnemies;
         private List<object> storeCreatorEnemies;
+        private List<bool> storeShouldMoveEnemies;
 
         // Enemy Total
         private ushort enemyTotal;
 
-        // Draw Direction
-        private SpriteEffects enemyDirection;
+        // Screen data
+        private Vector2 screenSize;
 
         #endregion
 
@@ -58,12 +63,13 @@ namespace Galabingus
         }
 
         /// <summary>
-        /// Returns the direction enemies should be facing
+        /// Used to get screen dimensions for bullets
         /// </summary>
-        public SpriteEffects EnemyDirection
+        public Vector2 ScreenDimensions
         {
-            get { 
-                return enemyDirection; 
+            get 
+            {
+                return Instance.screenSize;
             }
         }
 
@@ -81,14 +87,20 @@ namespace Galabingus
             activeEnemies = new List<Enemy>();
             content = new List<ushort>();
 
+            enemyRows = new Dictionary<int, List<Enemy>>();
+
             enemyTotal = 0;
 
             storeAbilityEnemies = new List<EnemyType>();
             storePositionEnemies = new List<Vector2>();
             storeCreatorEnemies = new List<object>();
+            storeShouldMoveEnemies = new List<bool>();
 
-            // Get base camera direction data
-            enemyDirection = SpriteEffects.None;
+            // Gets screen size data
+            screenSize = new Vector2(
+                GameObject.Instance.GraphicsDevice.Viewport.Width, // Width of screen
+                GameObject.Instance.GraphicsDevice.Viewport.Height // Height of screen
+                );
         }
 
         #endregion
@@ -122,11 +134,15 @@ namespace Galabingus
                     // Set its position
                     Vector2 enemyPos = new Vector2(enemyData[i][2], enemyData[i][3]);
 
+                    // Should enemy move?
+                    bool shouldMove = (enemyData[i][4] == 1) ? true : false;
+
                     // Create actual enemy
-                    CreateEnemy(tempAbility,// Ability
-                                enemyPos,   // Position
-                                null,       // Creator
-                                false       // Was this Enemy spawned by another enemy?
+                    CreateEnemy(tempAbility,    // Ability
+                                enemyPos,       // Position
+                                null,           // Creator
+                                shouldMove,     // Should Enemy move back and forth?
+                                false          // Was this Enemy spawned by another enemy?
                                 );
                 }
             }
@@ -134,16 +150,15 @@ namespace Galabingus
             return instance;
         }
 
-        public void CreateEnemy (EnemyType ability, Vector2 position, object creator, bool isSourceEnemy) 
+        public void CreateEnemy (EnemyType ability, Vector2 position, object creator, bool shouldMove, bool isSourceEnemy) 
         {
             // account for if creator is null
-
             ushort sprite = GameObject.Instance.Content.tile_strip26;
 
             switch (ability)
             {
                 case EnemyType.Normal:
-                    sprite = GameObject.Instance.Content.enemy_dblue_strip4;
+                    sprite = GameObject.Instance.Content.enemy_red_strip4;
                     break;
 
                 case EnemyType.Bouncing:
@@ -154,11 +169,7 @@ namespace Galabingus
                     sprite = GameObject.Instance.Content.enemy_green_strip4;
                     break;
 
-                case EnemyType.Circle:
-                    sprite = GameObject.Instance.Content.enemy_purple_strip4;
-                    break;
-
-                case EnemyType.Large:
+                case EnemyType.Wave:
                     sprite = GameObject.Instance.Content.enemy_yellow_strip4;
                     break;
 
@@ -166,8 +177,12 @@ namespace Galabingus
                     sprite = GameObject.Instance.Content.enemy_violet_strip4;
                     break;
 
+                case EnemyType.Bomb:
+                    sprite = GameObject.Instance.Content.bomb_strip4;
+                    break;
+
                 default:
-                    sprite = GameObject.Instance.Content.enemy_lblue_strip4;
+                    sprite = GameObject.Instance.Content.enemy_violet_strip4;
                     break;
             }
 
@@ -195,13 +210,10 @@ namespace Galabingus
             bool isReplacing = false;
             ushort setNumber = (ushort)Math.Max(0, (Instance.activeEnemies.Count - 1));
 
-            Debug.WriteLine($"COUNT: {activeEnemies.Count}");
-
             for (int i = 0; i < Instance.activeEnemies.Count; i++)
             {
                 if (Instance.activeEnemies[i] == null)
                 {
-                    Debug.WriteLine($"Found Reusable Val at: {i}");
                     setNumber = (ushort)(i);
                     isReplacing = true;
                     break;
@@ -214,18 +226,35 @@ namespace Galabingus
                 Instance.storeAbilityEnemies.Add(ability);
                 Instance.storePositionEnemies.Add(position);
                 Instance.storeCreatorEnemies.Add(creator);
+                Instance.storeShouldMoveEnemies.Add(shouldMove);
             }
             else
             { // Add enemy itself to list
                 if (isReplacing == false)
                 {
-                    Instance.activeEnemies.Add(new Enemy(ability,    // Ability of the Enemy spawned
-                                                         position,   // Position of Enemy
-                                                         creator,    // What created this enemy
-                                                         sprite,     // Sprite for Enemy
-                                                         enemyTotal  // Total enemies
-                                                         )
+                    Enemy newEnemy = new Enemy(ability,    // Ability of the Enemy spawned
+                                               position,   // Position of Enemy
+                                               creator,    // What created this enemy
+                                               shouldMove, // Should enemy move back and forth
+                                               sprite,     // Sprite for Enemy
+                                               enemyTotal  // Total enemies
                                                );
+
+                    Instance.activeEnemies.Add(newEnemy);
+
+                    // Create list if needed
+                    if (shouldMove)
+                    {
+                        if (!Instance.enemyRows.ContainsKey((int)position.Y))
+                        {
+                            Instance.enemyRows.Add(((int)position.Y), new List<Enemy>());
+                        }
+
+                        // Add item to rows list
+                        Instance.enemyRows[(int)position.Y].Add(newEnemy);
+                        System.Diagnostics.Debug.WriteLine((int)position.Y);
+                    }
+                    
 
                     // Increment total
                     enemyTotal++;
@@ -235,6 +264,7 @@ namespace Galabingus
                     Instance.activeEnemies[setNumber] = new Enemy(ability,    // Ability of the Enemy spawned
                                                                   position,   // Position of Enemy
                                                                   creator,    // What created this enemy
+                                                                  shouldMove, // Should enemy move back and forth
                                                                   sprite,     // Sprite for Enemy
                                                                   enemyTotal  // Total enemies
                                                                   );
@@ -248,17 +278,6 @@ namespace Galabingus
         /// <param name="gameTime"></param>
         public void Update (GameTime gameTime)
         {
-            // Get camera's movement direction
-            float cameraScroll = Camera.Instance.InitalCameraScroll;
-            if (cameraScroll < 0)
-            {
-                Instance.enemyDirection = SpriteEffects.None;
-            } 
-            else
-            {
-                Instance.enemyDirection = SpriteEffects.FlipHorizontally;
-            }
-            
             // Run enemy updates
             for (int i = 0; i < Instance.activeEnemies.Count; i++)
             {
@@ -270,11 +289,16 @@ namespace Galabingus
                     // Checks if enemy is set to be destroyed.
                     if (Instance.activeEnemies[i].Destroy)
                     {
+                        // Remove from Row List
+                        if (Instance.activeEnemies[i].ShouldMove)
+                        {
+                             Instance.enemyRows[(int)(Instance.activeEnemies[i].InitialY)].Remove(Instance.activeEnemies[i]);
+                        }
+
+                        // Remove from primary list
                         Instance.activeEnemies[i].Collider.Unload();
                         Instance.activeEnemies[i].Delete((ushort)i);
                         Instance.activeEnemies[i] = null;
-
-                        // NOTE: If an enmy should have an on death action put it here
                     }
                 }
             }
@@ -285,6 +309,7 @@ namespace Galabingus
                 Instance.CreateEnemy(Instance.storeAbilityEnemies[i],    // Ability of the Enemy spawned
                                      Instance.storePositionEnemies[i],   // Position of Enemy
                                      Instance.storeCreatorEnemies[i],    // Enemy's creator
+                                     Instance.storeShouldMoveEnemies[i], // Enemy should move?
                                      false
                                      );
             }
@@ -293,6 +318,7 @@ namespace Galabingus
             Instance.storeAbilityEnemies.Clear();
             Instance.storePositionEnemies.Clear();
             Instance.storeCreatorEnemies.Clear();
+            Instance.storeShouldMoveEnemies.Clear();
         }
 
         /// <summary>
@@ -304,6 +330,8 @@ namespace Galabingus
             {
                 if (enemy != null)
                 {
+                    SpriteEffects flipper = (enemy.Direction.Y < 0) ? SpriteEffects.None: SpriteEffects.FlipVertically;
+
                     GameObject.Instance.SpriteBatch.Draw(
                         enemy.Sprite,                   // The sprite-sheet for the player
                         enemy.Position,                 // The position for the player
@@ -312,11 +340,23 @@ namespace Galabingus
                         0.0f,                           // There cannot be any rotation of the player
                         Vector2.Zero,                   // Starting render position
                         enemy.Scale,                    // The scale of the sprite
-                        Instance.enemyDirection,        // Which direction the sprite faces
+                        flipper,                        // Which direction the sprite faces
                         0.0f                            // Layer depth of the player is 0.0
                     );
                 }
-                    
+            }
+        }
+
+        public void FlipEnemies(int positionY, int newDirection)
+        {
+            if (Instance.enemyRows.ContainsKey(positionY))
+            { // There are enemies in the line
+                
+                foreach (Enemy enemy in Instance.enemyRows[positionY])
+                {
+                    enemy.Direction = new Vector2(enemy.Direction.X * -1, enemy.Direction.Y);
+                    enemy.Position = new Vector2(enemy.Position.X + 10 * newDirection, enemy.Position.Y);
+                }
             }
         }
 

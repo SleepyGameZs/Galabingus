@@ -114,16 +114,32 @@ namespace Galabingus
             offSet.Y = 0;
         }
 
+        public void Reverse()
+        {
+            offSet.Y = -initalCameraScroll;
+        }
+
         public void Update(GameTime gameTime)
         {
+            Camera.Instance.offSet.Y = MathHelper.Lerp(Camera.Instance.offSet.Y, Camera.Instance.offSet.Y*1.2f, 0.1f);
+
+            if (Camera.Instance.OffSet.Y > 2.5)
+            {
+                offSet.Y = 2.5f;
+            }
+
             if (Keyboard.GetState().IsKeyDown(Keys.F5))
             {
                 cameraLock = true;
             }
             if (cameraLock == true)
             {
-                Camera.Instance.offSet.Y = Player.PlayerInstance.Velocity == Vector2.Zero ? Vector2.Zero.Y*5 :
-                    Vector2.Normalize(Player.PlayerInstance.Velocity).Y*5;
+                Player.PlayerInstance.CameraLock = false;
+                Camera.Instance.offSet.Y = Player.PlayerInstance.Velocity == Vector2.Zero ? Vector2.Zero.Y :
+                    Player.PlayerInstance.Translation.Y;
+                Player.PlayerInstance.Position -= new Vector2(0, Camera.instance.offSet.Y);
+                Debug.WriteLine(Player.PlayerInstance.Velocity.Y);
+                //Debug.WriteLine(Camera.Instance.OffSet.Y);
             }
         }
     }

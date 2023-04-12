@@ -77,6 +77,36 @@ namespace Galabingus
         private Texture2D heartSprite;
         private Texture2D halfHeartSprite;
         private Texture2D fullHeartSprite;
+        private bool cameraLock;
+        private Vector2 translation;
+
+        public Vector2 Translation
+        {
+            get
+            {
+                return translation;
+            }
+        }
+
+        public Vector2 Speed
+        {
+            get
+            {
+                return speed;
+            }
+        }
+
+        public bool CameraLock
+        {
+            get
+            {
+                return cameraLock;
+            }
+            set
+            {
+                cameraLock = value;
+            }
+        }
 
         public static Player PlayerInstance
         {
@@ -115,10 +145,10 @@ namespace Galabingus
         {
             get
             {
-                GameObject.Instance.Content = GameObject.Instance.Content.player_white_strip5;
+                GameObject.Instance.Content = GameObject.Instance.Content.player_white_strip4;
                 if (GetSprite(0) == null)
                 {
-                    LoadSprite(GameObject.Instance.Content.player_white_strip5, 0);
+                    LoadSprite(GameObject.Instance.Content.player_white_strip4, 0);
                 }
                 return GetSprite(0);
             }
@@ -265,7 +295,7 @@ namespace Galabingus
             PlayerInstance.inputBufferTime = 0.00399939f;
             PlayerInstance.inputBufferTime = 0.003f;
             PlayerInstance.delayBufferTime = inputBufferTime / 2.0f;
-            PlayerInstance.Scale = 2.35f;
+            PlayerInstance.Scale = 2.7f;
             playerInstance.Animation.AnimationDuration = 0.05f;
             // Ratio is calclated via the shape of the player sprite
             // against the width and height of the screen
@@ -287,6 +317,7 @@ namespace Galabingus
             PlayerInstance.fullHeartSprite = GameObject.Instance.ContentManager.Load<Texture2D>("heart_full_strip1");
             PlayerInstance.halfHeartSprite = GameObject.Instance.ContentManager.Load<Texture2D>("heart_half_strip1");
             PlayerInstance.heartSprite = GameObject.Instance.ContentManager.Load<Texture2D>("heart_strip1");
+            PlayerInstance.cameraLock = true;
         }
 
         /// <summary>
@@ -438,7 +469,8 @@ namespace Galabingus
             {
                 if (!collides && !previousCollision)
                 {
-                    Position += (velocity == Vector2.Zero ? velocity : Vector2.Normalize(velocity) * (float)Animation.EllapsedTime * ((boost) ? boostSpeed : 1) * speed * translationAjdustedRatio);
+                    translation = (velocity == Vector2.Zero ? velocity : Vector2.Normalize(velocity) * (float)Animation.EllapsedTime * ((boost) ? boostSpeed : 1) * speed * translationAjdustedRatio);
+                    Position += translation;
                 }
             }
 
@@ -780,8 +812,6 @@ namespace Galabingus
 
                 previousKeyboardState = currentKeyboardState;
 
-
-
                 if (currentKeyboardState.IsKeyDown(Keys.A) || currentKeyboardState.IsKeyDown(Keys.D) || currentKeyboardState.IsKeyUp(Keys.A) || currentKeyboardState.IsKeyUp(Keys.D))
                 {
                     previousKeyboardStateX = currentKeyboardState;
@@ -834,8 +864,8 @@ namespace Galabingus
                     if (totalBoostTime >= boostFrameRate * 0.3333333f)
                     {
                         Ghost ghostBoost = new Ghost();
-                        ghostBoost.ghostColor = new Color(new Color(255, 165, 11), 1.0f);
-                        ghostBoost.Position = Position + normVelocity * 0.1f * (float)Animation.EllapsedTime * new Vector2(speed.X, speed.Y).LengthSquared() * ((1 - boostSpeed) * -0.1f );
+                        ghostBoost.ghostColor = new Color(new Color(0, 155, 255), 1.0f);
+                        ghostBoost.Position = Position;// + normVelocity * 0.1f * (float)Animation.EllapsedTime * new Vector2(speed.X, speed.Y).LengthSquared() * ((1 - boostSpeed) * -0.1f );
                         boostSpeed *= (float)Animation.EllapsedTime;
                         boostOpacity -= 0.0005f;
                         ghostBoost.boostOpacity = boostOpacity;
@@ -855,15 +885,18 @@ namespace Galabingus
                 PlayerInstance.Health = 5;
             }
 
-            if (!Camera.Instance.Stopped)
+            if (cameraLock)
             {
-                Camera.Instance.OffSet = new Vector2(Math.Clamp((normVelocity.X) + Math.Clamp(Camera.Instance.OffSet.X, -0.005f, 0.005f), -0.5f, 0.5f), Math.Clamp((normVelocity.Y) * 0.005f + Math.Clamp((Camera.Instance.OffSet.Y), -2.5f, 0.005f), -2.5f, 2.0f))
-                    * (float)Animation.GetElapsedTime(gameTime, Vector2.Zero, new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Width * 0.5f, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.5f), Transform, Scale);
-            }
-            else
-            {
-                Camera.Instance.OffSet = new Vector2(Math.Clamp((normVelocity.X), -1f, 1f), Math.Clamp((normVelocity.Y), -0.5f, 0.5f)) 
-                    * (float)Animation.GetElapsedTime(gameTime, Vector2.Zero, new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Width * 0.5f, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.5f), Transform, Scale);
+                if (!Camera.Instance.Stopped)
+                {
+                    Camera.Instance.OffSet = new Vector2(Math.Clamp((normVelocity.X) + Math.Clamp(Camera.Instance.OffSet.X, -0.005f, 0.005f), -0.5f, 0.5f), Math.Clamp((normVelocity.Y) * 0.005f + Math.Clamp((Camera.Instance.OffSet.Y), -2.5f, 2.5f), -2.5f, 2.5f))
+                        * (float)Animation.GetElapsedTime(gameTime, Vector2.Zero, new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Width * 0.5f, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.5f), Transform, Scale);
+                }
+                else
+                {
+                    Camera.Instance.OffSet = new Vector2(Math.Clamp((normVelocity.X), -1f, 1f), Math.Clamp((normVelocity.Y), -0.5f, 0.5f))
+                        * (float)Animation.GetElapsedTime(gameTime, Vector2.Zero, new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Width * 0.5f, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.5f), Transform, Scale);
+                }
             }
 
             //Debug.WriteLine();
@@ -885,7 +918,7 @@ namespace Galabingus
                                                + velocity.Y             // Account for possible next movement
                                                );
 
-            BulletManager.Instance.CreateBullet(BulletType.Normal, vc2_shootPos, 0, 1, this, false);
+            BulletManager.Instance.CreateBullet(BulletType.PlayerNormal, Position, new Vector2(0, -1), this, false);
         }
 
         /// <summary>
@@ -900,7 +933,7 @@ namespace Galabingus
                     foreach (Ghost ghost in ghosts)
                     {
                         Color halfOColor = ghost.ghostColor;//new Color(ghost.ghostColor * 0.825f, 0.825f);
-                        if (halfOColor.R <= 7)
+                        if (halfOColor.B <= 7)
                         {
                             halfOColor = Color.Transparent;
                         }
@@ -935,7 +968,8 @@ namespace Galabingus
             else if (!Keyboard.GetState().IsKeyDown(Keys.G))
             {
                 Collider.Resolved = false;
-                UIManager.Instance.GS = GameState.Pause;
+                UIManager.Instance.GS = GameState.GameOver;
+                //UIManager.Instance.GS = GameState.Pause;
             }
 
 

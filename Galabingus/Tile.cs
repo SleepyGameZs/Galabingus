@@ -179,7 +179,14 @@ namespace Galabingus
             this.spriteNumber = sprite;
         }
 
-        public Tile(ushort contentName, ushort instanceNumber, ushort sprite, bool border) : base(contentName, instanceNumber, CollisionGroup.Tile)
+        /// <summary>
+        /// Creates static tiles
+        /// </summary>
+        /// <param name="contentName"></param>
+        /// <param name="instanceNumber"></param>
+        /// <param name="sprite"></param>
+        /// <param name="single"> If the tile is static </param>
+        public Tile(ushort contentName, ushort instanceNumber, ushort sprite, bool single) : base(contentName, instanceNumber, CollisionGroup.Tile)
         {
             this.thisGameObject = this;
             this.contentName = contentName;
@@ -219,13 +226,13 @@ namespace Galabingus
                 0.0f                             // Layer depth of the player is 0.0
             );
             GameObject.Instance.SpriteBatch.End();
-            GameObject.Instance.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, effect: GameObject.Instance.UniversalShader);
+            GameObject.Instance.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, effect: GameObject.Instance.UniversalShader);
         }
 
         public void Draw(float xTimes, float yTimes)
         {
             GameObject.Instance.SpriteBatch.End();
-            GameObject.Instance.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, effect: Effect);
+            GameObject.Instance.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, effect: Effect);
             GameObject.Instance.SpriteBatch.Draw(
                 this.Sprite,                      
                 this.Position,                 
@@ -243,7 +250,7 @@ namespace Galabingus
                 0.0f
             );
             GameObject.Instance.SpriteBatch.End();
-            GameObject.Instance.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, effect: GameObject.Instance.UniversalShader);
+            GameObject.Instance.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, effect: GameObject.Instance.UniversalShader);
         }
     }
 }

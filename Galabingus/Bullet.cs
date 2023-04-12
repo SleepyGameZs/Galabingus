@@ -11,6 +11,14 @@ using static System.Formats.Asn1.AsnWriter;
 using Microsoft.Xna.Framework.Input;
 using System.Security.Cryptography;
 
+// BULLET CLASS - By Zane Smith
+/* The Bullet class manges all spawned items beyond the scope of the Player, Enemies, and Tiles.
+ * Bullets will fly out on the screen with certain set gimmicks (most often tied to enemies), and
+ * collide with various things, resulting in them taking damage. Bullets can also be used as a
+ * way of creating 'effects' such as additional animations for things that may not involve damaging
+ * anything. Bullets currently store a Creator value, which is not in use, however it will become
+ * relevant when the Boss is added in. */
+
 namespace Galabingus
 {
     /// <summary>
@@ -18,13 +26,27 @@ namespace Galabingus
     /// </summary>
     public enum BulletType
     {
-        Normal,
-        Bouncing,
+        PlayerNormal,
+        EnemyNormal,
+        BouncingSide,
+        BouncingCenter,
         Splitter,
-        SplitSmall,
-        Circle,
-        Large,
-        Seeker
+        SplitOff,
+        Wave,
+        Seeker,
+        Explosion,
+        LazerPath,
+        LazerStart,
+        LazerAttack
+    }
+
+    public enum Targets
+    {
+        Player,
+        Enemies,
+        Everything,
+        Tiles,
+        None
     }
 
     // Zane Smith
@@ -33,7 +55,6 @@ namespace Galabingus
     {
 
         #region-------------------[ Fields ]-------------------
-
         // Is this bullet ready to be destroyed?
         private bool destroy;
 
@@ -42,16 +63,15 @@ namespace Galabingus
         private Vector2 oldPosition;
 
         // Movement data - uses degrees for storage purposes
-        private int angle;
         private Vector2 velocity;
-        private int direction;
+        private Vector2 direction;
 
         // State data
         private BulletType ability;
-        private int stateTimer;
+        private int state_timer;
 
-        // Animation Data
-        private Color bulletColor;
+        // Hit Target Storage (Prevents multihits)
+        private List<object> hitObjects;
 
         // Name used to find values from GameObject dynamic
         private ushort contentName;
@@ -60,25 +80,17 @@ namespace Galabingus
         private ushort bulletNumber;
 
         // Reference to the object that created the bullet
-        private object creatorReference;
+        private object creator;
+        private Targets target;
 
-        #endregion 
+        // Collision layer of the bullet
+        private CollisionGroup collisionLayer;
+
+        #endregion
 
         #region-------------------[ Properties ]-------------------
 
-        /// <summary>
-        /// Used to see if this bullet should be destroyed now
-        /// </summary>
-        public bool Destroy
-        {
-            get { 
-                return destroy; 
-            }
-            set
-            {
-                destroy = value;
-            }
-        }
+        #region GAME OBJECT PROPERTIES
 
         /// <summary>
         /// Accesses dynamic singleton GameObject class, using ushort contentName to find
@@ -185,71 +197,62 @@ namespace Galabingus
             }
         }
 
+        #endregion
+
+        #region BULLET SPECIFIC PROPERTIES
+
         /// <summary>
-        /// The color of the bullet
+        /// Used to see if this bullet should be destroyed now
         /// </summary>
-        public Color Color
+        public bool Destroy
         {
-            get
-            {
-                return bulletColor;
-            }
+            get { return destroy; }
+            set { destroy = value; }
         }
 
         /// <summary>
-        /// The angle of rotation for the bullet
+        /// The direction of the bullet on being spawned. 
+        /// Affects Sprite's visuals and movement for some bullets
+        /// X Slot:
+        ///     1 = Right
+        ///     -1 = Left
+        ///     0 = No direction (Most bullets have this for X)
+        /// Y Slot:
+        ///     1 = Up
+        ///     -1 = Down
+        ///     0 = No direction (ex: Seeker Bullet)
         /// </summary>
-        public int Angle
+        public Vector2 Direction
         {
-            get
-            {
-                return angle;
-            }
+            get { return direction; }
         }
 
         /// <summary>
-        /// The direction of the bullet (flips where 0 is for angle)
-        /// </summary>
-        public int Direction
-        {
-            get
-            {
-                return direction;
-            }
-        }
-
-        /// <summary>
-        /// The object which created this bullet.
+        /// What object owns this bullet?
+        /// Collision handling is done by targets
         /// </summary>
         public object Creator
         {
-            get
-            {
-                return creatorReference;
-            }
+            get { return creator; }
         }
 
         /// <summary>
-        /// Returns the bullet number of this bullet
+        /// Returns the bullet number of this bullet (matches with Bullet Manager).
         /// </summary>
         public ushort BulletNumber
         {
-            get
-            {
-                return bulletNumber;
-            }
+            get { return bulletNumber; }
         }
 
         /// <summary>
-        /// Returns the bullet's ability
+        /// Returns what kind of bullet this is.
         /// </summary>
         public BulletType Ability
         {
-            get
-            {
-                return ability;
-            }
+            get { return ability; }
         }
+
+        #endregion
 
         #endregion
 
@@ -260,112 +263,155 @@ namespace Galabingus
         /// </summary>
         /// <param name="ability">The ability to give the bullet</param>
         /// <param name="position">The position to spawn the bullet at</param>
-        /// <param name="angle">The angle the bullet should move at</param>
-        /// <param name="direction">The direction of the bullet, mainly for visuals</param>
+        /// <param name="direction">The direction of the bullet horizontally and vertically
+        ///                         (as needed) If not relevant will be zero</param>
         /// <param name="creator">Reference to the object who created the bullet</param>
         /// <param name="contentName">Name to use for GameObject storage</param>
         /// <param name="bulletNumber">Number to give bullet in GameObject list</param>
         public Bullet (
             BulletType ability,
             Vector2 position,
-            int angle,
-            int direction,
+            Vector2 direction,
             object creator,
             ushort contentName,
             ushort bulletNumber
-        ) : base(contentName, bulletNumber, CollisionGroup.Bullet)
+        ) : base(contentName, 
+            bulletNumber, 
+                (creator is Player) ? 
+                CollisionGroup.FromPlayer : 
+                CollisionGroup.Bullet)
         {
-            //this.thisGameObject = this;
-            // Set Sprite from given
+            
+            #region GAME OBJECT DATA
+
+            // Sets the content itself for the game object to link going forward for this bullet
             this.contentName = contentName;
+
+            // Number in Bullet Manager
             this.bulletNumber = bulletNumber;
 
-            // Establish bullet color and link to game object correct image
-            switch (ability)
-            {
-                case BulletType.Normal:
-                    bulletColor = Color.LightBlue;
-                    GameObject.Instance.Content = GameObject.Instance.Content.smallbullet_strip4;
-                    break;
-
-                case BulletType.Bouncing:
-                    bulletColor = Color.Orange;
-                    GameObject.Instance.Content = GameObject.Instance.Content.tinybullet_strip4;
-                    break;
-
-                case BulletType.Splitter:
-                    bulletColor = Color.LimeGreen;
-                    GameObject.Instance.Content = GameObject.Instance.Content.smallbullet_strip4;
-                    break;
-
-                case BulletType.SplitSmall:
-                    bulletColor = Color.LimeGreen;
-                    GameObject.Instance.Content = GameObject.Instance.Content.smallbullet_strip4;
-                    break;
-
-                case BulletType.Circle:
-                    bulletColor = Color.DarkMagenta;
-                    GameObject.Instance.Content = GameObject.Instance.Content.smallbullet_strip4;
-                    break;
-
-                case BulletType.Large:
-                    bulletColor = Color.Yellow;
-                    GameObject.Instance.Content = GameObject.Instance.Content.bigbullet_strip4;
-                    break;
-
-                case BulletType.Seeker:
-                    bulletColor = Color.Violet;
-                    GameObject.Instance.Content = GameObject.Instance.Content.circlebullet_strip4;
-                    break;
-
-                default:
-                    bulletColor = Color.White;
-                    GameObject.Instance.Content = GameObject.Instance.Content.smallbullet_strip4;
-                    break;
-            }
-            
-            // Set the owner reference
-            creatorReference = creator;
-
-            // Set bullet state & timer
-            this.ability = ability;
-            stateTimer = 0;
+            // Determine the collision layer for the bullet
+            collisionLayer = ((creator is Player) ? CollisionGroup.FromPlayer : CollisionGroup.Bullet);
 
             // Set the animation duration
             this.Animation.AnimationDuration = 0.03f;
 
-            // Set Position
+            // Set Location Data
             this.Scale = Player.PlayerInstance.Scale;
-            this.Position = new Vector2(position.X + Transform.Width * Scale / 2.0f, position.Y - Transform.Height * Scale / 2.0f);
+            this.Position = new Vector2(position.X + Transform.Width * Scale / 2.0f,
+                                        position.Y - Transform.Height * Scale / 2.0f);
+
+            #endregion
+
+            #region BULLET SPECIFIC DATA
+
+            // Set the ownering object for this bullet
+            // See Property for more details
+            this.creator = creator;
+
+            // Sets the horizontal and vertical directions
+            // See Property for more details
+            this.direction = direction;
+
+            // Set type for this bullet
+            this.ability = ability;
+            state_timer = 0;
+
+            // Sets current and old position based on Game Object
+            // Used for calculations
             currentPosition = this.Position;
             oldPosition = this.Position;
 
-            // Convert to radians
-            this.direction = direction;
-            this.angle = angle;
-            if (direction < 0)
+            // Set Velocity
+            velocity = Vector2.Normalize(direction);
+
+            // Set Empty hit objects list
+            hitObjects = new List<object>();
+
+            // Establish all Bullet Type specific data
+            switch (ability)
             {
-                angle += 180;
+                case BulletType.PlayerNormal:
+                    // Player: Moves forward quickly, no special features.
+                    GameObject.Instance.Content = GameObject.Instance.Content.smallbullet_strip4;
+                    
+                    // Can target: Enemies
+                    target = Targets.Enemies;
+                    break;
+
+                case BulletType.EnemyNormal:
+                    // Red Enemy: Same movement as player's bullets, except slower.
+                    GameObject.Instance.Content = GameObject.Instance.Content.enemy_red_bullet_strip4;
+
+                    // Can target: Player
+                    target = Targets.Player;
+                    break;
+
+                case BulletType.BouncingSide:
+                    // Orange Enemy: Moves to the side, is tiny, and bounces off walls.
+                    GameObject.Instance.Content = GameObject.Instance.Content.enemy_orange_bullet_45_strip4;
+
+                    // Can target: Player
+                    target = Targets.Player;
+                    break;
+
+                case BulletType.BouncingCenter:
+                    // Orange Enemy: Moves straight, and is tiny.
+                    GameObject.Instance.Content = GameObject.Instance.Content.enemy_orange_bullet_90_strip4;
+
+                    // Can target: Player
+                    target = Targets.Player;
+                    break;
+
+                case BulletType.Splitter:
+                    // Green Enemy: When near Player splits into two that move horizontally.
+                    GameObject.Instance.Content = GameObject.Instance.Content.enemy_green_bullet_main_strip4;
+
+                    // Can target: Player
+                    target = Targets.Player;
+                    break;
+
+                case BulletType.SplitOff:
+                    // Orange Enemy: Left moving horizontal bullet.
+                    GameObject.Instance.Content = GameObject.Instance.Content.enemy_green_bullet_split_strip4;
+
+                    // Can target: Player
+                    target = Targets.Player;
+                    break;
+
+                case BulletType.Wave:
+                    // Yellow Enemy: Big horizontally covering bullet that moves slower.
+                    GameObject.Instance.Content = GameObject.Instance.Content.enemy_yellow_bullet_strip3;
+
+                    // Can target: Player
+                    target = Targets.Player;
+                    break;
+
+                case BulletType.Seeker:
+                    // Violet Enemy: Tracks the player, however it eventually loses focus
+                    GameObject.Instance.Content = GameObject.Instance.Content.enemy_violet_bullet_strip4;
+
+                    // Can target: Player
+                    target = Targets.Player;
+                    break;
+
+                case BulletType.Explosion:
+                    // Bomb Enemy: Explosion can damage both the player and other enemies!
+                    GameObject.Instance.Content = GameObject.Instance.Content.bomb_explosion_strip5;
+
+                    // Can target: Everything - Players & Enemies (not tiles)
+                    target = Targets.Everything;
+                    this.Animation.AnimationDuration = 0.07f;
+                    break;
+
+                default:
+                    // In case of glass break game
+                    GameObject.Instance.Content = GameObject.Instance.Content.smallbullet_strip4;
+                    break;
             }
 
-            // Set values for vector lengths
-            float horizontalVal = (float)Math.Cos(MathHelper.ToRadians(angle));
-            float verticalVal = (float)Math.Sin(MathHelper.ToRadians(angle));
-            velocity = Vector2.Normalize(new Vector2(horizontalVal, verticalVal));
+            #endregion
 
-            // Set sprite manually at position
-            //GameObject.Instance.Content = ::file name::
-            //GameObject.Instance.Sprite;
-
-            // Set constructor easier access
-            // contentName = ::file name::;
-
-            // value to use if established in constructor
-            // this.Sprite <- property
-
-
-            // how to do collisions
-            // Update.
         }
 
         #endregion
@@ -377,61 +423,37 @@ namespace Galabingus
             // Get old position
             oldPosition = this.Position;
 
+            #region Unique Ability & Stat Management
+
             // Ability specific setting
             switch (ability)
             {
-                case BulletType.Normal:
-                    // Set Current Position
-                    if (Creator == Player.PlayerInstance)
-                    {
-                        currentPosition = SetPosition(gameTime, 16, true);
-                    } 
-                    else
-                    {
-                        currentPosition = SetPosition(gameTime, 16, false);
-                    }
-                    
+                case BulletType.PlayerNormal:
+                    currentPosition = SetPosition(gameTime, 16, true);
                     break;
 
-                case BulletType.Bouncing:
+                case BulletType.EnemyNormal:
+                    currentPosition = SetPosition(gameTime, 8, false);
+                    break;
+
+                case BulletType.BouncingSide:
                     // Set Current Position
                     currentPosition = SetPosition(gameTime, 3, false);
 
                     // Check for wall collison
-                    bool CeilingHit = this.Position.Y < Sprite.Height;
-                    bool FloorHit = this.Position.Y > BulletManager.Instance.ScreenDimensions.Y - Sprite.Height * 3;
+                    bool LeftWallHit = this.Position.X < Sprite.Width;
+                    bool RightWallHit = this.Position.X > BulletManager.Instance.ScreenDimensions.X - Sprite.Width * this.Scale;
 
-                    if (CeilingHit)
-                    {
-                        velocity.Y *= -1;
+                    /*if (LeftWallHit || RightWallHit)
+                    { // Flip bullet
+                        velocity.X *= -1;
+                        direction.X *= -1;
+                    }*/
 
-                        // Change angle (check direction)
-                        if (direction < 0)
-                        {
-                            angle -= 90;
-                        }
-                        else
-                        {
-                            angle += 90;
-                        }
+                    break;
 
-                    }
-
-                    if (FloorHit)
-                    {
-                        velocity.Y *= -1;
-
-                        // Change angle (check direction)
-                        if (direction < 0)
-                        {
-                            angle += 90;
-                        }
-                        else
-                        {
-                            angle -= 90;
-                        }
-                    }
-
+                case BulletType.BouncingCenter:
+                    currentPosition = SetPosition(gameTime, 3, false);
                     break;
 
                 case BulletType.Splitter:
@@ -439,65 +461,55 @@ namespace Galabingus
                     currentPosition = SetPosition(gameTime, 6, false);
 
                     // X Position of the player
-                    float PlayerX = Player.PlayerInstance.Position.X    // Base Position
-                                    + Player.PlayerInstance.Velocity.X; // Player Velocity 
+                    float PlayerY = Player.PlayerInstance.Position.Y    // Base Position
+                                    + Player.PlayerInstance.Velocity.Y; // Player Velocity 
 
-                    float rightBound = PlayerX;
-                    float leftBound = PlayerX;
+                    // Establish Positions to activate split
+                    float rightBound = PlayerY;
+                    float leftBound = PlayerY;
 
-                    // Bullet will split when it reaches the visual center of the player
-                    // (or anywhere up to the end of the player's sprite afterward)
-
-                    if (direction < 0)
+                    if (direction.Y == 1)
                     { // Facing Right
-                        rightBound = (PlayerX + Player.PlayerInstance.Transform.Width * Player.PlayerInstance.Scale * 0.35f) + 1;
-                        leftBound = (PlayerX) - 1;
+                        rightBound = (PlayerY + Player.PlayerInstance.Transform.Height * Player.PlayerInstance.Scale * 0.35f) + 1;
+                        leftBound = (PlayerY) - 1;
                     } 
-                    else
+                    else if (direction.Y == -1)
                     { // Facing Left
-                        rightBound = (PlayerX + Player.PlayerInstance.Transform.Width * Player.PlayerInstance.Scale) + 1;
-                        leftBound = (PlayerX + Player.PlayerInstance.Transform.Width * Player.PlayerInstance.Scale * 0.65f) - 1;
+                        rightBound = (PlayerY + Player.PlayerInstance.Transform.Height * Player.PlayerInstance.Scale) + 1;
+                        leftBound = (PlayerY + Player.PlayerInstance.Transform.Height * Player.PlayerInstance.Scale * 0.65f) - 1;
                     }
 
                     // Split into 2 bullets
-                    if (currentPosition.X < rightBound && currentPosition.X > leftBound)
+                    if (currentPosition.Y < rightBound && currentPosition.Y > leftBound && !destroy)
                     {
                         // Create Bullets
-                        BulletManager.Instance.CreateBullet(BulletType.SplitSmall, currentPosition, 90, direction, creatorReference, true);
-                        BulletManager.Instance.CreateBullet(BulletType.SplitSmall, currentPosition, -90, direction, creatorReference, true);
+                        //BulletManager.Instance.CreateBullet(BulletType.SplitOff, currentPosition, new Vector2(1, 0), creator, true);
+                        //BulletManager.Instance.CreateBullet(BulletType.SplitOff, currentPosition, new Vector2(-1, 0), creator, true);
 
                         // Tell Bullet Manager to delete this bullet
                         destroy = true;
                     }
                     break;
 
-                case BulletType.SplitSmall:
+                case BulletType.SplitOff:
                     // Set Current Position
-                    currentPosition = SetPosition(gameTime, 10, false);
+                    currentPosition = SetPosition(gameTime, 9, false);
                     break;
 
-                case BulletType.Circle:
+                case BulletType.Wave:
                     // Set Current Position
-                    currentPosition = SetPosition(gameTime, 1, false);
-                    break;
-
-                case BulletType.Large:
-                    // Set Current Position
-                    currentPosition = SetPosition(gameTime, 7, false);
+                    currentPosition = SetPosition(gameTime, 3, false);
                     break;
 
                 case BulletType.Seeker:
-                    // Change angle
-                    if (stateTimer < 200)
+                    if (state_timer < 200)
                     {
+                        // Change angle over time
                         Player player = Player.PlayerInstance;
 
                         // Get Player's Center relative to bullet
                         Vector2 playerCenter = new Vector2(player.Position.X + (player.Transform.Width * player.Scale) / 2,
                                                            player.Position.Y + (player.Transform.Height * player.Scale) / 2);
-
-                        playerCenter = playerCenter + new Vector2((Transform.Width * Scale) / 2,
-                                                                  (Transform.Height * Scale) / 2);
 
                         // Get Bullet's  Center
                         Vector2 bulletCenter = new Vector2(oldPosition.X, oldPosition.Y);
@@ -512,77 +524,173 @@ namespace Galabingus
                         velocity = Vector2.Normalize(new Vector2((float)(10 * Math.Sin(playerBulletAngle)), // X
                                                                  (float)(10 * Math.Cos(playerBulletAngle))  // Y
                                                      ));
-                    }
 
+                        // Set Current Position
+                        currentPosition = SetPosition(gameTime, 3, false);
+                    }
+                    break;
+
+                case BulletType.Explosion:
                     // Set Current Position
-                    currentPosition = SetPosition(gameTime, 3, true);
+                    currentPosition = SetPosition(gameTime, 1, false);
+
+                    if (state_timer > 14)
+                    {
+                        destroy = true;
+                        velocity = Vector2.Zero;
+                    }
                     break;
 
                 default:
                     // Doesn't move lol
                     break;
             }
+            state_timer++;
+            #endregion
 
-            // Increment State Timer
-            stateTimer++;
-            
             // Creates currect collider for Enemy
             this.Transform = this.Animation.Play(gameTime);
-            List<Collision> intercepts = this.Collider.UpdateTransform(
-                this.Sprite,                         // Bullet Sprite
-                this.Position,                       // Bullet position
-                this.Transform,                      // Bullet transform for sprite selection
-                GameObject.Instance.GraphicsDevice,
-                GameObject.Instance.SpriteBatch,
-                this.direction,
-                new Vector2(this.Scale,this.Scale),                          // Bullet scale
-                SpriteEffects.None,
-                (ushort)CollisionGroup.Bullet,                           // Collision Layer
-                bulletNumber
-            );
 
-            // Check if off screen
-            bool bol_bulletOffScreen = this.Position.X < 0 ||
-                                       this.Position.X > BulletManager.Instance.ScreenDimensions.X;
-            if (bol_bulletOffScreen)
+            // If the bullet is off the screen, destroy it
+            bool bulletOffScreen = this.Position.Y < 0 ||
+                                   this.Position.Y > BulletManager.Instance.ScreenDimensions.Y;
+
+            if (bulletOffScreen)
             {
                 destroy = true;
             }
 
+            // Collisons handled separately bellow
+            ColliderHandling();
+        }
+
+        /// <summary>
+        /// Handles all Collider related matters, from its establishment
+        /// to what should be done in the case of various kinds of collisions
+        /// </summary>
+        private void ColliderHandling()
+        {
+            #region Create Collider
+
+            // Get position for collider
+            Vector2 bulletCenterPosition = this.Position -                              // Base Position
+                                           new Vector2(Transform.Width * Scale * 0.5f,  // X Midpoint
+                                                       Transform.Height * Scale * 0.5f  // Y Midpoint
+                                                       );
+
+            // Tells Collider to use proper visual direction
+            SpriteEffects flipping = SpriteEffects.None;
+
+            if (Direction.X == -1)
+            { // Flip Horizontally
+                flipping = SpriteEffects.FlipHorizontally;
+            }
+
+            if (Direction.Y == -1)
+            { // Flip Vertically
+                flipping = flipping | SpriteEffects.FlipHorizontally;
+            }
+
+            List<Collision> intercepts = this.Collider.UpdateTransform(
+                this.Sprite,                            // Bullet Sprite itself
+                this.Position,                          // Position
+                this.Transform,                         // Bullet transform for sprite selection
+                GameObject.Instance.GraphicsDevice,     // Graphics Device Info
+                GameObject.Instance.SpriteBatch,        // Sprite Batcher (carries through)
+                1,                                      // Removed old variant of direction (bully Matt to remove this)
+                new Vector2(this.Scale, this.Scale),    // Scale
+                flipping,                               // Sprite Effects
+                (ushort)collisionLayer,                 // Collision Layer
+                bulletNumber                            // Bullet Number (tied to Manager)
+            );
+
+            // Tells Collider info has been given
             this.Collider.Resolved = true;
 
+            #endregion
 
+            #region Check for Collisions
+
+            // Checks what kind of things can be collided with
             foreach (Collision collision in intercepts)
             {
-                if (collision.other != null)
+                if (collision.other != null && !destroy)
                 {
-                    if (((collision.other as Player) is Player) && !destroy && !((collision.self as Bullet).Creator is Player))
+                    switch (target)
                     {
-                        // TODO: Write Player damage stuff here
-                        if ((Player.PlayerInstance.Health - 0.5) >= 0)
-                        {
-                            Player.PlayerInstance.Health = Player.PlayerInstance.Health - 0.5f;
-                        }
-                        
-                        destroy = true;
-                        velocity = Vector2.Zero;
-                    }
-                    else if (((collision.other as Enemy) is Enemy) && !destroy && !((collision.self as Bullet).Creator is Enemy))
-                    {
-                        // TODO: Write Enemy damage stuff here
-                        ((Enemy)collision.other).Health -= 1;
-                        destroy = true;
-                        velocity = Vector2.Zero;
+                        case Targets.Player:
+                            if ((collision.other as Player) is Player)
+                            { // Collided object is a player!
+                                if ((Player.PlayerInstance.Health - 0.5) >= 0)
+                                {
+                                    Player.PlayerInstance.Health = Player.PlayerInstance.Health - 0.5f;
+                                }
 
-                        if (((Enemy)collision.other).Health <= 0)
-                        {
-                            ((Enemy)collision.other).Destroy = true;
-                        }
+                                // Destroy the bullet
+                                destroy = true;
+                                velocity = Vector2.Zero;
+                            }
+                            break;
 
+                        case Targets.Enemies:
+                            if ((collision.other as Enemy) is Enemy)
+                            { // Collided object is an Enemy
+                                ((Enemy)collision.other).Health -= 1;
+
+                                // Kill the enemy if its health is below zero
+                                if (((Enemy)collision.other).Health <= 0)
+                                {
+                                    ((Enemy)collision.other).Destroy = true;
+                                }
+
+                                // Destroy the bullet
+                                destroy = true;
+                                velocity = Vector2.Zero;
+                            }
+                            break;
+
+                        case Targets.Everything:
+                            // Can hit both Enemies and the Player (not tiles).
+                            bool hasHit = false;
+
+                            for (int i = 0; i < hitObjects.Count; i++)
+                            {
+                                if (hitObjects[i] == collision.other)
+                                {
+                                    hasHit = true;
+                                }
+                            }
+
+                            if (!hasHit)
+                            { // object hasn't yet been hit
+                                if ((collision.other as Player) is Player)
+                                { // Collided object is a player!
+                                    if ((Player.PlayerInstance.Health - 0.5) >= 0)
+                                    {
+                                        Player.PlayerInstance.Health = Player.PlayerInstance.Health - 0.5f;
+                                    }
+
+                                    hitObjects.Add(collision.other);
+                                }
+                                else if ((collision.other as Enemy) is Enemy)
+                                { // Collided object is an Enemy
+                                    ((Enemy)collision.other).Health -= 1;
+
+                                    // Kill the enemy if its health is below zero
+                                    if (((Enemy)collision.other).Health <= 0)
+                                    {
+                                        ((Enemy)collision.other).Destroy = true;
+                                    }
+
+                                    hitObjects.Add(collision.other);
+                                }
+                            }
+                            break;
                     }
                 }
             }
 
+            #endregion
         }
 
         /// <summary>
@@ -592,25 +700,21 @@ namespace Galabingus
         /// <returns></returns>
         private Vector2 SetPosition(GameTime gameTime, int abilitySpeed, bool ignoreCamera)
         {
-            int speedmulti = 1;
+            int multiplier = 2;
 
             // Sets position
             Vector2 finalVelocity = (velocity *                                 // Actual velocity
-                                    speedmulti *                                // Speed multiplier for changing stats
-                                    abilitySpeed *                              // Ability specific speed changes
-                                    Player.PlayerInstance.TranslationRatio *    
-                                    (float)this.Animation.EllapsedTime          // Animation data
-                                    );
+                                     multiplier *
+                                     abilitySpeed *                              // Ability specific speed changes
+                                     Player.PlayerInstance.TranslationRatio *    
+                                     (float)this.Animation.EllapsedTime          // Animation data
+                                     );
 
-            // Final position change, includes camera movement
-            if (ignoreCamera)
-            {
-                this.Position += finalVelocity;
-            } else
-            {
-                this.Position += finalVelocity - Camera.Instance.OffSet;
+            if (ability == BulletType.BouncingSide) {
+                //System.Diagnostics.Debug.WriteLine(finalVelocity);
             }
-            
+            // Final position change, and whether or not to include camera movement
+            this.Position += finalVelocity - (ignoreCamera ? Camera.Instance.OffSet : Vector2.Zero);
 
             // Returns position
             return this.Position;

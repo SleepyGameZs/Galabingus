@@ -36,11 +36,6 @@ float3 normalizeSaturation(float4 color)
 		color.g = color.g * 0.8;
 	}
 
-	if (color.b > 0.5f && color.g > 0.25f && color.g < 0.5f)
-	{
-		//color.b = color.b * 2;
-	}
-
 	if ((color.r + color.b + color.g) * color.a < 0.3)
 	{
 		color = color * 1.27;
@@ -62,11 +57,6 @@ float3 normalizeSaturation(float4 color)
 
 	return  color * 1.3f;
 }
-
-cbuffer Collider
-{
-	float2 positon;
-};
 
 float4 FadeIn(float4 inColor)
 {
@@ -98,8 +88,56 @@ float4 FadeOut(float4 inColor)
 	}
 }
 
+
+
 float4 MainPS(VertexShaderOutput input) : COLOR
 {
+	float weights[11];
+	float2 offsets[11];
+
+	// Calculate the texel size
+	float2 texelSize = 1.0f/ float2(1600, 1600);
+
+	// Calculate the Gaussian weights and offsets
+	float sigma = 10 / 3.0f;
+	float twoSigma2 = 2.0f * sigma * sigma;
+	float weightSum = 0;
+	for (int i = 0; i < 11; i++)
+	{
+		float offset = float(i - 5);
+		weights[i] = exp(-(offset * offset) / twoSigma2);
+		weightSum += weights[i];
+		offsets[i] = float2(offset,0);
+	}
+	for (int i = 0; i < 11; i++)
+	{
+		weights[i] /= weightSum;
+	}
+
+	// Blur horizontally
+	float4 halation = float4(0, 0, 0, 0);
+	for (int i = 0; i < 11; i++)
+	{
+		float2 offset = float2(offsets[i].x, 0) * texelSize;
+		float4 texColor = tex2D(SpriteTextureSampler, input.TextureCoordinates + offset);
+		halation += weights[i] * texColor;
+	}
+
+	// Blur vertically
+	for (int i = 0; i < 11; i++)
+	{
+		float2 offset = float2(0, offsets[i].x) * texelSize;
+		float4 texColor = tex2D(SpriteTextureSampler, input.TextureCoordinates + offset);
+		halation += weights[i] * texColor;
+	}
+
+	// Clamp the maximum brightness value of the red color channel to create a red hue halation effect
+	const float4 maxHalationColor = float4(0.5f, 0.5f, 0.5f, 1.0f);
+	//halation.r = min(halation.r, maxColor.r);
+	//halation.g = min(halation.g, maxColor.g);
+	//halation.b = min(halation.b, maxHalationColor.b);
+
+
 	const float gamma = 1.26795f;
 	float4 color = tex2D(SpriteTextureSampler, input.TextureCoordinates);
 	float4 colorBefore = tex2D(SpriteTextureSampler, input.TextureCoordinates);
@@ -117,16 +155,36 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 	color.b = color.b * 0.125 + color.b * 0.875 * input.Color.a * 1.0;
 	color.a = color.a * input.Color.a;
 	color = color * input.Color;
-	
+
 	if (color.a == 0)
 	{
 		color.r = 0;
 		color.g = 0;
 		color.b = 0;
 	}
-	float4 lerpPixels = lerp(lerp(color, colorTrue, 0.9875), colorP,0.5);
+	float4 lerpPixels = lerp(lerp(color, colorTrue, 0.059875), colorP,0.5);
 	lerpPixels = lerpPixels * correctedColor;
-	return FadeIn(FadeOut(lerpPixels));
+	
+	halation.r = halation.r * 0.75;
+	halation.g = halation.g * 0.75;
+	halation.b = halation.b * 0.75;
+
+	float4 halationLerp;
+
+	if (lerpPixels.a == 0 && lerpPixels.b == 0 && lerpPixels.r == 0 && lerpPixels.g == 0)
+	{
+		halationLerp = lerp(halation, lerpPixels, 0.75) * 1.5;
+	}
+	else
+	{
+		halationLerp = lerpPixels;
+	}
+
+
+
+	halationLerp.a = lerpPixels.a;
+
+	return FadeIn(FadeOut(halationLerp));
 }
 
 technique SpriteDrawing
