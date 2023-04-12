@@ -252,7 +252,6 @@ namespace Galabingus
 
                         // Add item to rows list
                         Instance.enemyRows[(int)position.Y].Add(newEnemy);
-                        System.Diagnostics.Debug.WriteLine((int)position.Y);
                     }
                     
 
@@ -347,7 +346,7 @@ namespace Galabingus
             }
         }
 
-        public void FlipEnemies(int positionY, int newDirection)
+        public void FlipEnemies(int positionY)
         {
             if (Instance.enemyRows.ContainsKey(positionY))
             { // There are enemies in the line
@@ -355,9 +354,27 @@ namespace Galabingus
                 foreach (Enemy enemy in Instance.enemyRows[positionY])
                 {
                     enemy.Direction = new Vector2(enemy.Direction.X * -1, enemy.Direction.Y);
-                    enemy.Position = new Vector2(enemy.Position.X + 10 * newDirection, enemy.Position.Y);
+                    enemy.Position = new Vector2(enemy.Position.X + 10 * enemy.Direction.X, enemy.Position.Y);
                 }
             }
+        }
+        
+        public bool InSameRow(int selfY, ushort otherEnemyNumber)
+        {
+            //Debug.WriteLine("eee");
+            if (Instance.enemyRows.ContainsKey(selfY))
+            { // There are enemies in the line
+                //System.Diagnostics.Debug.WriteLine("eee");
+                foreach (Enemy enemy in Instance.enemyRows[selfY])
+                {
+                    if (enemy.EnemyNumber == otherEnemyNumber)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         #endregion

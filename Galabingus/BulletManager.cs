@@ -250,11 +250,6 @@ namespace Galabingus
                         Instance.activeBullets[i].Update(gameTime);
                     }
 
-                    if (Instance.activeBullets[i].Ability == BulletType.Explosion)
-                    {
-                        System.Diagnostics.Debug.WriteLine(Instance.activeBullets[i].Destroy);
-                    }
-
                     // Checks if bullet is set to be destroyed.
                     if (Instance.activeBullets[i].Destroy)
                     {
