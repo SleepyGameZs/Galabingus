@@ -165,10 +165,15 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 
 	float4 lerpPixels = colorTrue;
 
-	if (colorTrue.a == 1 && ((color.r+color.b+color.g) > 0.1f) || colorTrue.a < 0.1)
+	if ((colorTrue.a == 1 && ((color.r+color.b+color.g) > 0.1f) || colorTrue.a < 0.1))
 	{
 		lerpPixels = lerp(lerp(color, colorTrue, 0.059875), colorP, 0.5);
-		lerpPixels = lerpPixels * correctedColor;
+		lerpPixels = lerp(lerpPixels, lerpPixels * correctedColor, 0.7);
+		if (length(lerpPixels.rgb) > 1.65f && length(lerpPixels.rgb) < 1.73f )
+		{
+			lerpPixels.rgb = lerp(lerpPixels.rgb, lerpPixels.rgb * 0.1, 0.7);
+		}
+
 	}
 
 	halation.r = halation.r * 0.75;
