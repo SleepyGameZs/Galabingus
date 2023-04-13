@@ -308,20 +308,19 @@ namespace Galabingus
                 new Vector2(width / 2, height / 2 + 200),
                 event2, menu1);
 
-            /*
             //Pause
 
             AddText("arial_36", "hello there you are now paused",
                 new Vector2(width / 2 - 200,
-                height / 2 - 200), textEvent1, pause1);
+                height / 2 - 200), Color.White, textEvent1, pause1);
 
             //GameOver
 
             AddText("arial_36", "LOLLLLL :skull_emoji", 
                 new Vector2(width / 2 - 100,
-                height / 2 - 150), textEvent1, gameOver1);
+                height / 2 - 150), Color.White, textEvent1, gameOver1);
 
-            */
+            
 
             //add the background
             menuBackground = cm.Load<Texture2D>("menubackground_strip1");

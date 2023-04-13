@@ -163,7 +163,7 @@ namespace Galabingus
             userInterface.Update();
             bool shiftBefore = transition;
             transition = (userInterface.GS == GameState.Pause || userInterface.GS == GameState.GameOver);
-            if (!(userInterface.GS == GameState.Pause) && !(userInterface.GS == GameState.Menu))
+            if (!(userInterface.GS == GameState.Pause) && !(userInterface.GS == GameState.Menu) && !(userInterface.GS == GameState.GameOver))
             {
                 shaders.Parameters["fadeIn"].SetValue(true);
                 shaders.Parameters["fadeOut"].SetValue(false);
@@ -198,7 +198,7 @@ namespace Galabingus
 
         protected override void Draw(GameTime gameTime)
         {
-            // Change the clear color to transparent and use point rendering for pixel art
+            //Change the clear color to transparent and use point rendering for pixel art
             //GraphicsDevice.Clear(userInterface.ClearColor);
 
             GraphicsDevice.Clear(Color.Transparent);
