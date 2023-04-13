@@ -354,9 +354,13 @@ namespace Galabingus
         public void Update (GameTime gameTime)
         {
             // Check if off screen
-            bool enemyOnScreen = (this.Position.X > 0 &&
-                                       this.Position.X < BulletManager.Instance.ScreenDimensions.X);
-            
+            bool enemyOnScreen = (this.Position.Y > 0 &&
+                                  this.Position.Y < BulletManager.Instance.ScreenDimensions.Y);
+
+            // Move enemy with Y camera scrolling
+            Vector2 cameraScroll = new Vector2(0, Camera.Instance.OffSet.Y);
+            Position -= cameraScroll;
+
             if (enemyOnScreen)
             { // Only does these while on the screen
                 if (!destroy)
@@ -408,16 +412,6 @@ namespace Galabingus
                     if (ShouldMove)
                     {
                         this.Position += new Vector2(3 * direction.X, 0);
-
-                        if (this.Position.X <= 0)
-                        {
-                            EnemyManager.Instance.FlipEnemies(initialY, 1);
-                        }
-
-                        if (this.Position.X + this.Transform.Width * this.Scale > EnemyManager.Instance.ScreenDimensions.X)
-                        {
-                            EnemyManager.Instance.FlipEnemies(initialY, -1);
-                        }
                     }
                 }
                 else
@@ -430,49 +424,97 @@ namespace Galabingus
                             break;
                     }
                 }
-            }
 
-            // Creates currect collider for Enemy
-            this.Transform = this.Animation.Play(gameTime);
+                // Creates currect collider for Enemy
+                this.Transform = this.Animation.Play(gameTime);
 
-            // Move enemy with Y camera scrolling
-            Vector2 cameraScroll = new Vector2(0, Camera.Instance.OffSet.Y);
-            Position -= cameraScroll;
+                this.Collider.Resolved = true;
 
-            this.Collider.Resolved = true;
+                SpriteEffects flipper = (Direction.Y < 0) ? SpriteEffects.None : SpriteEffects.FlipVertically;
 
-            SpriteEffects flipper = (Direction.Y < 0) ? SpriteEffects.None : SpriteEffects.FlipVertically;
+                // Main Enemy Collider
+                List<Collision> intercepts = this.Collider.UpdateTransform(
+                    this.Sprite,                            // Enemy Sprite itself
+                    this.Position,                          // Position
+                    this.Transform,                         // Enemy transform for sprite selection
+                    GameObject.Instance.GraphicsDevice,     // Graphics Device Info
+                    GameObject.Instance.SpriteBatch,        // Sprite Batcher (carries through)
+                    1,                                      // Removed old variant of direction (bully Matt to remove this)
+                    new Vector2(this.Scale, this.Scale),    // Scale
+                    flipper,                              // Sprite Effects
+                    (ushort)CollisionGroup.Enemy,           // Collision Layer
+                    enemyNumber                             // Enemy Number (tied to Manager)
+                );
 
-            List<Collision> intercepts = this.Collider.UpdateTransform(
-                this.Sprite,                            // Enemy Sprite itself
-                this.Position,                          // Position
-                this.Transform,                         // Enemy transform for sprite selection
-                GameObject.Instance.GraphicsDevice,     // Graphics Device Info
-                GameObject.Instance.SpriteBatch,        // Sprite Batcher (carries through)
-                1,                                      // Removed old variant of direction (bully Matt to remove this)
-                new Vector2(this.Scale, this.Scale),    // Scale
-                flipper,                              // Sprite Effects
-                (ushort)CollisionGroup.Enemy,           // Collision Layer
-                enemyNumber                             // Enemy Number (tied to Manager)
-            );
+                // Secondary Enemy Collider
+                List<Collision> secondaryIntercept = this.Collider.UpdateTransform(
+                    this.Sprite,                                    // Enemy Sprite itself
+                    this.Position,                                  // Position
+                    this.Transform,                                 // Enemy transform for sprite selection
+                    GameObject.Instance.GraphicsDevice,             // Graphics Device Info
+                    GameObject.Instance.SpriteBatch,                // Sprite Batcher (carries through)
+                    1,                                              // Removed old variant of direction (bully Matt to remove this)
+                    new Vector2(this.Scale, this.Scale),            // Scale
+                    flipper,                                        // Sprite Effects
+                    (ushort)(CollisionGroup.Enemy + enemyNumber),   // Collision Layer
+                    enemyNumber                                     // Enemy Number (tied to Manager)
+                );
 
-            // Get camera's movement direction
-            float cameraScrollY = Camera.Instance.OffSet.Y;
-            if (Player.PlayerInstance.CameraLock == true)
+                // Get camera's movement direction
+                float cameraScrollY = Camera.Instance.OffSet.Y;
+                if (Player.PlayerInstance.CameraLock == true)
+                {
+                    if (cameraScroll.Y > 0)
+                    {
+                        direction.Y = -1;
+                    }
+                    else if (cameraScroll.Y < 0)
+                    {
+                        direction.Y = 1;
+                    }
+                }
+                
+                
+
+                // Checks what kind of things can be collided with
+                foreach (Collision collision in intercepts)
+                {
+                    if (collision.other != null && !destroy)
+                    {
+                        //System.Diagnostics.Debug.WriteLine("eee"+intercepts.Count);
+                        if ((collision.other as Enemy) is Enemy)
+                        { // Collided with Enemy
+                            // Check to see if collided enemy isn't in this Enemy's row
+
+                            if (!EnemyManager.Instance.InSameRow(initialY, ((Enemy)collision.other).EnemyNumber))
+                            {
+                                EnemyManager.Instance.FlipEnemies(initialY);
+                            }
+                        } 
+                        else if ((collision.other as Tile) is Tile)
+                        { // Collided with Tile
+                            Vector2 overlapZone = ((Tile)collision.other).ScaleVector;
+
+                            //System.Diagnostics.Debug.WriteLine(overlapZone.X);
+                            //System.Diagnostics.Debug.WriteLine(overlapZone.Y);
+                            if (overlapZone.X < overlapZone.Y)
+                            {
+                                EnemyManager.Instance.FlipEnemies(initialY);
+                            }
+                        }
+                    }
+                }
+
+                // Manage Animation
+                this.Animation.AnimationDuration = 0.03f;
+                this.Transform = this.Animation.Play(gameTime);
+
+            } 
+            else
             {
-                if (cameraScroll.Y > 0)
-                {
-                    direction.Y = -1;
-                }
-                else if (cameraScroll.Y < 0)
-                {
-                    direction.Y = 1;
-                }
+                this.Collider.Unload();
             }
 
-            // Manage Animation
-            this.Animation.AnimationDuration = 0.03f;
-            this.Transform = this.Animation.Play(gameTime);
         }
 
         #region Bullet Creation Methods
@@ -541,8 +583,6 @@ namespace Galabingus
                 shotWaitTime = rng.Next(shotWaitVariance) - shotWaitVariance / 2;
                 shotTimer = 0;
             }
-
-            
         }
 
         /// <summary>

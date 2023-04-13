@@ -577,7 +577,7 @@ namespace Galabingus
             listToAdd.Add(background);
         }
 
-        public void AddText(string content, Vector2 position, int scale, UIState uIState)
+        public Text AddText(string content, Vector2 position, int scale, Color tint, UIState uIState)
         {
 
             if(scale < 14 && scale > 0)
@@ -600,16 +600,19 @@ namespace Galabingus
             switch(uIState)
             {
                 case UIState.BaseMenu:
-                    AddText($"arial_{scale}", content, position, Color.White, null, menu1);
+                    return AddText($"arial_{scale}", content, position, tint, null, menu1);
                     break;
                 case UIState.BaseGame:
-                    AddText($"arial_{scale}", content, position, Color.White, null, game1);
+                    return AddText($"arial_{scale}", content, position, tint, null, game1);
                     break;
                 case UIState.BasePause:
-                    AddText($"arial_{scale}", content, position, Color.White, null, pause1);
+                    return AddText($"arial_{scale}", content, position, tint, null, pause1);
                     break;
                 case UIState.BaseGameOver:
-                    AddText($"arial_{scale}", content, position, Color.White, null, gameOver1);
+                    return AddText($"arial_{scale}", content, position, tint, null, gameOver1);
+                    break;
+                default:
+                    return null;
                     break;
             }
         }
@@ -625,7 +628,7 @@ namespace Galabingus
             listToAdd.Add(text);
         }
 
-        private void AddText(string filename, string content, Vector2 position, Color tint, TextEvent changeText, List<UIElement> listToAdd)
+        private Text AddText(string filename, string content, Vector2 position, Color tint, TextEvent changeText, List<UIElement> listToAdd)
         {
             SpriteFont font = cm.Load<SpriteFont>(filename);
 
@@ -634,6 +637,8 @@ namespace Galabingus
             text.UpdateText += changeText;
 
             listToAdd.Add(text);
+
+            return text;
         }
 
         private void AddText(string filename, string content, Vector2 position, int lineCapacity, int spacing,  List<UIElement> listToAdd)

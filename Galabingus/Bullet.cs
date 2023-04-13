@@ -442,13 +442,13 @@ namespace Galabingus
 
                     // Check for wall collison
                     bool LeftWallHit = this.Position.X < Sprite.Width;
-                    bool RightWallHit = this.Position.X > BulletManager.Instance.ScreenDimensions.X - Sprite.Width * this.Scale;
+                    bool RightWallHit = this.Position.X > BulletManager.Instance.ScreenDimensions.X;
 
-                    /*if (LeftWallHit || RightWallHit)
+                    if (LeftWallHit || RightWallHit)
                     { // Flip bullet
                         velocity.X *= -1;
                         direction.X *= -1;
-                    }*/
+                    }
 
                     break;
 
@@ -483,8 +483,8 @@ namespace Galabingus
                     if (currentPosition.Y < rightBound && currentPosition.Y > leftBound && !destroy)
                     {
                         // Create Bullets
-                        //BulletManager.Instance.CreateBullet(BulletType.SplitOff, currentPosition, new Vector2(1, 0), creator, true);
-                        //BulletManager.Instance.CreateBullet(BulletType.SplitOff, currentPosition, new Vector2(-1, 0), creator, true);
+                        BulletManager.Instance.CreateBullet(BulletType.SplitOff, currentPosition, new Vector2(1, 0), creator, true);
+                        BulletManager.Instance.CreateBullet(BulletType.SplitOff, currentPosition, new Vector2(-1, 0), creator, true);
 
                         // Tell Bullet Manager to delete this bullet
                         destroy = true;
@@ -520,7 +520,7 @@ namespace Galabingus
                         // Find angle distance between player and bullet
                         double playerBulletAngle = Math.Atan2(playerBulletDistance.X, playerBulletDistance.Y);
 
-                        // Normalize in case of trolling + perform calculations
+                        // Find midpoint between current velocity and player line velocity
                         velocity = Vector2.Normalize(new Vector2((float)(10 * Math.Sin(playerBulletAngle)), // X
                                                                  (float)(10 * Math.Cos(playerBulletAngle))  // Y
                                                      ));
@@ -586,9 +586,9 @@ namespace Galabingus
                 flipping = SpriteEffects.FlipHorizontally;
             }
 
-            if (Direction.Y == -1)
+            if (Direction.Y == 1)
             { // Flip Vertically
-                flipping = flipping | SpriteEffects.FlipHorizontally;
+                flipping = flipping | SpriteEffects.FlipVertically;
             }
 
             List<Collision> intercepts = this.Collider.UpdateTransform(
@@ -710,9 +710,6 @@ namespace Galabingus
                                      (float)this.Animation.EllapsedTime          // Animation data
                                      );
 
-            if (ability == BulletType.BouncingSide) {
-                //System.Diagnostics.Debug.WriteLine(finalVelocity);
-            }
             // Final position change, and whether or not to include camera movement
             this.Position += finalVelocity - (ignoreCamera ? Camera.Instance.OffSet : Vector2.Zero);
 

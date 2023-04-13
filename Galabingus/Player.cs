@@ -79,6 +79,7 @@ namespace Galabingus
         private Texture2D fullHeartSprite;
         private bool cameraLock;
         private Vector2 translation;
+        private Text textTest;
 
         public Vector2 Translation
         {
@@ -318,6 +319,8 @@ namespace Galabingus
             PlayerInstance.halfHeartSprite = GameObject.Instance.ContentManager.Load<Texture2D>("heart_half_strip1");
             PlayerInstance.heartSprite = GameObject.Instance.ContentManager.Load<Texture2D>("heart_strip1");
             PlayerInstance.cameraLock = true;
+            textTest = UIManager.Instance.AddText("Testing", Vector2.Zero, 12, Color.White, UIState.BaseGame);
+
         }
 
         /// <summary>
@@ -876,7 +879,7 @@ namespace Galabingus
                     if (totalBoostTime >= boostFrameRate * 0.3333333f)
                     {
                         Ghost ghostBoost = new Ghost();
-                        ghostBoost.ghostColor = new Color(new Color(0, 155, 255), 1.0f);
+                        ghostBoost.ghostColor = new Color(new Color(0, 35, 85), 1.0f);
                         ghostBoost.Position = Position;// + normVelocity * 0.1f * (float)Animation.EllapsedTime * new Vector2(speed.X, speed.Y).LengthSquared() * ((1 - boostSpeed) * -0.1f );
                         boostSpeed *= (float)Animation.EllapsedTime;
                         boostOpacity -= 0.0005f;
@@ -938,6 +941,9 @@ namespace Galabingus
         /// </summary>
         public void Draw()
         {
+            ///textTest;
+            textTest.UIText = "AA";
+            textTest.UITextPosition = Position;
             if (Player.PlayerInstance.Health > 0)
             {
                 if (boost) //&& totalBoostTime >= boostFrameRate)

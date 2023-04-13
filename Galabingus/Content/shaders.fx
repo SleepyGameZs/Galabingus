@@ -138,7 +138,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 	//halation.b = min(halation.b, maxHalationColor.b);
 
 
-	const float gamma = 1.26795f;
+	const float gamma = 0.41f;//1.26795f;
 	float4 color = tex2D(SpriteTextureSampler, input.TextureCoordinates);
 	float4 colorBefore = tex2D(SpriteTextureSampler, input.TextureCoordinates);
 	float4 correctedColor = exp(log(colorBefore / input.Color * (1.5f)) *  (1 / gamma) ) * input.Color;
@@ -162,9 +162,20 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 		color.g = 0;
 		color.b = 0;
 	}
-	float4 lerpPixels = lerp(lerp(color, colorTrue, 0.059875), colorP,0.5);
-	lerpPixels = lerpPixels * correctedColor;
-	
+
+	float4 lerpPixels = colorTrue;
+
+	if ((colorTrue.a == 1 && ((color.r+color.b+color.g) > 0.1f) || colorTrue.a < 0.1))
+	{
+		lerpPixels = lerp(lerp(color, colorTrue, 0.059875), colorP, 0.5);
+		lerpPixels = lerp(lerpPixels, lerpPixels * correctedColor, 0.7);
+		if (length(lerpPixels.rgb) < 1.73f )
+		{
+			lerpPixels.rgb = lerp(lerpPixels.rgb, lerpPixels.rgb * 0.21, 0.5);
+		}
+
+	}
+
 	halation.r = halation.r * 0.75;
 	halation.g = halation.g * 0.75;
 	halation.b = halation.b * 0.75;
