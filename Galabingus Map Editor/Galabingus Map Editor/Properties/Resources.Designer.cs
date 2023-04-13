@@ -151,6 +151,15 @@ namespace Galabingus_Map_Editor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string TempSave {
+            get {
+                return ResourceManager.GetString("TempSave", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap tile_strip26_1 {

@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,49 +12,6 @@ using System.Windows.Forms;
 
 namespace Galabingus_Map_Editor
 {
-    enum TileState 
-    {
-        Empty,
-        //Player
-        Player,
-        //Enemies
-        Enemy1,
-        Enemy2,
-        Enemy3,
-        Enemy4,
-        Enemy5,
-        Enemy6,
-        Enemy7,
-        Enemy8,
-        Enemy9,
-        Boss,
-        //Tiles
-        rock1,
-        rock2,
-        rock3,
-        rock4,
-        rock5,
-        rock6,
-        rock7,
-        rock8,
-        rock9,
-        rock10,
-        rock11,
-        rock12,
-        rock13,
-        rock14,
-        rock15,
-        rock16,
-        rock17,
-        rock18,
-        rock19,
-        rock20,
-        rock21,
-        rock22,
-        rock23,
-        rock24,
-        rock25,
-    }
     public partial class MapEditorScreen : Form
     {
         private List<PictureBox> boxes = new List<PictureBox>();
@@ -73,7 +31,7 @@ namespace Galabingus_Map_Editor
 
         private string filePath;
 
-        private List<Image> tileSet;
+        private List<ImageData> tileSet;
 
         private Image currentSelected;
 
@@ -87,7 +45,7 @@ namespace Galabingus_Map_Editor
         {
             InitializeComponent();
 
-            tileSet = new List<Image>();
+            tileSet = new List<ImageData>();
 
             totalWidth = 16;
 
@@ -282,48 +240,48 @@ namespace Galabingus_Map_Editor
             
 
             //Enemy Sprites
-            tileSet.Add(Properties.Resources.enemy_dblue_strip4_1);
-            tileSet.Add(Properties.Resources.enemy_green_strip4_1);
-            tileSet.Add(Properties.Resources.enemy_lblue_strip4_1);
-            tileSet.Add(Properties.Resources.enemy_orange_strip4_1);
-            tileSet.Add(Properties.Resources.enemy_pink_strip4_1);
-            tileSet.Add(Properties.Resources.enemy_purple_strip4_1);
-            tileSet.Add(Properties.Resources.enemy_red_strip4_1);
-            tileSet.Add(Properties.Resources.enemy_yellow_strip4_1);
+            tileSet.Add(new ImageData("dark blue", 1, Properties.Resources.enemy_dblue_strip4_1) );
+            tileSet.Add(new ImageData("green", 2, Properties.Resources.enemy_green_strip4_1));
+            tileSet.Add(new ImageData("light blue", 3, Properties.Resources.enemy_lblue_strip4_1));
+            tileSet.Add(new ImageData("pink", 4,Properties.Resources.enemy_pink_strip4_1));
+            tileSet.Add(new ImageData("purple", 5,Properties.Resources.enemy_purple_strip4_1));
+            tileSet.Add(new ImageData("red", 6,Properties.Resources.enemy_red_strip4_1));
+            tileSet.Add(new ImageData("yellow", 7,Properties.Resources.enemy_yellow_strip4_1));
+            tileSet.Add(new ImageData("orange", 8,Properties.Resources.enemy_orange_strip4_1));
 
             //Boss Sprite
             //TileSet.Add(Image.FromFile(@"../Resources/Boss image");
 
             //Player Sprite
-            tileSet.Add(Properties.Resources.player_strip5_1);
+            tileSet.Add(new ImageData("player", 9, Properties.Resources.player_strip5_1));
 
             //Asteroid Tiles
-            tileSet.Add(Properties.Resources.tile_strip26_1);
-            tileSet.Add(Properties.Resources.tile_strip26_2);
-            tileSet.Add(Properties.Resources.tile_strip26_3);
-            tileSet.Add(Properties.Resources.tile_strip26_4);
-            tileSet.Add(Properties.Resources.tile_strip26_5);
-            tileSet.Add(Properties.Resources.tile_strip26_6);
-            tileSet.Add(Properties.Resources.tile_strip26_7);
-            tileSet.Add(Properties.Resources.tile_strip26_8);
-            tileSet.Add(Properties.Resources.tile_strip26_9);
-            tileSet.Add(Properties.Resources.tile_strip26_10);
-            tileSet.Add(Properties.Resources.tile_strip26_11);
-            tileSet.Add(Properties.Resources.tile_strip26_12);
-            tileSet.Add(Properties.Resources.tile_strip26_13);
-            tileSet.Add(Properties.Resources.tile_strip26_14);
-            tileSet.Add(Properties.Resources.tile_strip26_15);
-            tileSet.Add(Properties.Resources.tile_strip26_16);
-            tileSet.Add(Properties.Resources.tile_strip26_17);
-            tileSet.Add(Properties.Resources.tile_strip26_18);
-            tileSet.Add(Properties.Resources.tile_strip26_19);
-            tileSet.Add(Properties.Resources.tile_strip26_20);
-            tileSet.Add(Properties.Resources.tile_strip26_21);
-            tileSet.Add(Properties.Resources.tile_strip26_22);
-            tileSet.Add(Properties.Resources.tile_strip26_23);
-            tileSet.Add(Properties.Resources.tile_strip26_24);
-            tileSet.Add(Properties.Resources.tile_strip26_25);
-            tileSet.Add(Properties.Resources.tile_strip26_26);
+            tileSet.Add(new ImageData("tile 1", 10, Properties.Resources.tile_strip26_1));
+            tileSet.Add(new ImageData("tile 2", 11, Properties.Resources.tile_strip26_2));
+            tileSet.Add(new ImageData("tile 3", 12, Properties.Resources.tile_strip26_3));
+            tileSet.Add(new ImageData("tile 4", 13, Properties.Resources.tile_strip26_4));
+            tileSet.Add(new ImageData("tile 5", 14, Properties.Resources.tile_strip26_5));
+            tileSet.Add(new ImageData("tile 6", 15, Properties.Resources.tile_strip26_6));
+            tileSet.Add(new ImageData("tile 7", 16, Properties.Resources.tile_strip26_7));
+            tileSet.Add(new ImageData("tile 8", 17, Properties.Resources.tile_strip26_8));
+            tileSet.Add(new ImageData("tile 9", 18, Properties.Resources.tile_strip26_9));
+            tileSet.Add(new ImageData("tile 10", 19, Properties.Resources.tile_strip26_10));
+            tileSet.Add(new ImageData("tile 11", 20, Properties.Resources.tile_strip26_11));
+            tileSet.Add(new ImageData("tile 12", 21, Properties.Resources.tile_strip26_12));
+            tileSet.Add(new ImageData("tile 13", 22, Properties.Resources.tile_strip26_13));
+            tileSet.Add(new ImageData("tile 14", 23, Properties.Resources.tile_strip26_14));
+            tileSet.Add(new ImageData("tile 15", 24, Properties.Resources.tile_strip26_15));
+            tileSet.Add(new ImageData("tile 16", 25, Properties.Resources.tile_strip26_16));
+            tileSet.Add(new ImageData("tile 17", 26, Properties.Resources.tile_strip26_17));
+            tileSet.Add(new ImageData("tile 18", 27, Properties.Resources.tile_strip26_18));
+            tileSet.Add(new ImageData("tile 19", 28, Properties.Resources.tile_strip26_19));
+            tileSet.Add(new ImageData("tile 20", 29, Properties.Resources.tile_strip26_20));
+            tileSet.Add(new ImageData("tile 21", 30, Properties.Resources.tile_strip26_21));
+            tileSet.Add(new ImageData("tile 22", 31, Properties.Resources.tile_strip26_22));
+            tileSet.Add(new ImageData("tile 23", 32, Properties.Resources.tile_strip26_23));
+            tileSet.Add(new ImageData("tile 24", 33, Properties.Resources.tile_strip26_24));
+            tileSet.Add(new ImageData("tile 25", 34, Properties.Resources.tile_strip26_25));
+            tileSet.Add(new ImageData("tile 26", 35, Properties.Resources.tile_strip26_26));
 
             spritePageSelect = new List<Image[]>();
 
@@ -334,7 +292,7 @@ namespace Galabingus_Map_Editor
                 {
                     if ((10 * x) + y < 35)
                     {
-                        imageArray[y] = tileSet[(10 * x) + y];
+                        imageArray[y] = tileSet[(10 * x) + y].Image;
                     }
                     else
                     {
@@ -403,9 +361,10 @@ namespace Galabingus_Map_Editor
 
         private void TempMapSave()
         {
+            StreamWriter writer = new StreamWriter(Properties.Resources.TempSave);
             for (int x = 0; x < boxes.Count; x++)
             {
-
+                
             }
         }
 
@@ -425,6 +384,22 @@ namespace Galabingus_Map_Editor
             {
                 string fileName = filesSave.FileName;
 
+                try
+                {
+                    using (FileStream fs = File.Create(filesSave.FileName))
+                    {
+                        StreamWriter writer = new StreamWriter(fs);
+                        writer.WriteLine(totalEditorPageNum);
+                        writer.WriteLine(totalDensity);
+
+                        
+                    }
+                }
+                catch
+                {
+
+                }
+
             }
         }
 
@@ -440,7 +415,7 @@ namespace Galabingus_Map_Editor
 
             if (loadSave.ShowDialog() == DialogResult.OK)
             {
-
+                string fileName = loadSave.FileName;
             }
         }
     }
