@@ -63,9 +63,15 @@ namespace Galabingus_Map_Editor
         private int totalDensity;
         private int totalEditorPageNum;
         private int tileSize;
-        private int selectablePage;
+        private int currentSelectablePage;
+        private int currentEditorPage;
 
+        private bool newMap;
+        private bool changed;
         private bool saved;
+        private bool moving;
+
+        private string filePath;
 
         private List<Image> tileSet;
 
@@ -95,7 +101,11 @@ namespace Galabingus_Map_Editor
 
             currentSelected = null;
 
-            selectablePage = 1;
+            currentSelectablePage = 1;
+
+            moving = false;
+
+            filePath = @"..\..\..\";
 
             ImageAdd();
 
@@ -256,6 +266,7 @@ namespace Galabingus_Map_Editor
                     tileBox.Location = new Point(305 + (tileSize * x), 30 + (tileSize * y));
                     tileBox.BackColor = Color.White ;
                     tileBox.SizeMode = PictureBoxSizeMode.StretchImage;
+                    tileBox.Capture = false;
                     Controls.Add(tileBox);
                     boxes.Add(tileBox);
                     tileBox.BringToFront();
@@ -347,10 +358,10 @@ namespace Galabingus_Map_Editor
 
         private void ChangeSelectable(int change) 
         {
-            if (selectablePage + change > 0 && selectablePage + change < 4)
+            if (currentSelectablePage + change > 0 && currentSelectablePage + change < 4)
             {
-                selectablePage = selectablePage + change;
-                Image[] temp = spritePageSelect[selectablePage];
+                currentSelectablePage = currentSelectablePage + change;
+                Image[] temp = spritePageSelect[currentSelectablePage];
                 for (int x = 0; x < buttonList.Length; x++)
                 {
                     buttonList[x].BackgroundImage = temp[x];
@@ -360,10 +371,10 @@ namespace Galabingus_Map_Editor
 
         private void ChangeLevelSection(int change)
         {
-            //if ()
-            //{
-
-            //}
+            if (currentEditorPage + change > 0 && currentEditorPage + change < totalEditorPageNum)
+            {
+                currentEditorPage = currentEditorPage + change;
+            }
         }
 
         private void ButtonStuff()
@@ -390,14 +401,47 @@ namespace Galabingus_Map_Editor
             pictureBox11.SizeMode = PictureBoxSizeMode.StretchImage;
         }
 
-        private void Savefile()
+        private void TempMapSave()
         {
+            for (int x = 0; x < boxes.Count; x++)
+            {
 
+            }
         }
 
-        private void LoadFile()
+        public void Savefile()
         {
+            SaveFileDialog filesSave = new SaveFileDialog();
+            filesSave.Title = "Save a Level File";
+            filesSave.Filter = "Level Files|*.level";
 
+            newMap = false;
+
+            changed = false;
+
+            saved = true;
+
+            if (filesSave.ShowDialog() == DialogResult.OK)
+            {
+                string fileName = filesSave.FileName;
+
+            }
+        }
+
+        public void LoadFile()
+        {
+            OpenFileDialog loadSave = new OpenFileDialog();
+            loadSave.Title = "Load a Level File";
+            loadSave.Filter = "Level Files|*.level";
+
+            newMap = true;
+
+            saved = true;
+
+            if (loadSave.ShowDialog() == DialogResult.OK)
+            {
+
+            }
         }
     }
 }
