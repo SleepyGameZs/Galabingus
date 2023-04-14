@@ -374,7 +374,7 @@ namespace Galabingus_Map_Editor
             {
                 TempMapSave(currentEditorPage);
                 
-                ClearEditor();
+                
                 currentEditorPage = currentEditorPage + change;
                 PageLoad(currentEditorPage);
                
@@ -392,8 +392,7 @@ namespace Galabingus_Map_Editor
 
         private void TempMapSave(int currentPage)
         {
-            List<Image> temp = new List<Image>();
-            pagesData.Add(temp);
+            pagesData.Add(new List<Image>());
 
             for (int x = 0; x < totalHeight * totalWidth; x++)
             {
@@ -402,8 +401,21 @@ namespace Galabingus_Map_Editor
            
         }
 
-        private void PageLoad(int currentPage)
+        private void PageLoad(int nextPage)
         {
+            if (nextPage >= pagesData.Count)
+            {
+                pagesData.Add(new List<Image>());
+                ClearEditor();
+            }
+            else
+            {
+                for (int x = 0; x < totalHeight * totalWidth; x++)
+                {
+                    boxes[x].Image = pagesData[nextPage][x];
+                }
+            }
+
 
         }
 
