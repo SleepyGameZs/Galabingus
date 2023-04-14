@@ -364,7 +364,13 @@ namespace Galabingus_Map_Editor
             StreamWriter writer = new StreamWriter(Properties.Resources.TempSave);
             for (int x = 0; x < boxes.Count; x++)
             {
-                
+                for (int y = 0; y < tileSet.Count; y++)
+                {
+                    if (boxes[x].Image == tileSet[y].Image)
+                    {
+                        writer.Write(tileSet[y].ImageNumber);
+                    }
+                }
             }
         }
 
