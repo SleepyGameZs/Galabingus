@@ -307,6 +307,7 @@ namespace Galabingus_Map_Editor
                 spritePageSelect.Add(imageArray);
             }
 
+            /*
             List<Image> temp = new List<Image>();
             for (int x = 0; x < pagesData.Count; x++)
             {
@@ -316,6 +317,8 @@ namespace Galabingus_Map_Editor
                 }
                 pagesData.Add(temp);
             }
+            */
+            
         }
 
         private void ButtonStuff()
@@ -368,6 +371,54 @@ namespace Galabingus_Map_Editor
             }
         }
 
+        private void ClearEditor()
+        {
+            for (int x = 0; x < totalHeight * totalWidth; x++)
+            {
+                boxes[x].Image = null;
+            }
+        }
+
+        private void PageChange(int change)
+        {
+            try
+            {
+                StreamWriter writer = new StreamWriter(Properties.Resources.TempSave);
+                for (int x = 0; x < totalWidth * totalHeight; x++)
+                {
+                    if ()
+                    {
+                        writer.Write(GetImageNum(boxes[x].Image) + " , ");
+                    }
+                    else
+                    {
+                        writer.WriteLine("");
+                    }
+                }
+                
+            }
+            catch
+            {
+
+            }
+            
+        }
+
+        private int GetImageNum(Image gottenImage)
+        {
+            for (int x = 0; x < tileSet.Count; x++)
+            {
+                if (tileSet[x].Image == gottenImage)
+                {
+                    return tileSet[x].ImageNumber;
+                }
+            }
+            return -1;
+        }
+
+
+
+        /*
         private void ChangeLevelSection(int change)
         {
             if (currentEditorPage + change >= 0 && currentEditorPage + change < totalEditorPageNum)
@@ -380,16 +431,8 @@ namespace Galabingus_Map_Editor
                
                 
             }
-        }
-
-        private void ClearEditor()
-        {
-            for (int x = 0; x < totalHeight * totalWidth; x++)
-            {
-                boxes[x].Image = null;
-            }
-        }
-
+        } 
+         
         private void TempMapSave(int currentPage)
         {
             pagesData.Add(new List<Image>());
@@ -419,6 +462,18 @@ namespace Galabingus_Map_Editor
 
         }
 
+        private void PageChange(int change)
+        {
+            if (change < 0 )
+            {
+
+            }
+            else if(change > 0)
+            {
+
+            }
+        }
+        */
 
         public void Savefile()
         {
