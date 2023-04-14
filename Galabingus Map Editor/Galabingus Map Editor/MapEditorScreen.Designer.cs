@@ -231,7 +231,6 @@
             this.pictureBox11.Size = new System.Drawing.Size(200, 200);
             this.pictureBox11.TabIndex = 11;
             this.pictureBox11.TabStop = false;
-            this.pictureBox11.Click += new System.EventHandler(this.pictureBox11_Click);
             // 
             // groupBox2
             // 

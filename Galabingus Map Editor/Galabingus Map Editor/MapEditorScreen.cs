@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -39,7 +40,10 @@ namespace Galabingus_Map_Editor
 
         private Image[] imageArray;
 
-        private PictureBox[] buttonList; 
+        private PictureBox[] buttonList;
+
+        //Stores all the changes to the picture boxes for each page
+        private List<List<Image>> pagesData;
 
         public MapEditorScreen(int numofPage, int pixelDensity)
         {
@@ -59,7 +63,11 @@ namespace Galabingus_Map_Editor
 
             currentSelected = null;
 
-            currentSelectablePage = 1;
+            pagesData = new List<List<Image>>();
+
+            currentSelectablePage = 0;
+
+            currentEditorPage = 0;
 
             moving = false;
 
@@ -93,79 +101,73 @@ namespace Galabingus_Map_Editor
         //Button 1
         private void pictureBox1_Click(object sender, EventArgs e)
         {
-            pictureBox11.BackgroundImage = pictureBox1.BackgroundImage;
-            currentSelected = pictureBox1.BackgroundImage;
+            pictureBox11.Image = pictureBox1.Image;
+            currentSelected = pictureBox1.Image;
         }
 
         //Button 2
         private void pictureBox2_Click(object sender, EventArgs e)
         {
-            pictureBox11.BackgroundImage = pictureBox2.BackgroundImage;
-            currentSelected = pictureBox2.BackgroundImage;
+            pictureBox11.Image = pictureBox2.Image;
+            currentSelected = pictureBox2.Image;
         }
 
         //Button 3
         private void pictureBox3_Click(object sender, EventArgs e)
         {
-            pictureBox11.BackgroundImage = pictureBox3.BackgroundImage;
-            currentSelected = pictureBox3.BackgroundImage;
+            pictureBox11.Image = pictureBox3.Image;
+            currentSelected = pictureBox3.Image;
         }
 
         //Button 4
         private void pictureBox4_Click(object sender, EventArgs e)
         {
-            pictureBox11.BackgroundImage = pictureBox4.BackgroundImage;
-            currentSelected = pictureBox4.BackgroundImage;
+            pictureBox11.Image = pictureBox4.Image;
+            currentSelected = pictureBox4.Image;
         }
 
         //Button 5
         private void pictureBox5_Click(object sender, EventArgs e)
         {
-            pictureBox11.BackgroundImage = pictureBox5.BackgroundImage;
-            currentSelected = pictureBox5.BackgroundImage;
+            pictureBox11.Image = pictureBox5.Image;
+            currentSelected = pictureBox5.Image;
         }
 
         //Button 6
         private void pictureBox6_Click(object sender, EventArgs e)
         {
-            pictureBox11.BackgroundImage = pictureBox6.BackgroundImage;
-            currentSelected = pictureBox6.BackgroundImage;
+            pictureBox11.Image = pictureBox6.Image;
+            currentSelected = pictureBox6.Image;
         }
 
         //Button 7
         private void pictureBox7_Click(object sender, EventArgs e)
         {
-            pictureBox11.BackgroundImage = pictureBox7.BackgroundImage;
-            currentSelected = pictureBox7.BackgroundImage;
+            pictureBox11.Image = pictureBox7.Image;
+            currentSelected = pictureBox7.Image;
         }
 
         //Button 8
         private void pictureBox8_Click(object sender, EventArgs e)
         {
-            pictureBox11.BackgroundImage = pictureBox8.BackgroundImage;
-            currentSelected = pictureBox8.BackgroundImage;
+            pictureBox11.Image = pictureBox8.Image;
+            currentSelected = pictureBox8.Image;
         }
 
         //Button 9
         private void pictureBox9_Click(object sender, EventArgs e)
         {
-            pictureBox11.BackgroundImage = pictureBox9.BackgroundImage;
-            currentSelected = pictureBox9.BackgroundImage;
+            pictureBox11.Image = pictureBox9.Image;
+            currentSelected = pictureBox9.Image;
         }
 
         //Button 10
         private void pictureBox10_Click(object sender, EventArgs e)
         {
-            pictureBox11.BackgroundImage = pictureBox10.BackgroundImage;
-            currentSelected = pictureBox10.BackgroundImage;
+            pictureBox11.Image = pictureBox10.Image;
+            currentSelected = pictureBox10.Image;
         }
-
-        //Current Image
-        private void pictureBox11_Click(object sender, EventArgs e)
-        {
-
-        }
-
+       
         //Save Button
         private void button14_Click(object sender, EventArgs e)
         {
@@ -193,13 +195,15 @@ namespace Galabingus_Map_Editor
         //Change Level Section Left
         private void button17_Click(object sender, EventArgs e)
         {
-
+            //ClearEditor();
+            ChangeLevelSection(-1);
         }
 
         //Change Level Section Right
         private void button16_Click(object sender, EventArgs e)
         {
-
+            //ClearEditor();
+            ChangeLevelSection(1);
         }
 
         private void ImageChanger(object tile, EventArgs click)
@@ -222,18 +226,19 @@ namespace Galabingus_Map_Editor
 
                     tileBox.Size = new Size(tileSize, tileSize);
                     tileBox.Location = new Point(305 + (tileSize * x), 30 + (tileSize * y));
-                    tileBox.BackColor = Color.White ;
+                    tileBox.BackColor = Color.White;
                     tileBox.SizeMode = PictureBoxSizeMode.StretchImage;
                     tileBox.Capture = false;
                     Controls.Add(tileBox);
                     boxes.Add(tileBox);
                     tileBox.BringToFront();
                     tileBox.Click += ImageChanger;
-                    Debug.Write(x);
                     //tileBox.Click += Change;
                 }
             }
         }
+
+
 
         private void ImageAdd()
         {
@@ -302,36 +307,14 @@ namespace Galabingus_Map_Editor
                 spritePageSelect.Add(imageArray);
             }
 
-            
-        }
-
-        private void TileSizeDet()
-        {
-            totalWidth = totalWidth * totalDensity;
-
-            totalHeight = totalHeight * totalDensity;
-
-            tileSize = (int) tileSize / totalDensity;
-        }
-
-        private void ChangeSelectable(int change) 
-        {
-            if (currentSelectablePage + change > 0 && currentSelectablePage + change < 4)
+            List<Image> temp = new List<Image>();
+            for (int x = 0; x < pagesData.Count; x++)
             {
-                currentSelectablePage = currentSelectablePage + change;
-                Image[] temp = spritePageSelect[currentSelectablePage];
-                for (int x = 0; x < buttonList.Length; x++)
+                for (int y = 0; y < boxes.Count; y++)
                 {
-                    buttonList[x].BackgroundImage = temp[x];
+                   temp.Add(boxes[y].Image);
                 }
-            }
-        }
-
-        private void ChangeLevelSection(int change)
-        {
-            if (currentEditorPage + change > 0 && currentEditorPage + change < totalEditorPageNum)
-            {
-                currentEditorPage = currentEditorPage + change;
+                pagesData.Add(temp);
             }
         }
 
@@ -359,14 +342,71 @@ namespace Galabingus_Map_Editor
             pictureBox11.SizeMode = PictureBoxSizeMode.StretchImage;
         }
 
-        private void TempMapSave()
+
+
+
+
+        private void TileSizeDet()
         {
-            StreamWriter writer = new StreamWriter(Properties.Resources.TempSave);
-            for (int x = 0; x < boxes.Count; x++)
+            totalWidth = totalWidth * totalDensity;
+
+            totalHeight = totalHeight * totalDensity;
+
+            tileSize = (int) tileSize / totalDensity;
+        }
+
+        private void ChangeSelectable(int change) 
+        {
+            if (currentSelectablePage + change >= 0 && currentSelectablePage + change < 4)
             {
+                currentSelectablePage = currentSelectablePage + change;
+                Image[] temp = spritePageSelect[currentSelectablePage];
+                for (int x = 0; x < buttonList.Length; x++)
+                {
+                    buttonList[x].Image = temp[x];
+                }
+            }
+        }
+
+        private void ChangeLevelSection(int change)
+        {
+            if (currentEditorPage + change >= 0 && currentEditorPage + change < totalEditorPageNum)
+            {
+                TempMapSave(currentEditorPage);
+                
+                ClearEditor();
+
+                PageLoad();
+               
                 
             }
         }
+
+        private void ClearEditor()
+        {
+            for (int x = 0; x < totalHeight * totalWidth; x++)
+            {
+                boxes[x].Image = null;
+            }
+        }
+
+        private void TempMapSave(int currentPage)
+        {
+            List<Image> temp = new List<Image>();
+            pagesData.Add(temp);
+
+            for (int x = 0; x < totalHeight * totalWidth; x++)
+            {
+                pagesData[currentPage].Add(boxes[x].Image);
+            }
+           
+        }
+
+        private void PageLoad()
+        {
+
+        }
+
 
         public void Savefile()
         {
@@ -418,5 +458,8 @@ namespace Galabingus_Map_Editor
                 string fileName = loadSave.FileName;
             }
         }
+
+        
+
     }
 }
