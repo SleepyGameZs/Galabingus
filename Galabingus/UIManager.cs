@@ -110,7 +110,6 @@ namespace Galabingus
 
         //the list of UIObjects it manages
         private List<UILevel> gameLevels;
-        private List<UILevel> debugLevels;
         int currentLevel;
 
         //variable containing the current gamestate
@@ -220,7 +219,6 @@ namespace Galabingus
 
             //list of menu levels
             gameLevels = new List<UILevel>();
-            debugLevels = new List<UILevel>();
             currentLevel = 1;
     }
 
