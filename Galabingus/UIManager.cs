@@ -35,6 +35,9 @@ namespace Galabingus
         DebugOff
     }
 
+    /// <summary>
+    /// (todo) represents the ways the player can interact with the UI
+    /// </summary>
     public enum UIControlState
     {
         Keys,
@@ -50,6 +53,9 @@ namespace Galabingus
         Tile
     }
 
+    /// <summary>
+    /// represents the different levels of the games UI
+    /// </summary>
     public enum UIState
     {
         BaseMenu,
@@ -63,26 +69,38 @@ namespace Galabingus
 
     #region Struct
 
+    /// <summary>
+    /// holds the basic information for every level of the UI
+    /// </summary>
     struct UILevel
     {
         //Fields
 
-        private List<UIElement> menu;
-        private GameState gs;
-        private int level;
+        private List<UIElement> menu; //the list of UIElements
+        private GameState gs; //the gameState its in
+        private int level; //the level its located in
 
         //Properties
 
+        /// <summary>
+        /// returns a list of UIElements which is contained within this level of the UI
+        /// </summary>
         public List<UIElement> Menu
         {
             get { return menu; }
         }
-
+        
+        /// <summary>
+        /// returns the gameState which this UILevel is apart of
+        /// </summary>
         public GameState GS
         {
             get { return gs; }
         }
 
+        /// <summary>
+        /// returns the level which this struct represents
+        /// </summary>
         public int Level
         {
             get { return level; }
@@ -90,6 +108,12 @@ namespace Galabingus
 
         //CTOR
 
+        /// <summary>
+        /// creates a struct which represents a level of the UI
+        /// </summary>
+        /// <param name="menu">the UIElements within this level</param>
+        /// <param name="gs">the gameState the level is in</param>
+        /// <param name="level">the level number</param>
         public UILevel(List<UIElement> menu, GameState gs, int level)
         {
             this.menu = menu;
@@ -108,7 +132,7 @@ namespace Galabingus
         //the instance of the UIManager
         private static UIManager instance = null;
 
-        //the list of UIObjects it manages
+        //the list of UILevels in the game and the current level
         private List<UILevel> gameLevels;
         int currentLevel;
 
@@ -149,7 +173,6 @@ namespace Galabingus
 
         // Temporary Backgrounds
         private Texture2D menuBackground;
-        private Texture2D logoTexture;
 
         //the sets of menus in the game
         List<UIElement> menu1;
@@ -186,12 +209,18 @@ namespace Galabingus
             set { gs = value; }
         }
 
+        /// <summary>
+        /// returns and sets the current debugState
+        /// </summary>
         public DebugState DS
         {
             get { return ds; }
             set { ds = value; }
         }
 
+        /// <summary>
+        /// return and set the UIControlState
+        /// </summary>
         public UIControlState CS
         {
             get { return cs; }
@@ -270,7 +299,7 @@ namespace Galabingus
             EventDelegate event2;
             TextEvent textEvent1;
 
-            #region Normal Game UI
+            #region Add stuffs
 
             //Create the Play Button
             event1 = StartGame;
@@ -280,10 +309,9 @@ namespace Galabingus
             new Vector2(width / 2, height / 2 + 30),
             event1, menu1);
 
+            //add the logo to the screen
             AddBackground("galabinguslogo_strip1", 5, 
-                new Vector2(
-                    (gr.GraphicsDevice.Viewport.Width / 2),
-                    (gr.GraphicsDevice.Viewport.Height / 4)),
+                new Vector2(width / 2,height / 4),
                 menu1);
 
             //Create the Options Button
@@ -309,19 +337,17 @@ namespace Galabingus
                 new Vector2(width / 2, height / 2 + 200),
                 event2, menu1);
 
-            //Pause
-
+            //Pause Text
             AddText("arial_36", "hello there you are now paused",
                 new Vector2(width / 2 - 200,
                 height / 2 - 200), Color.White, textEvent1, pause1);
 
-            //GameOver
-
+            //GameOver Text
             AddText("arial_36", "LOLLLLL :skull_emoji", 
                 new Vector2(width / 2 - 100,
                 height / 2 - 150), Color.White, textEvent1, gameOver1);
 
-            
+            #endregion
 
             //add the background
             menuBackground = cm.Load<Texture2D>("menubackground_strip1");
@@ -332,18 +358,6 @@ namespace Galabingus
             gameLevels.Add(new UILevel(game1, GameState.Game, 1));
             gameLevels.Add(new UILevel(pause1, GameState.Pause, 1));
             gameLevels.Add(new UILevel(gameOver1, GameState.GameOver, 1));
-
-            #endregion
-
-            #region Debug UI
-
-            List<UIElement> debugMenu1 = new List<UIElement>();
-            List<UIElement> debugMenu2 = new List<UIElement>();
-            List<UIElement> debugGame1 = new List<UIElement>();
-            List<UIElement> debugPause1 = new List<UIElement>();
-            List<UIElement> debugGameOver1 = new List<UIElement>();
-
-            #endregion
 
         }
 
@@ -356,22 +370,7 @@ namespace Galabingus
             currentKBS = Keyboard.GetState();
             currentMS = Mouse.GetState();
 
-            /*
-            if (currentMS != previousMS)
-            {
-                cs = UIControlState.Mouse;
-            }
-            else if (
-                currentKBS.IsKeyDown(Keys.W) && currentKBS.IsKeyDown(Keys.A) &&
-                currentKBS.IsKeyDown(Keys.S) && currentKBS.IsKeyDown(Keys.D) &&
-                currentKBS.IsKeyDown(Keys.Up) && currentKBS.IsKeyDown(Keys.Down) &&
-                currentKBS.IsKeyDown(Keys.Left) && currentKBS.IsKeyDown(Keys.Right))
-            {
-                cs = UIControlState.Keys;
-            }
-            */
-
-
+            //find the current UILevel and update its objects
             foreach (UILevel level in gameLevels)
             {
                 if(level.Level == currentLevel && level.GS == gs)
@@ -380,17 +379,7 @@ namespace Galabingus
                 }
             }
 
-            if(ds != DebugState.DebugOff)
-            {
-                foreach (UILevel level in debugLevels)
-                {
-                    if (level.Level == currentLevel && level.GS == gs)
-                    {
-                        UpdateObjects(level.Menu);
-                    }
-                }
-            }
-
+            //if the back key is pressed and the current level isn't the base one
             if (SingleKeyPress(Keys.Back) && currentLevel > 1)
             {
                 currentLevel--;
@@ -401,7 +390,7 @@ namespace Galabingus
             {
                 case GameState.Menu:
 
-                    if (ds != DebugState.DebugOff)
+                    if (ds == DebugState.DebugOn)
                     {
                         //if the shift button is pressed, change the state
                         if (SingleKeyPress(Keys.L))
@@ -414,7 +403,7 @@ namespace Galabingus
 
                 case GameState.Game:
 
-                    if (ds != DebugState.DebugOff)
+                    if (ds == DebugState.DebugOn)
                     {
                         //if the shift button is pressed, change the state
                         if (SingleKeyPress(Keys.L))
@@ -423,6 +412,7 @@ namespace Galabingus
                         }
                     }
 
+                    //pause the game when tab is pressed
                     if (SingleKeyPress(Keys.Tab))
                     {
                         gs = GameState.Pause;
@@ -431,7 +421,8 @@ namespace Galabingus
                     break;
 
                 case GameState.Pause:
-
+                    
+                    //if the game is paused, unpause when tab is hit
                     if (SingleKeyPress(Keys.Tab))
                     {
                         gs = GameState.Game;
@@ -441,6 +432,7 @@ namespace Galabingus
 
                 case GameState.GameOver:
 
+                    //if enter is hit in the game over state, go back to the menu
                     if (SingleKeyPress(Keys.Enter))
                     {
                         gs = GameState.Menu;
@@ -492,17 +484,6 @@ namespace Galabingus
                 }
             }
 
-            if (ds != DebugState.DebugOff)
-            {
-                foreach (UILevel level in debugLevels)
-                {
-                    if (level.Level == currentLevel && level.GS == gs)
-                    {
-                        UpdateObjects(level.Menu);
-                    }
-                }
-            }
-
         }
 
         #endregion
@@ -542,7 +523,7 @@ namespace Galabingus
         /// <param name="gs">the gamestate the element exists in</param>
         /// <param name="uiEvent">the data which it needs for its events</param>
         /// <param name="types">the event types it can call</param>
-        private void AddButton
+        private Button AddButton
             (string filename, float scale, Vector2 position, EventDelegate clickEvent, List<UIElement> listToAdd)
         {
             //create the button texture
@@ -554,6 +535,8 @@ namespace Galabingus
             button.OnClick += clickEvent;
 
             listToAdd.Add(button);
+
+            return button;
         }
 
         /// <summary>
@@ -563,7 +546,7 @@ namespace Galabingus
         /// <param name="gs">the gamestate the element exists in</param>
         /// <param name="uiEvent">the data which it needs for its events</param>
         /// <param name="types">the event types it can call</param>
-        private void AddBackground
+        private Background AddBackground
             (string filename, float scale, Vector2 position,  List<UIElement> listToAdd)
         {
             //create the menus texture
@@ -573,6 +556,8 @@ namespace Galabingus
             Background background = new Background(texture, position, gs);
 
             listToAdd.Add(background);
+
+            return background;
         }
 
         public Text AddText(string content, Vector2 position, float scale, Color tint, UIState uIState)
@@ -615,7 +600,7 @@ namespace Galabingus
             }
         }
 
-        private void AddText(string filename, string content, Vector2 position, TextEvent changeText, List<UIElement> listToAdd)
+        private Text AddText(string filename, string content, Vector2 position, TextEvent changeText, List<UIElement> listToAdd)
         {
             SpriteFont font = cm.Load<SpriteFont>(filename);
 
@@ -624,6 +609,8 @@ namespace Galabingus
             text.UpdateText += changeText;
 
             listToAdd.Add(text);
+
+            return text;
         }
 
         private Text AddText(string filename, string content, Vector2 position, Color tint, TextEvent changeText, List<UIElement> listToAdd)
@@ -639,7 +626,7 @@ namespace Galabingus
             return text;
         }
 
-        private void AddText(string filename, string content, Vector2 position, int lineCapacity, int spacing,  List<UIElement> listToAdd)
+        private List<Text> AddText(string filename, string content, Vector2 position, int lineCapacity, int spacing,  List<UIElement> listToAdd)
         {
             SpriteFont font = cm.Load<SpriteFont>(filename);
 
@@ -651,7 +638,12 @@ namespace Galabingus
 
                 for (int i = 0; i < lineCapacity; i++)
                 {
-                    if (i + 1 == content.Length || content[i] == ' ')
+                    if(i + 1 == content.Length)
+                    {
+                        finalPoint = i;
+                        break;
+                    }
+                    if (content[i] == ' ')
                     {
                         finalPoint = i;
                     }
@@ -667,28 +659,39 @@ namespace Galabingus
                 }
             }
 
+            List<Text> textList = new List<Text>();
+
             for(int i = 0; i < contentDivided.Count; i++)
             {
                 Text text = new Text(font, contentDivided[i], 
                     new Vector2 (position.X, position.Y + spacing));
 
                 listToAdd.Add(text);
+
+                textList.Add(text);
             }
+
+            return textList;
         }
 
-        private void AddText(string filename, string content, Vector2 position, int lineCapacity, int spacing, Color tint, List<UIElement> listToAdd)
+        private List<Text> AddText(string filename, string content, Vector2 position, int lineCapacity, int spacing, Color tint, List<UIElement> listToAdd)
         {
             SpriteFont font = cm.Load<SpriteFont>(filename);
 
             List<string> contentDivided = new List<string>();
 
-            while (content != null)
+            while (content.Length != 0)
             {
                 int finalPoint = 0;
 
                 for (int i = 0; i < lineCapacity; i++)
                 {
-                    if (content[i] == ' ' || i - 1 == content.Length)
+                    if (i + 1 == content.Length)
+                    {
+                        finalPoint = i;
+                        break;
+                    }
+                    if (content[i] == ' ')
                     {
                         finalPoint = i;
                     }
@@ -699,17 +702,23 @@ namespace Galabingus
 
                 if (content.Length != 0)
                 {
-                    content = content.Substring(finalPoint + 2, content.Length - 1);
+                    content = content.Substring(finalPoint + 1, content.Length - finalPoint - 1);
                 }
             }
+
+            List<Text> textList = new List<Text>();
 
             for (int i = 0; i < contentDivided.Count; i++)
             {
                 Text text = new Text(font, contentDivided[i],
-                    new Vector2(position.X, position.Y + spacing), tint);
+                    new Vector2(position.X, position.Y + (spacing*i)), tint);
 
                 listToAdd.Add(text);
+
+                textList.Add(text);
             }
+
+            return textList;
         }
 
         /// <summary>
