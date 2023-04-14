@@ -375,8 +375,8 @@ namespace Galabingus_Map_Editor
                 TempMapSave(currentEditorPage);
                 
                 ClearEditor();
-
-                PageLoad();
+                currentEditorPage = currentEditorPage + change;
+                PageLoad(currentEditorPage);
                
                 
             }
@@ -402,7 +402,7 @@ namespace Galabingus_Map_Editor
            
         }
 
-        private void PageLoad()
+        private void PageLoad(int currentPage)
         {
 
         }
