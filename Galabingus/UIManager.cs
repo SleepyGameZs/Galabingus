@@ -149,6 +149,7 @@ namespace Galabingus
 
         // Temporary Backgrounds
         private Texture2D menuBackground;
+        private Texture2D logoTexture;
 
         //the sets of menus in the game
         List<UIElement> menu1;
@@ -275,13 +276,15 @@ namespace Galabingus
             event1 = StartGame;
             textEvent1 = null;
 
-            AddButton("buttonPlay_strip1", 1,
-            new Vector2(width / 2, height / 2),
+            AddButton("buttonPlay_strip1", 0.5f,
+            new Vector2(width / 2, height / 2 + 30),
             event1, menu1);
 
-            AddText("arial_36", "Hello Welcome to Game",
-                new Vector2(width / 2 - 200,
-                height / 2 - 200), textEvent1, menu1);
+            AddBackground("galabinguslogo_strip1", 5, 
+                new Vector2(
+                    (gr.GraphicsDevice.Viewport.Width / 2),
+                    (gr.GraphicsDevice.Viewport.Height / 4)),
+                menu1);
 
             //Create the Options Button
             event1 = null;
@@ -289,20 +292,20 @@ namespace Galabingus
             textEvent1 = null;
             
             //create buttons to go in the menu it displays and add them to the list
-            AddButton("buttonHowToPlay_strip1", 1,
-                new Vector2(width / 2, height / 2 - 100),
+            AddButton("buttonHowToPlay_strip1", 0.5f,
+                new Vector2(width / 2, height / 2 - 80),
                 event1, menu2);
 
-            AddButton("buttonCredits_strip1", 1,
+            AddButton("buttonCredits_strip1", 0.5f,
                 new Vector2(width / 2, height / 2 + 100),
                 event1, menu2);
 
             AddText("arial_18", "use backspace to go back",
                 new Vector2(width / 2 - 200,
-                height / 2 - 200), textEvent1, menu2);
+                height / 2 - 200), Color.White, textEvent1, menu2);
 
             //create the options button in the main list
-            AddButton("buttonOptions_strip1", 1,
+            AddButton("buttonOptions_strip1", 0.5f,
                 new Vector2(width / 2, height / 2 + 200),
                 event2, menu1);
 
@@ -331,8 +334,6 @@ namespace Galabingus
             gameLevels.Add(new UILevel(gameOver1, GameState.GameOver, 1));
 
             #endregion
-
-
 
             #region Debug UI
 
@@ -470,8 +471,8 @@ namespace Galabingus
                         new Rectangle(
                             0,
                             0,
-                            gr.GraphicsDevice.Viewport.Width,
-                            gr.GraphicsDevice.Viewport.Height),
+                            (int)(menuBackground.Width / 1.1),
+                            (int)(menuBackground.Height / 1.1)),
                         Color.White);
 
                     break;
@@ -542,7 +543,7 @@ namespace Galabingus
         /// <param name="uiEvent">the data which it needs for its events</param>
         /// <param name="types">the event types it can call</param>
         private void AddButton
-            (string filename, int scale, Vector2 position, EventDelegate clickEvent, List<UIElement> listToAdd)
+            (string filename, float scale, Vector2 position, EventDelegate clickEvent, List<UIElement> listToAdd)
         {
             //create the button texture
             Texture2D texture = cm.Load<Texture2D>(filename);
@@ -563,7 +564,7 @@ namespace Galabingus
         /// <param name="uiEvent">the data which it needs for its events</param>
         /// <param name="types">the event types it can call</param>
         private void AddBackground
-            (string filename, int scale, Vector2 position,  List<UIElement> listToAdd)
+            (string filename, float scale, Vector2 position,  List<UIElement> listToAdd)
         {
             //create the menus texture
             Texture2D texture = cm.Load<Texture2D>(filename);
@@ -574,7 +575,7 @@ namespace Galabingus
             listToAdd.Add(background);
         }
 
-        public Text AddText(string content, Vector2 position, int scale, Color tint, UIState uIState)
+        public Text AddText(string content, Vector2 position, float scale, Color tint, UIState uIState)
         {
 
             if(scale < 14 && scale > 0)
