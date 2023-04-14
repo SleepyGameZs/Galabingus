@@ -52,7 +52,7 @@ namespace Galabingus
         /// <param name="uiTexture">the objects texture</param>
         /// <param name="position">the objects position</param>
         /// <param name="scale">the size it needs to be scaled to</param>
-        public UIElement(Texture2D uiTexture, Vector2 position, int scale)
+        public UIElement(Texture2D uiTexture, Vector2 position, float scale)
         {
             //sets the texture to this classes texture
             this.uiTexture = uiTexture;
