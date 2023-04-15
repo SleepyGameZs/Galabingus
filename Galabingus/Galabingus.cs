@@ -242,7 +242,7 @@ namespace Galabingus
 
             //draw the screen
             _spriteBatch.End();
-            _spriteBatch.Begin();
+            _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap);
             userInterface.Draw();
 
             // End the SpriteBatch draw
