@@ -169,7 +169,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 	{
 		lerpPixels = lerp(lerp(color, colorTrue, 0.059875), colorP, 0.5);
 		lerpPixels = lerp(lerpPixels, lerpPixels * correctedColor, 0.7);
-		if (length(lerpPixels.rgb) < 1.73f )
+		if (length(lerpPixels.rgb) < 2.0f)
 		{
 			lerpPixels.rgb = lerp(lerpPixels.rgb, lerpPixels.rgb * 0.21, 0.5);
 		}

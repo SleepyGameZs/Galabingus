@@ -94,6 +94,7 @@ namespace Galabingus
         public dynamic thisGameObject;
         private bool holdCollider;
         private ushort contentName;
+        private CollisionGroup collisionGroup;
 
         public struct GameObjectTrie<T>
         {
@@ -297,9 +298,9 @@ namespace Galabingus
                         Trie.Add(new List<List<ushort>>());
                     }
                 }
-                if (GameObject.Instance.Index >= Trie[layer1Find].Count)
+                if ((GameObject.Instance.Index) >= Trie[layer1Find].Count)
                 {
-                    for (int i = Trie[layer1Find].Count; i <= GameObject.Instance.Index; i++)
+                    for (int i = Trie[layer1Find].Count; i <= (GameObject.Instance.Index); i++)
                     {
                         Trie[layer1Find].Add(new List<ushort>());
                     }
@@ -785,7 +786,8 @@ namespace Galabingus
             // ONLY allow for receiving the index here
             get
             {
-                return GameObject.Instance.index;
+                //System.Diagnostics.Debug.WriteLine(GameObject.Instance.index);
+                return (ushort)(GameObject.Instance.index);
             }
         }
 
@@ -850,6 +852,15 @@ namespace Galabingus
             set
             {
                 holdCollider = value;
+            }
+        }
+
+
+        public ushort PositionLength
+        {
+            get
+            {
+                return (ushort)positions.Count;
             }
         }
 
@@ -928,6 +939,21 @@ namespace Galabingus
             CollisionGroup collisionGroup
         )
         {
+            GameObject.Instance.Content = contentName;
+
+
+
+            if (GetScale(instanceNumber) != 0)
+            {
+                instanceNumber = (ushort)(PositionLength);
+                if (instanceNumber == 0)
+                {
+                    instanceNumber = 1;
+                }
+            }
+
+            GameObject.Instance.InstanceID = instanceNumber;
+            
             switch (collisionGroup)
             {
                 case CollisionGroup.Player:
@@ -944,12 +970,14 @@ namespace Galabingus
                     break;
             }
             this.contentName = contentName;
+            //this.index = (ushort)(contentName + instanceNumber);
+
             CollisionGroupISet(contentName, instanceNumber, collisionGroup);
-            GameObject.Instance.Content = contentName;
+            this.collisionGroup = collisionGroup;
             //instance = instanceNumber;
             string path = GameObject.ObjectEnumsI[contentName];
             ushort strip = ushort.Parse(path.Split("strip")[1]);
-            this.index = contentName;
+
             SetSprite(instanceNumber, GameObject.Instance.contentManager.Load<Texture2D>(path));
             SetScale(instanceNumber, 1.0f);
             SetAnimation(instanceNumber, new Animation(GetSprite(instanceNumber).Width, GetSprite(instanceNumber).Height, strip));

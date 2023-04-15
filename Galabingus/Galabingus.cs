@@ -241,6 +241,8 @@ namespace Galabingus
             GameObject.Instance.DebugDraw(_spriteBatch);
 
             //draw the screen
+            _spriteBatch.End();
+            _spriteBatch.Begin();
             userInterface.Draw();
 
             // End the SpriteBatch draw
