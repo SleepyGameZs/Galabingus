@@ -200,6 +200,8 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 
 	float4 lerpColorOffset = lerp(lerpPixels, colorTrue*0.1, 0.2);
 
+
+
 	if (lerpColorOffset.g < 0.3)
 	{
 		lerpColorOffset.g = 0;
@@ -211,10 +213,15 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 				lerpColorOffset.b = 0;
 			}
 		}
+		lerpColorOffset.b = 0.073f + lerpColorOffset.b;
+	}
+	else
+	{
+		lerpColorOffset.b = 1;
 	}
 
 
-
+	lerpColorOffset.rgb = lerpColorOffset.rgb * 0.85f;
 
 
 	lerpColorOffset.a = 1;
