@@ -114,6 +114,7 @@ namespace Galabingus
                                   object creator, 
                                   bool sourceIsBullet)
         {
+            //AudioManager.Instance.CallSound("Fire");
 
             // Sets the sprite to use for the bullet for GameObject storage purposes
             ushort sprite;
