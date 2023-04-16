@@ -600,7 +600,7 @@ namespace Galabingus
                                     copyOfTarget.SetData(pixels);
                                 }
 
-                                GameObject.Instance.HoldCollider = true;
+                                GameObject.Instance.HoldCollider = false;
                             }
                         }
 
