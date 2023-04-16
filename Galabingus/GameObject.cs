@@ -1248,7 +1248,7 @@ namespace Galabingus
                     foreach (string num in row)
                     {
                         Vector2 assetPosition = CalculateLevelEditorPositions(width, height, xInput, yInput);
-                        enemies.Add(new int[] { 1, int.Parse(num), (int)assetPosition.X, (int)assetPosition.Y, 0 });
+                        enemies.Add(new int[] { 1, int.Parse(num), (int)assetPosition.X, (int)assetPosition.Y, 1 });
 
                         xInput++;
                         boxIdentifier++;
