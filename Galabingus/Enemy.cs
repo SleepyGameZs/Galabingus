@@ -307,7 +307,8 @@ namespace Galabingus
             this.Scale = Player.PlayerInstance.Scale;
 
             // Set Position
-            this.Position = new Vector2(position.X, position.Y);
+            this.Position = new Vector2(position.X + this.Transform.Width * this.Scale * 0.5f - 10,  // X
+                                        position.Y + this.Transform.Height * this.Scale * 0.5f);// Y
 
             #endregion
 
