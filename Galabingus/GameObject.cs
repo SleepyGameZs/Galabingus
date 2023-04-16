@@ -1191,5 +1191,10 @@ namespace Galabingus
                 return contentManager;
             }
         }
+
+        public void CalculateLevelEditorPositions(int width, int height, int row, int column)
+        {
+            
+        }
     }
 }

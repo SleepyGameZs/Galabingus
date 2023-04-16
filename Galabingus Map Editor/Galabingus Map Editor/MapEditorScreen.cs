@@ -340,15 +340,16 @@ namespace Galabingus_Map_Editor
         {
             
 
+
             //Enemy Sprites
-            tileSet.Add(new ImageData("dark blue", 1, Properties.Resources.enemy_dblue_strip4_1) );
+            //tileSet.Add(new ImageData("dark blue", 1, Properties.Resources.enemy_dblue_strip4_1) );
             tileSet.Add(new ImageData("green", 2, Properties.Resources.enemy_green_strip4_1));
-            tileSet.Add(new ImageData("light blue", 3, Properties.Resources.enemy_lblue_strip4_1));
-            tileSet.Add(new ImageData("pink", 4,Properties.Resources.enemy_pink_strip4_1));
-            tileSet.Add(new ImageData("purple", 5,Properties.Resources.enemy_purple_strip4_1));
-            tileSet.Add(new ImageData("red", 6,Properties.Resources.enemy_red_strip4_1));
-            tileSet.Add(new ImageData("yellow", 7,Properties.Resources.enemy_yellow_strip4_1));
-            tileSet.Add(new ImageData("orange", 8,Properties.Resources.enemy_orange_strip4_1));
+            tileSet.Add(new ImageData("light blue", 5, Properties.Resources.enemy_lblue_strip4_1));
+            //tileSet.Add(new ImageData("pink", 4,Properties.Resources.enemy_pink_strip4_1));
+            tileSet.Add(new ImageData("purple", 4,Properties.Resources.enemy_purple_strip4_1));
+            tileSet.Add(new ImageData("red", 0,Properties.Resources.enemy_red_strip4_1));
+            tileSet.Add(new ImageData("yellow", 3,Properties.Resources.enemy_yellow_strip4_1));
+            tileSet.Add(new ImageData("orange", 1,Properties.Resources.enemy_orange_strip4_1));
 
             //Boss Sprite
             //TileSet.Add(Image.FromFile(@"../Resources/Boss image");
@@ -391,7 +392,7 @@ namespace Galabingus_Map_Editor
                 imageArray = new Image[10];
                 for (int y = 0; y < 10; y++)
                 {
-                    if ((10 * x) + y < 35)
+                    if ((10 * x) + y < tileSet.Count)
                     {
                         imageArray[y] = tileSet[(10 * x) + y].Image;
                     }

@@ -188,8 +188,7 @@ namespace Galabingus
         /// <param name="position"> The position of the asteriod </param>
         public void CreateObject(dynamic content, Vector2 position)
         {
-            GameObject.Instance.Content = content;
-            Tile tile = new Tile(GameObject.Instance.ContentName, 0, 1, true);
+            Tile tile = new Tile(content, 666, 1, true);
             tile.Transform = new Rectangle(0, 0, tile.Sprite.Width, tile.Sprite.Height);
             tile.Scale = 1f;
             tile.Position = position;
@@ -284,14 +283,14 @@ namespace Galabingus
 
             );
 
-           //for (int i = 0; i < tileList.Count; i++)
-           //{
-           //    tileList[i].Draw();
-           //}
-
             for (int i = 0; i < borderList.Count; i++)
             {
                 borderList[i].Draw();
+            }
+
+            for (int i = 0; i < tileList.Count; i++)
+            {
+                tileList[i].Draw();
             }
         }
     }
