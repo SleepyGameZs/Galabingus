@@ -43,6 +43,7 @@ namespace Galabingus
             {
                 if (sounds[i].Name == name)
                 {
+                    sounds[i].CreateInstance();
                     RunSound(sounds[i].Volume, sounds[i].SoundEffect, sounds[i].AudioInstance);
                 }
             }
