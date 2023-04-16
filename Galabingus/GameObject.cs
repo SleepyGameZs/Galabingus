@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Diagnostics;
 using System.Dynamic;
+using System.IO;
+using System.Reflection.PortableExecutable;
 using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -953,7 +956,7 @@ namespace Galabingus
             }
 
             GameObject.Instance.InstanceID = instanceNumber;
-            
+
             switch (collisionGroup)
             {
                 case CollisionGroup.Player:
@@ -990,7 +993,7 @@ namespace Galabingus
                     GetSprite(instanceNumber).Height                   // Height of the sprite
                 )
             );
-            Collider newCollider = new Collider(GetSprite(instanceNumber),GetPosition(instanceNumber),GetTransform(instanceNumber),SpriteEffects.None,GetScale(instanceNumber),GraphicsDevice,SpriteBatch,(ushort)collisionGroup,this);
+            Collider newCollider = new Collider(GetSprite(instanceNumber), GetPosition(instanceNumber), GetTransform(instanceNumber), SpriteEffects.None, GetScale(instanceNumber), GraphicsDevice, SpriteBatch, (ushort)collisionGroup, this);
             newCollider.Layer = contentName;
             newCollider.Resolved = true;
             newCollider.self = this;
@@ -1033,7 +1036,7 @@ namespace Galabingus
             {
                 GameObject.Instance.collisionGroups = new List<List<CollisionGroup>>();
             }
-            for (int i = GameObject.Instance.collisionGroups.Count-1; i <= contentName; i++)
+            for (int i = GameObject.Instance.collisionGroups.Count - 1; i <= contentName; i++)
             {
                 GameObject.Instance.collisionGroups.Add(new List<CollisionGroup>());
             }
@@ -1192,9 +1195,73 @@ namespace Galabingus
             }
         }
 
-        public void CalculateLevelEditorPositions(int width, int height, int row, int column)
+        public Vector2 CalculateLevelEditorPositions(int width, int height, int row, int column)
         {
-            
+            float coordianteXScale = width / GameObject.Instance.GraphicsDevice.Viewport.Width;
+            float coordinateYScale = height / GameObject.Instance.GraphicsDevice.Viewport.Height;
+            return new Vector2(coordianteXScale * row, coordinateYScale * column);
+        }
+
+        public List<int[]> LoadEnemyLeveFile(string fileName)
+        {
+            List <int[]> enemies = new List<int[]>();
+            StreamReader reader = new StreamReader("../../../" + fileName);
+
+            int lineNumber = 0;
+            int width = 0;
+            int height = 0;
+            int xInput = 0;
+            int yInput = 0;
+            int boxIdentifier = 0;
+
+            string? data;
+            while ((data = reader.ReadLine()) != null)
+            {
+                //Debug.WriteLine(data);
+
+                if (lineNumber < 6)
+                {
+                    switch (lineNumber)
+                    {
+                        case 0:
+                            data = "";
+                            break;
+                        case 1:
+                            height = int.Parse(data);
+                            data = "";
+                            break;
+                        case 2:
+                            width = int.Parse(data);
+                            data = "";
+                            break;
+                        case 3:
+                            data = "";
+                            break;
+                        case 4:
+                            data = "";
+                            break;
+                    }
+                }
+                else
+                {
+                    string[] row = data.Split('|');
+                    foreach (string num in row)
+                    {
+                        Vector2 assetPosition = CalculateLevelEditorPositions(width, height, xInput, yInput);
+                        enemies.Add(new int[] { 1, int.Parse(num), (int)assetPosition.X, (int)assetPosition.Y });
+
+                        xInput++;
+                        boxIdentifier++;
+                    }
+                    xInput = 0;
+                    yInput++;
+                }
+                lineNumber++;
+            }
+
+            reader.Close();
+
+            return enemies;
         }
     }
 }
