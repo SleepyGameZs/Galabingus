@@ -421,6 +421,7 @@ namespace Galabingus
                         case EnemyType.Bomb:
                             // Creates an explosion
                             BulletSpawning(0, BulletType.Explosion, new Vector2(-180, 0), 0);
+                            AudioManager.Instance.CallSound("Explosion");
                             break;
                     }
                 }

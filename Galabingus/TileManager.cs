@@ -193,7 +193,7 @@ namespace Galabingus
             tile.Scale = 1f;
             tile.Position = position;
             tile.ScaleVector = new Vector2(tile.Scale, tile.Scale);
-            tileList.Add(tile);
+            borderList.Add(tile);
         }
 
         public void Update(GameTime gameTime)

@@ -352,6 +352,12 @@
 /processorParam:TextureFormat=Color
 /build:enemy_yellow_strip4.png
 
+#begin Explosion.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Explosion.mp3
+
 #begin galabingusLogo_strip1.png
 /importer:TextureImporter
 /processor:TextureProcessor
