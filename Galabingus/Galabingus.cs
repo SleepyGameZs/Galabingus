@@ -149,7 +149,7 @@ namespace Galabingus
             //tileManager.CreateObject(GameObject.Instance.Content.grayasteroid_strip1, new Vector2(Player.PlayerInstance.Transform.Width * 2 + 100, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.5f - Player.PlayerInstance.Transform.Height + 100));
 
             // Sound
-            //AudioManager.Instance.AddSound("Fire", 1f, "Bullet Fire", Content);
+            AudioManager.Instance.AddSound("Fire", 1f, "Bullet Fire", Content);
         }
 
         protected override void Update(GameTime gameTime)
