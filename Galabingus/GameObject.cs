@@ -1197,8 +1197,8 @@ namespace Galabingus
 
         public Vector2 CalculateLevelEditorPositions(int width, int height, int row, int column)
         {
-            float coordianteXScale = width / GameObject.Instance.GraphicsDevice.Viewport.Width;
-            float coordinateYScale = height / GameObject.Instance.GraphicsDevice.Viewport.Height;
+            float coordianteXScale = GameObject.Instance.GraphicsDevice.Viewport.Width / width;
+            float coordinateYScale = GameObject.Instance.GraphicsDevice.Viewport.Height / height;
             return new Vector2(coordianteXScale * row, coordinateYScale * column);
         }
 
@@ -1248,7 +1248,7 @@ namespace Galabingus
                     foreach (string num in row)
                     {
                         Vector2 assetPosition = CalculateLevelEditorPositions(width, height, xInput, yInput);
-                        enemies.Add(new int[] { 1, int.Parse(num), (int)assetPosition.X, (int)assetPosition.Y });
+                        enemies.Add(new int[] { 1, int.Parse(num), (int)assetPosition.X, (int)assetPosition.Y, 0 });
 
                         xInput++;
                         boxIdentifier++;
