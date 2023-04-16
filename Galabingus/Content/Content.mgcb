@@ -1,4 +1,3 @@
-
 #----------------------------- Global Properties ----------------------------#
 
 /outputDir:bin/$(Platform)
@@ -136,12 +135,6 @@
 /processorParam:TextureFormat=Color
 /build:brownasteroid_strip1.png
 
-#begin Bullet Fire.wav
-/importer:WavImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Bullet Fire.wav
-
 #begin buttonCredits_strip1.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -178,6 +171,13 @@
 /processorParam:TextureFormat=Color
 /build:buttonOptions_strip1.png
 
+#begin Collider.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Collider.fx
+
+#begin enemy_green_bullet_main_strip4.png
 #begin buttonPlay_strip1.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -190,13 +190,7 @@
 /processorParam:TextureFormat=Color
 /build:buttonPlay_strip1.png
 
-#begin Collider.fx
-/importer:EffectImporter
-/processor:EffectProcessor
-/processorParam:DebugMode=Auto
-/build:Collider.fx
-
-#begin enemy_green_bullet_main_strip4.png
+#begin circlebullet_strip4.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -472,7 +466,7 @@
 /processorParam:TextureFormat=Color
 /build:newBackground_strip1.png
 
-#begin player_strip4.png
+#begin player_strip5.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -585,4 +579,3 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:white_pixel_strip1.png
-
