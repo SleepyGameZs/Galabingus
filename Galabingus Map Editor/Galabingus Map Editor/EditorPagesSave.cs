@@ -12,9 +12,11 @@ namespace Galabingus_Map_Editor
         List<Image> editorImages;
 
         int pageNum;
+        /*
         EditorPagesSave(int currentPageNum, bool pageState, List<Image> EditorPage)
         {
             editorImages = EditorPage;
         }
+        */
     }
 }

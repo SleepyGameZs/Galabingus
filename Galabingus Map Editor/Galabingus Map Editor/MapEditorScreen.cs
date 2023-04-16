@@ -29,12 +29,13 @@ namespace Galabingus_Map_Editor
         private bool changed;
         private bool saved;
         private bool moving;
+        private bool drag;
 
         private string filePath;
 
         private List<ImageData> tileSet;
 
-        private Image currentSelected;
+        private ImageData currentSelected;
 
         private List<Image[]> spritePageSelect;
 
@@ -44,14 +45,38 @@ namespace Galabingus_Map_Editor
 
         //Stores all the changes to the picture boxes for each page
         private List<List<Image>> pagesData;
+        private List<ImageData> boxImages;
 
-        public MapEditorScreen(int numofPage, int pixelDensity)
+        public MapEditorScreen(bool load)
         {
             InitializeComponent();
 
             tileSet = new List<ImageData>();
 
-            totalWidth = 16;
+            boxImages = new List<ImageData>();
+
+            //currentSelected = null;
+
+            pagesData = new List<List<Image>>();
+
+            currentSelectablePage = 0;
+
+            currentEditorPage = 0;
+
+            moving = false;
+
+            filePath = @"..\..\..\";
+        }
+
+        public MapEditorScreen(int numofPage, int pixelDensity)
+        {
+            InitializeComponent();
+
+            boxImages = new List<ImageData>();
+
+            tileSet = new List<ImageData>();
+
+            totalWidth = 9;
 
             totalHeight = 9;
 
@@ -61,7 +86,7 @@ namespace Galabingus_Map_Editor
 
             totalEditorPageNum = numofPage;
 
-            currentSelected = null;
+            //currentSelected = null;
 
             pagesData = new List<List<Image>>();
 
@@ -89,7 +114,7 @@ namespace Galabingus_Map_Editor
         {
             InitializeComponent();
 
-            currentSelected = null;
+            //currentSelected = null;
 
             TileSizeDet();
 
@@ -98,86 +123,112 @@ namespace Galabingus_Map_Editor
             MapDraw();
         }
 
+        private ImageData MatchImageData(System.Drawing.Image image)
+        {
+            foreach(ImageData img in tileSet)
+            {
+                if (img.Image == image)
+                {
+                    return img;
+                }
+            }
+
+            return tileSet[0];
+        }
+
+        private ImageData MatchImageData(int image)
+        {
+            foreach (ImageData img in tileSet)
+            {
+                if (img.ImageNumber == image)
+                {
+                    return img;
+                }
+            }
+
+            return tileSet[tileSet.Count-1];
+        }
+
         //Button 1
         private void pictureBox1_Click(object sender, EventArgs e)
         {
             pictureBox11.Image = pictureBox1.Image;
-            currentSelected = pictureBox1.Image;
+            currentSelected = MatchImageData(pictureBox1.Image);
         }
 
         //Button 2
         private void pictureBox2_Click(object sender, EventArgs e)
         {
             pictureBox11.Image = pictureBox2.Image;
-            currentSelected = pictureBox2.Image;
+            currentSelected = MatchImageData(pictureBox2.Image);
         }
 
         //Button 3
         private void pictureBox3_Click(object sender, EventArgs e)
         {
             pictureBox11.Image = pictureBox3.Image;
-            currentSelected = pictureBox3.Image;
+            currentSelected = MatchImageData(pictureBox3.Image);
         }
 
         //Button 4
         private void pictureBox4_Click(object sender, EventArgs e)
         {
             pictureBox11.Image = pictureBox4.Image;
-            currentSelected = pictureBox4.Image;
+            currentSelected = MatchImageData(pictureBox4.Image);
         }
 
         //Button 5
         private void pictureBox5_Click(object sender, EventArgs e)
         {
             pictureBox11.Image = pictureBox5.Image;
-            currentSelected = pictureBox5.Image;
+            currentSelected = MatchImageData(pictureBox5.Image);
         }
 
         //Button 6
         private void pictureBox6_Click(object sender, EventArgs e)
         {
             pictureBox11.Image = pictureBox6.Image;
-            currentSelected = pictureBox6.Image;
+            currentSelected = MatchImageData(pictureBox6.Image);
         }
 
         //Button 7
         private void pictureBox7_Click(object sender, EventArgs e)
         {
             pictureBox11.Image = pictureBox7.Image;
-            currentSelected = pictureBox7.Image;
+            currentSelected = MatchImageData(pictureBox7.Image);
         }
 
         //Button 8
         private void pictureBox8_Click(object sender, EventArgs e)
         {
             pictureBox11.Image = pictureBox8.Image;
-            currentSelected = pictureBox8.Image;
+            currentSelected = MatchImageData(pictureBox8.Image);
         }
 
         //Button 9
         private void pictureBox9_Click(object sender, EventArgs e)
         {
             pictureBox11.Image = pictureBox9.Image;
-            currentSelected = pictureBox9.Image;
+            currentSelected = MatchImageData(pictureBox9.Image);
         }
 
         //Button 10
         private void pictureBox10_Click(object sender, EventArgs e)
         {
             pictureBox11.Image = pictureBox10.Image;
-            currentSelected = pictureBox10.Image;
+            currentSelected = MatchImageData(pictureBox10.Image);
         }
        
         //Save Button
         private void button14_Click(object sender, EventArgs e)
         {
-
+            Savefile();
         }
 
         //Load Button
         private void button15_Click(object sender, EventArgs e)
         {
-
+            LoadFile();
         }
 
         //Left Change Selectable
@@ -196,14 +247,14 @@ namespace Galabingus_Map_Editor
         private void button17_Click(object sender, EventArgs e)
         {
             //ClearEditor();
-            ChangeLevelSection(-1);
+            //ChangeLevelSection(-1);
         }
 
         //Change Level Section Right
         private void button16_Click(object sender, EventArgs e)
         {
             //ClearEditor();
-            ChangeLevelSection(1);
+            //ChangeLevelSection(1);
         }
 
         private void ImageChanger(object tile, EventArgs click)
@@ -211,34 +262,79 @@ namespace Galabingus_Map_Editor
             if (tile != null)
             {
                 PictureBox pixel = (PictureBox)tile;
-                pixel.Image = currentSelected;
+                pixel.Image = currentSelected.Image;
+                boxImages[(int)pixel.Tag] = currentSelected;
                 //changed = true;
+                drag = true;
             }
         }
 
         private void MapDraw()
         {
+            mapGroup.SetBounds(
+                mapGroup.Bounds.X,
+                mapGroup.Bounds.Y,
+                this.totalWidth * tileSize,
+                this.totalHeight * tileSize
+            );
+
             for (int y = 0; y < totalHeight; y++)
             {
                 for (int x = 0; x < totalWidth; x++)
                 {
                     PictureBox tileBox = new PictureBox();
-
                     tileBox.Size = new Size(tileSize, tileSize);
-                    tileBox.Location = new Point(305 + (tileSize * x), 30 + (tileSize * y));
+                    tileBox.Location = new Point(0 + (tileSize * x), 0 + (tileSize * y));
                     tileBox.BackColor = Color.White;
                     tileBox.SizeMode = PictureBoxSizeMode.StretchImage;
-                    tileBox.Capture = false;
-                    Controls.Add(tileBox);
-                    boxes.Add(tileBox);
-                    tileBox.BringToFront();
                     tileBox.Click += ImageChanger;
-                    //tileBox.Click += Change;
+                    tileBox.MouseDown += MouseReady;
+                    tileBox.MouseEnter += MouseDrag;
+                    tileBox.MouseUp += ResetMouse;
+                    tileBox.BringToFront();
+                    tileBox.Tag = boxes.Count;
+                    boxImages.Add(new ImageData());
+                    boxes.Add(tileBox);
+                    mapGroup.Controls.Add(tileBox);
                 }
             }
+
+            mapGroup.MouseLeave += ResetMouse;
         }
 
+        private void TileBox_MouseEnter(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
 
+        private void ResetMouse(
+            object sender,
+            EventArgs e
+        )
+        {
+            drag = false;
+        }
+
+        private void MouseReady(
+            object sender,
+            EventArgs e
+        )
+        {
+            drag = true;
+            ((PictureBox)sender).Capture = false;
+        }
+
+        private void MouseDrag(
+            object sender,
+            EventArgs e
+        )
+        {
+            if (drag)
+            {
+                boxImages[(int)((PictureBox)sender).Tag] = currentSelected;
+                ((PictureBox)sender).Image = currentSelected.Image;
+            }
+        }
 
         private void ImageAdd()
         {
@@ -386,6 +482,7 @@ namespace Galabingus_Map_Editor
                 StreamWriter writer = new StreamWriter(Properties.Resources.TempSave);
                 for (int x = 0; x < totalWidth * totalHeight; x++)
                 {
+                    /*
                     if ()
                     {
                         writer.Write(GetImageNum(boxes[x].Image) + " , ");
@@ -394,6 +491,7 @@ namespace Galabingus_Map_Editor
                     {
                         writer.WriteLine("");
                     }
+                    */
                 }
                 
             }
@@ -415,8 +513,6 @@ namespace Galabingus_Map_Editor
             }
             return -1;
         }
-
-
 
         /*
         private void ChangeLevelSection(int change)
@@ -480,6 +576,8 @@ namespace Galabingus_Map_Editor
             SaveFileDialog filesSave = new SaveFileDialog();
             filesSave.Title = "Save a Level File";
             filesSave.Filter = "Level Files|*.level";
+            boxes = new List<PictureBox>();
+
 
             newMap = false;
 
@@ -487,20 +585,47 @@ namespace Galabingus_Map_Editor
 
             saved = true;
 
+
+
             if (filesSave.ShowDialog() == DialogResult.OK)
             {
                 string fileName = filesSave.FileName;
 
                 try
                 {
-                    using (FileStream fs = File.Create(filesSave.FileName))
+                    StreamWriter writer = new StreamWriter(fileName);
+                    writer.WriteLine(tileSize);
+                    writer.WriteLine(totalHeight);
+                    writer.WriteLine(totalWidth);
+                    writer.WriteLine(totalEditorPageNum);
+                    writer.WriteLine(totalDensity);
+                    int tileNumber = 0;
+                    int currentY = 0;
+                    for (int y = 0; y < totalHeight; y++)
                     {
-                        StreamWriter writer = new StreamWriter(fs);
-                        writer.WriteLine(totalEditorPageNum);
-                        writer.WriteLine(totalDensity);
+                        for (int x = 0; x < totalWidth; x++)
+                        {
+                            if (currentY != y)
+                            {
+                                currentY = y;
+                                writer.Write("\n");
+                                writer.Write($"{boxImages[tileNumber].ImageNumber}");
+                                tileNumber++;
+                            }
+                            else if (y == 0 && x == 0)
+                            {
+                                writer.Write($"{boxImages[tileNumber].ImageNumber}");
+                                tileNumber++;
+                            }
+                            else
+                            {
+                                writer.Write($"|{boxImages[tileNumber].ImageNumber}");
+                                tileNumber++;
+                            }
 
-                        
+                        }
                     }
+                    writer.Close();
                 }
                 catch
                 {
@@ -509,7 +634,7 @@ namespace Galabingus_Map_Editor
 
             }
         }
-
+        
         public void LoadFile()
         {
             OpenFileDialog loadSave = new OpenFileDialog();
@@ -523,10 +648,93 @@ namespace Galabingus_Map_Editor
             if (loadSave.ShowDialog() == DialogResult.OK)
             {
                 string fileName = loadSave.FileName;
+
+                StreamReader reader = new StreamReader(fileName);
+                string data = "";
+     
+                int lineNumber = 0;
+                int yInput = 0;
+                int xInput = 0;
+                int boxIdentifier = 0;
+
+                while ((data = reader.ReadLine()) != null)
+                {
+                    //Debug.WriteLine(data);
+
+                    if (lineNumber < 6)
+                    {
+                        switch (lineNumber)
+                        {
+                            case 0:
+                                tileSize = int.Parse(data);
+                                data = "";
+                                break;
+                            case 1:
+                                totalHeight = int.Parse(data);
+                                data = "";
+                                break;
+                            case 2:
+                                totalWidth = int.Parse(data);
+                                data = "";
+                                break;
+                            case 3:
+                                totalEditorPageNum = int.Parse(data);
+                                data = "";
+                                break;
+                            case 4:
+                                totalDensity = int.Parse(data);
+                                data = "";
+                                ImageAdd();
+                                TileSizeDet();
+                                ButtonStuff();
+                                mapGroup.SetBounds(
+                                    mapGroup.Bounds.X,
+                                    mapGroup.Bounds.Y,
+                                    this.totalWidth * tileSize,
+                                    this.totalHeight * tileSize
+                                );
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        string[] row = data.Split('|');
+                        Debug.WriteLine(data);
+                        foreach (string num in row) 
+                        {
+                            PictureBox tileBox = new PictureBox();
+                            tileBox.Size = new Size(tileSize, tileSize);
+                            tileBox.Location = new Point(0 + (tileSize * xInput), 0 + (tileSize * yInput));
+                            tileBox.BackColor = Color.White;
+                            tileBox.SizeMode = PictureBoxSizeMode.StretchImage;
+                            tileBox.Click += ImageChanger;
+                            tileBox.MouseDown += MouseReady;
+                            tileBox.MouseEnter += MouseDrag;
+                            tileBox.MouseUp += ResetMouse;
+                            tileBox.BringToFront();
+                            tileBox.Tag = boxes.Count;
+                            boxImages.Add(int.Parse(num) == 0 ? new ImageData() : MatchImageData(int.Parse(num)));
+                            boxes.Add(tileBox);
+                            tileBox.Image = boxImages[boxIdentifier].Image;
+                            mapGroup.Controls.Add(tileBox);
+                            xInput++;
+                            boxIdentifier++;
+                        }
+                        xInput = 0;
+                        yInput++;
+                        data = "";
+                    }
+                    lineNumber++;
+                }
+
+                reader.Close();
             }
+
+            mapGroup.MouseLeave += ResetMouse;
+
+            ChangeSelectable(0);
         }
 
-        
 
     }
 }

@@ -13,12 +13,12 @@ namespace Galabingus_Map_Editor
 {
     public partial class Form1 : Form
     {
-        //16 x 9 
+        //9 x 9 
         private int numPages;
 
         private int pixelDensity;
 
-        private Form mapEditor;
+        private MapEditorScreen mapEditor;
 
         public Form1()
         {
@@ -33,12 +33,10 @@ namespace Galabingus_Map_Editor
         //Load Button
         private void button2_Click(object sender, EventArgs e)
         {
-            
+            mapEditor = new MapEditorScreen(true);
+            mapEditor.LoadFile();
+            mapEditor.Show();
         }
-
-
-
-
 
         private bool InputCheck(object input)
         {
@@ -46,7 +44,6 @@ namespace Galabingus_Map_Editor
             TextBox box = (TextBox)input;
             try
             {
-
                 temp = Int32.Parse(box.Text);
                 return true;
             }
@@ -98,7 +95,6 @@ namespace Galabingus_Map_Editor
             {
 
                 mapEditor = new MapEditorScreen(numPages, pixelDensity);
-
                 mapEditor.Show();
             }
             else
@@ -120,7 +116,5 @@ namespace Galabingus_Map_Editor
             }
         }
         */
-
-        
     }
 }
