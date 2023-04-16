@@ -146,8 +146,8 @@ namespace Galabingus
             // Load the temporary background
             //tempBackground = Content.Load<Texture2D>("spacebackground_strip1");
             tileManager.CreateBackground();
-            ushort asteroid = GameObject.Instance.Content.grayasteroid_strip1;
-            tileManager.CreateObject(asteroid,new Vector2(50,50));
+            //ushort asteroid = GameObject.Instance.Content.grayasteroid_strip1;
+            //tileManager.CreateObject(asteroid,new Vector2(50,50));
             //tileManager.CreateBackground();
             //tileManager.CreateObject(GameObject.Instance.Content.grayasteroid_strip1, new Vector2(Player.PlayerInstance.Transform.Width * 2 + 100, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.5f - Player.PlayerInstance.Transform.Height + 100));
 
