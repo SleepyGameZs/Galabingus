@@ -78,9 +78,9 @@ namespace Galabingus_Map_Editor
 
             totalWidth = 9;
 
-            totalHeight = 36;
+            totalHeight = 9;
 
-            tileSize = 20;
+            tileSize = 60;
 
             totalDensity = pixelDensity;
 
@@ -271,12 +271,14 @@ namespace Galabingus_Map_Editor
 
         private void MapDraw()
         {
+            /*
             mapGroup.SetBounds(
                 mapGroup.Bounds.X,
                 mapGroup.Bounds.Y,
                 this.totalWidth * tileSize,
                 this.totalHeight * tileSize
             );
+            */
 
             for (int y = 0; y < totalHeight; y++)
             {

@@ -174,7 +174,20 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 			lerpPixels.rgb = lerp(lerpPixels.rgb, lerpPixels.rgb * 0.21, 0.5);
 		}
 
+		//lerpPixel.rgb = lerp(lerpPixels.rgb, colorTrue.rgb, 0.9875);
 	}
+
+	if (colorTrue.a == 1 && length(lerpPixels.rgb) < 0.5f)
+	{
+		lerpPixels.rgb = lerpPixels.rgb * 2.5f;
+		if (colorTrue.r > 0.5f && colorTrue.b < 0.2f && colorTrue.g < 0.2f)
+		{
+			lerpPixels.r *= 1.0f;
+			lerpPixels.g *= 1.125f;
+		}
+	}
+
+
 
 	halation.r = halation.r * 0.75;
 	halation.g = halation.g * 0.75;
