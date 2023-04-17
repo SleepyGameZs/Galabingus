@@ -524,7 +524,6 @@ namespace Galabingus
                         velocity = Vector2.Normalize(new Vector2((float)(10 * Math.Sin(playerBulletAngle)), // X
                                                                  (float)(10 * Math.Cos(playerBulletAngle))  // Y
                                                      ));
-
                         
                     }
 
