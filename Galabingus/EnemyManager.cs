@@ -291,7 +291,7 @@ namespace Galabingus
                         // Remove from Row List
                         if (Instance.activeEnemies[i].ShouldMove)
                         {
-                             Instance.enemyRows[(int)(Instance.activeEnemies[i].InitialY)].Remove(Instance.activeEnemies[i]);
+                             Instance.enemyRows[(int)(Instance.activeEnemies[i].InitialPosition.Y)].Remove(Instance.activeEnemies[i]);
                         }
 
                         // Remove from primary list
@@ -361,11 +361,11 @@ namespace Galabingus
                     enemyList[i].Direction = new Vector2(enemyList[i].Direction.X * -1, enemyList[i].Direction.Y);
                     if (i != 0)
                     {
-                        enemyList[i].Position = new Vector2(enemyList[i].Position.X + 5 * enemyList[i].Direction.X, enemyList[i].Position.Y);
+                        enemyList[i].Position = new Vector2(enemyList[i].Position.X + 10 * enemyList[i].Direction.X, enemyList[i].Position.Y);
                     } 
-                    else if (!collideOnRight)
+                    else if (!collideOnRight || enemyList.Count == 1)
                     { // Fixes slight offset on first ship in row with each bonce
-                        enemyList[i].Position = new Vector2(enemyList[i].Position.X + 6 * enemyList[i].Direction.X, enemyList[i].Position.Y);
+                        enemyList[i].Position = new Vector2(enemyList[i].Position.X + 11 * enemyList[i].Direction.X, enemyList[i].Position.Y);
                     }
                 }
             }

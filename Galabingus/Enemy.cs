@@ -55,7 +55,7 @@ namespace Galabingus
 
         // Whether or not the enemy can Move
         private bool shouldMove;
-        private int initialY;
+        private Vector2 initialPosition;
 
         // Randomizer for time between shots
         private Random rng;
@@ -251,9 +251,9 @@ namespace Galabingus
         /// Returns the initial Y position of the enemy, for the dictionary
         /// in EnemyManager's keys
         /// </summary>
-        public int InitialY
+        public Vector2 InitialPosition
         {
-            get { return initialY; }
+            get { return initialPosition; }
         }
 
         /// <summary>
@@ -342,7 +342,7 @@ namespace Galabingus
             this.shouldMove = shouldMove;
 
             // Set base position to be stored for dictionary keys
-            initialY = (int)position.Y;
+            initialPosition = position;
 
             #endregion
 
@@ -355,7 +355,7 @@ namespace Galabingus
         public void Update (GameTime gameTime)
         {
             // Check if off screen
-            bool enemyOnScreen = (this.Position.Y > 0 &&
+            bool enemyOnScreen = (this.Position.Y > - this.Transform.Height * this.Scale &&
                                   this.Position.Y < BulletManager.Instance.ScreenDimensions.Y);
 
             // Move enemy with Y camera scrolling
@@ -486,24 +486,22 @@ namespace Galabingus
                         { // Collided with Enemy
                             // Check to see if collided enemy isn't in this Enemy's row
 
-                            if (!EnemyManager.Instance.InSameRow(initialY, ((Enemy)collision.other).EnemyNumber))
+                            /*if (!EnemyManager.Instance.InSameRow((int)initialPosition.Y, ((Enemy)collision.other).EnemyNumber))
                             {
                                 // Check if collision on left or right
                                 if (this.Position.X < ((Enemy)collision.other).Position.X)
                                 {
-                                    EnemyManager.Instance.FlipEnemies(initialY, true);
+                                    EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, true);
                                 }
                                 else
                                 {
-                                    EnemyManager.Instance.FlipEnemies(initialY, false);
+                                    EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, false);
                                 }
-                            }
-                        } 
+                            }*/
+                        }
                         else if ((collision.other as Tile) is Tile)
                         { // Collided with Tile
                             Vector2 overlapZone = ((Tile)collision.other).ScaleVector;
-
-
 
                             //System.Diagnostics.Debug.WriteLine(overlapZone.X);
                             //System.Diagnostics.Debug.WriteLine(overlapZone.Y);
@@ -512,10 +510,10 @@ namespace Galabingus
                                 // Check if collision on left or right
                                 if (this.Position.X < ((Tile)collision.other).Position.X)
                                 {
-                                    EnemyManager.Instance.FlipEnemies(initialY, true);
+                                    EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, true);
                                 } else
                                 {
-                                    EnemyManager.Instance.FlipEnemies(initialY, false);
+                                    EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, false);
                                 }
                             }
                         }
@@ -529,6 +527,9 @@ namespace Galabingus
             } 
             else
             {
+                Position = new Vector2(initialPosition.X, Position.Y);
+
+
                 this.Collider.Unload();
             }
 
