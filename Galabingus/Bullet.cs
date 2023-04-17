@@ -525,9 +525,11 @@ namespace Galabingus
                                                                  (float)(10 * Math.Cos(playerBulletAngle))  // Y
                                                      ));
 
-                        // Set Current Position
-                        currentPosition = SetPosition(gameTime, 3, false);
+                        
                     }
+
+                    // Set Current Position
+                    currentPosition = SetPosition(gameTime, 3, false);
                     break;
 
                 case BulletType.Explosion:
@@ -711,7 +713,7 @@ namespace Galabingus
                                      );
 
             // Final position change, and whether or not to include camera movement
-            this.Position += finalVelocity - (ignoreCamera ? Camera.Instance.OffSet : Vector2.Zero);
+            this.Position += finalVelocity + (ignoreCamera ? Camera.Instance.OffSet : Vector2.Zero);
 
             // Returns position
             return this.Position;

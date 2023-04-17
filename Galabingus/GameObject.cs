@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Diagnostics;
 using System.Dynamic;
+using System.IO;
+using System.Reflection.PortableExecutable;
 using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -94,6 +97,7 @@ namespace Galabingus
         public dynamic thisGameObject;
         private bool holdCollider;
         private ushort contentName;
+        private CollisionGroup collisionGroup;
 
         public struct GameObjectTrie<T>
         {
@@ -297,9 +301,9 @@ namespace Galabingus
                         Trie.Add(new List<List<ushort>>());
                     }
                 }
-                if (GameObject.Instance.Index >= Trie[layer1Find].Count)
+                if ((GameObject.Instance.Index) >= Trie[layer1Find].Count)
                 {
-                    for (int i = Trie[layer1Find].Count; i <= GameObject.Instance.Index; i++)
+                    for (int i = Trie[layer1Find].Count; i <= (GameObject.Instance.Index); i++)
                     {
                         Trie[layer1Find].Add(new List<ushort>());
                     }
@@ -785,7 +789,8 @@ namespace Galabingus
             // ONLY allow for receiving the index here
             get
             {
-                return GameObject.Instance.index;
+                //System.Diagnostics.Debug.WriteLine(GameObject.Instance.index);
+                return (ushort)(GameObject.Instance.index);
             }
         }
 
@@ -850,6 +855,15 @@ namespace Galabingus
             set
             {
                 holdCollider = value;
+            }
+        }
+
+
+        public ushort PositionLength
+        {
+            get
+            {
+                return (ushort)positions.Count;
             }
         }
 
@@ -928,6 +942,21 @@ namespace Galabingus
             CollisionGroup collisionGroup
         )
         {
+            GameObject.Instance.Content = contentName;
+
+
+
+            if (GetScale(instanceNumber) != 0)
+            {
+                instanceNumber = (ushort)(PositionLength);
+                if (instanceNumber == 0)
+                {
+                    instanceNumber = 1;
+                }
+            }
+
+            GameObject.Instance.InstanceID = instanceNumber;
+
             switch (collisionGroup)
             {
                 case CollisionGroup.Player:
@@ -944,12 +973,14 @@ namespace Galabingus
                     break;
             }
             this.contentName = contentName;
+            //this.index = (ushort)(contentName + instanceNumber);
+
             CollisionGroupISet(contentName, instanceNumber, collisionGroup);
-            GameObject.Instance.Content = contentName;
+            this.collisionGroup = collisionGroup;
             //instance = instanceNumber;
             string path = GameObject.ObjectEnumsI[contentName];
             ushort strip = ushort.Parse(path.Split("strip")[1]);
-            this.index = contentName;
+
             SetSprite(instanceNumber, GameObject.Instance.contentManager.Load<Texture2D>(path));
             SetScale(instanceNumber, 1.0f);
             SetAnimation(instanceNumber, new Animation(GetSprite(instanceNumber).Width, GetSprite(instanceNumber).Height, strip));
@@ -962,7 +993,7 @@ namespace Galabingus
                     GetSprite(instanceNumber).Height                   // Height of the sprite
                 )
             );
-            Collider newCollider = new Collider(GetSprite(instanceNumber),GetPosition(instanceNumber),GetTransform(instanceNumber),SpriteEffects.None,GetScale(instanceNumber),GraphicsDevice,SpriteBatch,(ushort)collisionGroup,this);
+            Collider newCollider = new Collider(GetSprite(instanceNumber), GetPosition(instanceNumber), GetTransform(instanceNumber), SpriteEffects.None, GetScale(instanceNumber), GraphicsDevice, SpriteBatch, (ushort)collisionGroup, this);
             newCollider.Layer = contentName;
             newCollider.Resolved = true;
             newCollider.self = this;
@@ -1005,7 +1036,7 @@ namespace Galabingus
             {
                 GameObject.Instance.collisionGroups = new List<List<CollisionGroup>>();
             }
-            for (int i = GameObject.Instance.collisionGroups.Count-1; i <= contentName; i++)
+            for (int i = GameObject.Instance.collisionGroups.Count - 1; i <= contentName; i++)
             {
                 GameObject.Instance.collisionGroups.Add(new List<CollisionGroup>());
             }
@@ -1162,6 +1193,142 @@ namespace Galabingus
             {
                 return contentManager;
             }
+        }
+
+        public Vector2 CalculateLevelEditorPositions(int width, int height, int row, int column)
+        {
+            float coordianteXScale = GameObject.Instance.GraphicsDevice.Viewport.Width / width;
+            float coordinateYScale = GameObject.Instance.GraphicsDevice.Viewport.Height / height * 4;
+            float startingY = GameObject.Instance.GraphicsDevice.Viewport.Height * -4;
+            return new Vector2(coordianteXScale * row, coordinateYScale * column + startingY);
+        }
+
+        public void LoadTileLevelFile(string fileName)
+        {
+            StreamReader reader = new StreamReader("../../../" + fileName);
+
+            int lineNumber = 0;
+            int width = 0;
+            int height = 0;
+            int xInput = 0;
+            int yInput = 0;
+            int boxIdentifier = 0;
+
+            string? data;
+            while ((data = reader.ReadLine()) != null)
+            {
+                //Debug.WriteLine(data);
+
+                if (lineNumber < 6)
+                {
+                    switch (lineNumber)
+                    {
+                        case 0:
+                            data = "";
+                            break;
+                        case 1:
+                            height = int.Parse(data);
+                            data = "";
+                            break;
+                        case 2:
+                            width = int.Parse(data);
+                            data = "";
+                            break;
+                        case 3:
+                            data = "";
+                            break;
+                        case 4:
+                            data = "";
+                            break;
+                    }
+                }
+                else
+                {
+                    string[] row = data.Split('|');
+
+                    foreach (string num in row)
+                    {
+                        Vector2 assetPosition = CalculateLevelEditorPositions(width, height, xInput, yInput);
+
+
+
+                        xInput++;
+                        boxIdentifier++;
+                    }
+                    xInput = 0;
+                    yInput++;
+                }
+                lineNumber++;
+            }
+
+            reader.Close();
+        }
+
+        public List<int[]> LoadEnemyLeveFile(string fileName)
+        {
+            List <int[]> enemies = new List<int[]>();
+            StreamReader reader = new StreamReader("../../../" + fileName);
+
+            int lineNumber = 0;
+            int width = 0;
+            int height = 0;
+            int xInput = 0;
+            int yInput = 0;
+            int boxIdentifier = 0;
+
+            string? data;
+            while ((data = reader.ReadLine()) != null)
+            {
+                //Debug.WriteLine(data);
+
+                if (lineNumber < 6)
+                {
+                    switch (lineNumber)
+                    {
+                        case 0:
+                            data = "";
+                            break;
+                        case 1:
+                            height = int.Parse(data);
+                            data = "";
+                            break;
+                        case 2:
+                            width = int.Parse(data);
+                            data = "";
+                            break;
+                        case 3:
+                            data = "";
+                            break;
+                        case 4:
+                            data = "";
+                            break;
+                    }
+                }
+                else
+                {
+                    string[] row = data.Split('|');
+
+                    foreach (string num in row)
+                    {
+                        Vector2 assetPosition = CalculateLevelEditorPositions(width, height, xInput, yInput);
+                        if (int.Parse(num) != -1)
+                        {
+                            enemies.Add(new int[] { 1, int.Parse(num), (int)assetPosition.X, (int)assetPosition.Y, 1 });
+                        }
+                        
+
+                        xInput++;
+                        boxIdentifier++;
+                    }
+                    xInput = 0;
+                    yInput++;
+                }
+                lineNumber++;
+            }
+
+            reader.Close();
+
+            return enemies;
         }
     }
 }

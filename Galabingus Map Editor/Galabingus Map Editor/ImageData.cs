@@ -14,6 +14,7 @@ namespace Galabingus_Map_Editor
         int imageNumber;
 
         Image image;
+
         public ImageData(string savedFileName,int savedImageNumber, Image SavedImage)
         {
             fileName = savedFileName;

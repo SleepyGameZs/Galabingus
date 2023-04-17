@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
@@ -101,6 +102,7 @@ namespace Galabingus
              * [3] -> Y Position
              */
 
+            /*
             l_a4_obj_enemyData.Add(new int[] { 1, 0, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 1 - 172), (GameObject.Instance.GraphicsDevice.Viewport.Height * -0) + 10, 1 });
             l_a4_obj_enemyData.Add(new int[] { 1, 2, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 0 + 200), (GameObject.Instance.GraphicsDevice.Viewport.Height * -0) + 10, 1 });
             l_a4_obj_enemyData.Add(new int[] { 1, 5, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 0 + 50), (GameObject.Instance.GraphicsDevice.Viewport.Height * -0) + 10, 0 });
@@ -118,11 +120,13 @@ namespace Galabingus
             l_a4_obj_enemyData.Add(new int[] { 1, 2, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 0 + 240), (GameObject.Instance.GraphicsDevice.Viewport.Height * -4) + 10, 0 });
             l_a4_obj_enemyData.Add(new int[] { 1, 4, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 1 - 172), (GameObject.Instance.GraphicsDevice.Viewport.Height * -4) + 10, 0 });
             l_a4_obj_enemyData.Add(new int[] { 1, 5, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 1 - 240), (GameObject.Instance.GraphicsDevice.Viewport.Height * -4) + 10, 0 });
+            */
 
+            l_a4_obj_enemyData = GameObject.Instance.LoadEnemyLeveFile("GalabingusLevel.level");
 
             // Create a player
             player = new Player(new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Height * 0.00875f, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.00875f), content.player_strip4);
-            player.Position = new Vector2(Player.PlayerInstance.Transform.Width * 2, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.5f - Player.PlayerInstance.Transform.Height);
+            player.Position = new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Width * 0.5f - Player.PlayerInstance.Transform.Width, GameObject.Instance.GraphicsDevice.Viewport.Height - Player.PlayerInstance.Transform.Height * 10);
             player.Health = 5;
 
             // Create Bullet Manager
@@ -142,7 +146,14 @@ namespace Galabingus
             // Load the temporary background
             //tempBackground = Content.Load<Texture2D>("spacebackground_strip1");
             tileManager.CreateBackground();
+            //ushort asteroid = GameObject.Instance.Content.grayasteroid_strip1;
+            //tileManager.CreateObject(asteroid,new Vector2(50,50));
+            //tileManager.CreateBackground();
             //tileManager.CreateObject(GameObject.Instance.Content.grayasteroid_strip1, new Vector2(Player.PlayerInstance.Transform.Width * 2 + 100, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.5f - Player.PlayerInstance.Transform.Height + 100));
+
+            // Sound
+            AudioManager.Instance.AddSound("Fire", 0.25f, "Bullet Fire", Content);
+            AudioManager.Instance.AddSound("Explosion", 1f, "Explosion", Content);
         }
 
         protected override void Update(GameTime gameTime)
@@ -154,7 +165,7 @@ namespace Galabingus
             if (GraphicsDevice.GraphicsDeviceStatus == GraphicsDeviceStatus.Normal && colliderTimer == 0)
             {
                 GameObject.Instance.HoldCollider = false;
-                colliderTimer = 2;
+                //colliderTimer = 2;
             }
 
             colliderTimer--;
@@ -241,6 +252,8 @@ namespace Galabingus
             GameObject.Instance.DebugDraw(_spriteBatch);
 
             //draw the screen
+            _spriteBatch.End();
+            _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap);
             userInterface.Draw();
 
             // End the SpriteBatch draw

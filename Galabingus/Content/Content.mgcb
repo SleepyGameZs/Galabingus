@@ -136,6 +136,12 @@
 /processorParam:TextureFormat=Color
 /build:brownasteroid_strip1.png
 
+#begin Bullet Fire.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Bullet Fire.mp3
+
 #begin buttonCredits_strip1.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -172,13 +178,6 @@
 /processorParam:TextureFormat=Color
 /build:buttonOptions_strip1.png
 
-#begin Collider.fx
-/importer:EffectImporter
-/processor:EffectProcessor
-/processorParam:DebugMode=Auto
-/build:Collider.fx
-
-#begin enemy_green_bullet_main_strip4.png
 #begin buttonPlay_strip1.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -191,7 +190,13 @@
 /processorParam:TextureFormat=Color
 /build:buttonPlay_strip1.png
 
-#begin circlebullet_strip4.png
+#begin Collider.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Collider.fx
+
+#begin enemy_green_bullet_main_strip4.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -347,6 +352,12 @@
 /processorParam:TextureFormat=Color
 /build:enemy_yellow_strip4.png
 
+#begin Explosion.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Explosion.mp3
+
 #begin galabingusLogo_strip1.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -467,7 +478,7 @@
 /processorParam:TextureFormat=Color
 /build:newBackground_strip1.png
 
-#begin player_strip5.png
+#begin player_strip4.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255

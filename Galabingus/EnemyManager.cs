@@ -291,7 +291,7 @@ namespace Galabingus
                         // Remove from Row List
                         if (Instance.activeEnemies[i].ShouldMove)
                         {
-                             Instance.enemyRows[(int)(Instance.activeEnemies[i].InitialY)].Remove(Instance.activeEnemies[i]);
+                             Instance.enemyRows[(int)(Instance.activeEnemies[i].InitialPosition.Y)].Remove(Instance.activeEnemies[i]);
                         }
 
                         // Remove from primary list
@@ -346,29 +346,47 @@ namespace Galabingus
             }
         }
 
-        public void FlipEnemies(int positionY)
+        /// <summary>
+        /// Flips all enemies in given row
+        /// </summary>
+        /// <param name="positionY">The key for the row to flip</param>
+        public void FlipEnemies(int positionY, bool collideOnRight)
         {
             if (Instance.enemyRows.ContainsKey(positionY))
             { // There are enemies in the line
-                
-                foreach (Enemy enemy in Instance.enemyRows[positionY])
+
+                List<Enemy> enemyList = Instance.enemyRows[positionY];
+                for (int i = 0; i < enemyList.Count; i++)
                 {
-                    enemy.Direction = new Vector2(enemy.Direction.X * -1, enemy.Direction.Y);
-                    enemy.Position = new Vector2(enemy.Position.X + 10 * enemy.Direction.X, enemy.Position.Y);
+                    enemyList[i].Direction = new Vector2(enemyList[i].Direction.X * -1, enemyList[i].Direction.Y);
+                    if (i != 0)
+                    {
+                        enemyList[i].Position = new Vector2(enemyList[i].Position.X + 10 * enemyList[i].Direction.X, enemyList[i].Position.Y);
+                    } 
+                    else if (!collideOnRight || enemyList.Count == 1)
+                    { // Fixes slight offset on first ship in row with each bonce
+                        enemyList[i].Position = new Vector2(enemyList[i].Position.X + 11 * enemyList[i].Direction.X, enemyList[i].Position.Y);
+                    }
                 }
             }
         }
         
+        /// <summary>
+        /// Checks if the given enemy is in the same row slot as the given key
+        /// </summary>
+        /// <param name="selfY">The initial y position of the enemy to check from
+        ///                     for the row (acts as the key for dictionary)</param>
+        /// <param name="otherEnemyNumber">The enemy to check if in row</param>
+        /// <returns></returns>
         public bool InSameRow(int selfY, ushort otherEnemyNumber)
         {
-            //Debug.WriteLine("eee");
             if (Instance.enemyRows.ContainsKey(selfY))
             { // There are enemies in the line
-                //System.Diagnostics.Debug.WriteLine("eee");
                 foreach (Enemy enemy in Instance.enemyRows[selfY])
                 {
                     if (enemy.EnemyNumber == otherEnemyNumber)
                     {
+                        //System.Diagnostics.Debug.WriteLine("eee");
                         return true;
                     }
                 }
