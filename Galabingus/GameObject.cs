@@ -1203,6 +1203,67 @@ namespace Galabingus
             return new Vector2(coordianteXScale * row, coordinateYScale * column + startingY);
         }
 
+        public void LoadTileLevelFile(string fileName)
+        {
+            StreamReader reader = new StreamReader("../../../" + fileName);
+
+            int lineNumber = 0;
+            int width = 0;
+            int height = 0;
+            int xInput = 0;
+            int yInput = 0;
+            int boxIdentifier = 0;
+
+            string? data;
+            while ((data = reader.ReadLine()) != null)
+            {
+                //Debug.WriteLine(data);
+
+                if (lineNumber < 6)
+                {
+                    switch (lineNumber)
+                    {
+                        case 0:
+                            data = "";
+                            break;
+                        case 1:
+                            height = int.Parse(data);
+                            data = "";
+                            break;
+                        case 2:
+                            width = int.Parse(data);
+                            data = "";
+                            break;
+                        case 3:
+                            data = "";
+                            break;
+                        case 4:
+                            data = "";
+                            break;
+                    }
+                }
+                else
+                {
+                    string[] row = data.Split('|');
+
+                    foreach (string num in row)
+                    {
+                        Vector2 assetPosition = CalculateLevelEditorPositions(width, height, xInput, yInput);
+
+
+
+                        xInput++;
+                        boxIdentifier++;
+                    }
+                    xInput = 0;
+                    yInput++;
+                }
+                lineNumber++;
+            }
+
+            reader.Close();
+        }
+
         public List<int[]> LoadEnemyLeveFile(string fileName)
         {
             List <int[]> enemies = new List<int[]>();
@@ -1250,8 +1311,6 @@ namespace Galabingus
                     foreach (string num in row)
                     {
                         Vector2 assetPosition = CalculateLevelEditorPositions(width, height, xInput, yInput);
-                        //System.Diagnostics.Debug.WriteLine(num);
-                        //System.Diagnostics.Debug.WriteLine(assetPosition.Y);
                         if (int.Parse(num) != -1)
                         {
                             enemies.Add(new int[] { 1, int.Parse(num), (int)assetPosition.X, (int)assetPosition.Y, 1 });
