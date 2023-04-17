@@ -489,7 +489,7 @@ namespace Galabingus
                             if (!EnemyManager.Instance.InSameRow(initialY, ((Enemy)collision.other).EnemyNumber))
                             {
                                 // Check if collision on left or right
-                                if (this.Position.X < ((Tile)collision.other).Position.X)
+                                if (this.Position.X < ((Enemy)collision.other).Position.X)
                                 {
                                     EnemyManager.Instance.FlipEnemies(initialY, true);
                                 }

@@ -1198,8 +1198,9 @@ namespace Galabingus
         public Vector2 CalculateLevelEditorPositions(int width, int height, int row, int column)
         {
             float coordianteXScale = GameObject.Instance.GraphicsDevice.Viewport.Width / width;
-            float coordinateYScale = GameObject.Instance.GraphicsDevice.Viewport.Height / height;
-            return new Vector2(coordianteXScale * row, coordinateYScale * column);
+            float coordinateYScale = GameObject.Instance.GraphicsDevice.Viewport.Height / height * 4;
+            float startingY = GameObject.Instance.GraphicsDevice.Viewport.Height * -4;
+            return new Vector2(coordianteXScale * row, coordinateYScale * column + startingY);
         }
 
         public List<int[]> LoadEnemyLeveFile(string fileName)
@@ -1245,10 +1246,17 @@ namespace Galabingus
                 else
                 {
                     string[] row = data.Split('|');
+
                     foreach (string num in row)
                     {
                         Vector2 assetPosition = CalculateLevelEditorPositions(width, height, xInput, yInput);
-                        enemies.Add(new int[] { 1, int.Parse(num), (int)assetPosition.X, (int)assetPosition.Y, 1 });
+                        //System.Diagnostics.Debug.WriteLine(num);
+                        //System.Diagnostics.Debug.WriteLine(assetPosition.Y);
+                        if (int.Parse(num) != -1)
+                        {
+                            enemies.Add(new int[] { 1, int.Parse(num), (int)assetPosition.X, (int)assetPosition.Y, 1 });
+                        }
+                        
 
                         xInput++;
                         boxIdentifier++;

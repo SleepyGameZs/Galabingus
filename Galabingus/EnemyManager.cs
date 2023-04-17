@@ -386,7 +386,7 @@ namespace Galabingus
                 {
                     if (enemy.EnemyNumber == otherEnemyNumber)
                     {
-                        System.Diagnostics.Debug.WriteLine("eee");
+                        //System.Diagnostics.Debug.WriteLine("eee");
                         return true;
                     }
                 }

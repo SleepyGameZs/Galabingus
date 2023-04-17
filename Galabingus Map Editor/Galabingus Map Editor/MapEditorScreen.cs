@@ -78,9 +78,9 @@ namespace Galabingus_Map_Editor
 
             totalWidth = 9;
 
-            totalHeight = 9;
+            totalHeight = 36;
 
-            tileSize = 60;
+            tileSize = 20;
 
             totalDensity = pixelDensity;
 
@@ -146,7 +146,7 @@ namespace Galabingus_Map_Editor
                 }
             }
 
-            return tileSet[tileSet.Count-1];
+            return tileSet[0];
         }
 
         //Button 1
@@ -293,7 +293,7 @@ namespace Galabingus_Map_Editor
                     tileBox.MouseUp += ResetMouse;
                     tileBox.BringToFront();
                     tileBox.Tag = boxes.Count;
-                    boxImages.Add(new ImageData());
+                    boxImages.Add(MatchImageData(-1));
                     boxes.Add(tileBox);
                     mapGroup.Controls.Add(tileBox);
                 }
@@ -338,8 +338,8 @@ namespace Galabingus_Map_Editor
 
         private void ImageAdd()
         {
-            
 
+            tileSet.Add(new ImageData("", -1, null));
 
             //Enemy Sprites
             //tileSet.Add(new ImageData("dark blue", 1, Properties.Resources.enemy_dblue_strip4_1) );
@@ -714,7 +714,7 @@ namespace Galabingus_Map_Editor
                             tileBox.MouseUp += ResetMouse;
                             tileBox.BringToFront();
                             tileBox.Tag = boxes.Count;
-                            boxImages.Add(int.Parse(num) == 0 ? new ImageData() : MatchImageData(int.Parse(num)));
+                            boxImages.Add(MatchImageData(int.Parse(num)));
                             boxes.Add(tileBox);
                             tileBox.Image = boxImages[boxIdentifier].Image;
                             mapGroup.Controls.Add(tileBox);
