@@ -342,7 +342,7 @@ namespace Galabingus
             this.shouldMove = shouldMove;
 
             // Set base position to be stored for dictionary keys
-            initialY = (int)Position.Y;
+            initialY = (int)position.Y;
 
             #endregion
 
@@ -476,8 +476,6 @@ namespace Galabingus
                     }
                 }
                 
-                
-
                 // Checks what kind of things can be collided with
                 foreach (Collision collision in intercepts)
                 {
@@ -490,18 +488,35 @@ namespace Galabingus
 
                             if (!EnemyManager.Instance.InSameRow(initialY, ((Enemy)collision.other).EnemyNumber))
                             {
-                                EnemyManager.Instance.FlipEnemies(initialY);
+                                // Check if collision on left or right
+                                if (this.Position.X < ((Tile)collision.other).Position.X)
+                                {
+                                    EnemyManager.Instance.FlipEnemies(initialY, true);
+                                }
+                                else
+                                {
+                                    EnemyManager.Instance.FlipEnemies(initialY, false);
+                                }
                             }
                         } 
                         else if ((collision.other as Tile) is Tile)
                         { // Collided with Tile
                             Vector2 overlapZone = ((Tile)collision.other).ScaleVector;
 
+
+
                             //System.Diagnostics.Debug.WriteLine(overlapZone.X);
                             //System.Diagnostics.Debug.WriteLine(overlapZone.Y);
                             if (overlapZone.X < overlapZone.Y)
                             {
-                                EnemyManager.Instance.FlipEnemies(initialY);
+                                // Check if collision on left or right
+                                if (this.Position.X < ((Tile)collision.other).Position.X)
+                                {
+                                    EnemyManager.Instance.FlipEnemies(initialY, true);
+                                } else
+                                {
+                                    EnemyManager.Instance.FlipEnemies(initialY, false);
+                                }
                             }
                         }
                     }
