@@ -100,7 +100,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 	);
 
 	*/
-	float mosaicAngle = 0.0625f * 3.141592654f;
+	float mosaicAngle = 0.2625f * 3.141592654f;
 	float mosaicSize = 1.44f;
 	float2 mosaicCoord = floor(input.TextureCoordinates / mosaicSize) * mosaicSize;
 	float2 centerCoord = mosaicCoord + (mosaicSize / 2.0f);
@@ -198,8 +198,8 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 	lerpPixels.a *= 0.5;
 
 
-	float4 lerpColorOffset = lerp(lerpPixels, colorTrue*0.1, 0.2);
-
+	float4 lerpColorOffset = lerp(lerpPixels, colorTrue*0.1, 0.35f);
+	//lerpColorOffset = colorTrue;
 
 
 	if (lerpColorOffset.g < 0.3)
@@ -218,7 +218,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 	}
 	else
 	{
-		//lerpColorOffset.b = 0.3f;
+		lerpColorOffset.b = 0.3f;
 	}
 
 
