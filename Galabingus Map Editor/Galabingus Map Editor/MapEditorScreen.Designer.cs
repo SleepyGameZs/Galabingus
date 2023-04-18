@@ -49,7 +49,6 @@
             this.button14 = new System.Windows.Forms.Button();
             this.button12 = new System.Windows.Forms.Button();
             this.button13 = new System.Windows.Forms.Button();
-            this.mapGroup.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox10)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox9)).BeginInit();
@@ -68,22 +67,20 @@
             // 
             // mapGroup
             // 
-            this.mapGroup.Controls.Add(this.button17);
-            this.mapGroup.Controls.Add(this.button16);
             this.mapGroup.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.mapGroup.Location = new System.Drawing.Point(238, 15);
             this.mapGroup.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.mapGroup.Name = "mapGroup";
             this.mapGroup.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.mapGroup.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.mapGroup.Size = new System.Drawing.Size(606, 734);
+            this.mapGroup.Size = new System.Drawing.Size(204, 734);
             this.mapGroup.TabIndex = 4;
             this.mapGroup.TabStop = false;
             this.mapGroup.Text = "Map";
             // 
             // button17
             // 
-            this.button17.Location = new System.Drawing.Point(0, 312);
+            this.button17.Location = new System.Drawing.Point(20, 772);
             this.button17.Name = "button17";
             this.button17.Size = new System.Drawing.Size(25, 75);
             this.button17.TabIndex = 10;
@@ -93,7 +90,7 @@
             // 
             // button16
             // 
-            this.button16.Location = new System.Drawing.Point(573, 317);
+            this.button16.Location = new System.Drawing.Point(51, 772);
             this.button16.Name = "button16";
             this.button16.Size = new System.Drawing.Size(28, 75);
             this.button16.TabIndex = 10;
@@ -294,7 +291,9 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(887, 761);
+            this.ClientSize = new System.Drawing.Size(465, 879);
+            this.Controls.Add(this.button16);
+            this.Controls.Add(this.button17);
             this.Controls.Add(this.button12);
             this.Controls.Add(this.button13);
             this.Controls.Add(this.groupBox4);
@@ -303,7 +302,6 @@
             this.Controls.Add(this.mapGroup);
             this.Name = "MapEditorScreen";
             this.Text = "MapEditorScreen";
-            this.mapGroup.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox10)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox9)).EndInit();

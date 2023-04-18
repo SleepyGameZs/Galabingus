@@ -141,7 +141,7 @@ namespace Galabingus
 
             // Create Camera
             camera = Camera.Instance;
-            camera.InitalCameraScroll = -2;
+            camera.InitalCameraScroll = -0.4f;
 
             // Create Tile Manager
             tileManager = TileManager.Instance;

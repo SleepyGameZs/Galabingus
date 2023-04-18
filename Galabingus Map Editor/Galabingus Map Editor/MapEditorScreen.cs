@@ -76,11 +76,11 @@ namespace Galabingus_Map_Editor
 
             tileSet = new List<ImageData>();
 
-            totalWidth = 9;
+            totalWidth = 6;
 
-            totalHeight = 9;
+            totalHeight = 36;
 
-            tileSize = 60;
+            tileSize = 27;
 
             totalDensity = pixelDensity;
 
@@ -271,14 +271,18 @@ namespace Galabingus_Map_Editor
 
         private void MapDraw()
         {
-            /*
+            this.SetBounds(
+                this.Bounds.X,
+                this.Bounds.Y,
+                mapGroup.Bounds.X + this.totalWidth * tileSize + 30,
+                mapGroup.Bounds.Y + this.totalHeight * tileSize + 60
+            );
             mapGroup.SetBounds(
                 mapGroup.Bounds.X,
                 mapGroup.Bounds.Y,
                 this.totalWidth * tileSize,
                 this.totalHeight * tileSize
             );
-            */
 
             for (int y = 0; y < totalHeight; y++)
             {
@@ -640,6 +644,27 @@ namespace Galabingus_Map_Editor
         
         public void LoadFile()
         {
+            boxes = new List<PictureBox>();
+
+            totalWidth = 0;
+            totalHeight = 0;
+            totalDensity = 0;
+            totalEditorPageNum = 0;
+            tileSize = 0;
+            currentSelectablePage = 0;
+
+
+            imageArray = null;
+            buttonList = null;
+            tileSet = new List<ImageData>();
+            boxImages = new List<ImageData>();
+            //currentSelected = null;
+            pagesData = new List<List<Image>>();
+            currentSelectablePage = 0;
+            currentEditorPage = 0;
+            moving = false;
+            filePath = @"..\..\..\";
+
             OpenFileDialog loadSave = new OpenFileDialog();
             loadSave.Title = "Load a Level File";
             loadSave.Filter = "Level Files|*.level";
@@ -650,6 +675,7 @@ namespace Galabingus_Map_Editor
 
             if (loadSave.ShowDialog() == DialogResult.OK)
             {
+                mapGroup.Controls.Clear();
                 string fileName = loadSave.FileName;
 
                 StreamReader reader = new StreamReader(fileName);

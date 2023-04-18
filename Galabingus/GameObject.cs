@@ -99,6 +99,8 @@ namespace Galabingus
         private bool holdCollider;
         private ushort contentName;
         private CollisionGroup collisionGroup;
+        private static List<Vector2> cameraStopPositions;
+        private static float universalScale;
 
         public struct GameObjectTrie<T>
         {
@@ -1011,7 +1013,21 @@ namespace Galabingus
             newCollider.Resolved = true;
             newCollider.self = this;
             SetCollider(instanceNumber, newCollider);
+        }
 
+        public float PostScaleRatio()
+        {
+            System.Diagnostics.Debug.WriteLine("EEEEAA " + this.GetTransform(instance).Width);
+            System.Diagnostics.Debug.WriteLine("FFFEEEE " + universalScale);
+            return (this.GetTransform(instance).Width > this.GetTransform(instance).Height ? universalScale / this.GetTransform(instance).Width : universalScale / this.GetTransform(instance).Height);
+        }
+
+        public Vector2 PostScaleRatio(bool isVector2)
+        {
+            return new Vector2(
+                universalScale / this.GetTransform(instance).Width,
+                universalScale / this.GetTransform(instance).Height
+            );
         }
 
         public System.Type GameObjectType
@@ -1208,9 +1224,15 @@ namespace Galabingus
             }
         }
 
+        public List<Vector2> GetCameraStopPositions()
+        {
+            return GameObject.cameraStopPositions;
+        }
+
         public Vector2 CalculateLevelEditorPositions(int width, int height, int row, int column)
         {
             float coordianteXScale = GameObject.Instance.GraphicsDevice.Viewport.Width / width;
+            universalScale = coordianteXScale;
             float coordinateYScale = GameObject.Instance.GraphicsDevice.Viewport.Height / height * 4;
             float startingY = GameObject.Instance.GraphicsDevice.Viewport.Height * -4;
             return new Vector2(coordianteXScale * row, coordinateYScale * column + startingY);
@@ -1335,7 +1357,6 @@ namespace Galabingus
                         {
                             enemies.Add(new int[] { 1, int.Parse(num), (int)assetPosition.X, (int)assetPosition.Y, 1 });
                         }
-                        
 
                         xInput++;
                         boxIdentifier++;
