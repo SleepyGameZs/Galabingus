@@ -44,7 +44,7 @@ namespace Galabingus_Map_Editor
         private PictureBox[] buttonList;
 
         //Stores all the changes to the picture boxes for each page
-        private List<List<Image>> pagesData;
+        private List<List<int>> pagesData;
         private List<ImageData> boxImages;
 
         public MapEditorScreen(bool load)
@@ -57,7 +57,7 @@ namespace Galabingus_Map_Editor
 
             //currentSelected = null;
 
-            pagesData = new List<List<Image>>();
+            pagesData = new List<List<int>>();
 
             currentSelectablePage = 0;
 
@@ -88,7 +88,7 @@ namespace Galabingus_Map_Editor
 
             //currentSelected = null;
 
-            pagesData = new List<List<Image>>();
+            pagesData = new List<List<int>>();
 
             currentSelectablePage = 0;
 
@@ -286,7 +286,7 @@ namespace Galabingus_Map_Editor
                 {
                     PictureBox tileBox = new PictureBox();
                     tileBox.Size = new Size(tileSize, tileSize);
-                    tileBox.Location = new Point(0 + (tileSize * x), 0 + (tileSize * y));
+                    tileBox.Location = new Point(29 + (tileSize * x), 50 + (tileSize * y));
                     tileBox.BackColor = Color.White;
                     tileBox.SizeMode = PictureBoxSizeMode.StretchImage;
                     tileBox.Click += ImageChanger;
@@ -405,18 +405,6 @@ namespace Galabingus_Map_Editor
                 }
                 spritePageSelect.Add(imageArray);
             }
-
-            /*
-            List<Image> temp = new List<Image>();
-            for (int x = 0; x < pagesData.Count; x++)
-            {
-                for (int y = 0; y < boxes.Count; y++)
-                {
-                   temp.Add(boxes[y].Image);
-                }
-                pagesData.Add(temp);
-            }
-            */
             
         }
 
@@ -480,28 +468,15 @@ namespace Galabingus_Map_Editor
 
         private void PageChange(int change)
         {
-            try
+            List<int> data = new List<int>();
+            for (int x = 0; x < totalHeight; x++)
             {
-                StreamWriter writer = new StreamWriter(Properties.Resources.TempSave);
-                for (int x = 0; x < totalWidth * totalHeight; x++)
+                for (int y = 0; y < totalWidth; y++)
                 {
-                    /*
-                    if ()
-                    {
-                        writer.Write(GetImageNum(boxes[x].Image) + " , ");
-                    }
-                    else
-                    {
-                        writer.WriteLine("");
-                    }
-                    */
-                }
-                
-            }
-            catch
-            {
 
+                }
             }
+            
             
         }
 
@@ -516,63 +491,6 @@ namespace Galabingus_Map_Editor
             }
             return -1;
         }
-
-        /*
-        private void ChangeLevelSection(int change)
-        {
-            if (currentEditorPage + change >= 0 && currentEditorPage + change < totalEditorPageNum)
-            {
-                TempMapSave(currentEditorPage);
-                
-                
-                currentEditorPage = currentEditorPage + change;
-                PageLoad(currentEditorPage);
-               
-                
-            }
-        } 
-         
-        private void TempMapSave(int currentPage)
-        {
-            pagesData.Add(new List<Image>());
-
-            for (int x = 0; x < totalHeight * totalWidth; x++)
-            {
-                pagesData[currentPage].Add(boxes[x].Image);
-            }
-           
-        }
-
-        private void PageLoad(int nextPage)
-        {
-            if (nextPage >= pagesData.Count)
-            {
-                pagesData.Add(new List<Image>());
-                ClearEditor();
-            }
-            else
-            {
-                for (int x = 0; x < totalHeight * totalWidth; x++)
-                {
-                    boxes[x].Image = pagesData[nextPage][x];
-                }
-            }
-
-
-        }
-
-        private void PageChange(int change)
-        {
-            if (change < 0 )
-            {
-
-            }
-            else if(change > 0)
-            {
-
-            }
-        }
-        */
 
         public void Savefile()
         {
