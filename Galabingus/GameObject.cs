@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Diagnostics;
@@ -920,7 +921,14 @@ namespace Galabingus
             GameObject.Instance.instance = instanceNumber;
             string path = GameObject.ObjectEnumsI[contentName];
             GameObject.Instance.index = contentName;
-            SetSprite(instanceNumber, GameObject.Instance.contentManager.Load<Texture2D>(path));
+            string start = "../../../Content";
+            string[] files = Directory.GetFiles(start, path + ".*", SearchOption.AllDirectories);
+            files[0] = files[0].Replace(start, "");
+            files[0] = files[0].Replace("\\", "/");
+            files[0] = files[0].Substring(1);
+            files[0] = files[0].Substring(0, files[0].LastIndexOf('.'));
+
+            SetSprite(instanceNumber, GameObject.Instance.contentManager.Load<Texture2D>(files[0]));
         }
 
         private GameObject()
@@ -979,9 +987,14 @@ namespace Galabingus
             this.collisionGroup = collisionGroup;
             //instance = instanceNumber;
             string path = GameObject.ObjectEnumsI[contentName];
+            string start = "../../../Content";
+            string[] files = Directory.GetFiles(start, path+".*", SearchOption.AllDirectories);
+            files[0] = files[0].Replace(start, "");
+            files[0] = files[0].Replace("\\", "/");
+            files[0] = files[0].Substring(1);
+            files[0] = files[0].Substring(0, files[0].LastIndexOf('.'));
             ushort strip = ushort.Parse(path.Split("strip")[1]);
-
-            SetSprite(instanceNumber, GameObject.Instance.contentManager.Load<Texture2D>(path));
+            SetSprite(instanceNumber, GameObject.Instance.contentManager.Load<Texture2D>(files[0]));
             SetScale(instanceNumber, 1.0f);
             SetAnimation(instanceNumber, new Animation(GetSprite(instanceNumber).Width, GetSprite(instanceNumber).Height, strip));
             SetPosition(instanceNumber, Vector2.Zero);
@@ -1250,7 +1263,13 @@ namespace Galabingus
                     {
                         Vector2 assetPosition = CalculateLevelEditorPositions(width, height, xInput, yInput);
 
+                        if (int.Parse(num) != -1)
+                        {
+                            //System.Diagnostics.Debug.WriteLine(assetPosition);
+                            //TileManager.Instance.CreateObject(GameObject.Instance.Content.smallbullet_strip4, Vector2.Zero);
+                            //TileManager.Instance.CreateObject(GameObject.Instance.Content.tile_strip26,assetPosition,(ushort)(int.Parse(num) - 9));
 
+                        }
 
                         xInput++;
                         boxIdentifier++;
@@ -1311,6 +1330,7 @@ namespace Galabingus
                     foreach (string num in row)
                     {
                         Vector2 assetPosition = CalculateLevelEditorPositions(width, height, xInput, yInput);
+                        //System.Diagnostics.Debug.WriteLine(assetPosition);
                         if (int.Parse(num) != -1)
                         {
                             enemies.Add(new int[] { 1, int.Parse(num), (int)assetPosition.X, (int)assetPosition.Y, 1 });

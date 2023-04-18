@@ -39,6 +39,7 @@ namespace Galabingus
         private List<ushort> layers;
         private List<ushort> spriteNumbers;
         private ushort currentSpriteNumber;
+        private ushort tileInstance;  
 
         private int counter;
         private bool turn = false;
@@ -51,6 +52,7 @@ namespace Galabingus
         {
             get { return layers[spriteNumbers[currentSpriteNumber]]; }
         }
+
 
         public ushort CurrentSpriteNumber
         {
@@ -78,6 +80,7 @@ namespace Galabingus
             tileList = new List<Tile>();
             borderList = new List<Tile>();
             backgroundList = new List<Tile>();
+            tileInstance = 1000;
 
             // temp counter for scroll
             counter = 0;
@@ -125,9 +128,11 @@ namespace Galabingus
                     break;
             }
 
+
             // Top
             currentSpriteNumber = (index);
             Tile tile = new Tile(GameObject.Instance.Content.white_pixel_strip1, 0, index, true);
+
             tile.Scale = 25f;
             tile.ScaleVector = new Vector2(screenSize.X, 200);
             tile.Position = new Vector2(0, -200);
@@ -139,6 +144,7 @@ namespace Galabingus
             tile.ScaleVector = new Vector2(screenSize.X, 200);
             tile.Position = new Vector2(0, screenSize.Y);
             borderList.Add(tile);
+
 
             // Right
             tile = new Tile(GameObject.Instance.Content.white_pixel_strip1, 2, index, true);
@@ -188,13 +194,30 @@ namespace Galabingus
         /// <param name="position"> The position of the asteriod </param>
         public void CreateObject(dynamic content, Vector2 position)
         {
-            Tile tile = new Tile(content, 666, 1, true);
+            Tile tile = new Tile(content, tileInstance, 1, true);
             tile.Transform = new Rectangle(0, 0, tile.Sprite.Width, tile.Sprite.Height);
             tile.Scale = 1f;
             tile.Position = position;
             tile.ScaleVector = new Vector2(tile.Scale, tile.Scale);
             borderList.Add(tile);
+            tileInstance++;
         }
+
+        /// <summary>
+        /// Creates asteriod objects
+        /// </summary>
+        /// <param name="position"> The position of the asteriod </param>
+        public void CreateObject(dynamic content, Vector2 position, ushort spriteNumber)
+        {
+            Tile tile = new Tile(content, tileInstance, spriteNumber);
+            tile.Transform = new Rectangle(0, 0, tile.Sprite.Width, tile.Sprite.Height);
+            tile.Scale = Player.PlayerInstance.Scale;
+            tile.Position = Vector2.Zero;
+            tile.ScaleVector = new Vector2(tile.Scale, tile.Scale);
+            borderList.Add(tile);
+            tileInstance++;
+        }
+
 
         public void Update(GameTime gameTime)
         {
@@ -214,7 +237,7 @@ namespace Galabingus
                     SpriteEffects.None,
                     (ushort)CollisionGroup.Tile,
                     borderList[i].InstanceNumber
-                    );
+                );
 
                 foreach (Collision collision in collisions)
                 {
