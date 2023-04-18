@@ -74,6 +74,14 @@ namespace Galabingus
             }
         }
 
+        public bool CameraLock
+        {
+            get
+            {
+                return cameraLock;
+            }
+        }
+
         // -------------------------------------------------
         // Contructors
         // -------------------------------------------------
