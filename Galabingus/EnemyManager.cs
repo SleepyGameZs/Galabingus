@@ -193,6 +193,10 @@ namespace Galabingus
                     sprite = GameObject.Instance.Content.bomb_strip4;
                     break;
 
+                case EnemyType.Boss:
+                    sprite = GameObject.Instance.Content.boss_red_strip4;
+                    break;
+
                 default:
                     sprite = GameObject.Instance.Content.enemy_violet_strip4;
                     break;
