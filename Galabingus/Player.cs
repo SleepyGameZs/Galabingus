@@ -485,7 +485,6 @@ namespace Galabingus
             {
                 translation = Vector2.Zero;
             }
-            System.Diagnostics.Debug.WriteLine(translation);
 
 
             Vector2 normPreVelocity = previousVelocity;
