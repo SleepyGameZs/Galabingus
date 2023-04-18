@@ -476,7 +476,17 @@ namespace Galabingus
                     translation = (velocity == Vector2.Zero ? velocity : Vector2.Normalize(velocity) * (float)Animation.EllapsedTime * ((boost) ? boostSpeed : 1) * speed * translationAjdustedRatio);
                     Position += translation;
                 }
+                
+                //Debug.
+                
             }
+
+            if (Math.Abs(velocity.Length()) < 0.001f)
+            {
+                translation = Vector2.Zero;
+            }
+            System.Diagnostics.Debug.WriteLine(translation);
+
 
             Vector2 normPreVelocity = previousVelocity;
             Vector2 normVelocity = velocity;
