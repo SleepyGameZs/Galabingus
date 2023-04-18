@@ -260,46 +260,63 @@ namespace Galabingus
                 backgroundList[i].Update(gameTime);
             }
 
-            if (turn == false)
+            // Scroll the camrea when the enemies are not on the screeen
+            if (EnemyManager.Instance.EnemiesOnScreen == 0)
             {
-                if (backgroundList[1].Position.Y >= GameObject.Instance.GraphicsDevice.Viewport.Height)
+                if (counter != 4)
                 {
-                    if (counter == 3)
+                    Camera.Instance.Start();
+                }
+                if (turn == false)
+                {
+                    if (backgroundList[1].Position.Y >= GameObject.Instance.GraphicsDevice.Viewport.Height)
                     {
-                        //Camera.Instance.Stop();
-                        Player.PlayerInstance.CameraLock = false;
-                        Camera.Instance.Reverse();
-                        turn = true;
+                        if (counter == 3)
+                        {
+                            Player.PlayerInstance.CameraLock = false;
+                            Camera.Instance.Reverse();
+                            turn = true;
+                        }
+
+                        counter++;
+                        backgroundList[1].Position = new Vector2(
+                            0, backgroundList[1].Position.Y - GameObject.Instance.GraphicsDevice.Viewport.Height
+                        );
                     }
-                    counter++;
-                    backgroundList[1].Position = new Vector2(
-                        0, backgroundList[1].Position.Y - GameObject.Instance.GraphicsDevice.Viewport.Height
-                    );
                 }
             }
 
-            // Stop the camera
-            if (turn && (backgroundList[0].Position.Y) <= (-GameObject.Instance.GraphicsDevice.Viewport.Height * 4f))
+            // Stop the camera at the different camera stops
+            bool stopHit = false;
+            int indexOfStop = 0;
+            foreach (Vector2 position in GameObject.Instance.GetCameraStopPositions())
+            {
+                if ((position.Y) >= Math.Floor(Camera.Instance.Position.Y))
+                {
+                    Camera.Instance.OffSet = Vector2.Zero;
+                    Camera.Instance.Stop();
+                    stopHit = true;
+                    break;
+                }
+                else if (!stopHit)
+                {
+                    indexOfStop++;
+                }
+                else
+                {
+                    continue;
+                }
+            }
+            if (stopHit)
+            {
+                GameObject.Instance.CameraStopRemoveAt(indexOfStop);
+            } 
+
+            // Stop the camera at the end on the way back
+            if (turn && (Camera.Instance.Position.Y) >= (GameObject.Instance.GraphicsDevice.Viewport.Height))
             {
                 Camera.Instance.Stop();
             }
-
-            /*
-            // Background Loop
-            for (int i = 0; i < backgroundList.Count; i++)
-            {
-                if (backgroundList[i].Position.X == -backgroundList[i].Transform.Width)
-                {
-                    backgroundList[i].Position = new Vector2(backgroundList[i].Transform.Width, 0);
-                    counter++;
-                    Debug.WriteLine(counter);
-                }
-                else if (counter == 3) 
-                {
-                    Camera.Instance.Stop();
-                }
-            }
-            */
         }
 
         public void Draw()
