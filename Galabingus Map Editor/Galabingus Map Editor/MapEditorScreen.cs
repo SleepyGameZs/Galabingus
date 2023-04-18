@@ -723,7 +723,6 @@ namespace Galabingus_Map_Editor
                                 totalDensity = int.Parse(data);
                                 data = "";
                                 ImageAdd();
-
                                 ButtonStuff();
                                 mapGroup.SetBounds(
                                     mapGroup.Bounds.X,
@@ -736,11 +735,6 @@ namespace Galabingus_Map_Editor
                     }
                     else
                     {
-                        Debug.WriteLine(tileSize);
-                        Debug.WriteLine(totalHeight);
-                        Debug.WriteLine(totalWidth);
-                        Debug.WriteLine(totalEditorPageNum);
-                        Debug.WriteLine(totalDensity);
                         string[] row = data.Split('|');
                         //Debug.WriteLine(data);
                         foreach (string num in row) 
