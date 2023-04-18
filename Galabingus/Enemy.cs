@@ -28,7 +28,8 @@ namespace Galabingus
         Splitter,
         Wave,
         Seeker,
-        Bomb
+        Bomb,
+        Boss
     }
 
     internal class Enemy : GameObject
@@ -476,38 +477,20 @@ namespace Galabingus
 
                 // Get camera's movement direction
                 float cameraScrollY = Camera.Instance.OffSet.Y;
-                if (!Player.PlayerInstance.CameraLock)
+                if (!Player.PlayerInstance.CameraLock && !Camera.Instance.CameraLock)
                 {
-                    if (Camera.Instance.CameraLock)
-                    { // In debug mode
-                        Vector2 playerMovement = new Vector2(0, Player.PlayerInstance.Translation.Y);
+                    Vector2 cameraScroll = new Vector2(0, Camera.Instance.OffSet.Y);
 
-                        // Set direction
-                        if (playerMovement.Y > 0)
-                        {
-                            direction.Y = -1;
-                        }
-                        else if (playerMovement.Y < 0)
-                        {
-                            direction.Y = 1;
-                        }
+                    // Set direction
+                    if (cameraScroll.Y > 0)
+                    {
+                        direction.Y = -1;
                     }
-                    else
-                    { // Normal camera movement
-                        Vector2 cameraScroll = new Vector2(0, Camera.Instance.OffSet.Y);
-
-                        // Set direction
-                        if (cameraScroll.Y > 0)
-                        {
-                            direction.Y = -1;
-                        }
-                        else if (cameraScroll.Y < 0)
-                        {
-                            direction.Y = 1;
-                        }
+                    else if (cameraScroll.Y < 0)
+                    {
+                        direction.Y = 1;
                     }
 
-                    
                 }
                 
                 // Checks what kind of things can be collided with

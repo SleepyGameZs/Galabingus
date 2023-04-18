@@ -298,7 +298,7 @@ namespace Galabingus
             this.Animation.AnimationDuration = 0.03f;
 
             // Set Location Data
-            this.Scale = PostScaleRatio() * 0.4f;
+            this.Scale = Player.PlayerInstance.Scale;
             this.Position = new Vector2(position.X + Transform.Width * Scale / 2.0f,
                                         position.Y - Transform.Height * Scale / 2.0f);
 
@@ -325,6 +325,7 @@ namespace Galabingus
 
             // Set Velocity
             velocity = Vector2.Normalize(direction);
+            
 
             // Set Empty hit objects list
             hitObjects = new List<object>();
@@ -508,7 +509,7 @@ namespace Galabingus
 
                 case BulletType.Wave:
                     // Set Current Position
-                    currentPosition = SetPosition(gameTime, 3, false);
+                    currentPosition = SetPosition(gameTime, 5, false);
                     break;
 
                 case BulletType.Seeker:
@@ -526,20 +527,22 @@ namespace Galabingus
                         // Find vector distance between player and bullet
                         Vector2 playerBulletDistance = playerCenter - bulletCenter;
 
+                        // Check which way to shift angle
                         if (playerBulletDistance.X > 0)
                         {
-                            velocity.X = Math.Max(velocity.X + 0.03f, 0.1f);
+                            velocity.X = Math.Max(velocity.X + 0.02f, 0.1f);
                         } else
                         {
-                            velocity.X = Math.Min(velocity.X - 0.03f, -0.1f);
+                            velocity.X = Math.Min(velocity.X - 0.02f, -0.1f);
                         }
 
+                        // Normalize the new velocity
                         Vector2.Normalize(velocity);
                         
                     }
 
                     // Set Current Position
-                    currentPosition = SetPosition(gameTime, 2, false);
+                    currentPosition = SetPosition(gameTime, 5, true);
                     break;
 
                 case BulletType.Explosion:
@@ -556,7 +559,6 @@ namespace Galabingus
                 case BulletType.BigExplosion:
                     // Set Current Position
                     this.Position -= Camera.Instance.OffSet;
-                    //currentPosition = SetPosition(gameTime, 1, false);
                     
                     if (state_timer > 14)
                     {
@@ -740,6 +742,7 @@ namespace Galabingus
             if (Camera.Instance.CameraLock)
             { // In debug mode
                 Vector2 playerMovement = new Vector2(0, Player.PlayerInstance.Translation.Y);
+                System.Diagnostics.Debug.WriteLine(Player.PlayerInstance.Translation.Y);
                 this.Position += finalVelocity + (ignoreCamera ? Vector2.Zero : playerMovement);
             } 
             else
