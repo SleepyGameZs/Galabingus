@@ -174,6 +174,14 @@ namespace Galabingus
                 //colliderTimer = 2;
             }
 
+            //Debug.WriteLine(GameObject.Instance.TimeShade);
+
+            GameObject.Instance.StartBossEffect();
+            GameObject.Instance.PlayBossEffect();
+            shaders.Parameters["bossEffect"].SetValue(GameObject.Instance.IsBossEffectActive);
+            shaders.Parameters["shadeFadeTime"].SetValue(GameObject.Instance.TimeShade);
+            shaders.Parameters["redShade"].SetValue(1);
+
             colliderTimer--;
 
             //Update the UI
