@@ -83,7 +83,7 @@ namespace Galabingus_Map_Editor
 
             tileSize = 27;
 
-            totalDensity = pixelDensity * 2;
+            totalDensity = pixelDensity;
 
             totalEditorPageNum = numofPage;
 
@@ -284,7 +284,6 @@ namespace Galabingus_Map_Editor
                 this.totalWidth * tileSize,
                 this.totalHeight * tileSize
             );
-
             for (int y = 0; y < totalHeight; y++)
             {
                 for (int x = 0; x < totalWidth; x++)
@@ -700,7 +699,7 @@ namespace Galabingus_Map_Editor
                 {
                     //Debug.WriteLine(data);
 
-                    if (lineNumber < 5)
+                    if (lineNumber < 6)
                     {
                         switch (lineNumber)
                         {
@@ -724,7 +723,7 @@ namespace Galabingus_Map_Editor
                                 totalDensity = int.Parse(data);
                                 data = "";
                                 ImageAdd();
-                                TileSizeDet();
+
                                 ButtonStuff();
                                 mapGroup.SetBounds(
                                     mapGroup.Bounds.X,
@@ -737,8 +736,13 @@ namespace Galabingus_Map_Editor
                     }
                     else
                     {
+                        Debug.WriteLine(tileSize);
+                        Debug.WriteLine(totalHeight);
+                        Debug.WriteLine(totalWidth);
+                        Debug.WriteLine(totalEditorPageNum);
+                        Debug.WriteLine(totalDensity);
                         string[] row = data.Split('|');
-                        Debug.WriteLine(data);
+                        //Debug.WriteLine(data);
                         foreach (string num in row) 
                         {
                             PictureBox tileBox = new PictureBox();
