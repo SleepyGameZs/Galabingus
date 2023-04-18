@@ -10,6 +10,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ScrollBar;
 
 namespace Galabingus_Map_Editor
 {
@@ -76,13 +77,13 @@ namespace Galabingus_Map_Editor
 
             tileSet = new List<ImageData>();
 
-            totalWidth = 9;
+            totalWidth = 6;
 
-            totalHeight = 9;
+            totalHeight = 36;
 
-            tileSize = 60;
+            tileSize = 27;
 
-            totalDensity = pixelDensity;
+            totalDensity = pixelDensity * 2;
 
             totalEditorPageNum = numofPage;
 
@@ -271,14 +272,18 @@ namespace Galabingus_Map_Editor
 
         private void MapDraw()
         {
-            /*
+            this.SetBounds(
+                this.Bounds.X,
+                this.Bounds.Y,
+                mapGroup.Bounds.X + this.totalWidth * tileSize + 30,
+                mapGroup.Bounds.Y + this.totalHeight * tileSize + 60
+            );
             mapGroup.SetBounds(
                 mapGroup.Bounds.X,
                 mapGroup.Bounds.Y,
                 this.totalWidth * tileSize,
                 this.totalHeight * tileSize
             );
-            */
 
             for (int y = 0; y < totalHeight; y++)
             {
@@ -352,6 +357,7 @@ namespace Galabingus_Map_Editor
             tileSet.Add(new ImageData("red", 0,Properties.Resources.enemy_red_strip4_1));
             tileSet.Add(new ImageData("yellow", 3,Properties.Resources.enemy_yellow_strip4_1));
             tileSet.Add(new ImageData("orange", 1,Properties.Resources.enemy_orange_strip4_1));
+
 
             //Boss Sprite
             //TileSet.Add(Image.FromFile(@"../Resources/Boss image");
@@ -558,6 +564,27 @@ namespace Galabingus_Map_Editor
         
         public void LoadFile()
         {
+            boxes = new List<PictureBox>();
+
+            totalWidth = 0;
+            totalHeight = 0;
+            totalDensity = 0;
+            totalEditorPageNum = 0;
+            tileSize = 0;
+            currentSelectablePage = 0;
+
+
+            imageArray = null;
+            buttonList = null;
+            tileSet = new List<ImageData>();
+            boxImages = new List<ImageData>();
+            //currentSelected = null;
+            pagesData = new List<List<Image>>();
+            currentSelectablePage = 0;
+            currentEditorPage = 0;
+            moving = false;
+            filePath = @"..\..\..\";
+
             OpenFileDialog loadSave = new OpenFileDialog();
             loadSave.Title = "Load a Level File";
             loadSave.Filter = "Level Files|*.level";
@@ -568,6 +595,15 @@ namespace Galabingus_Map_Editor
 
             if (loadSave.ShowDialog() == DialogResult.OK)
             {
+                int tempX = mapGroup.Bounds.X;
+                int tempY = mapGroup.Bounds.Y;
+                this.Controls.Remove(mapGroup);
+                mapGroup = new GroupBox();
+                mapGroup.SetBounds(tempX,tempY,0,0);
+                mapGroup.Visible = false;
+                this.Controls.Add(mapGroup);
+  
+
                 string fileName = loadSave.FileName;
 
                 StreamReader reader = new StreamReader(fileName);
@@ -582,7 +618,7 @@ namespace Galabingus_Map_Editor
                 {
                     //Debug.WriteLine(data);
 
-                    if (lineNumber < 6)
+                    if (lineNumber < 5)
                     {
                         switch (lineNumber)
                         {
@@ -637,7 +673,7 @@ namespace Galabingus_Map_Editor
                             boxImages.Add(MatchImageData(int.Parse(num)));
                             boxes.Add(tileBox);
                             tileBox.Image = boxImages[boxIdentifier].Image;
-                            mapGroup.Controls.Add(tileBox);
+                        
                             xInput++;
                             boxIdentifier++;
                         }
@@ -651,7 +687,23 @@ namespace Galabingus_Map_Editor
                 reader.Close();
             }
 
+            this.SetBounds(
+                this.Bounds.X,
+                this.Bounds.Y,
+                mapGroup.Bounds.X + this.totalWidth * tileSize + 30,
+                mapGroup.Bounds.Y + this.totalHeight * tileSize + 60
+            );
+
+            mapGroup.SetBounds(
+                mapGroup.Bounds.X,
+                mapGroup.Bounds.Y,
+                this.totalWidth * tileSize,
+                this.totalHeight * tileSize
+            );
+
             mapGroup.MouseLeave += ResetMouse;
+            mapGroup.Controls.AddRange(boxes.ToArray());
+            mapGroup.Visible = true;
 
             ChangeSelectable(0);
         }

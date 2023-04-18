@@ -28,7 +28,8 @@ namespace Galabingus
         Splitter,
         Wave,
         Seeker,
-        Bomb
+        Bomb,
+        Boss
     }
 
     internal class Enemy : GameObject
@@ -264,6 +265,17 @@ namespace Galabingus
             get { return enemyNumber; }
         }
 
+        /// <summary>
+        /// Returns if the enemy is on screen
+        /// </summary>
+        public bool OnScreen
+        {
+            get { 
+                return (this.Position.Y > 0 &&
+                        this.Position.Y < BulletManager.Instance.ScreenDimensions.Y
+                        - this.Transform.Height * this.Scale);
+            }
+        }
 
         #endregion
 
@@ -305,6 +317,7 @@ namespace Galabingus
 
             // Set Scale
             this.Scale = Player.PlayerInstance.Scale;
+            //this.Scale = PostScaleRatio();
 
             // Set Position
             this.Position = new Vector2(position.X + this.Transform.Width * this.Scale * 0.5f - 10,  // X
@@ -328,7 +341,7 @@ namespace Galabingus
 
             // set randomizer + extra time between next shot
             rng = new Random();
-            shotWaitVariance = 8;
+            shotWaitVariance = 9;
             shotWaitTime = rng.Next(shotWaitVariance) - shotWaitVariance / 2;
 
             // Set shot timer with some randomization
@@ -358,9 +371,17 @@ namespace Galabingus
             bool enemyOnScreen = (this.Position.Y > - this.Transform.Height * this.Scale &&
                                   this.Position.Y < BulletManager.Instance.ScreenDimensions.Y);
 
-            // Move enemy with Y camera scrolling
-            Vector2 cameraScroll = new Vector2(0, Camera.Instance.OffSet.Y);
-            Position -= cameraScroll;
+            // Final position change, and whether or not to include camera movement
+            if (Camera.Instance.CameraLock)
+            { // In debug mode
+                Vector2 playerMovement = new Vector2(0, Player.PlayerInstance.Translation.Y);
+                Position -= playerMovement;
+            }
+            else
+            { // Normal camera movement
+                Vector2 cameraScroll = new Vector2(0, Camera.Instance.OffSet.Y);
+                Position -= cameraScroll;
+            }
 
             if (enemyOnScreen)
             { // Only does these while on the screen
@@ -370,12 +391,12 @@ namespace Galabingus
                     {
                         case EnemyType.Normal:
                             // Shooting (3 Bullets)
-                            BulletSpawning(100, BulletType.EnemyNormal, new Vector2(-25, 0), 0);
+                            BulletSpawning(130, BulletType.EnemyNormal, new Vector2(-25, 0), 0);
                             break;
 
                         case EnemyType.Bouncing:
                             // Shooting (3 Bullets)
-                            BulletSpawning(140,
+                            BulletSpawning(150,
                                            new BulletType[]
                                            {
                                            BulletType.BouncingSide,
@@ -394,17 +415,17 @@ namespace Galabingus
 
                         case EnemyType.Splitter:
                             // Shoots
-                            BulletSpawning(140, BulletType.Splitter, new Vector2(-42, 0), 0);
+                            BulletSpawning(150, BulletType.Splitter, new Vector2(-42, 0), 0);
                             break;
 
                         case EnemyType.Wave:
                             // Shoots
-                            BulletSpawning(150, BulletType.Wave, new Vector2(-115, 0), 0);
+                            BulletSpawning(160, BulletType.Wave, new Vector2(-115, 0), 0);
                             break;
 
                         case EnemyType.Seeker:
                             // Shoots
-                            BulletSpawning(190, BulletType.Seeker, new Vector2(-15, 0), 0);
+                            BulletSpawning(170, BulletType.Seeker, new Vector2(-15, 0), 0);
                             break;
                     }
                     shotTimer++;
@@ -420,6 +441,12 @@ namespace Galabingus
                     switch (this.ability)
                     {
                         case EnemyType.Bomb:
+                            // Creates an explosion
+                            BulletSpawning(0, BulletType.BigExplosion, new Vector2(-360, 0), 0);
+                            AudioManager.Instance.CallSound("Explosion");
+                            break;
+
+                        default:
                             // Creates an explosion
                             BulletSpawning(0, BulletType.Explosion, new Vector2(-180, 0), 0);
                             AudioManager.Instance.CallSound("Explosion");
@@ -448,24 +475,13 @@ namespace Galabingus
                     enemyNumber                             // Enemy Number (tied to Manager)
                 );
 
-                // Secondary Enemy Collider
-                List<Collision> secondaryIntercept = this.Collider.UpdateTransform(
-                    this.Sprite,                                    // Enemy Sprite itself
-                    this.Position,                                  // Position
-                    this.Transform,                                 // Enemy transform for sprite selection
-                    GameObject.Instance.GraphicsDevice,             // Graphics Device Info
-                    GameObject.Instance.SpriteBatch,                // Sprite Batcher (carries through)
-                    1,                                              // Removed old variant of direction (bully Matt to remove this)
-                    new Vector2(this.Scale, this.Scale),            // Scale
-                    flipper,                                        // Sprite Effects
-                    (ushort)(CollisionGroup.Enemy + enemyNumber),   // Collision Layer
-                    enemyNumber                                     // Enemy Number (tied to Manager)
-                );
-
                 // Get camera's movement direction
                 float cameraScrollY = Camera.Instance.OffSet.Y;
-                if (Player.PlayerInstance.CameraLock == true)
+                if (!Player.PlayerInstance.CameraLock && !Camera.Instance.CameraLock)
                 {
+                    Vector2 cameraScroll = new Vector2(0, Camera.Instance.OffSet.Y);
+
+                    // Set direction
                     if (cameraScroll.Y > 0)
                     {
                         direction.Y = -1;
@@ -474,6 +490,7 @@ namespace Galabingus
                     {
                         direction.Y = 1;
                     }
+
                 }
                 
                 // Checks what kind of things can be collided with
@@ -481,25 +498,7 @@ namespace Galabingus
                 {
                     if (collision.other != null && !destroy)
                     {
-                        //System.Diagnostics.Debug.WriteLine("eee"+intercepts.Count);
-                        if ((collision.other as Enemy) is Enemy)
-                        { // Collided with Enemy
-                            // Check to see if collided enemy isn't in this Enemy's row
-
-                            /*if (!EnemyManager.Instance.InSameRow((int)initialPosition.Y, ((Enemy)collision.other).EnemyNumber))
-                            {
-                                // Check if collision on left or right
-                                if (this.Position.X < ((Enemy)collision.other).Position.X)
-                                {
-                                    EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, true);
-                                }
-                                else
-                                {
-                                    EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, false);
-                                }
-                            }*/
-                        }
-                        else if ((collision.other as Tile) is Tile)
+                        if ((collision.other as Tile) is Tile)
                         { // Collided with Tile
                             Vector2 overlapZone = ((Tile)collision.other).ScaleVector;
 

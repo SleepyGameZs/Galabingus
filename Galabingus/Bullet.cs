@@ -35,6 +35,7 @@ namespace Galabingus
         Wave,
         Seeker,
         Explosion,
+        BigExplosion,
         LazerPath,
         LazerStart,
         LazerAttack
@@ -324,6 +325,7 @@ namespace Galabingus
 
             // Set Velocity
             velocity = Vector2.Normalize(direction);
+            
 
             // Set Empty hit objects list
             hitObjects = new List<object>();
@@ -404,6 +406,15 @@ namespace Galabingus
                     this.Animation.AnimationDuration = 0.07f;
                     break;
 
+                case BulletType.BigExplosion:
+                    // Bomb Enemy: Explosion can damage both the player and other enemies!
+                    GameObject.Instance.Content = GameObject.Instance.Content.big_explode_strip5;
+
+                    // Can target: Everything - Players & Enemies (not tiles)
+                    target = Targets.Everything;
+                    this.Animation.AnimationDuration = 0.07f;
+                    break;
+
                 default:
                     // In case of glass break game
                     GameObject.Instance.Content = GameObject.Instance.Content.smallbullet_strip4;
@@ -429,11 +440,11 @@ namespace Galabingus
             switch (ability)
             {
                 case BulletType.PlayerNormal:
-                    currentPosition = SetPosition(gameTime, 16, true);
+                    currentPosition = SetPosition(gameTime, 14, true);
                     break;
 
                 case BulletType.EnemyNormal:
-                    currentPosition = SetPosition(gameTime, 8, false);
+                    currentPosition = SetPosition(gameTime, 6, false);
                     break;
 
                 case BulletType.BouncingSide:
@@ -458,7 +469,7 @@ namespace Galabingus
 
                 case BulletType.Splitter:
                     // Set Current Position
-                    currentPosition = SetPosition(gameTime, 6, false);
+                    currentPosition = SetPosition(gameTime, 4, false);
 
                     // X Position of the player
                     float PlayerY = Player.PlayerInstance.Position.Y    // Base Position
@@ -493,54 +504,68 @@ namespace Galabingus
 
                 case BulletType.SplitOff:
                     // Set Current Position
-                    currentPosition = SetPosition(gameTime, 9, false);
+                    currentPosition = SetPosition(gameTime, 5, true);
                     break;
 
                 case BulletType.Wave:
                     // Set Current Position
-                    currentPosition = SetPosition(gameTime, 3, false);
+                    currentPosition = SetPosition(gameTime, 5, false);
                     break;
 
                 case BulletType.Seeker:
-                    if (state_timer < 200)
-                    {
-                        // Change angle over time
-                        Player player = Player.PlayerInstance;
+                    Player player = Player.PlayerInstance;
 
+                    if (this.Position.Y < player.Position.Y)
+                    {
                         // Get Player's Center relative to bullet
                         Vector2 playerCenter = new Vector2(player.Position.X + (player.Transform.Width * player.Scale) / 2,
                                                            player.Position.Y + (player.Transform.Height * player.Scale) / 2);
 
-                        // Get Bullet's  Center
+                        // Get Bullet's Center
                         Vector2 bulletCenter = new Vector2(oldPosition.X, oldPosition.Y);
 
                         // Find vector distance between player and bullet
                         Vector2 playerBulletDistance = playerCenter - bulletCenter;
 
-                        // Find angle distance between player and bullet
-                        double playerBulletAngle = Math.Atan2(playerBulletDistance.X, playerBulletDistance.Y);
+                        // Check which way to shift angle
+                        if (playerBulletDistance.X > 0)
+                        {
+                            velocity.X = Math.Max(velocity.X + 0.02f, 0.1f);
+                        } else
+                        {
+                            velocity.X = Math.Min(velocity.X - 0.02f, -0.1f);
+                        }
 
-                        // Find midpoint between current velocity and player line velocity
-                        velocity = Vector2.Normalize(new Vector2((float)(10 * Math.Sin(playerBulletAngle)), // X
-                                                                 (float)(10 * Math.Cos(playerBulletAngle))  // Y
-                                                     ));
-
+                        // Normalize the new velocity
+                        Vector2.Normalize(velocity);
                         
                     }
 
                     // Set Current Position
-                    currentPosition = SetPosition(gameTime, 3, false);
+                    currentPosition = SetPosition(gameTime, 5, true);
                     break;
 
                 case BulletType.Explosion:
                     // Set Current Position
-                    currentPosition = SetPosition(gameTime, 1, false);
+                    this.Position -= Camera.Instance.OffSet;
 
                     if (state_timer > 14)
                     {
                         destroy = true;
                         velocity = Vector2.Zero;
                     }
+                    break;
+
+                case BulletType.BigExplosion:
+                    // Set Current Position
+                    this.Position -= Camera.Instance.OffSet;
+                    
+                    if (state_timer > 14)
+                    {
+                        destroy = true;
+                        velocity = Vector2.Zero;
+                    }
+
                     break;
 
                 default:
@@ -557,7 +582,7 @@ namespace Galabingus
             bool bulletOffScreen = this.Position.Y < 0 ||
                                    this.Position.Y > BulletManager.Instance.ScreenDimensions.Y;
 
-            if (bulletOffScreen)
+            if (bulletOffScreen && ability != BulletType.Explosion && ability != BulletType.BigExplosion)
             {
                 destroy = true;
             }
@@ -690,6 +715,7 @@ namespace Galabingus
                             break;
                     }
                 }
+                
             }
 
             #endregion
@@ -713,7 +739,17 @@ namespace Galabingus
                                      );
 
             // Final position change, and whether or not to include camera movement
-            this.Position += finalVelocity + (ignoreCamera ? Camera.Instance.OffSet : Vector2.Zero);
+            if (Camera.Instance.CameraLock)
+            { // In debug mode
+                Vector2 playerMovement = new Vector2(0, Player.PlayerInstance.Translation.Y);
+                System.Diagnostics.Debug.WriteLine(Player.PlayerInstance.Translation.Y);
+                this.Position += finalVelocity + (ignoreCamera ? Vector2.Zero : playerMovement);
+            } 
+            else
+            { // Normal camera movement
+                Vector2 cameraScroll = new Vector2(0, Camera.Instance.OffSet.Y);
+                this.Position += finalVelocity + (ignoreCamera ? Vector2.Zero : cameraScroll);
+            }
 
             // Returns position
             return this.Position;

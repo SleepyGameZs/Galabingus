@@ -37,10 +37,19 @@ namespace Galabingus
         private Vector2 offSet;
         private bool cameraLock;
         private bool stop;
+        private Vector2 position;
 
         // -------------------------------------------------
         // Properties
         // -------------------------------------------------
+
+        public Vector2 Position
+        {
+            get
+            {
+                return position;
+            }
+        }
 
         public int X
         {
@@ -74,6 +83,14 @@ namespace Galabingus
             }
         }
 
+        public bool CameraLock
+        {
+            get
+            {
+                return cameraLock;
+            }
+        }
+
         // -------------------------------------------------
         // Contructors
         // -------------------------------------------------
@@ -85,6 +102,8 @@ namespace Galabingus
             initalCameraScroll = 2f;
             offSet = new Vector2(0, -initalCameraScroll);
             stop = false;
+            position = Vector2.Zero;
+
         }
 
         public Camera(int cameraScroll)
@@ -93,6 +112,7 @@ namespace Galabingus
             y = 0;
             this.initalCameraScroll = cameraScroll;
             offSet = new Vector2(0, -initalCameraScroll);
+            position = Vector2.Zero;
         }
 
         // -------------------------------------------------
@@ -121,6 +141,8 @@ namespace Galabingus
 
         public void Update(GameTime gameTime)
         {
+            Camera.Instance.position += offSet;
+
             Camera.Instance.offSet.Y = MathHelper.Lerp(Camera.Instance.offSet.Y, Camera.Instance.offSet.Y*1.2f, 0.1f);
 
             if (Camera.Instance.OffSet.Y > 2.5)

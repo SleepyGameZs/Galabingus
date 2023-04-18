@@ -297,7 +297,8 @@ namespace Galabingus
             PlayerInstance.inputBufferTime = 0.003f;
             PlayerInstance.delayBufferTime = inputBufferTime / 2.0f;
             PlayerInstance.Scale = 3.0f;
-            playerInstance.Animation.AnimationDuration = 0.05f;
+            //PlayerInstance.Scale = PostScaleRatio();
+            PlayerInstance.Animation.AnimationDuration = 0.05f;
             // Ratio is calclated via the shape of the player sprite
             // against the width and height of the screen
             // With the third factor a vector of 1 ie the directional vector ie normalized velocity
@@ -475,7 +476,16 @@ namespace Galabingus
                     translation = (velocity == Vector2.Zero ? velocity : Vector2.Normalize(velocity) * (float)Animation.EllapsedTime * ((boost) ? boostSpeed : 1) * speed * translationAjdustedRatio);
                     Position += translation;
                 }
+                
+                //Debug.
+                
             }
+
+            if (Math.Abs(velocity.Length()) < 0.001f)
+            {
+                translation = Vector2.Zero;
+            }
+
 
             Vector2 normPreVelocity = previousVelocity;
             Vector2 normVelocity = velocity;
@@ -908,8 +918,8 @@ namespace Galabingus
                         * (float)Animation.GetElapsedTime(gameTime, Vector2.Zero, new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Width * 0.5f, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.5f), Transform, Scale);
                 }
                 else
-                {
-                    Camera.Instance.OffSet = new Vector2(Math.Clamp((normVelocity.X), -1f, 1f), Math.Clamp((normVelocity.Y), -0.5f, 0.5f))
+                {   
+                    Camera.Instance.OffSet = new Vector2(Math.Clamp((normVelocity.X), -1f, 1f), Math.Clamp((normVelocity.Y), -0, 0))
                         * (float)Animation.GetElapsedTime(gameTime, Vector2.Zero, new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Width * 0.5f, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.5f), Transform, Scale);
                 }
             }

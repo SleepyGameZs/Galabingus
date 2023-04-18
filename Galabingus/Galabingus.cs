@@ -122,7 +122,11 @@ namespace Galabingus
             l_a4_obj_enemyData.Add(new int[] { 1, 5, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 1 - 240), (GameObject.Instance.GraphicsDevice.Viewport.Height * -4) + 10, 0 });
             */
 
+
+
             l_a4_obj_enemyData = GameObject.Instance.LoadEnemyLeveFile("GalabingusLevel.level");
+
+            //l_a4_obj_enemyData.Add(new int[] { 1, 1, 0, 0, 0 });
 
             // Create a player
             player = new Player(new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Height * 0.00875f, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.00875f), content.player_strip4);
@@ -137,7 +141,7 @@ namespace Galabingus
 
             // Create Camera
             camera = Camera.Instance;
-            camera.InitalCameraScroll = -2;
+            camera.InitalCameraScroll = -2f;
 
             // Create Tile Manager
             tileManager = TileManager.Instance;
@@ -150,6 +154,8 @@ namespace Galabingus
             //tileManager.CreateObject(asteroid,new Vector2(50,50));
             //tileManager.CreateBackground();
             //tileManager.CreateObject(GameObject.Instance.Content.grayasteroid_strip1, new Vector2(Player.PlayerInstance.Transform.Width * 2 + 100, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.5f - Player.PlayerInstance.Transform.Height + 100));
+
+            GameObject.Instance.LoadTileLevelFile("GalabingusTilesLevel.level");
 
             // Sound
             AudioManager.Instance.AddSound("Fire", 0.25f, "Bullet Fire", Content);
