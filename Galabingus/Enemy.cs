@@ -67,6 +67,10 @@ namespace Galabingus
         private int currentHealth;
         private int totalHealth;
 
+        // Whether or not this enemy is a boss
+        private EnemyType bossPhase;
+        private int stateTimer;
+
         // Reference to what thing created this enemy (can be null)
         private object creatorReference;
 
@@ -426,6 +430,34 @@ namespace Galabingus
                         case EnemyType.Seeker:
                             // Shoots
                             BulletSpawning(170, BulletType.Seeker, new Vector2(-15, 0), 0);
+                            break;
+
+                        case EnemyType.Boss:
+                            // Switch for various attacks
+                            switch (bossPhase)
+                            {
+                                case EnemyType.Normal:
+                                    if (stateTimer % 25 == 0 && stateTimer >= 300)
+                                    {
+                                        BulletSpawning(130, BulletType.EnemyNormal, new Vector2(-25, 0), 0);
+                                    }
+                                    break;
+                            }
+
+                            // Change to make use of game time
+                            if (stateTimer >= 600)
+                            {
+                                bossPhase++;
+                                stateTimer = 0;
+                                if (bossPhase == EnemyType.Bomb)
+                                {
+                                    bossPhase = EnemyType.Normal;
+                                }
+                            }
+
+                            // Increment state timer 
+                            stateTimer++;
+
                             break;
                     }
                     shotTimer++;
