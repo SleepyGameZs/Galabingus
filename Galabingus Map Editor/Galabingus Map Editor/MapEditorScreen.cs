@@ -10,6 +10,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ScrollBar;
 
 namespace Galabingus_Map_Editor
 {
@@ -675,7 +676,15 @@ namespace Galabingus_Map_Editor
 
             if (loadSave.ShowDialog() == DialogResult.OK)
             {
-                mapGroup.Controls.Clear();
+                int tempX = mapGroup.Bounds.X;
+                int tempY = mapGroup.Bounds.Y;
+                this.Controls.Remove(mapGroup);
+                mapGroup = new GroupBox();
+                mapGroup.SetBounds(tempX,tempY,0,0);
+                mapGroup.Visible = false;
+                this.Controls.Add(mapGroup);
+  
+
                 string fileName = loadSave.FileName;
 
                 StreamReader reader = new StreamReader(fileName);
@@ -745,7 +754,7 @@ namespace Galabingus_Map_Editor
                             boxImages.Add(MatchImageData(int.Parse(num)));
                             boxes.Add(tileBox);
                             tileBox.Image = boxImages[boxIdentifier].Image;
-                            mapGroup.Controls.Add(tileBox);
+                        
                             xInput++;
                             boxIdentifier++;
                         }
@@ -759,7 +768,23 @@ namespace Galabingus_Map_Editor
                 reader.Close();
             }
 
+            this.SetBounds(
+                this.Bounds.X,
+                this.Bounds.Y,
+                mapGroup.Bounds.X + this.totalWidth * tileSize + 30,
+                mapGroup.Bounds.Y + this.totalHeight * tileSize + 60
+            );
+
+            mapGroup.SetBounds(
+                mapGroup.Bounds.X,
+                mapGroup.Bounds.Y,
+                this.totalWidth * tileSize,
+                this.totalHeight * tileSize
+            );
+
             mapGroup.MouseLeave += ResetMouse;
+            mapGroup.Controls.AddRange(boxes.ToArray());
+            mapGroup.Visible = true;
 
             ChangeSelectable(0);
         }
