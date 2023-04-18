@@ -1258,9 +1258,9 @@ namespace Galabingus
         {
             float coordianteXScale = GameObject.Instance.GraphicsDevice.Viewport.Width / width;
             universalScale = coordianteXScale;
-            float coordinateYScale = GameObject.Instance.GraphicsDevice.Viewport.Height / height * 3;
-            float startingY = GameObject.Instance.GraphicsDevice.Viewport.Height * -3;
-            return new Vector2(coordianteXScale * column, coordinateYScale * row + startingY);
+            float coordinateYScale = GameObject.Instance.GraphicsDevice.Viewport.Height / height * 4;
+            float startingY = GameObject.Instance.GraphicsDevice.Viewport.Height * -4;
+            return new Vector2(coordianteXScale * column, coordinateYScale * row + startingY + coordinateYScale * 1.5f);
         }
 
         public void LoadTileLevelFile(string fileName)
@@ -1374,6 +1374,7 @@ namespace Galabingus
                     else
                     {
                         string[] column = data.Split('|');
+                        System.Diagnostics.Debug.WriteLine(data);
                         foreach (string num in column)
                         {
                             Vector2 assetPosition = CalculateLevelEditorPositions(width, height, yInput, xInput);

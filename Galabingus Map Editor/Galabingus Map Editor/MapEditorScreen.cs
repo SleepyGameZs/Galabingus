@@ -83,7 +83,7 @@ namespace Galabingus_Map_Editor
 
             tileSize = 27;
 
-            totalDensity = pixelDensity;
+            totalDensity = pixelDensity * 2;
 
             totalEditorPageNum = numofPage;
 
@@ -700,7 +700,7 @@ namespace Galabingus_Map_Editor
                 {
                     //Debug.WriteLine(data);
 
-                    if (lineNumber < 6)
+                    if (lineNumber < 5)
                     {
                         switch (lineNumber)
                         {
