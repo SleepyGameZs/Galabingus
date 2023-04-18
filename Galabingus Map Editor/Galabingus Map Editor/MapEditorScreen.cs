@@ -358,6 +358,7 @@ namespace Galabingus_Map_Editor
             tileSet.Add(new ImageData("yellow", 3,Properties.Resources.enemy_yellow_strip4_1));
             tileSet.Add(new ImageData("orange", 1,Properties.Resources.enemy_orange_strip4_1));
 
+
             //Boss Sprite
             //TileSet.Add(Image.FromFile(@"../Resources/Boss image");
 

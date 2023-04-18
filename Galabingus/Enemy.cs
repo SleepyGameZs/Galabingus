@@ -316,8 +316,8 @@ namespace Galabingus
             Animation.AnimationDuration = 0.01f;
 
             // Set Scale
-            //this.Scale = Player.PlayerInstance.Scale;
-            this.Scale = PostScaleRatio();
+            this.Scale = Player.PlayerInstance.Scale;
+            //this.Scale = PostScaleRatio();
 
             // Set Position
             this.Position = new Vector2(position.X + this.Transform.Width * this.Scale * 0.5f - 10,  // X

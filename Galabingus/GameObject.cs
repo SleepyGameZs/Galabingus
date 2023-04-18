@@ -1056,6 +1056,7 @@ namespace Galabingus
             this.contentManager = contentManager;
             GameObject.fade = 1;
             GameObject.Instance.holdCollider = false;
+            cameraStopPositions = new List<Vector2>();
             return new GameObject();
         }
 
@@ -1229,13 +1230,37 @@ namespace Galabingus
             return GameObject.cameraStopPositions;
         }
 
+        public void CameraStopRemoveAt(int index)
+        {
+            List<Vector2> preI = new List<Vector2>();
+            List<Vector2> postI = new List<Vector2>();
+            List<Vector2> result = new List<Vector2>();
+            for (int i = 0; i < index; i++)
+            {
+                preI.Add(GameObject.cameraStopPositions[i]);
+            }
+            for (int i = index+1; i < GameObject.cameraStopPositions.Count; i++)
+            {
+                postI.Add(GameObject.cameraStopPositions[i]);
+            }
+            foreach (Vector2 pos in preI)
+            {
+                result.Add(pos);
+            }
+            foreach (Vector2 pos in postI)
+            {
+                result.Add(pos);
+            }
+            GameObject.cameraStopPositions = result;
+        }
+
         public Vector2 CalculateLevelEditorPositions(int width, int height, int row, int column)
         {
             float coordianteXScale = GameObject.Instance.GraphicsDevice.Viewport.Width / width;
             universalScale = coordianteXScale;
-            float coordinateYScale = GameObject.Instance.GraphicsDevice.Viewport.Height / height * 4;
-            float startingY = GameObject.Instance.GraphicsDevice.Viewport.Height * -4;
-            return new Vector2(coordianteXScale * row, coordinateYScale * column + startingY);
+            float coordinateYScale = GameObject.Instance.GraphicsDevice.Viewport.Height / height * 3;
+            float startingY = GameObject.Instance.GraphicsDevice.Viewport.Height * -3;
+            return new Vector2(coordianteXScale * column, coordinateYScale * row + startingY);
         }
 
         public void LoadTileLevelFile(string fileName)
@@ -1254,7 +1279,7 @@ namespace Galabingus
             {
                 //Debug.WriteLine(data);
 
-                if (lineNumber < 6)
+                if (lineNumber < 5)
                 {
                     switch (lineNumber)
                     {
@@ -1279,9 +1304,9 @@ namespace Galabingus
                 }
                 else
                 {
-                    string[] row = data.Split('|');
+                    string[] column = data.Split('|');
 
-                    foreach (string num in row)
+                    foreach (string num in column)
                     {
                         Vector2 assetPosition = CalculateLevelEditorPositions(width, height, xInput, yInput);
 
@@ -1316,56 +1341,64 @@ namespace Galabingus
             int xInput = 0;
             int yInput = 0;
             int boxIdentifier = 0;
-
-            string? data;
-            while ((data = reader.ReadLine()) != null)
+            bool ready = false;
+            string? data = "";
+            do
             {
                 //Debug.WriteLine(data);
-
-                if (lineNumber < 6)
+                if (ready)
                 {
-                    switch (lineNumber)
+                    if (lineNumber < 5)
                     {
-                        case 0:
-                            data = "";
-                            break;
-                        case 1:
-                            height = int.Parse(data);
-                            data = "";
-                            break;
-                        case 2:
-                            width = int.Parse(data);
-                            data = "";
-                            break;
-                        case 3:
-                            data = "";
-                            break;
-                        case 4:
-                            data = "";
-                            break;
-                    }
-                }
-                else
-                {
-                    string[] row = data.Split('|');
-
-                    foreach (string num in row)
-                    {
-                        Vector2 assetPosition = CalculateLevelEditorPositions(width, height, xInput, yInput);
-                        //System.Diagnostics.Debug.WriteLine(assetPosition);
-                        if (int.Parse(num) != -1)
+                        switch (lineNumber)
                         {
-                            enemies.Add(new int[] { 1, int.Parse(num), (int)assetPosition.X, (int)assetPosition.Y, 1 });
+                            case 0:
+                                data = "";
+                                break;
+                            case 1:
+                                height = int.Parse(data);
+                                data = "";
+                                break;
+                            case 2:
+                                width = int.Parse(data);
+                                data = "";
+                                break;
+                            case 3:
+                                data = "";
+                                break;
+                            case 4:
+                                data = "";
+                                break;
                         }
-
-                        xInput++;
-                        boxIdentifier++;
                     }
-                    xInput = 0;
-                    yInput++;
+                    else
+                    {
+                        string[] column = data.Split('|');
+                        foreach (string num in column)
+                        {
+                            Vector2 assetPosition = CalculateLevelEditorPositions(width, height, yInput, xInput);
+                            //System.Diagnostics.Debug.WriteLine(assetPosition);
+                            if (int.Parse(num) != -1 && int.Parse(num) != 9)
+                            {
+                                enemies.Add(new int[] { 1, int.Parse(num), (int)assetPosition.X, (int)assetPosition.Y, 1 });
+                            }
+
+                            if (int.Parse(num) == 9)
+                            {
+                                cameraStopPositions.Add(assetPosition);
+                            }
+
+                            xInput++;
+                            boxIdentifier++;
+                        }
+                        xInput = 0;
+                        yInput++;
+                    }
+                    lineNumber++;
                 }
-                lineNumber++;
+                ready = true;
             }
+            while ((data = reader.ReadLine()) != null);
 
             reader.Close();
 
