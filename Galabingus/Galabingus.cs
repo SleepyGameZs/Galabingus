@@ -126,6 +126,8 @@ namespace Galabingus
 
             l_a4_obj_enemyData = GameObject.Instance.LoadEnemyLeveFile("GalabingusLevel.level");
 
+            //l_a4_obj_enemyData.Add(new int[] { 1, 1, 0, 0, 0 });
+
             // Create a player
             player = new Player(new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Height * 0.00875f, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.00875f), content.player_strip4);
             player.Position = new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Width * 0.5f - Player.PlayerInstance.Transform.Width, GameObject.Instance.GraphicsDevice.Viewport.Height - Player.PlayerInstance.Transform.Height * 10);

@@ -172,7 +172,7 @@ namespace Galabingus
           
             background.Scale = GameObject.Instance.GraphicsDevice.Viewport.Height / background.Sprite.Width / (Player.PlayerInstance.Scale * 0.975f);
             background.ScaleVector = new Vector2(background.Scale, background.Scale);
-            background.Position = new Vector2(0, -GameObject.Instance.GraphicsDevice.Viewport.Height * 4.3f);
+            background.Position = new Vector2(-GameObject.Instance.GraphicsDevice.Viewport.Width * 2, -GameObject.Instance.GraphicsDevice.Viewport.Height * 4f);
             background.Position -= new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Width, 0);
             background.Effect = GameObject.Instance.ContentManager.Load<Effect>("background");
             background.Collider.Unload();
@@ -278,7 +278,11 @@ namespace Galabingus
                 }
             }
 
-
+            // Stop the camera
+            if (turn && (backgroundList[0].Position.Y) <= (-GameObject.Instance.GraphicsDevice.Viewport.Height * 4f))
+            {
+                Camera.Instance.Stop();
+            }
 
             /*
             // Background Loop
@@ -301,8 +305,8 @@ namespace Galabingus
         public void Draw()
         {
             backgroundList[0].Draw(
-                GameObject.Instance.GraphicsDevice.Viewport.Width / backgroundList[0].Transform.Width / backgroundList[0].ScaleVector.X * 4,
-                GameObject.Instance.GraphicsDevice.Viewport.Height / backgroundList[0].Transform.Height / backgroundList[0].ScaleVector.Y * 4.3f * 2
+                GameObject.Instance.GraphicsDevice.Viewport.Width * 4f,
+                GameObject.Instance.GraphicsDevice.Viewport.Height * 4f
 
             );
 
