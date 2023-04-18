@@ -315,7 +315,8 @@ namespace Galabingus
             Animation.AnimationDuration = 0.01f;
 
             // Set Scale
-            this.Scale = Player.PlayerInstance.Scale;
+            //this.Scale = Player.PlayerInstance.Scale;
+            this.Scale = PostScaleRatio();
 
             // Set Position
             this.Position = new Vector2(position.X + this.Transform.Width * this.Scale * 0.5f - 10,  // X
@@ -339,7 +340,7 @@ namespace Galabingus
 
             // set randomizer + extra time between next shot
             rng = new Random();
-            shotWaitVariance = 8;
+            shotWaitVariance = 9;
             shotWaitTime = rng.Next(shotWaitVariance) - shotWaitVariance / 2;
 
             // Set shot timer with some randomization
@@ -369,9 +370,17 @@ namespace Galabingus
             bool enemyOnScreen = (this.Position.Y > - this.Transform.Height * this.Scale &&
                                   this.Position.Y < BulletManager.Instance.ScreenDimensions.Y);
 
-            // Move enemy with Y camera scrolling
-            Vector2 cameraScroll = new Vector2(0, Camera.Instance.OffSet.Y);
-            Position -= cameraScroll;
+            // Final position change, and whether or not to include camera movement
+            if (Camera.Instance.CameraLock)
+            { // In debug mode
+                Vector2 playerMovement = new Vector2(0, Player.PlayerInstance.Translation.Y);
+                Position -= playerMovement;
+            }
+            else
+            { // Normal camera movement
+                Vector2 cameraScroll = new Vector2(0, Camera.Instance.OffSet.Y);
+                Position -= cameraScroll;
+            }
 
             if (enemyOnScreen)
             { // Only does these while on the screen
@@ -381,12 +390,12 @@ namespace Galabingus
                     {
                         case EnemyType.Normal:
                             // Shooting (3 Bullets)
-                            BulletSpawning(100, BulletType.EnemyNormal, new Vector2(-25, 0), 0);
+                            BulletSpawning(130, BulletType.EnemyNormal, new Vector2(-25, 0), 0);
                             break;
 
                         case EnemyType.Bouncing:
                             // Shooting (3 Bullets)
-                            BulletSpawning(140,
+                            BulletSpawning(150,
                                            new BulletType[]
                                            {
                                            BulletType.BouncingSide,
@@ -405,17 +414,17 @@ namespace Galabingus
 
                         case EnemyType.Splitter:
                             // Shoots
-                            BulletSpawning(140, BulletType.Splitter, new Vector2(-42, 0), 0);
+                            BulletSpawning(150, BulletType.Splitter, new Vector2(-42, 0), 0);
                             break;
 
                         case EnemyType.Wave:
                             // Shoots
-                            BulletSpawning(150, BulletType.Wave, new Vector2(-115, 0), 0);
+                            BulletSpawning(160, BulletType.Wave, new Vector2(-115, 0), 0);
                             break;
 
                         case EnemyType.Seeker:
                             // Shoots
-                            BulletSpawning(190, BulletType.Seeker, new Vector2(-15, 0), 0);
+                            BulletSpawning(170, BulletType.Seeker, new Vector2(-15, 0), 0);
                             break;
                     }
                     shotTimer++;
@@ -467,16 +476,38 @@ namespace Galabingus
 
                 // Get camera's movement direction
                 float cameraScrollY = Camera.Instance.OffSet.Y;
-                if (Player.PlayerInstance.CameraLock == true)
+                if (!Player.PlayerInstance.CameraLock)
                 {
-                    if (cameraScroll.Y > 0)
-                    {
-                        direction.Y = -1;
+                    if (Camera.Instance.CameraLock)
+                    { // In debug mode
+                        Vector2 playerMovement = new Vector2(0, Player.PlayerInstance.Translation.Y);
+
+                        // Set direction
+                        if (playerMovement.Y > 0)
+                        {
+                            direction.Y = -1;
+                        }
+                        else if (playerMovement.Y < 0)
+                        {
+                            direction.Y = 1;
+                        }
                     }
-                    else if (cameraScroll.Y < 0)
-                    {
-                        direction.Y = 1;
+                    else
+                    { // Normal camera movement
+                        Vector2 cameraScroll = new Vector2(0, Camera.Instance.OffSet.Y);
+
+                        // Set direction
+                        if (cameraScroll.Y > 0)
+                        {
+                            direction.Y = -1;
+                        }
+                        else if (cameraScroll.Y < 0)
+                        {
+                            direction.Y = 1;
+                        }
                     }
+
+                    
                 }
                 
                 // Checks what kind of things can be collided with
