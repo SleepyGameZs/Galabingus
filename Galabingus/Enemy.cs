@@ -264,6 +264,17 @@ namespace Galabingus
             get { return enemyNumber; }
         }
 
+        /// <summary>
+        /// Returns if the enemy is on screen
+        /// </summary>
+        public bool OnScreen
+        {
+            get { 
+                return (this.Position.Y > 0 &&
+                        this.Position.Y < BulletManager.Instance.ScreenDimensions.Y
+                        - this.Transform.Height * this.Scale);
+            }
+        }
 
         #endregion
 
@@ -421,6 +432,12 @@ namespace Galabingus
                     {
                         case EnemyType.Bomb:
                             // Creates an explosion
+                            BulletSpawning(0, BulletType.BigExplosion, new Vector2(-360, 0), 0);
+                            AudioManager.Instance.CallSound("Explosion");
+                            break;
+
+                        default:
+                            // Creates an explosion
                             BulletSpawning(0, BulletType.Explosion, new Vector2(-180, 0), 0);
                             AudioManager.Instance.CallSound("Explosion");
                             break;
@@ -448,20 +465,6 @@ namespace Galabingus
                     enemyNumber                             // Enemy Number (tied to Manager)
                 );
 
-                // Secondary Enemy Collider
-                List<Collision> secondaryIntercept = this.Collider.UpdateTransform(
-                    this.Sprite,                                    // Enemy Sprite itself
-                    this.Position,                                  // Position
-                    this.Transform,                                 // Enemy transform for sprite selection
-                    GameObject.Instance.GraphicsDevice,             // Graphics Device Info
-                    GameObject.Instance.SpriteBatch,                // Sprite Batcher (carries through)
-                    1,                                              // Removed old variant of direction (bully Matt to remove this)
-                    new Vector2(this.Scale, this.Scale),            // Scale
-                    flipper,                                        // Sprite Effects
-                    (ushort)(CollisionGroup.Enemy + enemyNumber),   // Collision Layer
-                    enemyNumber                                     // Enemy Number (tied to Manager)
-                );
-
                 // Get camera's movement direction
                 float cameraScrollY = Camera.Instance.OffSet.Y;
                 if (Player.PlayerInstance.CameraLock == true)
@@ -481,25 +484,7 @@ namespace Galabingus
                 {
                     if (collision.other != null && !destroy)
                     {
-                        //System.Diagnostics.Debug.WriteLine("eee"+intercepts.Count);
-                        if ((collision.other as Enemy) is Enemy)
-                        { // Collided with Enemy
-                            // Check to see if collided enemy isn't in this Enemy's row
-
-                            /*if (!EnemyManager.Instance.InSameRow((int)initialPosition.Y, ((Enemy)collision.other).EnemyNumber))
-                            {
-                                // Check if collision on left or right
-                                if (this.Position.X < ((Enemy)collision.other).Position.X)
-                                {
-                                    EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, true);
-                                }
-                                else
-                                {
-                                    EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, false);
-                                }
-                            }*/
-                        }
-                        else if ((collision.other as Tile) is Tile)
+                        if ((collision.other as Tile) is Tile)
                         { // Collided with Tile
                             Vector2 overlapZone = ((Tile)collision.other).ScaleVector;
 

@@ -39,6 +39,7 @@ namespace Galabingus
 
         // Enemy Total
         private ushort enemyTotal;
+        private ushort enemiesOnScreen;
 
         // Screen data
         private Vector2 screenSize;
@@ -70,6 +71,17 @@ namespace Galabingus
             get 
             {
                 return Instance.screenSize;
+            }
+        }
+
+        /// <summary>
+        /// Returns the total enemies on screen
+        /// </summary>
+        public ushort EnemiesOnScreen
+        {
+            get
+            {
+                return enemiesOnScreen;
             }
         }
 
@@ -277,6 +289,9 @@ namespace Galabingus
         /// <param name="gameTime"></param>
         public void Update (GameTime gameTime)
         {
+            // Resets enemies on screen value.
+            enemiesOnScreen = 0;
+
             // Run enemy updates
             for (int i = 0; i < Instance.activeEnemies.Count; i++)
             {
@@ -284,6 +299,12 @@ namespace Galabingus
                 { // Checks if the enemy slot is null
                     // Runs the bullet's update.
                     Instance.activeEnemies[i].Update(gameTime);
+
+                    // Get total active enemies on screen
+                    if (Instance.activeEnemies[i].OnScreen)
+                    {
+                        enemiesOnScreen++;
+                    }
 
                     // Checks if enemy is set to be destroyed.
                     if (Instance.activeEnemies[i].Destroy)

@@ -35,6 +35,7 @@ namespace Galabingus
         Wave,
         Seeker,
         Explosion,
+        BigExplosion,
         LazerPath,
         LazerStart,
         LazerAttack
@@ -404,6 +405,15 @@ namespace Galabingus
                     this.Animation.AnimationDuration = 0.07f;
                     break;
 
+                case BulletType.BigExplosion:
+                    // Bomb Enemy: Explosion can damage both the player and other enemies!
+                    GameObject.Instance.Content = GameObject.Instance.Content.big_explode_strip5;
+
+                    // Can target: Everything - Players & Enemies (not tiles)
+                    target = Targets.Everything;
+                    this.Animation.AnimationDuration = 0.07f;
+                    break;
+
                 default:
                     // In case of glass break game
                     GameObject.Instance.Content = GameObject.Instance.Content.smallbullet_strip4;
@@ -533,13 +543,26 @@ namespace Galabingus
 
                 case BulletType.Explosion:
                     // Set Current Position
-                    currentPosition = SetPosition(gameTime, 1, false);
+                    this.Position -= Camera.Instance.OffSet;
 
                     if (state_timer > 14)
                     {
                         destroy = true;
                         velocity = Vector2.Zero;
                     }
+                    break;
+
+                case BulletType.BigExplosion:
+                    // Set Current Position
+                    this.Position -= Camera.Instance.OffSet;
+                    //currentPosition = SetPosition(gameTime, 1, false);
+                    
+                    if (state_timer > 14)
+                    {
+                        destroy = true;
+                        velocity = Vector2.Zero;
+                    }
+
                     break;
 
                 default:
@@ -556,7 +579,7 @@ namespace Galabingus
             bool bulletOffScreen = this.Position.Y < 0 ||
                                    this.Position.Y > BulletManager.Instance.ScreenDimensions.Y;
 
-            if (bulletOffScreen)
+            if (bulletOffScreen && ability != BulletType.Explosion && ability != BulletType.BigExplosion)
             {
                 destroy = true;
             }
@@ -689,6 +712,7 @@ namespace Galabingus
                             break;
                     }
                 }
+                
             }
 
             #endregion
