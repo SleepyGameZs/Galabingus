@@ -702,24 +702,27 @@ namespace Galabingus_Map_Editor
             
             if (currentEditorPageNum + change >= 0 && currentEditorPageNum + change < totalEditorPageNum)
             {
+
                 if (pageData.Count >= 0 && pageData.Count < totalEditorPageNum)
                 {
                     pageData.Add(PageSave());
-                    
+                    ClearEditor();
                 }
-
-                ClearEditor();
-
-                for (int x = 0; x < boxImages.Count; x++)
+                else 
                 {
-                    boxImages[x] = MatchImageData(pageData[currentEditorPageNum][x]);
+                    for (int x = 0; x < boxImages.Count; x++)
+                    {
+                        boxes[x].Image = MatchImageData(pageData[currentEditorPageNum][x]).Image;
+                    }
+                    if (currentEditorPageNum + change >= 0 && currentEditorPageNum + change < totalEditorPageNum)
+                    {
+                        currentEditorPageNum += change;
+                    }
+                    
                 }
 
                 Debug.Write(currentEditorPageNum);
 
-                currentEditorPageNum += change;
-
-                
             }
         }
 
