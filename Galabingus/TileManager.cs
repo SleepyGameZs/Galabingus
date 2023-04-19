@@ -225,32 +225,35 @@ namespace Galabingus
             {
                 //currentSpriteNumber = tilesList[i].SpriteNumber;
 
-
-                borderList[i].Collider.Resolved = true;
-                List<Collision> collisions = borderList[i].Collider.UpdateTransform(
-                    borderList[i].Sprite,
-                    borderList[i].Position,
-                    borderList[i].Transform,
-                    GameObject.Instance.GraphicsDevice,
-                    GameObject.Instance.SpriteBatch,
-                    borderList[i].ScaleVector,
-                    SpriteEffects.None,
-                    (ushort)CollisionGroup.Tile,
-                    borderList[i].InstanceNumber
-                );
-
-                foreach (Collision collision in collisions)
+                if (borderList[i].IsActive)
                 {
-                    if (collision.other != null)
+                    borderList[i].Collider.Resolved = true;
+                    List<Collision> collisions = borderList[i].Collider.UpdateTransform(
+                        borderList[i].Sprite,
+                        borderList[i].Position,
+                        borderList[i].Transform,
+                        GameObject.Instance.GraphicsDevice,
+                        GameObject.Instance.SpriteBatch,
+                        borderList[i].ScaleVector,
+                        SpriteEffects.None,
+                        (ushort)CollisionGroup.Tile,
+                        borderList[i].InstanceNumber
+                    );
+
+                    foreach (Collision collision in collisions)
                     {
-                        if ( ((collision.other as Player) is Player) && collision.self is Tile )
+                        if (collision.other != null)
                         {
-                            Player.PlayerInstance.Position += collision.mtv;
-                            Player.PlayerInstance.Collider.Resolved = true;
+                            if (((collision.other as Player) is Player) && collision.self is Tile)
+                            {
+                                Player.PlayerInstance.Position += collision.mtv;
+                                Player.PlayerInstance.Collider.Resolved = true;
+                            }
                         }
                     }
+                    borderList[i].Collider.Resolved = true;
+
                 }
-                borderList[i].Collider.Resolved = true;
 
             }
             #endregion
@@ -258,32 +261,35 @@ namespace Galabingus
             #region Object Update
             for (int i = 0; i < tileList.Count; i++)
             {
-                tileList[i].Collider.Resolved = true;
-                List<Collision> collisions = tileList[i].Collider.UpdateTransform(
-                    tileList[i].Sprite,
-                    tileList[i].Position,
-                    tileList[i].Transform,
-                    GameObject.Instance.GraphicsDevice,
-                    GameObject.Instance.SpriteBatch,
-                    tileList[i].ScaleVector,
-                    SpriteEffects.None,
-                    (ushort)CollisionGroup.Tile,
-                    tileList[i].InstanceNumber
-                );
-
-                foreach (Collision collision in collisions)
+                if (tileList[i].IsActive)
                 {
-                    if (collision.other != null)
+                    tileList[i].Collider.Resolved = true;
+                    List<Collision> collisions = tileList[i].Collider.UpdateTransform(
+                        tileList[i].Sprite,
+                        tileList[i].Position,
+                        tileList[i].Transform,
+                        GameObject.Instance.GraphicsDevice,
+                        GameObject.Instance.SpriteBatch,
+                        tileList[i].ScaleVector,
+                        SpriteEffects.None,
+                        (ushort)CollisionGroup.Tile,
+                        tileList[i].InstanceNumber
+                    );
+
+                    foreach (Collision collision in collisions)
                     {
-                        if (((collision.other as Player) is Player) && collision.self is Tile)
+                        if (collision.other != null)
                         {
-                            Player.PlayerInstance.Position += collision.mtv;
-                            Player.PlayerInstance.Collider.Resolved = true;
+                            if (((collision.other as Player) is Player) && collision.self is Tile)
+                            {
+                                Player.PlayerInstance.Position += collision.mtv;
+                                Player.PlayerInstance.Collider.Resolved = true;
+                            }
                         }
                     }
+                    tileList[i].Collider.Resolved = true;
+                    tileList[i].Update(gameTime);
                 }
-                tileList[i].Collider.Resolved = true;
-                tileList[i].Update(gameTime);
             }
             #endregion
 
@@ -363,12 +369,18 @@ namespace Galabingus
 
             for (int i = 0; i < borderList.Count; i++)
             {
-                borderList[i].Draw();
+                if (borderList[i].IsActive)
+                {
+                    borderList[i].Draw();
+                }
             }
 
             for (int i = 0; i < tileList.Count; i++)
             {
-                tileList[i].Draw();
+                if (tileList[i].IsActive)
+                {
+                    tileList[i].Draw();
+                }
             }
         }
     }

@@ -163,6 +163,12 @@ namespace Galabingus
                 //Debug.WriteLine(Player.PlayerInstance.Velocity.Y);
                 //Debug.WriteLine(Camera.Instance.OffSet.Y);
             }
+            Debug.WriteLine(Camera.instance.position);
+
+            if (Camera.instance.Position.Y > 0 && Camera.instance.OffSet.Y > 0) 
+            {
+                Player.PlayerInstance.Health = 0;
+            }
         }
     }
 }
