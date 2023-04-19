@@ -595,6 +595,7 @@ namespace Galabingus
                             // Creates an explosion
                             BulletSpawning(0, BulletType.BigExplosion, new Vector2(-360, 0), 0);
                             AudioManager.Instance.CallSound("Explosion");
+                            GameObject.Instance.StopBossEffect();
                             break;
 
                         default:
