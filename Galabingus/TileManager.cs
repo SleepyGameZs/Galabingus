@@ -211,7 +211,7 @@ namespace Galabingus
         {
             Tile tile = new Tile(content, tileInstance, spriteNumber);
             tile.Scale = Player.PlayerInstance.Scale;
-            tile.Position = Vector2.Zero;
+            tile.Position = position;
             tile.ScaleVector = new Vector2(tile.Scale, tile.Scale);
             tileList.Add(tile);
             tileInstance++;

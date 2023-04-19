@@ -149,6 +149,9 @@ namespace Galabingus
             tileManager = TileManager.Instance;
             tileManager.CreateTile(1);
 
+            //tileManager.CreateObject(GameObject.Instance.Content.tile_strip26, Vector2.Zero, 25);
+            //tileManager.CreateObject();
+
             // Load the temporary background
             //tempBackground = Content.Load<Texture2D>("spacebackground_strip1");
             tileManager.CreateBackground();

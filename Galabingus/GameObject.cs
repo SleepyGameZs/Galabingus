@@ -1410,6 +1410,8 @@ namespace Galabingus
                 {
                     string[] column = data.Split('|');
 
+                    System.Diagnostics.Debug.WriteLine(data);
+
                     foreach (string num in column)
                     {
                         Vector2 assetPosition = CalculateLevelEditorPositions(width, height, xInput, yInput);
@@ -1418,8 +1420,7 @@ namespace Galabingus
                         {
                             //System.Diagnostics.Debug.WriteLine(assetPosition);
                             //TileManager.Instance.CreateObject(GameObject.Instance.Content.smallbullet_strip4, Vector2.Zero);
-                            //TileManager.Instance.CreateObject(GameObject.Instance.Content.tile_strip26,assetPosition,(ushort)(int.Parse(num) - 9));
-
+                            //TileManager.Instance.CreateObject(GameObject.Instance.Content.tile_strip26,Vector2.Zero,(ushort)23);
                         }
 
                         xInput++;
