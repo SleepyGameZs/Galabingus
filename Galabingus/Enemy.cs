@@ -605,6 +605,12 @@ namespace Galabingus
                             // Creates an explosion
                             BulletSpawning(0, BulletType.Explosion, new Vector2(-180, 0), 0);
                             AudioManager.Instance.CallSound("Explosion");
+
+                            // Has a chance to spawn hearts
+                            if (rng.Next(3) == 1)
+                            {
+                                BulletSpawning(0, BulletType.Heart, new Vector2(-25, 0), 0);
+                            }
                             break;
                     }
                 }
@@ -723,7 +729,7 @@ namespace Galabingus
         {
             double percentageChange = 1 + (0.1 * shotWaitTime);
 
-            if (shotTimer > (int)(shootDelay * percentageChange))
+            if (shotTimer >= (int)(shootDelay * percentageChange))
             {
                 CreateBullet(ability, shootOffset, horizontalDirection);
 
