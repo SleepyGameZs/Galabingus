@@ -226,6 +226,7 @@ namespace Galabingus
         public Vector2 Direction
         {
             get { return direction; }
+            set { direction = value; }
         }
 
         /// <summary>
@@ -458,7 +459,7 @@ namespace Galabingus
                     if (LeftWallHit || RightWallHit)
                     { // Flip bullet
                         velocity.X *= -1;
-                        direction.X *= -1;
+                        Direction = new Vector2(Direction.X * - 1, Direction.Y);
                     }
 
                     break;
@@ -479,12 +480,12 @@ namespace Galabingus
                     float rightBound = PlayerY;
                     float leftBound = PlayerY;
 
-                    if (direction.Y == 1)
+                    if (direction.Y == -1)
                     { // Facing Right
                         rightBound = (PlayerY + Player.PlayerInstance.Transform.Height * Player.PlayerInstance.Scale * 0.35f) + 1;
                         leftBound = (PlayerY) - 1;
                     } 
-                    else if (direction.Y == -1)
+                    else if (direction.Y == 1)
                     { // Facing Left
                         rightBound = (PlayerY + Player.PlayerInstance.Transform.Height * Player.PlayerInstance.Scale) + 1;
                         leftBound = (PlayerY + Player.PlayerInstance.Transform.Height * Player.PlayerInstance.Scale * 0.65f) - 1;
@@ -608,20 +609,15 @@ namespace Galabingus
             // Tells Collider to use proper visual direction
             SpriteEffects flipping = SpriteEffects.None;
 
-            if (Direction.X == -1)
+            if (this.Direction.X == -1)
             { // Flip Horizontally
                 flipping = SpriteEffects.FlipHorizontally;
             }
 
-            if (Direction.Y == 1)
+            if (this.Direction.Y == 1)
             { // Flip Vertically
                 flipping = flipping | SpriteEffects.FlipVertically;
             }
-
-            //if (flipping == (SpriteEffects.FlipHorizontally | SpriteEffects.FlipVertically))
-            //{
-            //    System.Diagnostics.Debug.WriteLine(SpriteEffects.FlipHorizontally | SpriteEffects.FlipVertically);
-            //}
 
             List<Collision> intercepts = this.Collider.UpdateTransform(
                 this.Sprite,                            // Bullet Sprite itself
@@ -629,7 +625,7 @@ namespace Galabingus
                 this.Transform,                         // Bullet transform for sprite selection
                 GameObject.Instance.GraphicsDevice,     // Graphics Device Info
                 GameObject.Instance.SpriteBatch,        // Sprite Batcher (carries through)
-                1,                                      // Removed old variant of direction (bully Matt to remove this)
+                0,                                      // Removed old variant of direction (bully Matt to remove this)
                 new Vector2(this.Scale, this.Scale),    // Scale
                 flipping,                               // Sprite Effects
                 (ushort)collisionLayer,                 // Collision Layer
