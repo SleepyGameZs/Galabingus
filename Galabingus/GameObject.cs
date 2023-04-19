@@ -932,22 +932,22 @@ namespace Galabingus
             {
 
                 flipSine = !flipSine;
-                timeShadeEffect -= 0.1f;
+                timeShadeEffect -= 0.01f;
             }
             else if (timeShadeEffect <= 0)
             {
                 flipSine = !flipSine;
-                timeShadeEffect += 0.1f;
+                timeShadeEffect += 0.01f;
             }
             else
             {
                 if (flipSine)
                 {
-                    timeShadeEffect -= 0.1f;
+                    timeShadeEffect -= 0.01f;
                 }
                 else
                 {
-                    timeShadeEffect += 0.1f;
+                    timeShadeEffect += 0.01f;
                 }
             }
 
@@ -1000,6 +1000,22 @@ namespace Galabingus
             result = index;
             //GameObject.Instance.Content = index;
             return exist;
+        }
+
+        public Texture2D GetSpriteFrom(ushort contentName, ushort instanceNumber)
+        {
+            GameObject.Instance.Content = contentName;
+            GameObject.Instance.instance = instanceNumber;
+            string path = GameObject.ObjectEnumsI[contentName];
+            GameObject.Instance.index = contentName;
+            string start = "../../../Content";
+            string[] files = Directory.GetFiles(start, path + ".*", SearchOption.AllDirectories);
+            files[0] = files[0].Replace(start, "");
+            files[0] = files[0].Replace("\\", "/");
+            files[0] = files[0].Substring(1);
+            files[0] = files[0].Substring(0, files[0].LastIndexOf('.'));
+
+            return GameObject.Instance.contentManager.Load<Texture2D>(files[0]);
         }
 
         public void LoadSprite(ushort contentName, ushort instanceNumber)
