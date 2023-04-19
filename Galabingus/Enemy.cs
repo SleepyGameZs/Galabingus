@@ -25,8 +25,8 @@ namespace Galabingus
     {
         Normal,
         Bouncing,
-        Splitter,
         Wave,
+        Splitter,
         Seeker,
         Bomb,
         Boss
@@ -366,9 +366,13 @@ namespace Galabingus
             // Set base position to be stored for dictionary keys
             initialPosition = position;
 
-            #endregion
+            // Boss Data
+            bossPhase = EnemyType.Normal;
+            stateTimer = 0;
 
-        }
+        #endregion
+
+    }
 
         #endregion
 
@@ -446,26 +450,110 @@ namespace Galabingus
                             switch (bossPhase)
                             {
                                 case EnemyType.Normal:
-                                    if (stateTimer % 25 == 0 && stateTimer >= 300)
+                                    // Shooting
+                                    bool normalRange = (stateTimer >= 100 && stateTimer < 200) ||
+                                                       (stateTimer >= 250 && stateTimer < 350) ||
+                                                       (stateTimer >= 400 && stateTimer < 500);
+
+                                    if (stateTimer % 10 == 0 && normalRange)
                                     {
-                                        BulletSpawning(130, BulletType.EnemyNormal, new Vector2(-25, 0), 0);
+                                        BulletSpawning(0, BulletType.EnemyNormal, new Vector2(-25, 0), 0);
+                                    }
+
+                                    // Change to make use of game time
+                                    if (stateTimer >= 500)
+                                    {
+                                        bossPhase++;
+                                        stateTimer = 0;
+                                        if (bossPhase == EnemyType.Bomb)
+                                        {
+                                            bossPhase = EnemyType.Normal;
+                                        }
                                     }
                                     break;
-                            }
 
-                            // Change to make use of game time
-                            if (stateTimer >= 600)
-                            {
-                                bossPhase++;
-                                stateTimer = 0;
-                                if (bossPhase == EnemyType.Bomb)
-                                {
-                                    bossPhase = EnemyType.Normal;
-                                }
+                                case EnemyType.Bouncing:
+                                    // Shooting Bouncy shots
+                                    if (stateTimer % 70 == 0 && stateTimer >= 70)
+                                    {
+                                        BulletSpawning(0,
+                                           new BulletType[]
+                                           {
+                                           BulletType.BouncingSide,
+                                           BulletType.BouncingCenter,
+                                           BulletType.BouncingSide
+                                           },
+                                           new Vector2[]
+                                           {
+                                           new Vector2(-14, 0),
+                                           new Vector2(-14, 0),
+                                           new Vector2(-24, 0)
+                                           },
+                                           new int[] { -1, 0, 1 }
+                                           );
+                                    }
+
+                                    // Change to make use of game time
+                                    if (stateTimer >= 420)
+                                    {
+                                        bossPhase++;
+                                        stateTimer = 0;
+                                        if (bossPhase == EnemyType.Bomb)
+                                        {
+                                            bossPhase = EnemyType.Normal;
+                                        }
+                                    }
+                                    break;
+
+                                case EnemyType.Wave:
+                                    // Shooting
+
+                                    if (stateTimer % 80 == 0 && stateTimer >= 100)
+                                    {
+                                        BulletSpawning(0, BulletType.Wave, new Vector2(-115, 0), 0);
+                                    }
+
+                                    // Change to make use of game time
+                                    if (stateTimer >= 500)
+                                    {
+                                        bossPhase++;
+                                        stateTimer = 0;
+                                        if (bossPhase == EnemyType.Bomb)
+                                        {
+                                            bossPhase = EnemyType.Normal;
+                                        }
+                                    }
+                                    break;
+
+                                case EnemyType.Splitter:
+                                    // Shooting
+                                    bool splitterRange = (stateTimer >= 100 && stateTimer <= 160) ||
+                                                       (stateTimer >= 210 && stateTimer <= 270) ||
+                                                       (stateTimer >= 320 && stateTimer < 380);
+
+                                    if (stateTimer % 30 == 0 && splitterRange)
+                                    {
+                                        BulletSpawning(0, BulletType.Splitter, new Vector2(-42, 0), 0);
+                                    }
+
+                                    // Change to make use of game time
+                                    if (stateTimer >= 380)
+                                    {
+                                        bossPhase++;
+                                        stateTimer = 0;
+                                        if (bossPhase == EnemyType.Bomb)
+                                        {
+                                            bossPhase = EnemyType.Normal;
+                                        }
+                                    }
+                                    break;
+
+
                             }
 
                             // Increment state timer 
                             stateTimer++;
+                            
 
                             break;
                     }
