@@ -160,6 +160,10 @@ namespace Galabingus
                     sprite = GameObject.Instance.Content.big_explode_strip5;
                     break;
 
+                case BulletType.Heart:
+                    sprite = GameObject.Instance.Content.heartbullet_strip4;
+                    break;
+
                 default:
                     sprite = GameObject.Instance.Content.smallbullet_strip4;
                     break;

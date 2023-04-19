@@ -36,6 +36,7 @@ namespace Galabingus
         Seeker,
         Explosion,
         BigExplosion,
+        Heart,
         LazerPath,
         LazerStart,
         LazerAttack
@@ -416,6 +417,14 @@ namespace Galabingus
                     this.Animation.AnimationDuration = 0.07f;
                     break;
 
+                case BulletType.Heart:
+                    // Violet Enemy: Tracks the player, however it eventually loses focus
+                    GameObject.Instance.Content = GameObject.Instance.Content.heartbullet_strip4;
+
+                    // Can target: Player
+                    target = Targets.Player;
+                    break;
+
                 default:
                     // In case of glass break game
                     GameObject.Instance.Content = GameObject.Instance.Content.smallbullet_strip4;
@@ -514,22 +523,22 @@ namespace Galabingus
                     break;
 
                 case BulletType.Seeker:
-                    Player player = Player.PlayerInstance;
+                    Player seekerPlayer = Player.PlayerInstance;
 
-                    if (this.Position.Y < player.Position.Y)
+                    if (this.Position.Y < seekerPlayer.Position.Y)
                     {
                         // Get Player's Center relative to bullet
-                        Vector2 playerCenter = new Vector2(player.Position.X + (player.Transform.Width * player.Scale) / 2,
-                                                           player.Position.Y + (player.Transform.Height * player.Scale) / 2);
+                        Vector2 seekerPlayerCenter = new Vector2(seekerPlayer.Position.X + (seekerPlayer.Transform.Width * seekerPlayer.Scale) / 2,
+                                                           seekerPlayer.Position.Y + (seekerPlayer.Transform.Height * seekerPlayer.Scale) / 2);
 
                         // Get Bullet's Center
-                        Vector2 bulletCenter = new Vector2(oldPosition.X, oldPosition.Y);
+                        Vector2 seekerBulletCenter = new Vector2(oldPosition.X, oldPosition.Y);
 
                         // Find vector distance between player and bullet
-                        Vector2 playerBulletDistance = playerCenter - bulletCenter;
+                        Vector2 seekerPlayerBulletDistance = seekerPlayerCenter - seekerBulletCenter;
 
                         // Check which way to shift angle
-                        if (playerBulletDistance.X > 0)
+                        if (seekerPlayerBulletDistance.X > 0)
                         {
                             velocity.X = Math.Max(velocity.X + 0.03f, 0.1f);
                         } else
@@ -566,6 +575,31 @@ namespace Galabingus
                         destroy = true;
                         velocity = Vector2.Zero;
                     }
+
+                    break;
+
+                case BulletType.Heart:
+                    
+                    // Change angle over time
+                    Player heartPlayer = Player.PlayerInstance;
+                    // Get Player's Center relative to bullet
+                    Vector2 heartPlayerCenter = new Vector2(heartPlayer.Position.X + (heartPlayer.Transform.Width * heartPlayer.Scale) / 2,
+                                                       heartPlayer.Position.Y + (heartPlayer.Transform.Height * heartPlayer.Scale) / 2);
+                    // Get Bullet's  Center
+                    Vector2 heartBulletCenter = new Vector2(oldPosition.X, oldPosition.Y);
+                    // Find vector distance between player and bullet
+                    Vector2 heartPlayerBulletDistance = heartPlayerCenter - heartBulletCenter;
+                    // Find angle distance between player and bullet
+                    double heartPlayerBulletAngle = Math.Atan2(heartPlayerBulletDistance.X, 
+                                                          heartPlayerBulletDistance.Y);
+
+                    // Find midpoint between current velocity and player line velocity
+                    velocity = Vector2.Normalize(new Vector2((float)(10 * Math.Sin(heartPlayerBulletAngle)), // X
+                                                             (float)(10 * Math.Cos(heartPlayerBulletAngle))  // Y
+                                                             ));
+
+                    // Set Current Position
+                    currentPosition = SetPosition(gameTime, 3, false);
 
                     break;
 
@@ -659,6 +693,10 @@ namespace Galabingus
 
                                         case BulletType.Wave:
                                             Player.PlayerInstance.Health = Player.PlayerInstance.Health - 3f;
+                                            break;
+
+                                        case BulletType.Heart:
+                                            Player.PlayerInstance.Health = Math.Min(Player.PlayerInstance.Health + 1f, 5);
                                             break;
 
                                         default:
