@@ -199,7 +199,7 @@ namespace Galabingus
             tile.Scale = 1f;
             tile.Position = position;
             tile.ScaleVector = new Vector2(tile.Scale, tile.Scale);
-            borderList.Add(tile);
+            tileList.Add(tile);
             tileInstance++;
         }
 
@@ -210,17 +210,17 @@ namespace Galabingus
         public void CreateObject(dynamic content, Vector2 position, ushort spriteNumber)
         {
             Tile tile = new Tile(content, tileInstance, spriteNumber);
-            tile.Transform = new Rectangle(0, 0, tile.Sprite.Width, tile.Sprite.Height);
             tile.Scale = Player.PlayerInstance.Scale;
             tile.Position = Vector2.Zero;
             tile.ScaleVector = new Vector2(tile.Scale, tile.Scale);
-            borderList.Add(tile);
+            tileList.Add(tile);
             tileInstance++;
         }
 
 
         public void Update(GameTime gameTime)
         {
+            #region Border Update
             for (int i = 0; i < borderList.Count; i++)
             {
                 //currentSpriteNumber = tilesList[i].SpriteNumber;
@@ -253,8 +253,41 @@ namespace Galabingus
                 borderList[i].Collider.Resolved = true;
 
             }
+            #endregion
 
-            // Background Scroll
+            #region Object Update
+            for (int i = 0; i < tileList.Count; i++)
+            {
+                tileList[i].Collider.Resolved = true;
+                List<Collision> collisions = tileList[i].Collider.UpdateTransform(
+                    tileList[i].Sprite,
+                    tileList[i].Position,
+                    tileList[i].Transform,
+                    GameObject.Instance.GraphicsDevice,
+                    GameObject.Instance.SpriteBatch,
+                    tileList[i].ScaleVector,
+                    SpriteEffects.None,
+                    (ushort)CollisionGroup.Tile,
+                    tileList[i].InstanceNumber
+                );
+
+                foreach (Collision collision in collisions)
+                {
+                    if (collision.other != null)
+                    {
+                        if (((collision.other as Player) is Player) && collision.self is Tile)
+                        {
+                            Player.PlayerInstance.Position += collision.mtv;
+                            Player.PlayerInstance.Collider.Resolved = true;
+                        }
+                    }
+                }
+                tileList[i].Collider.Resolved = true;
+                tileList[i].Update(gameTime);
+            }
+            #endregion
+
+            #region Background Scroll
             for (int i = 0; i < backgroundList.Count; i++)
             {
                 backgroundList[i].Update(gameTime);
@@ -285,6 +318,7 @@ namespace Galabingus
                     }
                 }
             }
+            #endregion
 
             // Stop the camera at the different camera stops
             bool stopHit = false;
