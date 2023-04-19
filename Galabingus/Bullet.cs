@@ -30,12 +30,13 @@ namespace Galabingus
         EnemyNormal,
         BouncingSide,
         BouncingCenter,
+        Wave,
         Splitter,
         SplitOff,
-        Wave,
         Seeker,
         Explosion,
         BigExplosion,
+        Heart,
         LazerPath,
         LazerStart,
         LazerAttack
@@ -226,6 +227,7 @@ namespace Galabingus
         public Vector2 Direction
         {
             get { return direction; }
+            set { direction = value; }
         }
 
         /// <summary>
@@ -415,6 +417,14 @@ namespace Galabingus
                     this.Animation.AnimationDuration = 0.07f;
                     break;
 
+                case BulletType.Heart:
+                    // Violet Enemy: Tracks the player, however it eventually loses focus
+                    GameObject.Instance.Content = GameObject.Instance.Content.heartbullet_strip4;
+
+                    // Can target: Player
+                    target = Targets.Player;
+                    break;
+
                 default:
                     // In case of glass break game
                     GameObject.Instance.Content = GameObject.Instance.Content.smallbullet_strip4;
@@ -458,7 +468,7 @@ namespace Galabingus
                     if (LeftWallHit || RightWallHit)
                     { // Flip bullet
                         velocity.X *= -1;
-                        direction.X *= -1;
+                        Direction = new Vector2(Direction.X * - 1, Direction.Y);
                     }
 
                     break;
@@ -479,12 +489,12 @@ namespace Galabingus
                     float rightBound = PlayerY;
                     float leftBound = PlayerY;
 
-                    if (direction.Y == 1)
+                    if (direction.Y == -1)
                     { // Facing Right
                         rightBound = (PlayerY + Player.PlayerInstance.Transform.Height * Player.PlayerInstance.Scale * 0.35f) + 1;
                         leftBound = (PlayerY) - 1;
                     } 
-                    else if (direction.Y == -1)
+                    else if (direction.Y == 1)
                     { // Facing Left
                         rightBound = (PlayerY + Player.PlayerInstance.Transform.Height * Player.PlayerInstance.Scale) + 1;
                         leftBound = (PlayerY + Player.PlayerInstance.Transform.Height * Player.PlayerInstance.Scale * 0.65f) - 1;
@@ -513,27 +523,27 @@ namespace Galabingus
                     break;
 
                 case BulletType.Seeker:
-                    Player player = Player.PlayerInstance;
+                    Player seekerPlayer = Player.PlayerInstance;
 
-                    if (this.Position.Y < player.Position.Y)
+                    if (this.Position.Y < seekerPlayer.Position.Y)
                     {
                         // Get Player's Center relative to bullet
-                        Vector2 playerCenter = new Vector2(player.Position.X + (player.Transform.Width * player.Scale) / 2,
-                                                           player.Position.Y + (player.Transform.Height * player.Scale) / 2);
+                        Vector2 seekerPlayerCenter = new Vector2(seekerPlayer.Position.X + (seekerPlayer.Transform.Width * seekerPlayer.Scale) / 2,
+                                                           seekerPlayer.Position.Y + (seekerPlayer.Transform.Height * seekerPlayer.Scale) / 2);
 
                         // Get Bullet's Center
-                        Vector2 bulletCenter = new Vector2(oldPosition.X, oldPosition.Y);
+                        Vector2 seekerBulletCenter = new Vector2(oldPosition.X, oldPosition.Y);
 
                         // Find vector distance between player and bullet
-                        Vector2 playerBulletDistance = playerCenter - bulletCenter;
+                        Vector2 seekerPlayerBulletDistance = seekerPlayerCenter - seekerBulletCenter;
 
                         // Check which way to shift angle
-                        if (playerBulletDistance.X > 0)
+                        if (seekerPlayerBulletDistance.X > 0)
                         {
-                            velocity.X = Math.Max(velocity.X + 0.02f, 0.1f);
+                            velocity.X = Math.Max(velocity.X + 0.03f, 0.1f);
                         } else
                         {
-                            velocity.X = Math.Min(velocity.X - 0.02f, -0.1f);
+                            velocity.X = Math.Min(velocity.X - 0.03f, -0.1f);
                         }
 
                         // Normalize the new velocity
@@ -565,6 +575,31 @@ namespace Galabingus
                         destroy = true;
                         velocity = Vector2.Zero;
                     }
+
+                    break;
+
+                case BulletType.Heart:
+                    
+                    // Change angle over time
+                    Player heartPlayer = Player.PlayerInstance;
+                    // Get Player's Center relative to bullet
+                    Vector2 heartPlayerCenter = new Vector2(heartPlayer.Position.X + (heartPlayer.Transform.Width * heartPlayer.Scale) / 2,
+                                                       heartPlayer.Position.Y + (heartPlayer.Transform.Height * heartPlayer.Scale) / 2);
+                    // Get Bullet's  Center
+                    Vector2 heartBulletCenter = new Vector2(oldPosition.X, oldPosition.Y);
+                    // Find vector distance between player and bullet
+                    Vector2 heartPlayerBulletDistance = heartPlayerCenter - heartBulletCenter;
+                    // Find angle distance between player and bullet
+                    double heartPlayerBulletAngle = Math.Atan2(heartPlayerBulletDistance.X, 
+                                                          heartPlayerBulletDistance.Y);
+
+                    // Find midpoint between current velocity and player line velocity
+                    velocity = Vector2.Normalize(new Vector2((float)(10 * Math.Sin(heartPlayerBulletAngle)), // X
+                                                             (float)(10 * Math.Cos(heartPlayerBulletAngle))  // Y
+                                                             ));
+
+                    // Set Current Position
+                    currentPosition = SetPosition(gameTime, 3, false);
 
                     break;
 
@@ -608,12 +643,12 @@ namespace Galabingus
             // Tells Collider to use proper visual direction
             SpriteEffects flipping = SpriteEffects.None;
 
-            if (Direction.X == -1)
+            if (this.Direction.X == -1)
             { // Flip Horizontally
                 flipping = SpriteEffects.FlipHorizontally;
             }
 
-            if (Direction.Y == 1)
+            if (this.Direction.Y == 1)
             { // Flip Vertically
                 flipping = flipping | SpriteEffects.FlipVertically;
             }
@@ -624,7 +659,7 @@ namespace Galabingus
                 this.Transform,                         // Bullet transform for sprite selection
                 GameObject.Instance.GraphicsDevice,     // Graphics Device Info
                 GameObject.Instance.SpriteBatch,        // Sprite Batcher (carries through)
-                1,                                      // Removed old variant of direction (bully Matt to remove this)
+                0,                                      // Removed old variant of direction (bully Matt to remove this)
                 new Vector2(this.Scale, this.Scale),    // Scale
                 flipping,                               // Sprite Effects
                 (ushort)collisionLayer,                 // Collision Layer
@@ -650,7 +685,24 @@ namespace Galabingus
                             { // Collided object is a player!
                                 if ((Player.PlayerInstance.Health - 0.5) >= 0)
                                 {
-                                    Player.PlayerInstance.Health = Player.PlayerInstance.Health - 0.5f;
+                                    switch (ability)
+                                    {
+                                        case BulletType.EnemyNormal:
+                                            Player.PlayerInstance.Health = Player.PlayerInstance.Health - 1f;
+                                            break;
+
+                                        case BulletType.Wave:
+                                            Player.PlayerInstance.Health = Player.PlayerInstance.Health - 3f;
+                                            break;
+
+                                        case BulletType.Heart:
+                                            Player.PlayerInstance.Health = Math.Min(Player.PlayerInstance.Health + 1f, 5);
+                                            break;
+
+                                        default:
+                                            Player.PlayerInstance.Health = Player.PlayerInstance.Health - 0.5f;
+                                            break;
+                                    }
                                 }
 
                                 // Destroy the bullet
@@ -694,14 +746,23 @@ namespace Galabingus
                                 { // Collided object is a player!
                                     if ((Player.PlayerInstance.Health - 0.5) >= 0)
                                     {
-                                        Player.PlayerInstance.Health = Player.PlayerInstance.Health - 0.5f;
+                                        Player.PlayerInstance.Health = Player.PlayerInstance.Health - 1f;
                                     }
 
                                     hitObjects.Add(collision.other);
                                 }
                                 else if ((collision.other as Enemy) is Enemy)
                                 { // Collided object is an Enemy
-                                    ((Enemy)collision.other).Health -= 1;
+                                    switch (ability)
+                                    {
+                                        case BulletType.BigExplosion:
+                                            ((Enemy)collision.other).Health -= 2;
+                                            break;
+
+                                        default:
+                                            ((Enemy)collision.other).Health -= 1;
+                                            break;
+                                    }
 
                                     // Kill the enemy if its health is below zero
                                     if (((Enemy)collision.other).Health <= 0)
@@ -742,7 +803,6 @@ namespace Galabingus
             if (Camera.Instance.CameraLock)
             { // In debug mode
                 Vector2 playerMovement = new Vector2(0, Player.PlayerInstance.Translation.Y);
-                System.Diagnostics.Debug.WriteLine(Player.PlayerInstance.Translation.Y);
                 this.Position += finalVelocity + (ignoreCamera ? Vector2.Zero : playerMovement);
             } 
             else

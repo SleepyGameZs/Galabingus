@@ -88,6 +88,18 @@
 /processorParam:TextureFormat=Color
 /build:Boss/boss_green_strip4.png
 
+#begin Boss/boss_lightblue_strip4.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Boss/boss_lightblue_strip4.png
+
 #begin Boss/boss_orange_strip4.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -489,6 +501,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:heart_strip1.png
+
+#begin heartbullet_strip4.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:heartbullet_strip4.png
 
 #begin menubackground_strip1.png
 /importer:TextureImporter

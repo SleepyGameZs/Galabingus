@@ -160,6 +160,10 @@ namespace Galabingus
                     sprite = GameObject.Instance.Content.big_explode_strip5;
                     break;
 
+                case BulletType.Heart:
+                    sprite = GameObject.Instance.Content.heartbullet_strip4;
+                    break;
+
                 default:
                     sprite = GameObject.Instance.Content.smallbullet_strip4;
                     break;
@@ -247,7 +251,6 @@ namespace Galabingus
         {
             for (int i = 0; i < Instance.activeBullets.Count; i++)
             {
-
                 if (Instance.activeBullets[i] != null)
                 {
                     // Runs the bullet's update.
@@ -292,7 +295,6 @@ namespace Galabingus
             {
                 if (bullet != null)
                 {
-
                     SpriteEffects flipping = SpriteEffects.None;
 
                     if (bullet.Direction.X == -1)

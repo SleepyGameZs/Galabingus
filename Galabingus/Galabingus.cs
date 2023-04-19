@@ -4,7 +4,9 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Security.Cryptography.X509Certificates;
 using static System.Formats.Asn1.AsnWriter;
+using static System.Net.Mime.MediaTypeNames;
 
 // Wabungus Corpsungus Duplicatungus
 // 2023, 3, 13
@@ -122,9 +124,9 @@ namespace Galabingus
             l_a4_obj_enemyData.Add(new int[] { 1, 5, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 1 - 240), (GameObject.Instance.GraphicsDevice.Viewport.Height * -4) + 10, 0 });
             */
 
-
-
             l_a4_obj_enemyData = GameObject.Instance.LoadEnemyLeveFile("GalabingusLevel.level");
+
+            l_a4_obj_enemyData.Add(new int[] { 1, 6, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 0.5f), (GameObject.Instance.GraphicsDevice.Viewport.Height * 0), 1 });
 
             //l_a4_obj_enemyData.Add(new int[] { 1, 1, 0, 0, 0 });
 
@@ -173,6 +175,13 @@ namespace Galabingus
                 GameObject.Instance.HoldCollider = false;
                 //colliderTimer = 2;
             }
+
+            //Debug.WriteLine(GameObject.Instance.TimeShade);
+
+            GameObject.Instance.PlayBossEffect();
+            shaders.Parameters["bossEffect"].SetValue(GameObject.Instance.IsBossEffectActive);
+            shaders.Parameters["shadeFadeTime"].SetValue(GameObject.Instance.TimeShade);
+            shaders.Parameters["redShade"].SetValue(1);
 
             colliderTimer--;
 

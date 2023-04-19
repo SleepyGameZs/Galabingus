@@ -8,8 +8,11 @@
 #endif
 
 uniform float fade;
+uniform float redShade;
+uniform float shadeFadeTime;
 uniform bool fadeIn;
 uniform bool fadeOut;
+uniform bool bossEffect;
 
 Texture2D SpriteTexture;
 
@@ -56,6 +59,15 @@ float3 normalizeSaturation(float4 color)
 	}
 
 	return  color * 1.3f;
+}
+
+float4 BossEffect(float4 inColor)
+{
+	if (bossEffect)// && inColor.a == 1)
+	{
+		return float4(inColor.r, inColor.g * redShade * shadeFadeTime, inColor.b * redShade * shadeFadeTime, inColor.a);
+	}
+	return float4(inColor.r, inColor.g, inColor.b, inColor.a);
 }
 
 float4 FadeIn(float4 inColor)
@@ -204,11 +216,9 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 		halationLerp = lerpPixels;
 	}
 
-
-
 	halationLerp.a = lerpPixels.a;
 
-	return FadeIn(FadeOut(halationLerp));
+	return BossEffect(FadeIn(FadeOut(halationLerp)));
 }
 
 technique SpriteDrawing

@@ -25,8 +25,8 @@ namespace Galabingus
     {
         Normal,
         Bouncing,
-        Splitter,
         Wave,
+        Splitter,
         Seeker,
         Bomb,
         Boss
@@ -67,6 +67,10 @@ namespace Galabingus
         private int currentHealth;
         private int totalHealth;
 
+        // Whether or not this enemy is a boss
+        private EnemyType bossPhase;
+        private int stateTimer;
+
         // Reference to what thing created this enemy (can be null)
         private object creatorReference;
 
@@ -106,6 +110,11 @@ namespace Galabingus
             {
                 GameObject.Instance.Content = contentName;
                 return GetSprite(enemyNumber);
+            }
+            set
+            {
+                GameObject.Instance.Content = contentName;
+                SetSprite(enemyNumber, value);
             }
         }
 
@@ -347,9 +356,7 @@ namespace Galabingus
             // Set shot timer with some randomization
             shotTimer = rng.Next(50);
 
-            // Set Health
-            totalHealth = 3;
-            currentHealth = totalHealth;
+            
 
             // Set if enemy should move
             this.shouldMove = shouldMove;
@@ -357,9 +364,27 @@ namespace Galabingus
             // Set base position to be stored for dictionary keys
             initialPosition = position;
 
-            #endregion
+            // Boss Data + Health
+            if (ability == EnemyType.Boss)
+            {
+                // Set Health
+                totalHealth = 100;
 
-        }
+                // Start boss effect
+                GameObject.Instance.StartBossEffect();
+            } 
+            else
+            {
+                // Normal health
+                totalHealth = 3;
+            }
+            currentHealth = totalHealth;
+            bossPhase = EnemyType.Normal;
+            stateTimer = 0;
+
+        #endregion
+
+    }
 
         #endregion
 
@@ -427,6 +452,129 @@ namespace Galabingus
                             // Shoots
                             BulletSpawning(170, BulletType.Seeker, new Vector2(-15, 0), 0);
                             break;
+
+                        case EnemyType.Boss:
+                            // Base data
+                            int phaseTime = 0;
+                            ushort newSprite = 0;
+
+                            // Switch for various attacks
+                            switch (bossPhase)
+                            {
+                                case EnemyType.Normal:
+                                    // Set the new boss sprite
+                                    newSprite = GameObject.Instance.Content.boss_red_strip4;
+                                    this.Sprite = GetSpriteFrom(newSprite, enemyNumber);
+
+                                    // Shooting
+                                    bool normalRange = (stateTimer >= 100 && stateTimer < 200) ||
+                                                       (stateTimer >= 250 && stateTimer < 350) ||
+                                                       (stateTimer >= 400 && stateTimer < 500);
+
+                                    if (stateTimer % 10 == 0 && normalRange)
+                                    {
+                                        BulletSpawning(0, BulletType.EnemyNormal, new Vector2(-25, 0), 0);
+                                    }
+
+                                    // Time till next phase
+                                    phaseTime = 500;
+                                    break;
+
+                                case EnemyType.Bouncing:
+                                    // Set the new boss sprite
+                                    newSprite = GameObject.Instance.Content.boss_orange_strip4;
+                                    this.Sprite = GetSpriteFrom(newSprite, enemyNumber);
+
+                                    // Shooting Bouncy shots
+                                    if (stateTimer % 70 == 0 && stateTimer >= 70)
+                                    {
+                                        BulletSpawning(0,
+                                           new BulletType[]
+                                           {
+                                           BulletType.BouncingSide,
+                                           BulletType.BouncingCenter,
+                                           BulletType.BouncingSide
+                                           },
+                                           new Vector2[]
+                                           {
+                                           new Vector2(-14, 0),
+                                           new Vector2(-14, 0),
+                                           new Vector2(-24, 0)
+                                           },
+                                           new int[] { -1, 0, 1 }
+                                           );
+                                    }
+
+                                    // Time till next phase
+                                    phaseTime = 420;
+                                    break;
+
+                                case EnemyType.Wave:
+                                    // Set the new boss sprite
+                                    newSprite = GameObject.Instance.Content.boss_yellow_strip4;
+                                    this.Sprite = GetSpriteFrom(newSprite, enemyNumber);
+
+                                    // Shooting
+                                    if (stateTimer % 80 == 0 && stateTimer >= 100)
+                                    {
+                                        BulletSpawning(0, BulletType.Wave, new Vector2(-115, 0), 0);
+                                    }
+
+                                    // Time till next phase
+                                    phaseTime = 500;
+                                    break;
+
+                                case EnemyType.Splitter:
+                                    // Set the new boss sprite
+                                    newSprite = GameObject.Instance.Content.boss_green_strip4;
+                                    this.Sprite = GetSpriteFrom(newSprite, enemyNumber);
+
+                                    // Shooting
+                                    bool splitterRange = (stateTimer >= 100 && stateTimer <= 160) ||
+                                                       (stateTimer >= 210 && stateTimer <= 270) ||
+                                                       (stateTimer >= 320 && stateTimer < 380);
+
+                                    if (stateTimer % 30 == 0 && splitterRange)
+                                    {
+                                        BulletSpawning(0, BulletType.Splitter, new Vector2(-42, 0), 0);
+                                    }
+
+                                    // Time till next phase
+                                    phaseTime = 380;
+                                    break;
+
+                                case EnemyType.Seeker:
+                                    // Set the new boss sprite
+                                    newSprite = GameObject.Instance.Content.boss_violet_strip4;
+                                    this.Sprite = GetSpriteFrom(newSprite, enemyNumber);
+
+                                    // Shooting
+
+                                    if (stateTimer % 80 == 0 && stateTimer >= 100)
+                                    {
+                                        BulletSpawning(0, BulletType.Seeker, new Vector2(-15, 0), 0);
+                                    }
+
+                                    // Time till next phase
+                                    phaseTime = 500;
+                                    break;
+
+                            }
+
+                            // Change to make use of game time
+                            if (stateTimer >= phaseTime)
+                            {
+                                bossPhase++;
+                                stateTimer = 0;
+                                if (bossPhase == EnemyType.Bomb)
+                                {
+                                    bossPhase = EnemyType.Normal;
+                                }
+                            }
+
+                            // Increment state timer 
+                            stateTimer++;
+                            break;
                     }
                     shotTimer++;
 
@@ -446,10 +594,23 @@ namespace Galabingus
                             AudioManager.Instance.CallSound("Explosion");
                             break;
 
+                        case EnemyType.Boss:
+                            // Creates an explosion
+                            BulletSpawning(0, BulletType.BigExplosion, new Vector2(-360, 0), 0);
+                            AudioManager.Instance.CallSound("Explosion");
+                            GameObject.Instance.StopBossEffect();
+                            break;
+
                         default:
                             // Creates an explosion
                             BulletSpawning(0, BulletType.Explosion, new Vector2(-180, 0), 0);
                             AudioManager.Instance.CallSound("Explosion");
+
+                            // Has a chance to spawn hearts
+                            if (rng.Next(3) == 1)
+                            {
+                                BulletSpawning(0, BulletType.Heart, new Vector2(-25, 0), 0);
+                            }
                             break;
                     }
                 }
@@ -490,7 +651,6 @@ namespace Galabingus
                     {
                         direction.Y = 1;
                     }
-
                 }
                 
                 // Checks what kind of things can be collided with
@@ -500,20 +660,35 @@ namespace Galabingus
                     {
                         if ((collision.other as Tile) is Tile)
                         { // Collided with Tile
+                            if (ability == EnemyType.Boss)
+                            { // Boss deletes tiles
+                                ((Tile)collision.other).IsActive = false;
+                            }
+
                             Vector2 overlapZone = ((Tile)collision.other).ScaleVector;
 
-                            //System.Diagnostics.Debug.WriteLine(overlapZone.X);
-                            //System.Diagnostics.Debug.WriteLine(overlapZone.Y);
                             if (overlapZone.X < overlapZone.Y)
                             {
                                 // Check if collision on left or right
                                 if (this.Position.X < ((Tile)collision.other).Position.X)
                                 {
                                     EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, true);
-                                } else
+                                }
+                                else
                                 {
                                     EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, false);
                                 }
+                            }
+                        } 
+                        else if ((collision.other as Player) is Player)
+                        {
+                            if (ability == EnemyType.Bomb) 
+                            { // Bomb blows up
+                                destroy = true;
+                            } 
+                            else
+                            { // Add enemy IFrames then make player take damage on collision
+                                Player.PlayerInstance.Health = Player.PlayerInstance.Health - 0.5f;
                             }
                         }
                     }
@@ -554,7 +729,7 @@ namespace Galabingus
         {
             double percentageChange = 1 + (0.1 * shotWaitTime);
 
-            if (shotTimer > (int)(shootDelay * percentageChange))
+            if (shotTimer >= (int)(shootDelay * percentageChange))
             {
                 CreateBullet(ability, shootOffset, horizontalDirection);
 
