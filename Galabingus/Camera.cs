@@ -38,6 +38,7 @@ namespace Galabingus
         private bool cameraLock;
         private bool stop;
         private Vector2 position;
+        private Vector2 stopPoint;
 
         // -------------------------------------------------
         // Properties
@@ -73,6 +74,12 @@ namespace Galabingus
         {
             get { return offSet; }
             set { offSet = value; }
+        }
+
+        public Vector2 StopPoint
+        {
+            get { return stopPoint; }
+            set { stopPoint = value; }
         }
 
         public bool Stopped
