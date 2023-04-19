@@ -618,6 +618,11 @@ namespace Galabingus
                 flipping = flipping | SpriteEffects.FlipVertically;
             }
 
+            //if (flipping == (SpriteEffects.FlipHorizontally | SpriteEffects.FlipVertically))
+            //{
+            //    System.Diagnostics.Debug.WriteLine(SpriteEffects.FlipHorizontally | SpriteEffects.FlipVertically);
+            //}
+
             List<Collision> intercepts = this.Collider.UpdateTransform(
                 this.Sprite,                            // Bullet Sprite itself
                 this.Position,                          // Position
@@ -764,7 +769,6 @@ namespace Galabingus
             if (Camera.Instance.CameraLock)
             { // In debug mode
                 Vector2 playerMovement = new Vector2(0, Player.PlayerInstance.Translation.Y);
-                System.Diagnostics.Debug.WriteLine(Player.PlayerInstance.Translation.Y);
                 this.Position += finalVelocity + (ignoreCamera ? Vector2.Zero : playerMovement);
             } 
             else
