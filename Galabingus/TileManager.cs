@@ -369,12 +369,18 @@ namespace Galabingus
 
             for (int i = 0; i < borderList.Count; i++)
             {
-                borderList[i].Draw();
+                if (borderList[i].IsActive)
+                {
+                    borderList[i].Draw();
+                }
             }
 
             for (int i = 0; i < tileList.Count; i++)
             {
-                tileList[i].Draw();
+                if (tileList[i].IsActive)
+                {
+                    tileList[i].Draw();
+                }
             }
         }
     }
