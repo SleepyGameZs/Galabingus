@@ -16,6 +16,7 @@ namespace Galabingus
         private ushort instanceNumber;
         private ushort spriteNumber;
         private Vector2 scale;
+        private bool isActive;
 
         // -------------------------------------------------
         // Properties
@@ -165,6 +166,18 @@ namespace Galabingus
             }
         }
 
+        public bool IsActive
+        {
+            get
+            {
+                return isActive;
+            }
+            set
+            {
+                isActive = value;
+            }
+        }
+
         // -------------------------------------------------
         // Contructors
         // -------------------------------------------------
@@ -178,6 +191,7 @@ namespace Galabingus
             this.Transform = this.Animation.GetFrame(sprite);
             this.Scale = 3.0f;
             this.spriteNumber = sprite;
+            isActive = true;
         }
 
         /// <summary>
@@ -196,6 +210,7 @@ namespace Galabingus
             this.Transform = this.Animation.GetFrame(0);
             this.Scale = 3.0f;
             this.spriteNumber = sprite;
+            isActive = true;
         }
 
         // -------------------------------------------------
