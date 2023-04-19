@@ -67,7 +67,7 @@ float4 BossEffect(float4 inColor)
 	{
 		return float4(inColor.r, inColor.g * redShade * shadeFadeTime, inColor.b * redShade * shadeFadeTime, inColor.a);
 	}
-	return float4(inColor.a, inColor.g, inColor.b, inColor.a);
+	return float4(inColor.r, inColor.g, inColor.b, inColor.a);
 }
 
 float4 FadeIn(float4 inColor)
