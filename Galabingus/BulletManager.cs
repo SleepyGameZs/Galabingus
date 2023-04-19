@@ -247,7 +247,6 @@ namespace Galabingus
         {
             for (int i = 0; i < Instance.activeBullets.Count; i++)
             {
-
                 if (Instance.activeBullets[i] != null)
                 {
                     // Runs the bullet's update.

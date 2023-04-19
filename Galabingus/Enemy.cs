@@ -368,12 +368,15 @@ namespace Galabingus
             if (ability == EnemyType.Boss)
             {
                 // Set Health
-                totalHealth = 30;
+                totalHealth = 100;
+
+                // Start boss effect
+                GameObject.Instance.StartBossEffect();
             } 
             else
             {
+                // Normal health
                 totalHealth = 3;
-                
             }
             currentHealth = totalHealth;
             bossPhase = EnemyType.Normal;
@@ -642,7 +645,6 @@ namespace Galabingus
                     {
                         direction.Y = 1;
                     }
-
                 }
                 
                 // Checks what kind of things can be collided with
@@ -652,20 +654,35 @@ namespace Galabingus
                     {
                         if ((collision.other as Tile) is Tile)
                         { // Collided with Tile
+                            if (ability == EnemyType.Boss)
+                            { // Boss deletes tiles
+                                ((Tile)collision.other).IsActive = false;
+                            }
+
                             Vector2 overlapZone = ((Tile)collision.other).ScaleVector;
 
-                            //System.Diagnostics.Debug.WriteLine(overlapZone.X);
-                            //System.Diagnostics.Debug.WriteLine(overlapZone.Y);
                             if (overlapZone.X < overlapZone.Y)
                             {
                                 // Check if collision on left or right
                                 if (this.Position.X < ((Tile)collision.other).Position.X)
                                 {
                                     EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, true);
-                                } else
+                                }
+                                else
                                 {
                                     EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, false);
                                 }
+                            }
+                        } 
+                        else if ((collision.other as Player) is Player)
+                        {
+                            if (ability == EnemyType.Bomb) 
+                            { // Bomb blows up
+                                destroy = true;
+                            } 
+                            else
+                            { // Add enemy IFrames then make player take damage on collision
+                                Player.PlayerInstance.Health = Player.PlayerInstance.Health - 0.5f;
                             }
                         }
                     }

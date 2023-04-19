@@ -178,7 +178,6 @@ namespace Galabingus
 
             //Debug.WriteLine(GameObject.Instance.TimeShade);
 
-            GameObject.Instance.StartBossEffect();
             GameObject.Instance.PlayBossEffect();
             shaders.Parameters["bossEffect"].SetValue(GameObject.Instance.IsBossEffectActive);
             shaders.Parameters["shadeFadeTime"].SetValue(GameObject.Instance.TimeShade);
