@@ -221,6 +221,16 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 		lerpColorOffset.b = 0.3f;
 	}
 
+	/*
+	if (bossEffect)
+	{
+		if (lerpColorOffset.a == 1)
+		{
+			lerpColorOffset.g = lerpColorOffset.g * bossEffectValue;
+			lerpColorOffset.b = lerpColorOffset.g * bossEffectValue;
+		}
+	}
+	*/
 
 	lerpColorOffset.rgb = lerpColorOffset.rgb * 0.85f;
 

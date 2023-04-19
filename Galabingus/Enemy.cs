@@ -111,6 +111,11 @@ namespace Galabingus
                 GameObject.Instance.Content = contentName;
                 return GetSprite(enemyNumber);
             }
+            set
+            {
+                GameObject.Instance.Content = contentName;
+                SetSprite(enemyNumber, value);
+            }
         }
 
         /// <summary>
@@ -437,8 +442,9 @@ namespace Galabingus
                             break;
 
                         case EnemyType.Boss:
-                            // Time per phase
-                            int phaseTime = 0;
+                            // Set the new boss sprite
+                            ushort newSprite = GameObject.Instance.Content.boss_green_strip4;
+                            this.Sprite = GetSpriteFrom(newSprite, enemyNumber);
 
                             // Switch for various attacks
                             switch (bossPhase)

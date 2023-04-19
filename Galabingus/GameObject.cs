@@ -101,6 +101,10 @@ namespace Galabingus
         private CollisionGroup collisionGroup;
         private static List<Vector2> cameraStopPositions;
         private static float universalScale;
+        private static float redShade;
+        private static float timeShadeEffect;
+        private static bool flipSine;
+        private static bool bossEffectIsActive;
 
         public struct GameObjectTrie<T>
         {
@@ -709,6 +713,31 @@ namespace Galabingus
 #nullable enable
         }
 
+        public static float RedShade
+        {
+            get
+            {
+                return redShade;
+            }
+            set
+            {
+                redShade = value;
+            }
+        }
+
+        public static float ShadeTime
+        {
+            get
+            {
+                return timeShadeEffect;
+            }
+            set
+            {
+                timeShadeEffect = value;
+            }
+        }
+
+
         public ref List<Collider> ColliderCollisions()
         {
             return ref colliders;
@@ -870,6 +899,62 @@ namespace Galabingus
             }
         }
 
+        public bool IsBossEffectActive
+        {
+            get
+            {
+                return bossEffectIsActive;
+            }
+        }
+
+        public float TimeShade
+        {
+            get
+            {
+                return timeShadeEffect;
+            }
+        }
+
+        public void StartBossEffect()
+        {
+            bossEffectIsActive = true;
+        }
+
+        public void StopBossEffect()
+        {
+            bossEffectIsActive = false;
+        }
+
+
+        public void PlayBossEffect()
+        {
+            if (timeShadeEffect >= 1)
+            {
+
+                flipSine = !flipSine;
+                timeShadeEffect -= 0.01f;
+            }
+            else if (timeShadeEffect <= 0)
+            {
+                flipSine = !flipSine;
+                timeShadeEffect += 0.01f;
+            }
+            else
+            {
+                if (flipSine)
+                {
+                    timeShadeEffect -= 0.01f;
+                }
+                else
+                {
+                    timeShadeEffect += 0.01f;
+                }
+            }
+
+            //System.Diagnostics.Debug.WriteLine(timeShadeEffect);
+        }
+
+
         /// <summary>
         ///  Generates a index for the instance Content 
         ///  property that cannot be found
@@ -917,6 +1002,22 @@ namespace Galabingus
             return exist;
         }
 
+        public Texture2D GetSpriteFrom(ushort contentName, ushort instanceNumber)
+        {
+            GameObject.Instance.Content = contentName;
+            GameObject.Instance.instance = instanceNumber;
+            string path = GameObject.ObjectEnumsI[contentName];
+            GameObject.Instance.index = contentName;
+            string start = "../../../Content";
+            string[] files = Directory.GetFiles(start, path + ".*", SearchOption.AllDirectories);
+            files[0] = files[0].Replace(start, "");
+            files[0] = files[0].Replace("\\", "/");
+            files[0] = files[0].Substring(1);
+            files[0] = files[0].Substring(0, files[0].LastIndexOf('.'));
+
+            return GameObject.Instance.contentManager.Load<Texture2D>(files[0]);
+        }
+
         public void LoadSprite(ushort contentName, ushort instanceNumber)
         {
             GameObject.Instance.Content = contentName;
@@ -953,8 +1054,6 @@ namespace Galabingus
         )
         {
             GameObject.Instance.Content = contentName;
-
-
 
             if (GetScale(instanceNumber) != 0)
             {
@@ -1056,7 +1155,12 @@ namespace Galabingus
             this.contentManager = contentManager;
             GameObject.fade = 1;
             GameObject.Instance.holdCollider = false;
+            redShade = 1;
+            timeShadeEffect = 1;
+            //shade = false;
+            flipSine = false;
             cameraStopPositions = new List<Vector2>();
+            flipSine = false;
             return new GameObject();
         }
 
@@ -1314,7 +1418,7 @@ namespace Galabingus
                         {
                             //System.Diagnostics.Debug.WriteLine(assetPosition);
                             //TileManager.Instance.CreateObject(GameObject.Instance.Content.smallbullet_strip4, Vector2.Zero);
-                            //TileManager.Instance.CreateObject(GameObject.Instance.Content.tile_strip26,assetPosition,(ushort)(int.Parse(num) - 9));
+                            TileManager.Instance.CreateObject(GameObject.Instance.Content.tile_strip26,assetPosition,(ushort)(int.Parse(num) - 9));
 
                         }
 
@@ -1329,6 +1433,12 @@ namespace Galabingus
 
             reader.Close();
         }
+
+        public void TriggerBossEffect()
+        {
+            
+        }
+
 
         public List<int[]> LoadEnemyLeveFile(string fileName)
         {
