@@ -356,9 +356,7 @@ namespace Galabingus
             // Set shot timer with some randomization
             shotTimer = rng.Next(50);
 
-            // Set Health
-            totalHealth = 3;
-            currentHealth = totalHealth;
+            
 
             // Set if enemy should move
             this.shouldMove = shouldMove;
@@ -366,7 +364,18 @@ namespace Galabingus
             // Set base position to be stored for dictionary keys
             initialPosition = position;
 
-            // Boss Data
+            // Boss Data + Health
+            if (ability == EnemyType.Boss)
+            {
+                // Set Health
+                totalHealth = 30;
+            } 
+            else
+            {
+                totalHealth = 3;
+                
+            }
+            currentHealth = totalHealth;
             bossPhase = EnemyType.Normal;
             stateTimer = 0;
 
@@ -442,14 +451,18 @@ namespace Galabingus
                             break;
 
                         case EnemyType.Boss:
-                            // Set the new boss sprite
-                            ushort newSprite = GameObject.Instance.Content.boss_green_strip4;
-                            this.Sprite = GetSpriteFrom(newSprite, enemyNumber);
+                            // Base data
+                            int phaseTime = 0;
+                            ushort newSprite = 0;
 
                             // Switch for various attacks
                             switch (bossPhase)
                             {
                                 case EnemyType.Normal:
+                                    // Set the new boss sprite
+                                    newSprite = GameObject.Instance.Content.boss_red_strip4;
+                                    this.Sprite = GetSpriteFrom(newSprite, enemyNumber);
+
                                     // Shooting
                                     bool normalRange = (stateTimer >= 100 && stateTimer < 200) ||
                                                        (stateTimer >= 250 && stateTimer < 350) ||
@@ -465,6 +478,10 @@ namespace Galabingus
                                     break;
 
                                 case EnemyType.Bouncing:
+                                    // Set the new boss sprite
+                                    newSprite = GameObject.Instance.Content.boss_orange_strip4;
+                                    this.Sprite = GetSpriteFrom(newSprite, enemyNumber);
+
                                     // Shooting Bouncy shots
                                     if (stateTimer % 70 == 0 && stateTimer >= 70)
                                     {
@@ -490,8 +507,11 @@ namespace Galabingus
                                     break;
 
                                 case EnemyType.Wave:
-                                    // Shooting
+                                    // Set the new boss sprite
+                                    newSprite = GameObject.Instance.Content.boss_yellow_strip4;
+                                    this.Sprite = GetSpriteFrom(newSprite, enemyNumber);
 
+                                    // Shooting
                                     if (stateTimer % 80 == 0 && stateTimer >= 100)
                                     {
                                         BulletSpawning(0, BulletType.Wave, new Vector2(-115, 0), 0);
@@ -502,6 +522,10 @@ namespace Galabingus
                                     break;
 
                                 case EnemyType.Splitter:
+                                    // Set the new boss sprite
+                                    newSprite = GameObject.Instance.Content.boss_green_strip4;
+                                    this.Sprite = GetSpriteFrom(newSprite, enemyNumber);
+
                                     // Shooting
                                     bool splitterRange = (stateTimer >= 100 && stateTimer <= 160) ||
                                                        (stateTimer >= 210 && stateTimer <= 270) ||
@@ -517,6 +541,10 @@ namespace Galabingus
                                     break;
 
                                 case EnemyType.Seeker:
+                                    // Set the new boss sprite
+                                    newSprite = GameObject.Instance.Content.boss_violet_strip4;
+                                    this.Sprite = GetSpriteFrom(newSprite, enemyNumber);
+
                                     // Shooting
 
                                     if (stateTimer % 80 == 0 && stateTimer >= 100)
@@ -558,6 +586,12 @@ namespace Galabingus
                     switch (this.ability)
                     {
                         case EnemyType.Bomb:
+                            // Creates an explosion
+                            BulletSpawning(0, BulletType.BigExplosion, new Vector2(-360, 0), 0);
+                            AudioManager.Instance.CallSound("Explosion");
+                            break;
+
+                        case EnemyType.Boss:
                             // Creates an explosion
                             BulletSpawning(0, BulletType.BigExplosion, new Vector2(-360, 0), 0);
                             AudioManager.Instance.CallSound("Explosion");

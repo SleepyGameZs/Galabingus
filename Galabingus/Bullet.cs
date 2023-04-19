@@ -530,10 +530,10 @@ namespace Galabingus
                         // Check which way to shift angle
                         if (playerBulletDistance.X > 0)
                         {
-                            velocity.X = Math.Max(velocity.X + 0.02f, 0.1f);
+                            velocity.X = Math.Max(velocity.X + 0.03f, 0.1f);
                         } else
                         {
-                            velocity.X = Math.Min(velocity.X - 0.02f, -0.1f);
+                            velocity.X = Math.Min(velocity.X - 0.03f, -0.1f);
                         }
 
                         // Normalize the new velocity
@@ -650,7 +650,20 @@ namespace Galabingus
                             { // Collided object is a player!
                                 if ((Player.PlayerInstance.Health - 0.5) >= 0)
                                 {
-                                    Player.PlayerInstance.Health = Player.PlayerInstance.Health - 0.5f;
+                                    switch (ability)
+                                    {
+                                        case BulletType.EnemyNormal:
+                                            Player.PlayerInstance.Health = Player.PlayerInstance.Health - 1f;
+                                            break;
+
+                                        case BulletType.Wave:
+                                            Player.PlayerInstance.Health = Player.PlayerInstance.Health - 3f;
+                                            break;
+
+                                        default:
+                                            Player.PlayerInstance.Health = Player.PlayerInstance.Health - 0.5f;
+                                            break;
+                                    }
                                 }
 
                                 // Destroy the bullet
@@ -694,14 +707,23 @@ namespace Galabingus
                                 { // Collided object is a player!
                                     if ((Player.PlayerInstance.Health - 0.5) >= 0)
                                     {
-                                        Player.PlayerInstance.Health = Player.PlayerInstance.Health - 0.5f;
+                                        Player.PlayerInstance.Health = Player.PlayerInstance.Health - 1f;
                                     }
 
                                     hitObjects.Add(collision.other);
                                 }
                                 else if ((collision.other as Enemy) is Enemy)
                                 { // Collided object is an Enemy
-                                    ((Enemy)collision.other).Health -= 1;
+                                    switch (ability)
+                                    {
+                                        case BulletType.BigExplosion:
+                                            ((Enemy)collision.other).Health -= 2;
+                                            break;
+
+                                        default:
+                                            ((Enemy)collision.other).Health -= 1;
+                                            break;
+                                    }
 
                                     // Kill the enemy if its health is below zero
                                     if (((Enemy)collision.other).Health <= 0)
