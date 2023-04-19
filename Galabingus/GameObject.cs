@@ -1418,7 +1418,7 @@ namespace Galabingus
                         {
                             //System.Diagnostics.Debug.WriteLine(assetPosition);
                             //TileManager.Instance.CreateObject(GameObject.Instance.Content.smallbullet_strip4, Vector2.Zero);
-                            TileManager.Instance.CreateObject(GameObject.Instance.Content.tile_strip26,assetPosition,(ushort)(int.Parse(num) - 9));
+                            //TileManager.Instance.CreateObject(GameObject.Instance.Content.tile_strip26,assetPosition,(ushort)(int.Parse(num) - 9));
 
                         }
 
