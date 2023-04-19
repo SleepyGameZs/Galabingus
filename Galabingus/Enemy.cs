@@ -437,6 +437,9 @@ namespace Galabingus
                             break;
 
                         case EnemyType.Boss:
+                            // Time per phase
+                            int phaseTime = 0;
+
                             // Switch for various attacks
                             switch (bossPhase)
                             {
@@ -451,16 +454,8 @@ namespace Galabingus
                                         BulletSpawning(0, BulletType.EnemyNormal, new Vector2(-25, 0), 0);
                                     }
 
-                                    // Change to make use of game time
-                                    if (stateTimer >= 500)
-                                    {
-                                        bossPhase++;
-                                        stateTimer = 0;
-                                        if (bossPhase == EnemyType.Bomb)
-                                        {
-                                            bossPhase = EnemyType.Normal;
-                                        }
-                                    }
+                                    // Time till next phase
+                                    phaseTime = 500;
                                     break;
 
                                 case EnemyType.Bouncing:
@@ -484,16 +479,8 @@ namespace Galabingus
                                            );
                                     }
 
-                                    // Change to make use of game time
-                                    if (stateTimer >= 420)
-                                    {
-                                        bossPhase++;
-                                        stateTimer = 0;
-                                        if (bossPhase == EnemyType.Bomb)
-                                        {
-                                            bossPhase = EnemyType.Normal;
-                                        }
-                                    }
+                                    // Time till next phase
+                                    phaseTime = 420;
                                     break;
 
                                 case EnemyType.Wave:
@@ -504,16 +491,8 @@ namespace Galabingus
                                         BulletSpawning(0, BulletType.Wave, new Vector2(-115, 0), 0);
                                     }
 
-                                    // Change to make use of game time
-                                    if (stateTimer >= 500)
-                                    {
-                                        bossPhase++;
-                                        stateTimer = 0;
-                                        if (bossPhase == EnemyType.Bomb)
-                                        {
-                                            bossPhase = EnemyType.Normal;
-                                        }
-                                    }
+                                    // Time till next phase
+                                    phaseTime = 500;
                                     break;
 
                                 case EnemyType.Splitter:
@@ -527,25 +506,37 @@ namespace Galabingus
                                         BulletSpawning(0, BulletType.Splitter, new Vector2(-42, 0), 0);
                                     }
 
-                                    // Change to make use of game time
-                                    if (stateTimer >= 380)
-                                    {
-                                        bossPhase++;
-                                        stateTimer = 0;
-                                        if (bossPhase == EnemyType.Bomb)
-                                        {
-                                            bossPhase = EnemyType.Normal;
-                                        }
-                                    }
+                                    // Time till next phase
+                                    phaseTime = 380;
                                     break;
 
+                                case EnemyType.Seeker:
+                                    // Shooting
 
+                                    if (stateTimer % 80 == 0 && stateTimer >= 100)
+                                    {
+                                        BulletSpawning(0, BulletType.Seeker, new Vector2(-15, 0), 0);
+                                    }
+
+                                    // Time till next phase
+                                    phaseTime = 500;
+                                    break;
+
+                            }
+
+                            // Change to make use of game time
+                            if (stateTimer >= phaseTime)
+                            {
+                                bossPhase++;
+                                stateTimer = 0;
+                                if (bossPhase == EnemyType.Bomb)
+                                {
+                                    bossPhase = EnemyType.Normal;
+                                }
                             }
 
                             // Increment state timer 
                             stateTimer++;
-                            
-
                             break;
                     }
                     shotTimer++;
