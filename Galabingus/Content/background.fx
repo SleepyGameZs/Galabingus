@@ -73,6 +73,9 @@ float2 randomValues(float2 uv, float2 scale)
 	return noise * scale - (scale / 2.0);
 }
 
+uniform bool bossEffect;
+uniform float bossShade;
+
 float4 MainPS(VertexShaderOutput input) : COLOR
 {
 	//floa radn_1_05();
@@ -221,16 +224,15 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 		lerpColorOffset.b = 0.3f;
 	}
 
-	/*
 	if (bossEffect)
 	{
-		if (lerpColorOffset.a == 1)
-		{
-			lerpColorOffset.g = lerpColorOffset.g * bossEffectValue;
-			lerpColorOffset.b = lerpColorOffset.g * bossEffectValue;
-		}
+		//if (lerpColorOffset.a == 1)
+		//{
+			lerpColorOffset.r = (0.1 - abs(bossShade * 0.1f));
+			//lerpColorOffset.g = lerpColorOffset.g * bossShade;
+			//lerpColorOffset.b = lerpColorOffset.g * bossShade;
+		//}
 	}
-	*/
 
 	lerpColorOffset.rgb = lerpColorOffset.rgb * 0.85f;
 

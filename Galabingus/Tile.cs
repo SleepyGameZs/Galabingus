@@ -234,7 +234,10 @@ namespace Galabingus
         public void Draw(float xTimes, float yTimes)
         {
             GameObject.Instance.SpriteBatch.End();
+            Effect.Parameters["bossEffect"].SetValue(GameObject.Instance.IsBossEffectActive);
+            Effect.Parameters["bossShade"].SetValue(GameObject.Instance.TimeShade);
             GameObject.Instance.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, effect: Effect);
+
             GameObject.Instance.SpriteBatch.Draw(
                 this.Sprite,                      
                 this.Position,                 

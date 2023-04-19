@@ -65,7 +65,7 @@ float4 BossEffect(float4 inColor)
 {
 	if (bossEffect)// && inColor.a == 1)
 	{
-		return float4(inColor.r, inColor.g * redShade * shadeFadeTime, inColor.b * redShade * shadeFadeTime, inColor.a);
+		return float4(inColor.r, inColor.g * redShade * shadeFadeTime * 0.8f, inColor.b * redShade * shadeFadeTime * 0.8f, inColor.a);
 	}
 	return float4(inColor.r, inColor.g, inColor.b, inColor.a);
 }
@@ -194,8 +194,8 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 		lerpPixels.rgb = lerpPixels.rgb * 2.5f;
 		if (colorTrue.r > 0.5f && colorTrue.b < 0.2f && colorTrue.g < 0.2f)
 		{
-			lerpPixels.r *= 1.0f;
-			lerpPixels.g *= 1.125f;
+			//lerpPixels.r *= 1.0f;
+			//lerpPixels.g *= 1.125f;
 		}
 	}
 
