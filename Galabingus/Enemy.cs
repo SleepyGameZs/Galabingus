@@ -368,12 +368,15 @@ namespace Galabingus
             if (ability == EnemyType.Boss)
             {
                 // Set Health
-                totalHealth = 30;
+                totalHealth = 100;
+
+                // Start boss effect
+                GameObject.Instance.StartBossEffect();
             } 
             else
             {
+                // Normal health
                 totalHealth = 3;
-                
             }
             currentHealth = totalHealth;
             bossPhase = EnemyType.Normal;
@@ -602,6 +605,12 @@ namespace Galabingus
                             // Creates an explosion
                             BulletSpawning(0, BulletType.Explosion, new Vector2(-180, 0), 0);
                             AudioManager.Instance.CallSound("Explosion");
+
+                            // Has a chance to spawn hearts
+                            if (rng.Next(3) == 1)
+                            {
+                                BulletSpawning(0, BulletType.Heart, new Vector2(-25, 0), 0);
+                            }
                             break;
                     }
                 }
@@ -642,7 +651,6 @@ namespace Galabingus
                     {
                         direction.Y = 1;
                     }
-
                 }
                 
                 // Checks what kind of things can be collided with
@@ -652,20 +660,35 @@ namespace Galabingus
                     {
                         if ((collision.other as Tile) is Tile)
                         { // Collided with Tile
+                            if (ability == EnemyType.Boss)
+                            { // Boss deletes tiles
+                                ((Tile)collision.other).IsActive = false;
+                            }
+
                             Vector2 overlapZone = ((Tile)collision.other).ScaleVector;
 
-                            //System.Diagnostics.Debug.WriteLine(overlapZone.X);
-                            //System.Diagnostics.Debug.WriteLine(overlapZone.Y);
                             if (overlapZone.X < overlapZone.Y)
                             {
                                 // Check if collision on left or right
                                 if (this.Position.X < ((Tile)collision.other).Position.X)
                                 {
                                     EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, true);
-                                } else
+                                }
+                                else
                                 {
                                     EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, false);
                                 }
+                            }
+                        } 
+                        else if ((collision.other as Player) is Player)
+                        {
+                            if (ability == EnemyType.Bomb) 
+                            { // Bomb blows up
+                                destroy = true;
+                            } 
+                            else
+                            { // Add enemy IFrames then make player take damage on collision
+                                Player.PlayerInstance.Health = Player.PlayerInstance.Health - 0.5f;
                             }
                         }
                     }
@@ -706,7 +729,7 @@ namespace Galabingus
         {
             double percentageChange = 1 + (0.1 * shotWaitTime);
 
-            if (shotTimer > (int)(shootDelay * percentageChange))
+            if (shotTimer >= (int)(shootDelay * percentageChange))
             {
                 CreateBullet(ability, shootOffset, horizontalDirection);
 

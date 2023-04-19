@@ -197,8 +197,5 @@
   <ItemGroup>
     <None Include="Resources\enemy_dblue_strip4-1.png" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\TempSave.txt" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
