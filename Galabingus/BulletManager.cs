@@ -291,7 +291,6 @@ namespace Galabingus
             {
                 if (bullet != null)
                 {
-
                     SpriteEffects flipping = SpriteEffects.None;
 
                     if (bullet.Direction.X == -1)

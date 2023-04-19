@@ -625,7 +625,7 @@ namespace Galabingus
                 this.Transform,                         // Bullet transform for sprite selection
                 GameObject.Instance.GraphicsDevice,     // Graphics Device Info
                 GameObject.Instance.SpriteBatch,        // Sprite Batcher (carries through)
-                1,                                      // Removed old variant of direction (bully Matt to remove this)
+                0,                                      // Removed old variant of direction (bully Matt to remove this)
                 new Vector2(this.Scale, this.Scale),    // Scale
                 flipping,                               // Sprite Effects
                 (ushort)collisionLayer,                 // Collision Layer
