@@ -49,8 +49,6 @@
             this.Save = new System.Windows.Forms.Button();
             this.button12 = new System.Windows.Forms.Button();
             this.button13 = new System.Windows.Forms.Button();
-            this.PageChangeRight = new System.Windows.Forms.Button();
-            this.PageChangeLeft = new System.Windows.Forms.Button();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox10)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox9)).BeginInit();
@@ -75,7 +73,7 @@
             this.mapGroup.Name = "mapGroup";
             this.mapGroup.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.mapGroup.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.mapGroup.Size = new System.Drawing.Size(600, 600);
+            this.mapGroup.Size = new System.Drawing.Size(332, 720);
             this.mapGroup.TabIndex = 4;
             this.mapGroup.TabStop = false;
             this.mapGroup.Text = "Map";
@@ -287,33 +285,11 @@
             this.button13.UseVisualStyleBackColor = true;
             this.button13.Click += new System.EventHandler(this.button13_Click);
             // 
-            // PageChangeRight
-            // 
-            this.PageChangeRight.Location = new System.Drawing.Point(884, 265);
-            this.PageChangeRight.Name = "PageChangeRight";
-            this.PageChangeRight.Size = new System.Drawing.Size(25, 75);
-            this.PageChangeRight.TabIndex = 10;
-            this.PageChangeRight.Text = ">";
-            this.PageChangeRight.UseVisualStyleBackColor = true;
-            this.PageChangeRight.Click += new System.EventHandler(this.PageChangeRight_Click);
-            // 
-            // PageChangeLeft
-            // 
-            this.PageChangeLeft.Location = new System.Drawing.Point(247, 265);
-            this.PageChangeLeft.Name = "PageChangeLeft";
-            this.PageChangeLeft.Size = new System.Drawing.Size(25, 75);
-            this.PageChangeLeft.TabIndex = 11;
-            this.PageChangeLeft.Text = "<";
-            this.PageChangeLeft.UseVisualStyleBackColor = true;
-            this.PageChangeLeft.Click += new System.EventHandler(this.PageChangeLeft_Click);
-            // 
             // MapEditorScreen
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(930, 756);
-            this.Controls.Add(this.PageChangeLeft);
-            this.Controls.Add(this.PageChangeRight);
+            this.ClientSize = new System.Drawing.Size(660, 756);
             this.Controls.Add(this.button12);
             this.Controls.Add(this.button13);
             this.Controls.Add(this.groupBox4);
@@ -363,7 +339,5 @@
         private System.Windows.Forms.PictureBox pictureBox2;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.PictureBox pictureBox11;
-        private System.Windows.Forms.Button PageChangeLeft;
-        private System.Windows.Forms.Button PageChangeRight;
     }
 }
