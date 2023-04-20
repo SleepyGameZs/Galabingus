@@ -298,6 +298,42 @@
 /processorParam:TextureFormat=Color
 /build:Bullets/Orange/enemy_orange_bullet_90_strip4.png
 
+#begin Bullets/Orange/enemy_orange_bullet_flipped_135_strip4.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Bullets/Orange/enemy_orange_bullet_flipped_135_strip4.png
+
+#begin Bullets/Orange/enemy_orange_bullet_flipped_45_strip4.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Bullets/Orange/enemy_orange_bullet_flipped_45_strip4.png
+
+#begin Bullets/Orange/enemy_orange_bullet_flipped_90_strip4.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Bullets/Orange/enemy_orange_bullet_flipped_90_strip4.png
+
 #begin Bullets/smallbullet_strip4.png
 /importer:TextureImporter
 /processor:TextureProcessor

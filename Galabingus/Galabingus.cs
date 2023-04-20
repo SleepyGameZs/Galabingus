@@ -126,7 +126,7 @@ namespace Galabingus
 
             l_a4_obj_enemyData = GameObject.Instance.LoadEnemyLeveFile("GalabingusLevel.level");
 
-            l_a4_obj_enemyData.Add(new int[] { 1, 6, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 0.5f), (GameObject.Instance.GraphicsDevice.Viewport.Height * 0), 1 });
+            //l_a4_obj_enemyData.Add(new int[] { 1, 6, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 0.5f), (GameObject.Instance.GraphicsDevice.Viewport.Height * -4), 1 });
 
             //l_a4_obj_enemyData.Add(new int[] { 1, 1, 0, 0, 0 });
 
@@ -149,6 +149,10 @@ namespace Galabingus
             tileManager = TileManager.Instance;
             tileManager.CreateTile(1);
 
+            GameObject.Instance.LoadTileLevelFile("GalabingusTilesLevel.level");
+            //tileManager.CreateObject(GameObject.Instance.Content.tile_strip26, Vector2.Zero, 25);
+            //tileManager.CreateObject();
+
             // Load the temporary background
             //tempBackground = Content.Load<Texture2D>("spacebackground_strip1");
             tileManager.CreateBackground();
@@ -157,7 +161,7 @@ namespace Galabingus
             //tileManager.CreateBackground();
             //tileManager.CreateObject(GameObject.Instance.Content.grayasteroid_strip1, new Vector2(Player.PlayerInstance.Transform.Width * 2 + 100, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.5f - Player.PlayerInstance.Transform.Height + 100));
 
-            GameObject.Instance.LoadTileLevelFile("GalabingusTilesLevel.level");
+
 
             // Sound
             AudioManager.Instance.AddSound("Fire", 0.25f, "Bullet Fire", Content);

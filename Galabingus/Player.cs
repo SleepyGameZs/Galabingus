@@ -140,8 +140,8 @@ namespace Galabingus
                 PlayerInstance.health = value;
             }
         }
-        
-        
+
+
         public Texture2D WhiteSprite
         {
             get
@@ -424,16 +424,30 @@ namespace Galabingus
             //Vector2 previousVelocity;
             bool collides = false;
 
+            /*
+            if (!previousCollision &&
+                ((PlayerInstance.Position.Y <= 0 || PlayerInstance.Position.X <= 0) ||
+                (PlayerInstance.Position.X + PlayerInstance.Transform.Width * Scale) >= GameObject.Instance.GraphicsDevice.Viewport.Width ||
+                (PlayerInstance.Position.Y + PlayerInstance.Transform.Height * Scale) >= GameObject.Instance.GraphicsDevice.Viewport.Height)
+                )
+            {
+                previousVelocity = velocity;
+                acceleration = Vector2.Zero;
+                velocity = Vector2.Zero;
+                collides = true;
+            }
+            else if (previousCollision)
+            { 
+                collides = ((PlayerInstance.Position.Y <= 0 || PlayerInstance.Position.X <= 0) ||
+                (PlayerInstance.Position.X + PlayerInstance.Transform.Width * Scale) >= GameObject.Instance.GraphicsDevice.Viewport.Width ||
+                (PlayerInstance.Position.Y + PlayerInstance.Transform.Height * Scale) >= GameObject.Instance.GraphicsDevice.Viewport.Height)
+                ;
+            }
+            */
+
             foreach (Collision collision in intercepts)
             {
-                if (collision.other != null && this.Collider.Resolved && !((collision.other as Tile) is Tile))
-                {
-                    previousVelocity = velocity;
-                    acceleration = Vector2.Zero;
-                    velocity = Vector2.Zero;
-                    collides = true;
-                }
-                else if (collision.other != null && ((collision.other as Tile) is Tile))
+                if (collision.other != null && this.Collider.Resolved && ((collision.other as Tile) is Tile))
                 {
                     previousVelocity = velocity;
                     acceleration = Vector2.Zero;
@@ -441,6 +455,9 @@ namespace Galabingus
                     collides = true;
                 }
             }
+
+            Vector2 normPreVelocity = previousVelocity;
+            Vector2 normVelocity = velocity;
 
             // Determine if idle or moving
             if (playerState == PlayerStates.Idle || playerState == PlayerStates.None)
@@ -468,100 +485,161 @@ namespace Galabingus
 
                 // Slow de-accelerate
                 Position -= velocity;
+
+                if (Math.Abs(normPreVelocity.X) < 0.0000001)
+                {
+                    normPreVelocity.X = 0;
+                }
+                if (Math.Abs(normPreVelocity.Y) < 0.0000001)
+                {
+                    normPreVelocity.Y = 0;
+                }
+
+                normPreVelocity = (normPreVelocity == Vector2.Zero ? normPreVelocity : Vector2.Normalize(normPreVelocity));
+
+                if (Math.Abs(normPreVelocity.X) > 0.99)
+                {
+                    if (normPreVelocity.X > 0)
+                    {
+                        normPreVelocity.X = 1;
+                    }
+                    else if (normPreVelocity.Y < 0)
+                    {
+                        normPreVelocity.X = -1;
+                    }
+                }
+                if (Math.Abs(normPreVelocity.Y) > 0.99)
+                {
+                    if (normPreVelocity.Y > 0)
+                    {
+                        normPreVelocity.Y = 1;
+                    }
+                    else if (normPreVelocity.Y < 0)
+                    {
+                        normPreVelocity.Y = -1;
+                    }
+                }
+
+                if (Math.Abs(normVelocity.X) < 0.0000001)
+                {
+                    normVelocity.X = 0;
+                }
+                if (Math.Abs(normVelocity.Y) < 0.0000001)
+                {
+                    normVelocity.Y = 0;
+                }
+
+                normVelocity = (normVelocity == Vector2.Zero ? normVelocity : Vector2.Normalize(normVelocity));
+
+                if (Math.Abs(normVelocity.X) > 0.99)
+                {
+                    if (normVelocity.X > 0)
+                    {
+                        normVelocity.X = 1;
+                    }
+                    else if (normVelocity.X < 0)
+                    {
+                        normVelocity.X = -1;
+                    }
+                }
+                if (Math.Abs(normVelocity.Y) > 0.99)
+                {
+                    if (normVelocity.Y > 0)
+                    {
+                        normVelocity.Y = 1;
+                    }
+                    else if (normVelocity.Y < 0)
+                    {
+                        normVelocity.Y = -1;
+                    }
+                }
             }
             else
             {
-                if (!collides && !previousCollision)
+
+                if (Math.Abs(normPreVelocity.X) < 0.0000001)
+                {
+                    normPreVelocity.X = 0;
+                }
+                if (Math.Abs(normPreVelocity.Y) < 0.0000001)
+                {
+                    normPreVelocity.Y = 0;
+                }
+
+                normPreVelocity = (normPreVelocity == Vector2.Zero ? normPreVelocity : Vector2.Normalize(normPreVelocity));
+
+                if (Math.Abs(normPreVelocity.X) > 0.99)
+                {
+                    if (normPreVelocity.X > 0)
+                    {
+                        normPreVelocity.X = 1;
+                    }
+                    else if (normPreVelocity.Y < 0)
+                    {
+                        normPreVelocity.X = -1;
+                    }
+                }
+                if (Math.Abs(normPreVelocity.Y) > 0.99)
+                {
+                    if (normPreVelocity.Y > 0)
+                    {
+                        normPreVelocity.Y = 1;
+                    }
+                    else if (normPreVelocity.Y < 0)
+                    {
+                        normPreVelocity.Y = -1;
+                    }
+                }
+
+                if (Math.Abs(normVelocity.X) < 0.0000001)
+                {
+                    normVelocity.X = 0;
+                }
+                if (Math.Abs(normVelocity.Y) < 0.0000001)
+                {
+                    normVelocity.Y = 0;
+                }
+
+                normVelocity = (normVelocity == Vector2.Zero ? normVelocity : Vector2.Normalize(normVelocity));
+
+                if (Math.Abs(normVelocity.X) > 0.99)
+                {
+                    if (normVelocity.X > 0)
+                    {
+                        normVelocity.X = 1;
+                    }
+                    else if (normVelocity.X < 0)
+                    {
+                        normVelocity.X = -1;
+                    }
+                }
+                if (Math.Abs(normVelocity.Y) > 0.99)
+                {
+                    if (normVelocity.Y > 0)
+                    {
+                        normVelocity.Y = 1;
+                    }
+                    else if (normVelocity.Y < 0)
+                    {
+                        normVelocity.Y = -1;
+                    }
+                }
+
+                if (normPreVelocity != normVelocity && normVelocity != Vector2.Zero && normPreVelocity != Vector2.Zero && previousCollision || !collides)
                 {
                     translation = (velocity == Vector2.Zero ? velocity : Vector2.Normalize(velocity) * (float)Animation.EllapsedTime * ((boost) ? boostSpeed : 1) * speed * translationAjdustedRatio);
                     Position += translation;
                 }
-                
-                //Debug.
-                
             }
+
+            previousCollision = collides;
 
             if (Math.Abs(velocity.Length()) < 0.001f)
             {
                 translation = Vector2.Zero;
             }
-
-
-            Vector2 normPreVelocity = previousVelocity;
-            Vector2 normVelocity = velocity;
-
-            if (Math.Abs(normPreVelocity.X) < 0.0000001)
-            {
-                normPreVelocity.X = 0;
-            }
-            if (Math.Abs(normPreVelocity.Y) < 0.0000001)
-            {
-                normPreVelocity.Y = 0;
-            }
-
-            normPreVelocity = (normPreVelocity == Vector2.Zero ? normPreVelocity : Vector2.Normalize(normPreVelocity));
-
-            if (Math.Abs(normPreVelocity.X) > 0.99)
-            {
-                if (normPreVelocity.X > 0)
-                {
-                    normPreVelocity.X = 1;
-                }
-                else if (normPreVelocity.Y < 0)
-                {
-                    normPreVelocity.X = -1;
-                }
-            }
-            if (Math.Abs(normPreVelocity.Y) > 0.99)
-            {
-                if (normPreVelocity.Y > 0)
-                {
-                    normPreVelocity.Y = 1;
-                }
-                else if (normPreVelocity.Y < 0)
-                {
-                    normPreVelocity.Y = -1;
-                }
-            }
-
-            if (Math.Abs(normVelocity.X) < 0.0000001)
-            {
-                normVelocity.X = 0;
-            }
-            if (Math.Abs(normVelocity.Y) < 0.0000001)
-            {
-                normVelocity.Y = 0;
-            }
-
-            normVelocity = (normVelocity == Vector2.Zero ? normVelocity : Vector2.Normalize(normVelocity));
-
-            if (Math.Abs(normVelocity.X) > 0.99)
-            {
-                if (normVelocity.X > 0)
-                {
-                    normVelocity.X = 1;
-                }
-                else if (normVelocity.X < 0)
-                {
-                    normVelocity.X = -1;
-                }
-            }
-            if (Math.Abs(normVelocity.Y) > 0.99)
-            {
-                if (normVelocity.Y > 0)
-                {
-                    normVelocity.Y = 1;
-                }
-                else if (normVelocity.Y < 0)
-                {
-                    normVelocity.Y = -1;
-                }
-            }
-
-            if (collides || !collides && normPreVelocity != Vector2.Zero && normPreVelocity != normVelocity)
-            {
-                previousCollision = collides;
-            }
+            
+            //System.Diagnostics.Debug.WriteLine(previousCollision);
 
             previousVelocity = velocity;
 
@@ -581,7 +659,7 @@ namespace Galabingus
             );
 
             currentKeyboardState = Keyboard.GetState();
-            if (!previousCollision || currentKeyboardState != previousKeyboardState )
+       
             {
                 // Player Finite State Machine
                 switch (playerState)
