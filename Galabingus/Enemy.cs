@@ -368,7 +368,7 @@ namespace Galabingus
             if (ability == EnemyType.Boss)
             {
                 // Set Health
-                totalHealth = 1;
+                totalHealth = 100;
 
                 // Start boss effect
                 GameObject.Instance.StartBossEffect();
