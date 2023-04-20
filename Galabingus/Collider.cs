@@ -503,7 +503,7 @@ namespace Galabingus
                         copyOfTarget,
                         new Vector2(position.X, position.Y),
                         new Rectangle(0,0,this.transform.Width, this.transform.Height),
-                        Color.Red,
+                        Color.Blue,
                         0.0f,
                         Vector2.Zero,
                         1.0f,
@@ -545,7 +545,6 @@ namespace Galabingus
                                 ) 
                             ) &&
                             collidersR[colliderIndex].transform.Intersects(this.transform)
-                            
                         )
                         {
                             //Debug.WriteLineIf(this.layer == (ushort)CollisionGroup.FromPlayer, "AAA");
@@ -570,7 +569,7 @@ namespace Galabingus
                                     (int)Math.Round((transform.Width * (Scale.X)), MidpointRounding.AwayFromZero) <= 0 ? 1 : (int)Math.Round((transform.Width * (Scale.X)), MidpointRounding.AwayFromZero),
                                     (int)Math.Round((transform.Height * (Scale.Y)), MidpointRounding.AwayFromZero) <= 0 ? 1 : (int)Math.Round((transform.Height * (Scale.Y)), MidpointRounding.AwayFromZero),
                                     true,
-                                    SurfaceFormat.Color,
+                                    SurfaceFormat.Alpha8,
                                     DepthFormat.None,
                                     0,
                                     RenderTargetUsage.PlatformContents
@@ -579,18 +578,19 @@ namespace Galabingus
                                 // Render the new sprite 
                                 graphicsDevice.SetRenderTarget(targetSprite);
                                 graphicsDevice.Clear(clearColor);
-                                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointWrap, null, RasterizerState.CullNone, null, null);
+                                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointWrap, null, RasterizerState.CullNone, null, null);
                                 spriteBatch.Draw(
                                     sprite,
                                     new Vector2(0, 0),
                                     transform,
-                                    Color.Black,
+                                    Color.Blue,
                                     0.0f,
                                     Vector2.Zero,
                                     Scale,
                                     effect,
                                     1.0f
                                 );
+
                                 spriteBatch.End();
                                 graphicsDevice.SetRenderTarget(null);
                                 this.colliderNextMTV = Vector2.Zero;
