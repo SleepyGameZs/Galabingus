@@ -254,8 +254,11 @@ namespace Galabingus
                 }
                 else
                 {
-                    borderList[i].Collider.Resolved = true;
-                    borderList[i].Collider.Unload();
+                    if (borderList[i].Collider != null)
+                    {
+                        borderList[i].Collider.Resolved = true;
+                        borderList[i].Collider.Unload();
+                    }
                 }
             }
             #endregion
@@ -294,8 +297,11 @@ namespace Galabingus
                 }
                 else
                 {
-                    borderList[i].Collider.Resolved = true;
-                    borderList[i].Collider.Unload();
+                    if (borderList[i].Collider != null)
+                    {
+                        borderList[i].Collider.Resolved = true;
+                        borderList[i].Collider.Unload();
+                    }
                 }
             }
             #endregion
