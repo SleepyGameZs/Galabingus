@@ -365,25 +365,29 @@ namespace Galabingus
             initialPosition = position;
 
             // Boss Data + Health
-            if (ability == EnemyType.Boss)
+            switch (ability)
             {
-                // Set Health
-                totalHealth = 100;
+                case EnemyType.Bomb:
+                    totalHealth = 1;
+                    break;
 
-                // Start boss effect
-                GameObject.Instance.StartBossEffect();
-            } 
-            else
-            {
-                // Normal health
-                totalHealth = 3;
+                case EnemyType.Boss:
+                    // Set Health
+                    totalHealth = 150;
+                    break;
+
+                default:
+                    // Normal health
+                    totalHealth = 3;
+                    break;
             }
             currentHealth = totalHealth;
             bossPhase = EnemyType.Normal;
+
+            // Sets the state timer to zero
             stateTimer = 0;
 
         #endregion
-
     }
 
         #endregion
@@ -396,16 +400,41 @@ namespace Galabingus
             bool enemyOnScreen = (this.Position.Y > - this.Transform.Height * this.Scale &&
                                   this.Position.Y < BulletManager.Instance.ScreenDimensions.Y);
 
-            // Final position change, and whether or not to include camera movement
-            if (Camera.Instance.CameraLock)
-            { // In debug mode
-                Vector2 playerMovement = new Vector2(0, Player.PlayerInstance.Translation.Y);
-                Position -= playerMovement;
-            }
+            if (ability == EnemyType.Boss)
+            {
+                if (!enemyOnScreen)
+                {
+                    // Final position change, and whether or not to include camera movement
+                    if (Camera.Instance.CameraLock)
+                    { // In debug mode
+                        Vector2 playerMovement = new Vector2(0, Player.PlayerInstance.Translation.Y);
+                        Position -= playerMovement;
+                    }
+                    else
+                    { // Normal camera movement
+                        Vector2 cameraScroll = new Vector2(0, Camera.Instance.OffSet.Y);
+                        Position -= cameraScroll;
+                    }
+                }
+                else
+                {
+                    // Start boss effect
+                    GameObject.Instance.StartBossEffect();
+                }
+            } 
             else
-            { // Normal camera movement
-                Vector2 cameraScroll = new Vector2(0, Camera.Instance.OffSet.Y);
-                Position -= cameraScroll;
+            {
+                // Final position change, and whether or not to include camera movement
+                if (Camera.Instance.CameraLock)
+                { // In debug mode
+                    Vector2 playerMovement = new Vector2(0, Player.PlayerInstance.Translation.Y);
+                    Position -= playerMovement;
+                }
+                else
+                { // Normal camera movement
+                    Vector2 cameraScroll = new Vector2(0, Camera.Instance.OffSet.Y);
+                    Position -= cameraScroll;
+                }
             }
 
             if (enemyOnScreen)
@@ -416,7 +445,12 @@ namespace Galabingus
                     {
                         case EnemyType.Normal:
                             // Shooting (3 Bullets)
-                            BulletSpawning(130, BulletType.EnemyNormal, new Vector2(-25, 0), 0);
+                            BulletSpawning(130, 
+                                           BulletType.EnemyNormal, 
+                                           ((Direction.Y == 1) ?    // CHECK DIRECTION
+                                               new Vector2(-30, 0) :    // DOWN
+                                               new Vector2(-35, -80)),  // UP
+                                           0);
                             break;
 
                         case EnemyType.Bouncing:
@@ -430,9 +464,15 @@ namespace Galabingus
                                            },
                                            new Vector2[]
                                            {
-                                           new Vector2(-14, 0),
-                                           new Vector2(-14, 0),
-                                           new Vector2(-24, 0)
+                                           ((Direction.Y == 1) ?    // CHECK DIRECTION
+                                               new Vector2(-19, 0) :    // DOWN
+                                               new Vector2(-24, -80)),  // UP,
+                                           ((Direction.Y == 1) ?    // CHECK DIRECTION
+                                               new Vector2(-19, 0) :    // DOWN
+                                               new Vector2(-24, -80)),  // UP,,
+                                           ((Direction.Y == 1) ?    // CHECK DIRECTION
+                                               new Vector2(-29, 0) :    // DOWN
+                                               new Vector2(-24, -80)),  // UP,
                                            },
                                            new int[] { -1, 0, 1 }
                                            );
@@ -440,17 +480,32 @@ namespace Galabingus
 
                         case EnemyType.Splitter:
                             // Shoots
-                            BulletSpawning(150, BulletType.Splitter, new Vector2(-42, 0), 0);
+                            BulletSpawning(150, 
+                                           BulletType.Splitter,
+                                           ((Direction.Y == 1) ?    // CHECK DIRECTION
+                                               new Vector2(-47, 0) :    // DOWN
+                                               new Vector2(-52, -80)),  // UP,
+                                           0);
                             break;
 
                         case EnemyType.Wave:
                             // Shoots
-                            BulletSpawning(160, BulletType.Wave, new Vector2(-115, 0), 0);
+                            BulletSpawning(160, 
+                                           BulletType.Wave,
+                                           ((Direction.Y == 1) ?    // CHECK DIRECTION
+                                               new Vector2(-135, 0) :    // DOWN
+                                               new Vector2(-140, -80)),  // UP
+                                           0);
                             break;
 
                         case EnemyType.Seeker:
                             // Shoots
-                            BulletSpawning(170, BulletType.Seeker, new Vector2(-15, 0), 0);
+                            BulletSpawning(170, 
+                                           BulletType.Seeker,
+                                           ((Direction.Y == 1) ?    // CHECK DIRECTION
+                                               new Vector2(-20, 0) :    // DOWN
+                                               new Vector2(-25, -80)),  // UP, 
+                                           0);
                             break;
 
                         case EnemyType.Boss:
@@ -473,7 +528,7 @@ namespace Galabingus
 
                                     if (stateTimer % 10 == 0 && normalRange)
                                     {
-                                        BulletSpawning(0, BulletType.EnemyNormal, new Vector2(-25, 0), 0);
+                                        BulletSpawning(0, BulletType.EnemyNormal, new Vector2(-30, 0), 0);
                                     }
 
                                     // Time till next phase
@@ -497,9 +552,9 @@ namespace Galabingus
                                            },
                                            new Vector2[]
                                            {
-                                           new Vector2(-14, 0),
-                                           new Vector2(-14, 0),
-                                           new Vector2(-24, 0)
+                                           new Vector2(-19, 0),
+                                           new Vector2(-19, 0),
+                                           new Vector2(-29, 0)
                                            },
                                            new int[] { -1, 0, 1 }
                                            );
@@ -517,7 +572,7 @@ namespace Galabingus
                                     // Shooting
                                     if (stateTimer % 80 == 0 && stateTimer >= 100)
                                     {
-                                        BulletSpawning(0, BulletType.Wave, new Vector2(-115, 0), 0);
+                                        BulletSpawning(0, BulletType.Wave, new Vector2(-135, 0), 0);
                                     }
 
                                     // Time till next phase
@@ -531,12 +586,12 @@ namespace Galabingus
 
                                     // Shooting
                                     bool splitterRange = (stateTimer >= 100 && stateTimer <= 160) ||
-                                                       (stateTimer >= 210 && stateTimer <= 270) ||
-                                                       (stateTimer >= 320 && stateTimer < 380);
+                                                         (stateTimer >= 210 && stateTimer <= 270) ||
+                                                         (stateTimer >= 320 && stateTimer < 380);
 
                                     if (stateTimer % 30 == 0 && splitterRange)
                                     {
-                                        BulletSpawning(0, BulletType.Splitter, new Vector2(-42, 0), 0);
+                                        BulletSpawning(0, BulletType.Splitter, new Vector2(-47, 0), 0);
                                     }
 
                                     // Time till next phase
@@ -552,7 +607,7 @@ namespace Galabingus
 
                                     if (stateTimer % 80 == 0 && stateTimer >= 100)
                                     {
-                                        BulletSpawning(0, BulletType.Seeker, new Vector2(-15, 0), 0);
+                                        BulletSpawning(0, BulletType.Seeker, new Vector2(-20, 0), 0);
                                     }
 
                                     // Time till next phase
@@ -603,20 +658,20 @@ namespace Galabingus
                     {
                         case EnemyType.Bomb:
                             // Creates an explosion
-                            BulletSpawning(0, BulletType.BigExplosion, new Vector2(-360, 0), 0);
+                            BulletSpawning(0, BulletType.BigExplosion, new Vector2(-400, 0), 0);
                             AudioManager.Instance.CallSound("Explosion");
                             break;
 
                         case EnemyType.Boss:
                             // Creates an explosion
-                            BulletSpawning(0, BulletType.BigExplosion, new Vector2(-360, 0), 0);
+                            BulletSpawning(0, BulletType.BigExplosion, new Vector2(-400, 0), 0);
                             AudioManager.Instance.CallSound("Explosion");
                             GameObject.Instance.StopBossEffect();
                             break;
 
                         default:
                             // Creates an explosion
-                            BulletSpawning(0, BulletType.Explosion, new Vector2(-180, 0), 0);
+                            BulletSpawning(0, BulletType.Explosion, new Vector2(-230, 0), 0);
                             AudioManager.Instance.CallSound("Explosion");
 
                             // Has a chance to spawn hearts
@@ -679,29 +734,23 @@ namespace Galabingus
                             } 
                             else
                             { // Normal enemies bounce off tiles
-                                Vector2 overlapZone = ((Tile)collision.other).ScaleVector;
-
-                                if (overlapZone.X < overlapZone.Y)
-                                {
-                                    // Check if collision on left or right
-                                    if (this.Position.X < ((Tile)collision.other).Position.X)
-                                    {
-                                        EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, true);
-                                    }
-                                    else
-                                    {
-                                        EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, false);
-                                    }
+                                if (this.Position.X < ((Tile)collision.other).Position.X)
+                                { // Bounce right
+                                    EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, true);
+                                }
+                                else
+                                { // Bounce left
+                                    EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, false);
                                 }
                             }
-
-                            
                         } 
                         else if ((collision.other as Player) is Player)
                         {
                             if (ability == EnemyType.Bomb) 
                             { // Bomb blows up
                                 destroy = true;
+                                BulletSpawning(0, BulletType.Explosion, new Vector2(-400, 0), 0);
+                                AudioManager.Instance.CallSound("Explosion");
                             } 
                             else
                             { // Add enemy IFrames then make player take damage on collision
@@ -754,8 +803,6 @@ namespace Galabingus
                 shotWaitTime = rng.Next(shotWaitVariance) - shotWaitVariance / 2;
                 shotTimer = 0;
             }
-
-            
         }
 
         /// <summary>

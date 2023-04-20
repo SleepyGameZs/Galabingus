@@ -891,14 +891,6 @@ namespace Galabingus
             // When space is pressed trigger shoot
             if (previousKeyboardState.IsKeyDown(Keys.Space) && currentKeyboardState.IsKeyUp(Keys.Space))
             {
-                //GameObject.Instance.Content = GameObject.Instance.Content.tile_strip26;
-                //Texture2D otherSprite = GetSprite(0);
-                //Rectangle otherTransform = GetAnimation(0).GetFrame(2);
-                //Animation otherAnimation = GetAnimation(0);
-                //PlayerInstance.Animation = otherAnimation;
-                //PlayerInstance.Sprite = otherSprite;
-                //PlayerInstance.Transform = otherTransform;
-                //PlayerInstance.Animation.AnimationDuration = 1000000000;
                 Shoot();
             }
 
@@ -1011,16 +1003,6 @@ namespace Galabingus
         /// </summary>
         public void Shoot()
         {
-            float flt_playerShootX = (Transform.Width * PlayerInstance.Scale) / 2;
-            float flt_playerShootY = (Transform.Height * PlayerInstance.Scale) / 2 + 10;
-            Vector2 vc2_shootPos = new Vector2(Position.X               // Base player X position
-                                               + flt_playerShootX       // Center horizontally
-                                               ,                        // Account for possible next movement
-                                               Position.Y               // Base player Y position
-                                               + flt_playerShootY       // Center vertically
-                                               + velocity.Y             // Account for possible next movement
-                                               );
-
             BulletManager.Instance.CreateBullet(BulletType.PlayerNormal, Position, new Vector2(0, -1), this, false);
         }
 
