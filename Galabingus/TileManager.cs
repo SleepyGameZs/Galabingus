@@ -254,7 +254,7 @@ namespace Galabingus
                 }
                 else
                 {
-                    if (borderList[i].Collider != null)
+                    if (borderList[i] != null && borderList[i].Collider != null)
                     {
                         borderList[i].Collider.Resolved = true;
                         borderList[i].Collider.Unload();
@@ -297,7 +297,7 @@ namespace Galabingus
                 }
                 else
                 {
-                    if (borderList[i].Collider != null)
+                    if (borderList[i] != null && borderList[i].Collider != null)
                     {
                         borderList[i].Collider.Resolved = true;
                         borderList[i].Collider.Unload();
