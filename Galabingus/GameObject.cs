@@ -1383,7 +1383,7 @@ namespace Galabingus
             {
                 //Debug.WriteLine(data);
 
-                if (lineNumber < 5)
+                if (lineNumber < 6)
                 {
                     switch (lineNumber)
                     {
@@ -1410,17 +1410,17 @@ namespace Galabingus
                 {
                     string[] column = data.Split('|');
 
-                    System.Diagnostics.Debug.WriteLine(data);
+                    //System.Diagnostics.Debug.WriteLine(height);
 
                     foreach (string num in column)
                     {
-                        Vector2 assetPosition = CalculateLevelEditorPositions(width, height, xInput, yInput);
+                        Vector2 assetPosition = CalculateLevelEditorPositions(width, height, yInput, xInput);
 
                         if (int.Parse(num) != -1)
                         {
                             //System.Diagnostics.Debug.WriteLine(assetPosition);
                             //TileManager.Instance.CreateObject(GameObject.Instance.Content.smallbullet_strip4, Vector2.Zero);
-                            //TileManager.Instance.CreateObject(GameObject.Instance.Content.tile_strip26,Vector2.Zero,(ushort)23);
+                            TileManager.Instance.CreateObject(GameObject.Instance.Content.tile_strip26,assetPosition,(ushort)(int.Parse(num) - 10));
                         }
 
                         xInput++;

@@ -128,7 +128,7 @@ namespace Galabingus
                     break;
             }
 
-
+            /*
             // Top
             currentSpriteNumber = (index);
             Tile tile = new Tile(GameObject.Instance.Content.white_pixel_strip1, 0, index, true);
@@ -159,6 +159,8 @@ namespace Galabingus
             tile.ScaleVector = new Vector2(200, screenSize.Y);
             tile.Position = new Vector2(-200, 0);
             borderList.Add(tile);
+            */
+
         }
 
         /// <summary>
@@ -195,8 +197,6 @@ namespace Galabingus
         public void CreateObject(dynamic content, Vector2 position)
         {
             Tile tile = new Tile(content, tileInstance, 1, true);
-            tile.Transform = new Rectangle(0, 0, tile.Sprite.Width, tile.Sprite.Height);
-            tile.Scale = 1f;
             tile.Position = position;
             tile.ScaleVector = new Vector2(tile.Scale, tile.Scale);
             tileList.Add(tile);
@@ -210,7 +210,6 @@ namespace Galabingus
         public void CreateObject(dynamic content, Vector2 position, ushort spriteNumber)
         {
             Tile tile = new Tile(content, tileInstance, spriteNumber);
-            tile.Scale = Player.PlayerInstance.Scale;
             tile.Position = position;
             tile.ScaleVector = new Vector2(tile.Scale, tile.Scale);
             tileList.Add(tile);
@@ -252,9 +251,12 @@ namespace Galabingus
                         }
                     }
                     borderList[i].Collider.Resolved = true;
-
                 }
-
+                else
+                {
+                    borderList[i].Collider.Resolved = true;
+                    borderList[i].Collider.Unload();
+                }
             }
             #endregion
 
@@ -289,6 +291,11 @@ namespace Galabingus
                     }
                     tileList[i].Collider.Resolved = true;
                     tileList[i].Update(gameTime);
+                }
+                else
+                {
+                    borderList[i].Collider.Resolved = true;
+                    borderList[i].Collider.Unload();
                 }
             }
             #endregion

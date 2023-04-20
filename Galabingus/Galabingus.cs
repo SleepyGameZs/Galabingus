@@ -149,6 +149,7 @@ namespace Galabingus
             tileManager = TileManager.Instance;
             tileManager.CreateTile(1);
 
+            GameObject.Instance.LoadTileLevelFile("GalabingusTilesLevel.level");
             //tileManager.CreateObject(GameObject.Instance.Content.tile_strip26, Vector2.Zero, 25);
             //tileManager.CreateObject();
 
@@ -160,7 +161,7 @@ namespace Galabingus
             //tileManager.CreateBackground();
             //tileManager.CreateObject(GameObject.Instance.Content.grayasteroid_strip1, new Vector2(Player.PlayerInstance.Transform.Width * 2 + 100, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.5f - Player.PlayerInstance.Transform.Height + 100));
 
-            GameObject.Instance.LoadTileLevelFile("GalabingusTilesLevel.level");
+
 
             // Sound
             AudioManager.Instance.AddSound("Fire", 0.25f, "Bullet Fire", Content);

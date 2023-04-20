@@ -189,7 +189,7 @@ namespace Galabingus
             this.contentName = contentName;
             this.instanceNumber = instanceNumber;
             this.Transform = this.Animation.GetFrame(sprite);
-            this.Scale = 3.0f;
+            this.Scale = PostScaleRatio();
             this.spriteNumber = sprite;
             isActive = true;
         }
@@ -208,7 +208,7 @@ namespace Galabingus
             this.contentName = contentName;
             this.instanceNumber = instanceNumber;
             this.Transform = this.Animation.GetFrame(0);
-            this.Scale = 3.0f;
+            this.Scale = PostScaleRatio();
             this.spriteNumber = sprite;
             isActive = true;
         }
@@ -219,7 +219,7 @@ namespace Galabingus
 
         public void Update(GameTime gameTime)
         {
-            this.Position -= Camera.Instance.OffSet;
+            this.Position = new Vector2(this.Position.X,this.Position.Y - Camera.Instance.OffSet.Y);
         }
 
         public void Draw()

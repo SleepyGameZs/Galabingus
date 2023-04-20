@@ -545,6 +545,7 @@ namespace Galabingus
                                 ) 
                             ) &&
                             collidersR[colliderIndex].transform.Intersects(this.transform)
+                            
                         )
                         {
                             //Debug.WriteLineIf(this.layer == (ushort)CollisionGroup.FromPlayer, "AAA");
@@ -567,18 +568,23 @@ namespace Galabingus
                                 // Setup the renderTarget
                                 targetSprite = new RenderTarget2D(graphicsDevice,
                                     (int)Math.Round((transform.Width * (Scale.X)), MidpointRounding.AwayFromZero) <= 0 ? 1 : (int)Math.Round((transform.Width * (Scale.X)), MidpointRounding.AwayFromZero),
-                                    (int)Math.Round((transform.Height * (Scale.Y)), MidpointRounding.AwayFromZero) <= 0 ? 1 : (int)Math.Round((transform.Height * (Scale.Y)), MidpointRounding.AwayFromZero)
+                                    (int)Math.Round((transform.Height * (Scale.Y)), MidpointRounding.AwayFromZero) <= 0 ? 1 : (int)Math.Round((transform.Height * (Scale.Y)), MidpointRounding.AwayFromZero),
+                                    true,
+                                    SurfaceFormat.Color,
+                                    DepthFormat.None,
+                                    0,
+                                    RenderTargetUsage.PlatformContents
                                 );
 
                                 // Render the new sprite 
                                 graphicsDevice.SetRenderTarget(targetSprite);
                                 graphicsDevice.Clear(clearColor);
-                                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointWrap);
+                                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointWrap, null, RasterizerState.CullNone, null, null);
                                 spriteBatch.Draw(
                                     sprite,
                                     new Vector2(0, 0),
                                     transform,
-                                    Color.Red,
+                                    Color.Black,
                                     0.0f,
                                     Vector2.Zero,
                                     Scale,
@@ -843,6 +849,7 @@ namespace Galabingus
             }
             */
 
+      
             /*
             if (xComparison)
             {
@@ -854,7 +861,6 @@ namespace Galabingus
                 mtv.Y = Math.Abs(mtv.Y);
             }
 
-            /*
             if (!xComparison)
             {
                 mtv.X = -Math.Abs(mtv.X);
@@ -864,7 +870,6 @@ namespace Galabingus
             {
                 mtv.Y = -Math.Abs(mtv.Y);
             }
-
             */
 
             if (mtv == Vector2.Zero)
