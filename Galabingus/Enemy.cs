@@ -582,6 +582,19 @@ namespace Galabingus
                     if (ShouldMove)
                     {
                         this.Position += new Vector2(3 * direction.X, 0);
+
+                        // Bounce on right side of screen
+                        if (this.Position.X + this.Transform.Width * this.Scale >=  // Enemy's right side
+                            EnemyManager.Instance.ScreenDimensions.X)               // Screen's right side
+                        {
+                            EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, true);
+                        }
+
+                        // Bounce on left side of screen
+                        if (this.Position.X <= 0)
+                        {
+                            EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, false);
+                        }
                     }
                 }
                 else
@@ -663,22 +676,26 @@ namespace Galabingus
                             if (ability == EnemyType.Boss)
                             { // Boss deletes tiles
                                 ((Tile)collision.other).IsActive = false;
+                            } 
+                            else
+                            { // Normal enemies bounce off tiles
+                                Vector2 overlapZone = ((Tile)collision.other).ScaleVector;
+
+                                if (overlapZone.X < overlapZone.Y)
+                                {
+                                    // Check if collision on left or right
+                                    if (this.Position.X < ((Tile)collision.other).Position.X)
+                                    {
+                                        EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, true);
+                                    }
+                                    else
+                                    {
+                                        EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, false);
+                                    }
+                                }
                             }
 
-                            Vector2 overlapZone = ((Tile)collision.other).ScaleVector;
-
-                            if (overlapZone.X < overlapZone.Y)
-                            {
-                                // Check if collision on left or right
-                                if (this.Position.X < ((Tile)collision.other).Position.X)
-                                {
-                                    EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, true);
-                                }
-                                else
-                                {
-                                    EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, false);
-                                }
-                            }
+                            
                         } 
                         else if ((collision.other as Player) is Player)
                         {
