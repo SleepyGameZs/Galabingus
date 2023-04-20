@@ -352,19 +352,19 @@ namespace Galabingus
         /// </summary>
         public void Load(RenderTarget2D renderTarget2D)
         {
-            //if (!renderTarget2D.IsContentLost && !GameObject.Instance.HoldCollider)
-            //{
-                //if (copyOfTarget == null || copyOfTarget.Width != renderTarget2D.Width || copyOfTarget.Height != renderTarget2D.Height)
-                //{
+            if (!renderTarget2D.IsContentLost && !GameObject.Instance.HoldCollider)
+            {
+                if (copyOfTarget == null || copyOfTarget.Width != renderTarget2D.Width || copyOfTarget.Height != renderTarget2D.Height)
+                {
                     copyOfTarget = new Texture2D(GameObject.Instance.GraphicsDevice, renderTarget2D.Width, renderTarget2D.Height);
-                //}
-                //if (pixels == null || pixels.Length != (renderTarget2D.Width * renderTarget2D.Height))
-                //{
+                }
+                if (pixels == null || pixels.Length != (renderTarget2D.Width * renderTarget2D.Height))
+                {
                     pixels = new Color[renderTarget2D.Width * renderTarget2D.Height];
                     renderTarget2D.GetData(pixels);
-                //}
-            ///}
-            //else
+                }
+            }
+            else
             {
                 GameObject.Instance.HoldCollider = true;
             }
@@ -561,7 +561,7 @@ namespace Galabingus
                             updated = true;
 
                             // Load pixel data to CPU memory
-                            if (true)//(!GameObject.Instance.HoldCollider && (pixels == null || spriteEffects != effect))
+                            if (!GameObject.Instance.HoldCollider && (pixels == null || spriteEffects != effect))
                             {
                                 
                                 // Setup the renderTarget
@@ -601,7 +601,7 @@ namespace Galabingus
                                 // Update the transform with the new scale and sprite
                                 Load(targetSprite);
 
-                                //if (pixels != null && copyOfTarget != null)
+                                if (pixels != null && copyOfTarget != null)
                                 {
                                     copyOfTarget.SetData(pixels);
                                 }

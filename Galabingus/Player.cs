@@ -68,6 +68,7 @@ namespace Galabingus
         private bool previousCollision;
         private bool shot;
         private bool boost;
+        private bool iFrame;
         private float boostSpeed;
         private List<Ghost> ghosts = new List<Ghost>();
         private Vector2 boostSpawnGhost;
@@ -137,7 +138,10 @@ namespace Galabingus
             }
             set
             {
-                PlayerInstance.health = value;
+                if (!iFrame)
+                {
+                    PlayerInstance.health = value;
+                }
             }
         }
 
@@ -321,7 +325,7 @@ namespace Galabingus
             PlayerInstance.heartSprite = GameObject.Instance.ContentManager.Load<Texture2D>("heart_strip1");
             PlayerInstance.cameraLock = true;
             textTest = UIManager.Instance.AddText("Testing", Vector2.Zero, 12, Color.White, UIState.BaseGame);
-
+            iFrame = false;
         }
 
         /// <summary>
