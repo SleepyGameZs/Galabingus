@@ -579,7 +579,7 @@ namespace Galabingus
                                 // Render the new sprite 
                                 graphicsDevice.SetRenderTarget(targetSprite);
                                 graphicsDevice.Clear(clearColor);
-                                spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.NonPremultiplied, SamplerState.PointWrap, null, RasterizerState.CullNone, null, null);
+                                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, SamplerState.PointWrap, null, RasterizerState.CullNone, null, null);
                                 spriteBatch.Draw(
                                     sprite,
                                     new Vector2(0, 0),
