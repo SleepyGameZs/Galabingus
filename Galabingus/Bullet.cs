@@ -125,6 +125,11 @@ namespace Galabingus
                 GameObject.Instance.Content = contentName;
                 return GetSprite(bulletNumber);
             }
+            set
+            {
+                GameObject.Instance.Content = contentName;
+                SetSprite(bulletNumber, value);
+            }
         }
 
         /// <summary>
@@ -301,7 +306,7 @@ namespace Galabingus
 
             // Set Location Data
             this.Scale = Player.PlayerInstance.Scale;
-            this.Position = new Vector2(position.X + Transform.Width * Scale / 2.0f,
+            this.Position = new Vector2(position.X + Transform.Width * Scale / 1.5f,
                                         position.Y - Transform.Height * Scale / 2.0f);
 
             #endregion
@@ -463,12 +468,28 @@ namespace Galabingus
 
                     // Check for wall collison
                     bool LeftWallHit = this.Position.X < Sprite.Width;
-                    bool RightWallHit = this.Position.X > BulletManager.Instance.ScreenDimensions.X;
+                    bool RightWallHit = this.Position.X > BulletManager.Instance.ScreenDimensions.X - 
+                                        this.Transform.Width * this.Scale;
 
-                    if (LeftWallHit || RightWallHit)
+                    
+                    // Hit left wall
+                    if (LeftWallHit)
                     { // Flip bullet
                         velocity.X *= -1;
-                        Direction = new Vector2(Direction.X * - 1, Direction.Y);
+
+                        // Set the new boss sprite
+                        ushort newSprite = GameObject.Instance.Content.enemy_orange_bullet_45_strip4;
+                        this.Sprite = GetSpriteFrom(newSprite, bulletNumber);
+                    }
+
+                    // Hit right wall
+                    if (RightWallHit)
+                    { // Flip bullet
+                        velocity.X *= -1;
+
+                        // Set the new boss sprite
+                        ushort newSprite = GameObject.Instance.Content.enemy_orange_bullet_135_strip4;
+                        this.Sprite = GetSpriteFrom(newSprite, bulletNumber);
                     }
 
                     break;
@@ -525,30 +546,34 @@ namespace Galabingus
                 case BulletType.Seeker:
                     Player seekerPlayer = Player.PlayerInstance;
 
-                    if (this.Position.Y < seekerPlayer.Position.Y)
+                    // Tracks the player initially then holds its velocity
+                    if (state_timer > 60)
                     {
-                        // Get Player's Center relative to bullet
-                        Vector2 seekerPlayerCenter = new Vector2(seekerPlayer.Position.X + (seekerPlayer.Transform.Width * seekerPlayer.Scale) / 2,
-                                                           seekerPlayer.Position.Y + (seekerPlayer.Transform.Height * seekerPlayer.Scale) / 2);
-
-                        // Get Bullet's Center
-                        Vector2 seekerBulletCenter = new Vector2(oldPosition.X, oldPosition.Y);
-
-                        // Find vector distance between player and bullet
-                        Vector2 seekerPlayerBulletDistance = seekerPlayerCenter - seekerBulletCenter;
-
-                        // Check which way to shift angle
-                        if (seekerPlayerBulletDistance.X > 0)
+                        if (this.Position.Y < seekerPlayer.Position.Y)
                         {
-                            velocity.X = Math.Max(velocity.X + 0.03f, 0.1f);
-                        } else
-                        {
-                            velocity.X = Math.Min(velocity.X - 0.03f, -0.1f);
+                            // Get Player's Center relative to bullet
+                            Vector2 seekerPlayerCenter = new Vector2(seekerPlayer.Position.X + (seekerPlayer.Transform.Width * seekerPlayer.Scale) / 2,
+                                                               seekerPlayer.Position.Y + (seekerPlayer.Transform.Height * seekerPlayer.Scale) / 2);
+
+                            // Get Bullet's Center
+                            Vector2 seekerBulletCenter = new Vector2(oldPosition.X, oldPosition.Y);
+
+                            // Find vector distance between player and bullet
+                            Vector2 seekerPlayerBulletDistance = seekerPlayerCenter - seekerBulletCenter;
+
+                            // Check which way to shift angle
+                            if (seekerPlayerBulletDistance.X > 0)
+                            {
+                                velocity.X = Math.Max(velocity.X + 0.03f, 0.1f);
+                            }
+                            else
+                            {
+                                velocity.X = Math.Min(velocity.X - 0.03f, -0.1f);
+                            }
+
+                            // Normalize the new velocity
+                            Vector2.Normalize(velocity);
                         }
-
-                        // Normalize the new velocity
-                        Vector2.Normalize(velocity);
-                        
                     }
 
                     // Set Current Position

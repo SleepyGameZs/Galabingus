@@ -34,7 +34,7 @@ namespace Galabingus_Map_Editor
         private void button2_Click(object sender, EventArgs e)
         {
             mapEditor = new MapEditorScreen(true);
-            mapEditor.LoadFile();
+            //mapEditor.LoadFile();
             mapEditor.Show();
         }
 
@@ -58,25 +58,6 @@ namespace Galabingus_Map_Editor
             string output = "Error:";
 
             bool invalid = false;
-            //width
-            if (InputCheck(textBox1))
-            {
-                if (Int32.Parse(textBox1.Text) > 0)
-                {
-                    numPages = Int32.Parse(textBox1.Text);
-                }
-                else
-                {
-                    output += "\n - Width value is not Valid and must be greater then 0";
-                    invalid = true;
-                }
-            }
-            else
-            {
-                output += "\n - Width is not Valid";
-                invalid = true;
-            }
-
             //Pixel Density
             if (InputCheck(textBox2))
             {
@@ -94,7 +75,7 @@ namespace Galabingus_Map_Editor
             if (invalid == false)
             {
 
-                mapEditor = new MapEditorScreen(numPages, pixelDensity);
+                mapEditor = new MapEditorScreen(pixelDensity);
                 mapEditor.Show();
             }
             else
@@ -103,18 +84,5 @@ namespace Galabingus_Map_Editor
             }
         }
 
-        /*
-        private bool DivisibleBy(double input, double divisor)
-        {
-            if (input != 0 && (input / divisor) % 1 == 0)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        */
     }
 }

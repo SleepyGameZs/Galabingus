@@ -1,17 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ScrollBar;
 
 namespace Galabingus_Map_Editor
 {
@@ -22,10 +14,8 @@ namespace Galabingus_Map_Editor
         private int totalWidth;
         private int totalHeight;
         private int totalDensity;
-        private int totalEditorPageNum;
         private int tileSize;
         private int currentSelectablePageNum;
-        private int currentEditorPageNum;
 
         private bool newMap;
         private bool changed;
@@ -48,7 +38,7 @@ namespace Galabingus_Map_Editor
         //Stores all the changes to the picture boxes for each page
         private List<ImageData> boxImages;
 
-        private List<List<int>> pageData;
+        //private List<List<int>> pageData;
         public MapEditorScreen(bool load)
         {
             InitializeComponent();
@@ -59,17 +49,19 @@ namespace Galabingus_Map_Editor
 
             //currentSelected = null;
 
-
-            currentSelectablePageNum = 0;
-
-            currentEditorPageNum = 0;
-
             moving = false;
 
             filePath = @"..\..\..\";
+
+            //ButtonStuff();
+
+            ImageAdd();
+
+            LoadFile();
+
         }
 
-        public MapEditorScreen(int numofPage, int pixelDensity)
+        public MapEditorScreen(int pixelDensity)
         {
             InitializeComponent();
 
@@ -79,29 +71,21 @@ namespace Galabingus_Map_Editor
 
             totalWidth = 9;
 
-            totalHeight = 9;
+            totalHeight = 36;
 
-            tileSize = 60;
+            tileSize = 20;
 
             totalDensity = pixelDensity;
 
-            totalEditorPageNum = numofPage;
-
-            pageData = new List<List<int>>();
-
-            //currentSelected = null;
-
             currentSelectablePageNum = 0;
-
-            currentEditorPageNum = 0;
 
             moving = false;
 
             filePath = @"..\..\..\";
 
-            ImageAdd();
-
             TileSizeDet();
+
+            ImageAdd();
 
             ButtonStuff();
 
@@ -244,17 +228,6 @@ namespace Galabingus_Map_Editor
             ChangeSelectable(1);
         }
 
-        //Change Level Section Left
-        private void PageChangeLeft_Click(object sender, EventArgs e)
-        {
-            EditorPageChange(-1);
-        }
-        //Change Level Section Right
-        private void PageChangeRight_Click(object sender, EventArgs e)
-        {
-            EditorPageChange(1);
-        }
-
         
 
         private void ImageChanger(object tile, EventArgs click)
@@ -292,7 +265,7 @@ namespace Galabingus_Map_Editor
                 {
                     PictureBox tileBox = new PictureBox();
                     tileBox.Size = new Size(tileSize, tileSize);
-                    tileBox.Location = new Point(29 + (tileSize * x), 50 + (tileSize * y));
+                    tileBox.Location = new Point(75 + (tileSize * x), 0 + (tileSize * y));
                     tileBox.BackColor = Color.White;
                     tileBox.SizeMode = PictureBoxSizeMode.StretchImage;
                     tileBox.Click += ImageChanger;
@@ -412,7 +385,19 @@ namespace Galabingus_Map_Editor
                 }
                 spritePageSelect.Add(imageArray);
             }
-            
+
+            /*
+            for (int x = 0; x < totalEditorPageNum; x++)
+            {
+                List<int> NewImage = new List<int>();
+                for (int y = 0; y < totalHeight * totalWidth; y++)
+                {
+                    NewImage.Add(-1);
+                }
+                
+                pageData.Add(NewImage);
+            }
+            */
         }
 
         private void ButtonStuff()
@@ -467,20 +452,7 @@ namespace Galabingus_Map_Editor
             }
         }
 
-        /*
-        private void PageChange(int change)
-        {
-            if (currentEditorPageNum + change >= 0 && currentEditorPageNum + change < totalEditorPageNum)
-            {
-                if (pagesData.Count == 0 || pagesData.Count < totalEditorPageNum)
-                {
-                    pagesData.Add(PageSave(boxImages));
-                }
-                currentEditorPageNum = currentEditorPageNum + change;
-
-            }
-        }
-        */
+       
 
         
 
@@ -512,7 +484,6 @@ namespace Galabingus_Map_Editor
                     writer.WriteLine(tileSize);
                     writer.WriteLine(totalHeight);
                     writer.WriteLine(totalWidth);
-                    writer.WriteLine(totalEditorPageNum);
                     writer.WriteLine(totalDensity);
                     int tileNumber = 0;
                     int currentY = 0;
@@ -557,18 +528,15 @@ namespace Galabingus_Map_Editor
             totalWidth = 0;
             totalHeight = 0;
             totalDensity = 0;
-            totalEditorPageNum = 0;
             tileSize = 0;
             currentSelectablePageNum = 0;
 
 
             imageArray = null;
             buttonList = null;
-            tileSet = new List<ImageData>();
+            //tileSet = new List<ImageData>();
             boxImages = new List<ImageData>();
             //currentSelected = null;
-            currentSelectablePageNum = 0;
-            currentEditorPageNum = 0;
             moving = false;
             filePath = @"..\..\..\";
 
@@ -622,14 +590,9 @@ namespace Galabingus_Map_Editor
                                 data = "";
                                 break;
                             case 3:
-                                totalEditorPageNum = int.Parse(data);
-                                data = "";
-                                break;
-                            case 4:
                                 totalDensity = int.Parse(data);
                                 data = "";
-                                ImageAdd();
-                                ButtonStuff();
+                                
                                 /*
                                 mapGroup.SetBounds(
                                     mapGroup.Bounds.X,
@@ -697,34 +660,6 @@ namespace Galabingus_Map_Editor
             ChangeSelectable(0);
         }
 
-        public void EditorPageChange(int change)
-        {
-            
-            if (currentEditorPageNum + change >= 0 && currentEditorPageNum + change < totalEditorPageNum)
-            {
-
-                if (pageData.Count >= 0 && pageData.Count < totalEditorPageNum)
-                {
-                    pageData.Add(PageSave());
-                    ClearEditor();
-                }
-                else 
-                {
-                    for (int x = 0; x < boxImages.Count; x++)
-                    {
-                        boxes[x].Image = MatchImageData(pageData[currentEditorPageNum][x]).Image;
-                    }
-                    if (currentEditorPageNum + change >= 0 && currentEditorPageNum + change < totalEditorPageNum)
-                    {
-                        currentEditorPageNum += change;
-                    }
-                    
-                }
-
-                Debug.Write(currentEditorPageNum);
-
-            }
-        }
 
         private void ClearEditor()
         {
@@ -734,19 +669,6 @@ namespace Galabingus_Map_Editor
             }
         }
 
-        public List<int> PageSave()
-        {
-            List<int> temp = new List<int>();
-            int tileNumber = 0;
-            for (int x = 0; x < totalWidth; x++)
-            {
-                for (int y = 0; y < totalHeight; y++)
-                {
-                    temp.Add(boxImages[tileNumber].ImageNumber);
-                    tileNumber++;
-                }
-            }
-            return temp;
-        }
+       
     }
 }
