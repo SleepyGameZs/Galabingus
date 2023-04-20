@@ -126,7 +126,7 @@ namespace Galabingus
 
             l_a4_obj_enemyData = GameObject.Instance.LoadEnemyLeveFile("GalabingusLevel.level");
 
-            l_a4_obj_enemyData.Add(new int[] { 1, 6, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 0.5f), (GameObject.Instance.GraphicsDevice.Viewport.Height * 0), 1 });
+            //l_a4_obj_enemyData.Add(new int[] { 1, 6, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 0.5f), (GameObject.Instance.GraphicsDevice.Viewport.Height * -4), 1 });
 
             //l_a4_obj_enemyData.Add(new int[] { 1, 1, 0, 0, 0 });
 
