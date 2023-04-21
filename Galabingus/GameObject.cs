@@ -1416,7 +1416,7 @@ namespace Galabingus
                     {
                         Vector2 assetPosition = CalculateLevelEditorPositions(width, height, yInput, xInput);
 
-                        if (int.Parse(num) != -1)
+                        if (int.Parse(num) != -1 && int.Parse(num) > 9)
                         {
                             //System.Diagnostics.Debug.WriteLine(assetPosition);
                             //TileManager.Instance.CreateObject(GameObject.Instance.Content.smallbullet_strip4, Vector2.Zero);
@@ -1490,7 +1490,7 @@ namespace Galabingus
                         {
                             Vector2 assetPosition = CalculateLevelEditorPositions(width, height, yInput, xInput);
                             //System.Diagnostics.Debug.WriteLine(assetPosition);
-                            if (int.Parse(num) != -1 && int.Parse(num) != 9)
+                            if (int.Parse(num) != -1 && int.Parse(num) < 7)
                             {
                                 enemies.Add(new int[] { 1, int.Parse(num), (int)assetPosition.X, (int)assetPosition.Y, 1 });
                             }

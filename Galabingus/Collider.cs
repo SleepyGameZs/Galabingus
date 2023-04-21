@@ -531,6 +531,8 @@ namespace Galabingus
                         // Then we can activate the collider
                         if (active || this.resolved &&
                             otherCollider.layer != this.layer &&
+                            (otherCollider.layer != (ushort)CollisionGroup.Tile || ((ushort)CollisionGroup.Enemy != otherCollider.layer && this.layer != (ushort)CollisionGroup.Enemy)
+                            ) &&
                             collidersR[colliderIndex].transform.Intersects(this.transform)
                         )
                         {
