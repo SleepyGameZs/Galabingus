@@ -8,8 +8,11 @@
 #endif
 
 uniform float fade;
+uniform float redShade;
+uniform float shadeFadeTime;
 uniform bool fadeIn;
 uniform bool fadeOut;
+uniform bool bossEffect;
 
 Texture2D SpriteTexture;
 
@@ -56,6 +59,15 @@ float3 normalizeSaturation(float4 color)
 	}
 
 	return  color * 1.3f;
+}
+
+float4 BossEffect(float4 inColor)
+{
+	if (bossEffect)// && inColor.a == 1)
+	{
+		return float4(inColor.r, inColor.g * redShade * shadeFadeTime * 0.8f, inColor.b * redShade * shadeFadeTime * 0.8f, inColor.a);
+	}
+	return float4(inColor.r, inColor.g, inColor.b, inColor.a);
 }
 
 float4 FadeIn(float4 inColor)
@@ -174,7 +186,20 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 			lerpPixels.rgb = lerp(lerpPixels.rgb, lerpPixels.rgb * 0.21, 0.5);
 		}
 
+		//lerpPixel.rgb = lerp(lerpPixels.rgb, colorTrue.rgb, 0.9875);
 	}
+
+	if (colorTrue.a == 1 && length(lerpPixels.rgb) < 0.5f)
+	{
+		lerpPixels.rgb = lerpPixels.rgb * 2.5f;
+		if (colorTrue.r > 0.5f && colorTrue.b < 0.2f && colorTrue.g < 0.2f)
+		{
+			//lerpPixels.r *= 1.0f;
+			//lerpPixels.g *= 1.125f;
+		}
+	}
+
+
 
 	halation.r = halation.r * 0.75;
 	halation.g = halation.g * 0.75;
@@ -191,11 +216,9 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 		halationLerp = lerpPixels;
 	}
 
-
-
 	halationLerp.a = lerpPixels.a;
 
-	return FadeIn(FadeOut(halationLerp));
+	return BossEffect(FadeIn(FadeOut(halationLerp)));
 }
 
 technique SpriteDrawing

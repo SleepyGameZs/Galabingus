@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Diagnostics;
@@ -98,6 +99,12 @@ namespace Galabingus
         private bool holdCollider;
         private ushort contentName;
         private CollisionGroup collisionGroup;
+        private static List<Vector2> cameraStopPositions;
+        private static float universalScale;
+        private static float redShade;
+        private static float timeShadeEffect;
+        private static bool flipSine;
+        private static bool bossEffectIsActive;
 
         public struct GameObjectTrie<T>
         {
@@ -706,6 +713,31 @@ namespace Galabingus
 #nullable enable
         }
 
+        public static float RedShade
+        {
+            get
+            {
+                return redShade;
+            }
+            set
+            {
+                redShade = value;
+            }
+        }
+
+        public static float ShadeTime
+        {
+            get
+            {
+                return timeShadeEffect;
+            }
+            set
+            {
+                timeShadeEffect = value;
+            }
+        }
+
+
         public ref List<Collider> ColliderCollisions()
         {
             return ref colliders;
@@ -867,6 +899,62 @@ namespace Galabingus
             }
         }
 
+        public bool IsBossEffectActive
+        {
+            get
+            {
+                return bossEffectIsActive;
+            }
+        }
+
+        public float TimeShade
+        {
+            get
+            {
+                return timeShadeEffect;
+            }
+        }
+
+        public void StartBossEffect()
+        {
+            bossEffectIsActive = true;
+        }
+
+        public void StopBossEffect()
+        {
+            bossEffectIsActive = false;
+        }
+
+
+        public void PlayBossEffect()
+        {
+            if (timeShadeEffect >= 1)
+            {
+
+                flipSine = !flipSine;
+                timeShadeEffect -= 0.01f;
+            }
+            else if (timeShadeEffect <= 0)
+            {
+                flipSine = !flipSine;
+                timeShadeEffect += 0.01f;
+            }
+            else
+            {
+                if (flipSine)
+                {
+                    timeShadeEffect -= 0.01f;
+                }
+                else
+                {
+                    timeShadeEffect += 0.01f;
+                }
+            }
+
+            //System.Diagnostics.Debug.WriteLine(timeShadeEffect);
+        }
+
+
         /// <summary>
         ///  Generates a index for the instance Content 
         ///  property that cannot be found
@@ -914,13 +1002,36 @@ namespace Galabingus
             return exist;
         }
 
+        public Texture2D GetSpriteFrom(ushort contentName, ushort instanceNumber)
+        {
+            GameObject.Instance.Content = contentName;
+            GameObject.Instance.instance = instanceNumber;
+            string path = GameObject.ObjectEnumsI[contentName];
+            GameObject.Instance.index = contentName;
+            string start = "../../../Content";
+            string[] files = Directory.GetFiles(start, path + ".*", SearchOption.AllDirectories);
+            files[0] = files[0].Replace(start, "");
+            files[0] = files[0].Replace("\\", "/");
+            files[0] = files[0].Substring(1);
+            files[0] = files[0].Substring(0, files[0].LastIndexOf('.'));
+
+            return GameObject.Instance.contentManager.Load<Texture2D>(files[0]);
+        }
+
         public void LoadSprite(ushort contentName, ushort instanceNumber)
         {
             GameObject.Instance.Content = contentName;
             GameObject.Instance.instance = instanceNumber;
             string path = GameObject.ObjectEnumsI[contentName];
             GameObject.Instance.index = contentName;
-            SetSprite(instanceNumber, GameObject.Instance.contentManager.Load<Texture2D>(path));
+            string start = "../../../Content";
+            string[] files = Directory.GetFiles(start, path + ".*", SearchOption.AllDirectories);
+            files[0] = files[0].Replace(start, "");
+            files[0] = files[0].Replace("\\", "/");
+            files[0] = files[0].Substring(1);
+            files[0] = files[0].Substring(0, files[0].LastIndexOf('.'));
+
+            SetSprite(instanceNumber, GameObject.Instance.contentManager.Load<Texture2D>(files[0]));
         }
 
         private GameObject()
@@ -943,8 +1054,6 @@ namespace Galabingus
         )
         {
             GameObject.Instance.Content = contentName;
-
-
 
             if (GetScale(instanceNumber) != 0)
             {
@@ -979,9 +1088,14 @@ namespace Galabingus
             this.collisionGroup = collisionGroup;
             //instance = instanceNumber;
             string path = GameObject.ObjectEnumsI[contentName];
+            string start = "../../../Content";
+            string[] files = Directory.GetFiles(start, path+".*", SearchOption.AllDirectories);
+            files[0] = files[0].Replace(start, "");
+            files[0] = files[0].Replace("\\", "/");
+            files[0] = files[0].Substring(1);
+            files[0] = files[0].Substring(0, files[0].LastIndexOf('.'));
             ushort strip = ushort.Parse(path.Split("strip")[1]);
-
-            SetSprite(instanceNumber, GameObject.Instance.contentManager.Load<Texture2D>(path));
+            SetSprite(instanceNumber, GameObject.Instance.contentManager.Load<Texture2D>(files[0]));
             SetScale(instanceNumber, 1.0f);
             SetAnimation(instanceNumber, new Animation(GetSprite(instanceNumber).Width, GetSprite(instanceNumber).Height, strip));
             SetPosition(instanceNumber, Vector2.Zero);
@@ -998,7 +1112,21 @@ namespace Galabingus
             newCollider.Resolved = true;
             newCollider.self = this;
             SetCollider(instanceNumber, newCollider);
+        }
 
+        public float PostScaleRatio()
+        {
+            System.Diagnostics.Debug.WriteLine("EEEEAA " + this.GetTransform(instance).Width);
+            System.Diagnostics.Debug.WriteLine("FFFEEEE " + universalScale);
+            return (this.GetTransform(instance).Width > this.GetTransform(instance).Height ? universalScale / this.GetTransform(instance).Width : universalScale / this.GetTransform(instance).Height);
+        }
+
+        public Vector2 PostScaleRatio(bool isVector2)
+        {
+            return new Vector2(
+                universalScale / this.GetTransform(instance).Width,
+                universalScale / this.GetTransform(instance).Height
+            );
         }
 
         public System.Type GameObjectType
@@ -1027,6 +1155,12 @@ namespace Galabingus
             this.contentManager = contentManager;
             GameObject.fade = 1;
             GameObject.Instance.holdCollider = false;
+            redShade = 1;
+            timeShadeEffect = 1;
+            //shade = false;
+            flipSine = false;
+            cameraStopPositions = new List<Vector2>();
+            flipSine = false;
             return new GameObject();
         }
 
@@ -1195,17 +1329,46 @@ namespace Galabingus
             }
         }
 
+        public List<Vector2> GetCameraStopPositions()
+        {
+            return GameObject.cameraStopPositions;
+        }
+
+        public void CameraStopRemoveAt(int index)
+        {
+            List<Vector2> preI = new List<Vector2>();
+            List<Vector2> postI = new List<Vector2>();
+            List<Vector2> result = new List<Vector2>();
+            for (int i = 0; i < index; i++)
+            {
+                preI.Add(GameObject.cameraStopPositions[i]);
+            }
+            for (int i = index+1; i < GameObject.cameraStopPositions.Count; i++)
+            {
+                postI.Add(GameObject.cameraStopPositions[i]);
+            }
+            foreach (Vector2 pos in preI)
+            {
+                result.Add(pos);
+            }
+            foreach (Vector2 pos in postI)
+            {
+                result.Add(pos);
+            }
+            GameObject.cameraStopPositions = result;
+        }
+
         public Vector2 CalculateLevelEditorPositions(int width, int height, int row, int column)
         {
             float coordianteXScale = GameObject.Instance.GraphicsDevice.Viewport.Width / width;
+            universalScale = coordianteXScale;
             float coordinateYScale = GameObject.Instance.GraphicsDevice.Viewport.Height / height * 4;
             float startingY = GameObject.Instance.GraphicsDevice.Viewport.Height * -4;
-            return new Vector2(coordianteXScale * row, coordinateYScale * column + startingY);
+            return new Vector2(coordianteXScale * column, coordinateYScale * row + startingY + coordinateYScale * 1.5f);
         }
 
-        public List<int[]> LoadEnemyLeveFile(string fileName)
+        public void LoadTileLevelFile(string fileName)
         {
-            List <int[]> enemies = new List<int[]>();
             StreamReader reader = new StreamReader("../../../" + fileName);
 
             int lineNumber = 0;
@@ -1245,18 +1408,20 @@ namespace Galabingus
                 }
                 else
                 {
-                    string[] row = data.Split('|');
+                    string[] column = data.Split('|');
 
-                    foreach (string num in row)
+                    //System.Diagnostics.Debug.WriteLine(height);
+
+                    foreach (string num in column)
                     {
-                        Vector2 assetPosition = CalculateLevelEditorPositions(width, height, xInput, yInput);
-                        //System.Diagnostics.Debug.WriteLine(num);
-                        //System.Diagnostics.Debug.WriteLine(assetPosition.Y);
+                        Vector2 assetPosition = CalculateLevelEditorPositions(width, height, yInput, xInput);
+
                         if (int.Parse(num) != -1)
                         {
-                            enemies.Add(new int[] { 1, int.Parse(num), (int)assetPosition.X, (int)assetPosition.Y, 1 });
+                            //System.Diagnostics.Debug.WriteLine(assetPosition);
+                            //TileManager.Instance.CreateObject(GameObject.Instance.Content.smallbullet_strip4, Vector2.Zero);
+                            TileManager.Instance.CreateObject(GameObject.Instance.Content.tile_strip26,assetPosition,(ushort)(int.Parse(num) - 10));
                         }
-                        
 
                         xInput++;
                         boxIdentifier++;
@@ -1266,6 +1431,86 @@ namespace Galabingus
                 }
                 lineNumber++;
             }
+
+            reader.Close();
+        }
+
+        public void TriggerBossEffect()
+        {
+            
+        }
+
+
+        public List<int[]> LoadEnemyLeveFile(string fileName)
+        {
+            List <int[]> enemies = new List<int[]>();
+            StreamReader reader = new StreamReader("../../../" + fileName);
+
+            int lineNumber = 0;
+            int width = 0;
+            int height = 0;
+            int xInput = 0;
+            int yInput = 0;
+            int boxIdentifier = 0;
+            bool ready = false;
+            string? data = "";
+            do
+            {
+                //Debug.WriteLine(data);
+                if (ready)
+                {
+                    if (lineNumber < 5)
+                    {
+                        switch (lineNumber)
+                        {
+                            case 0:
+                                data = "";
+                                break;
+                            case 1:
+                                height = int.Parse(data);
+                                data = "";
+                                break;
+                            case 2:
+                                width = int.Parse(data);
+                                data = "";
+                                break;
+                            case 3:
+                                data = "";
+                                break;
+                            case 4:
+                                data = "";
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        string[] column = data.Split('|');
+                        //System.Diagnostics.Debug.WriteLine(data);
+                        foreach (string num in column)
+                        {
+                            Vector2 assetPosition = CalculateLevelEditorPositions(width, height, yInput, xInput);
+                            //System.Diagnostics.Debug.WriteLine(assetPosition);
+                            if (int.Parse(num) != -1 && int.Parse(num) != 9)
+                            {
+                                enemies.Add(new int[] { 1, int.Parse(num), (int)assetPosition.X, (int)assetPosition.Y, 1 });
+                            }
+
+                            if (int.Parse(num) == 9)
+                            {
+                                cameraStopPositions.Add(assetPosition);
+                            }
+
+                            xInput++;
+                            boxIdentifier++;
+                        }
+                        xInput = 0;
+                        yInput++;
+                    }
+                    lineNumber++;
+                }
+                ready = true;
+            }
+            while ((data = reader.ReadLine()) != null);
 
             reader.Close();
 

@@ -25,10 +25,11 @@ namespace Galabingus
     {
         Normal,
         Bouncing,
-        Splitter,
         Wave,
+        Splitter,
         Seeker,
-        Bomb
+        Bomb,
+        Boss
     }
 
     internal class Enemy : GameObject
@@ -65,6 +66,10 @@ namespace Galabingus
         // Health value of this enemy
         private int currentHealth;
         private int totalHealth;
+
+        // Whether or not this enemy is a boss
+        private EnemyType bossPhase;
+        private int stateTimer;
 
         // Reference to what thing created this enemy (can be null)
         private object creatorReference;
@@ -105,6 +110,11 @@ namespace Galabingus
             {
                 GameObject.Instance.Content = contentName;
                 return GetSprite(enemyNumber);
+            }
+            set
+            {
+                GameObject.Instance.Content = contentName;
+                SetSprite(enemyNumber, value);
             }
         }
 
@@ -264,6 +274,17 @@ namespace Galabingus
             get { return enemyNumber; }
         }
 
+        /// <summary>
+        /// Returns if the enemy is on screen
+        /// </summary>
+        public bool OnScreen
+        {
+            get { 
+                return (this.Position.Y > 0 &&
+                        this.Position.Y < BulletManager.Instance.ScreenDimensions.Y
+                        - this.Transform.Height * this.Scale);
+            }
+        }
 
         #endregion
 
@@ -305,6 +326,7 @@ namespace Galabingus
 
             // Set Scale
             this.Scale = Player.PlayerInstance.Scale;
+            //this.Scale = PostScaleRatio();
 
             // Set Position
             this.Position = new Vector2(position.X + this.Transform.Width * this.Scale * 0.5f - 10,  // X
@@ -328,15 +350,13 @@ namespace Galabingus
 
             // set randomizer + extra time between next shot
             rng = new Random();
-            shotWaitVariance = 8;
+            shotWaitVariance = 9;
             shotWaitTime = rng.Next(shotWaitVariance) - shotWaitVariance / 2;
 
             // Set shot timer with some randomization
             shotTimer = rng.Next(50);
 
-            // Set Health
-            totalHealth = 3;
-            currentHealth = totalHealth;
+            
 
             // Set if enemy should move
             this.shouldMove = shouldMove;
@@ -344,9 +364,31 @@ namespace Galabingus
             // Set base position to be stored for dictionary keys
             initialPosition = position;
 
-            #endregion
+            // Boss Data + Health
+            switch (ability)
+            {
+                case EnemyType.Bomb:
+                    totalHealth = 1;
+                    break;
 
-        }
+                case EnemyType.Boss:
+                    // Set Health
+                    totalHealth = 150;
+                    break;
+
+                default:
+                    // Normal health
+                    totalHealth = 3;
+                    break;
+            }
+            currentHealth = totalHealth;
+            bossPhase = EnemyType.Normal;
+
+            // Sets the state timer to zero
+            stateTimer = 0;
+
+        #endregion
+    }
 
         #endregion
 
@@ -358,9 +400,42 @@ namespace Galabingus
             bool enemyOnScreen = (this.Position.Y > - this.Transform.Height * this.Scale &&
                                   this.Position.Y < BulletManager.Instance.ScreenDimensions.Y);
 
-            // Move enemy with Y camera scrolling
-            Vector2 cameraScroll = new Vector2(0, Camera.Instance.OffSet.Y);
-            Position -= cameraScroll;
+            if (ability == EnemyType.Boss)
+            {
+                if (!enemyOnScreen)
+                {
+                    // Final position change, and whether or not to include camera movement
+                    if (Camera.Instance.CameraLock)
+                    { // In debug mode
+                        Vector2 playerMovement = new Vector2(0, Player.PlayerInstance.Translation.Y);
+                        Position -= playerMovement;
+                    }
+                    else
+                    { // Normal camera movement
+                        Vector2 cameraScroll = new Vector2(0, Camera.Instance.OffSet.Y);
+                        Position -= cameraScroll;
+                    }
+                }
+                else
+                {
+                    // Start boss effect
+                    GameObject.Instance.StartBossEffect();
+                }
+            } 
+            else
+            {
+                // Final position change, and whether or not to include camera movement
+                if (Camera.Instance.CameraLock)
+                { // In debug mode
+                    Vector2 playerMovement = new Vector2(0, Player.PlayerInstance.Translation.Y);
+                    Position -= playerMovement;
+                }
+                else
+                { // Normal camera movement
+                    Vector2 cameraScroll = new Vector2(0, Camera.Instance.OffSet.Y);
+                    Position -= cameraScroll;
+                }
+            }
 
             if (enemyOnScreen)
             { // Only does these while on the screen
@@ -370,12 +445,17 @@ namespace Galabingus
                     {
                         case EnemyType.Normal:
                             // Shooting (3 Bullets)
-                            BulletSpawning(100, BulletType.EnemyNormal, new Vector2(-25, 0), 0);
+                            BulletSpawning(130, 
+                                           BulletType.EnemyNormal, 
+                                           ((Direction.Y == 1) ?    // CHECK DIRECTION
+                                               new Vector2(-30, 0) :    // DOWN
+                                               new Vector2(-35, -80)),  // UP
+                                           0);
                             break;
 
                         case EnemyType.Bouncing:
                             // Shooting (3 Bullets)
-                            BulletSpawning(140,
+                            BulletSpawning(150,
                                            new BulletType[]
                                            {
                                            BulletType.BouncingSide,
@@ -384,9 +464,15 @@ namespace Galabingus
                                            },
                                            new Vector2[]
                                            {
-                                           new Vector2(-14, 0),
-                                           new Vector2(-14, 0),
-                                           new Vector2(-24, 0)
+                                           ((Direction.Y == 1) ?    // CHECK DIRECTION
+                                               new Vector2(-19, 0) :    // DOWN
+                                               new Vector2(-24, -80)),  // UP,
+                                           ((Direction.Y == 1) ?    // CHECK DIRECTION
+                                               new Vector2(-19, 0) :    // DOWN
+                                               new Vector2(-24, -80)),  // UP,,
+                                           ((Direction.Y == 1) ?    // CHECK DIRECTION
+                                               new Vector2(-29, 0) :    // DOWN
+                                               new Vector2(-24, -80)),  // UP,
                                            },
                                            new int[] { -1, 0, 1 }
                                            );
@@ -394,17 +480,155 @@ namespace Galabingus
 
                         case EnemyType.Splitter:
                             // Shoots
-                            BulletSpawning(140, BulletType.Splitter, new Vector2(-42, 0), 0);
+                            BulletSpawning(150, 
+                                           BulletType.Splitter,
+                                           ((Direction.Y == 1) ?    // CHECK DIRECTION
+                                               new Vector2(-47, 0) :    // DOWN
+                                               new Vector2(-52, -80)),  // UP,
+                                           0);
                             break;
 
                         case EnemyType.Wave:
                             // Shoots
-                            BulletSpawning(150, BulletType.Wave, new Vector2(-115, 0), 0);
+                            BulletSpawning(160, 
+                                           BulletType.Wave,
+                                           ((Direction.Y == 1) ?    // CHECK DIRECTION
+                                               new Vector2(-135, 0) :    // DOWN
+                                               new Vector2(-140, -80)),  // UP
+                                           0);
                             break;
 
                         case EnemyType.Seeker:
                             // Shoots
-                            BulletSpawning(190, BulletType.Seeker, new Vector2(-15, 0), 0);
+                            BulletSpawning(170, 
+                                           BulletType.Seeker,
+                                           ((Direction.Y == 1) ?    // CHECK DIRECTION
+                                               new Vector2(-20, 0) :    // DOWN
+                                               new Vector2(-25, -80)),  // UP, 
+                                           0);
+                            break;
+
+                        case EnemyType.Boss:
+                            // Base data
+                            int phaseTime = 0;
+                            ushort newSprite = 0;
+
+                            // Switch for various attacks
+                            switch (bossPhase)
+                            {
+                                case EnemyType.Normal:
+                                    // Set the new boss sprite
+                                    newSprite = GameObject.Instance.Content.boss_red_strip4;
+                                    this.Sprite = GetSpriteFrom(newSprite, enemyNumber);
+
+                                    // Shooting
+                                    bool normalRange = (stateTimer >= 100 && stateTimer < 200) ||
+                                                       (stateTimer >= 250 && stateTimer < 350) ||
+                                                       (stateTimer >= 400 && stateTimer < 500);
+
+                                    if (stateTimer % 10 == 0 && normalRange)
+                                    {
+                                        BulletSpawning(0, BulletType.EnemyNormal, new Vector2(-30, 0), 0);
+                                    }
+
+                                    // Time till next phase
+                                    phaseTime = 500;
+                                    break;
+
+                                case EnemyType.Bouncing:
+                                    // Set the new boss sprite
+                                    newSprite = GameObject.Instance.Content.boss_orange_strip4;
+                                    this.Sprite = GetSpriteFrom(newSprite, enemyNumber);
+
+                                    // Shooting Bouncy shots
+                                    if (stateTimer % 70 == 0 && stateTimer >= 70)
+                                    {
+                                        BulletSpawning(0,
+                                           new BulletType[]
+                                           {
+                                           BulletType.BouncingSide,
+                                           BulletType.BouncingCenter,
+                                           BulletType.BouncingSide
+                                           },
+                                           new Vector2[]
+                                           {
+                                           new Vector2(-19, 0),
+                                           new Vector2(-19, 0),
+                                           new Vector2(-29, 0)
+                                           },
+                                           new int[] { -1, 0, 1 }
+                                           );
+                                    }
+
+                                    // Time till next phase
+                                    phaseTime = 420;
+                                    break;
+
+                                case EnemyType.Wave:
+                                    // Set the new boss sprite
+                                    newSprite = GameObject.Instance.Content.boss_yellow_strip4;
+                                    this.Sprite = GetSpriteFrom(newSprite, enemyNumber);
+
+                                    // Shooting
+                                    if (stateTimer % 80 == 0 && stateTimer >= 100)
+                                    {
+                                        BulletSpawning(0, BulletType.Wave, new Vector2(-135, 0), 0);
+                                    }
+
+                                    // Time till next phase
+                                    phaseTime = 500;
+                                    break;
+
+                                case EnemyType.Splitter:
+                                    // Set the new boss sprite
+                                    newSprite = GameObject.Instance.Content.boss_green_strip4;
+                                    this.Sprite = GetSpriteFrom(newSprite, enemyNumber);
+
+                                    // Shooting
+                                    bool splitterRange = (stateTimer >= 100 && stateTimer <= 160) ||
+                                                         (stateTimer >= 210 && stateTimer <= 270) ||
+                                                         (stateTimer >= 320 && stateTimer < 380);
+
+                                    if (stateTimer % 30 == 0 && splitterRange)
+                                    {
+                                        BulletSpawning(0, BulletType.Splitter, new Vector2(-47, 0), 0);
+                                    }
+
+                                    // Time till next phase
+                                    phaseTime = 380;
+                                    break;
+
+                                case EnemyType.Seeker:
+                                    // Set the new boss sprite
+                                    newSprite = GameObject.Instance.Content.boss_violet_strip4;
+                                    this.Sprite = GetSpriteFrom(newSprite, enemyNumber);
+
+                                    // Shooting
+
+                                    if (stateTimer % 80 == 0 && stateTimer >= 100)
+                                    {
+                                        BulletSpawning(0, BulletType.Seeker, new Vector2(-20, 0), 0);
+                                    }
+
+                                    // Time till next phase
+                                    phaseTime = 500;
+                                    break;
+
+                            }
+
+                            // Change to make use of game time
+                            if (stateTimer >= phaseTime)
+                            {
+                                bossPhase++;
+                                stateTimer = 0;
+                                if (bossPhase == EnemyType.Bomb)
+                                {
+                                    bossPhase = EnemyType.Normal;
+                                }
+                            }
+
+                            // Increment state timer 
+                            stateTimer++;
                             break;
                     }
                     shotTimer++;
@@ -413,6 +637,19 @@ namespace Galabingus
                     if (ShouldMove)
                     {
                         this.Position += new Vector2(3 * direction.X, 0);
+
+                        // Bounce on right side of screen
+                        if (this.Position.X + this.Transform.Width * this.Scale >=  // Enemy's right side
+                            EnemyManager.Instance.ScreenDimensions.X)               // Screen's right side
+                        {
+                            EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, true);
+                        }
+
+                        // Bounce on left side of screen
+                        if (this.Position.X <= 0)
+                        {
+                            EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, false);
+                        }
                     }
                 }
                 else
@@ -421,8 +658,27 @@ namespace Galabingus
                     {
                         case EnemyType.Bomb:
                             // Creates an explosion
-                            BulletSpawning(0, BulletType.Explosion, new Vector2(-180, 0), 0);
+                            BulletSpawning(0, BulletType.BigExplosion, new Vector2(-400, 0), 0);
                             AudioManager.Instance.CallSound("Explosion");
+                            break;
+
+                        case EnemyType.Boss:
+                            // Creates an explosion
+                            BulletSpawning(0, BulletType.BigExplosion, new Vector2(-400, 0), 0);
+                            AudioManager.Instance.CallSound("Explosion");
+                            GameObject.Instance.StopBossEffect();
+                            break;
+
+                        default:
+                            // Creates an explosion
+                            BulletSpawning(0, BulletType.Explosion, new Vector2(-230, 0), 0);
+                            AudioManager.Instance.CallSound("Explosion");
+
+                            // Has a chance to spawn hearts
+                            if (rng.Next(3) == 1)
+                            {
+                                BulletSpawning(0, BulletType.Heart, new Vector2(-25, 0), 0);
+                            }
                             break;
                     }
                 }
@@ -448,24 +704,13 @@ namespace Galabingus
                     enemyNumber                             // Enemy Number (tied to Manager)
                 );
 
-                // Secondary Enemy Collider
-                List<Collision> secondaryIntercept = this.Collider.UpdateTransform(
-                    this.Sprite,                                    // Enemy Sprite itself
-                    this.Position,                                  // Position
-                    this.Transform,                                 // Enemy transform for sprite selection
-                    GameObject.Instance.GraphicsDevice,             // Graphics Device Info
-                    GameObject.Instance.SpriteBatch,                // Sprite Batcher (carries through)
-                    1,                                              // Removed old variant of direction (bully Matt to remove this)
-                    new Vector2(this.Scale, this.Scale),            // Scale
-                    flipper,                                        // Sprite Effects
-                    (ushort)(CollisionGroup.Enemy + enemyNumber),   // Collision Layer
-                    enemyNumber                                     // Enemy Number (tied to Manager)
-                );
-
                 // Get camera's movement direction
                 float cameraScrollY = Camera.Instance.OffSet.Y;
-                if (Player.PlayerInstance.CameraLock == true)
+                if (!Player.PlayerInstance.CameraLock && !Camera.Instance.CameraLock)
                 {
+                    Vector2 cameraScroll = new Vector2(0, Camera.Instance.OffSet.Y);
+
+                    // Set direction
                     if (cameraScroll.Y > 0)
                     {
                         direction.Y = -1;
@@ -481,40 +726,35 @@ namespace Galabingus
                 {
                     if (collision.other != null && !destroy)
                     {
-                        //System.Diagnostics.Debug.WriteLine("eee"+intercepts.Count);
-                        if ((collision.other as Enemy) is Enemy)
-                        { // Collided with Enemy
-                            // Check to see if collided enemy isn't in this Enemy's row
-
-                            /*if (!EnemyManager.Instance.InSameRow((int)initialPosition.Y, ((Enemy)collision.other).EnemyNumber))
-                            {
-                                // Check if collision on left or right
-                                if (this.Position.X < ((Enemy)collision.other).Position.X)
-                                {
+                        if ((collision.other as Tile) is Tile)
+                        { // Collided with Tile
+                            if (ability == EnemyType.Boss)
+                            { // Boss deletes tiles
+                                ((Tile)collision.other).IsActive = false;
+                            } 
+                            else
+                            { // Normal enemies bounce off tiles
+                                if (this.Position.X < ((Tile)collision.other).Position.X)
+                                { // Bounce right
                                     EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, true);
                                 }
                                 else
-                                {
+                                { // Bounce left
                                     EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, false);
                                 }
-                            }*/
-                        }
-                        else if ((collision.other as Tile) is Tile)
-                        { // Collided with Tile
-                            Vector2 overlapZone = ((Tile)collision.other).ScaleVector;
-
-                            //System.Diagnostics.Debug.WriteLine(overlapZone.X);
-                            //System.Diagnostics.Debug.WriteLine(overlapZone.Y);
-                            if (overlapZone.X < overlapZone.Y)
-                            {
-                                // Check if collision on left or right
-                                if (this.Position.X < ((Tile)collision.other).Position.X)
-                                {
-                                    EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, true);
-                                } else
-                                {
-                                    EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, false);
-                                }
+                            }
+                        } 
+                        else if ((collision.other as Player) is Player)
+                        {
+                            if (ability == EnemyType.Bomb) 
+                            { // Bomb blows up
+                                destroy = true;
+                                BulletSpawning(0, BulletType.Explosion, new Vector2(-400, 0), 0);
+                                AudioManager.Instance.CallSound("Explosion");
+                            } 
+                            else
+                            { // Add enemy IFrames then make player take damage on collision
+                                Player.PlayerInstance.Health = Player.PlayerInstance.Health - 0.5f;
                             }
                         }
                     }
@@ -555,7 +795,7 @@ namespace Galabingus
         {
             double percentageChange = 1 + (0.1 * shotWaitTime);
 
-            if (shotTimer > (int)(shootDelay * percentageChange))
+            if (shotTimer >= (int)(shootDelay * percentageChange))
             {
                 CreateBullet(ability, shootOffset, horizontalDirection);
 
@@ -563,8 +803,6 @@ namespace Galabingus
                 shotWaitTime = rng.Next(shotWaitVariance) - shotWaitVariance / 2;
                 shotTimer = 0;
             }
-
-            
         }
 
         /// <summary>

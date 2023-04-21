@@ -16,6 +16,7 @@ namespace Galabingus
         private ushort instanceNumber;
         private ushort spriteNumber;
         private Vector2 scale;
+        private bool isActive;
 
         // -------------------------------------------------
         // Properties
@@ -165,6 +166,18 @@ namespace Galabingus
             }
         }
 
+        public bool IsActive
+        {
+            get
+            {
+                return isActive;
+            }
+            set
+            {
+                isActive = value;
+            }
+        }
+
         // -------------------------------------------------
         // Contructors
         // -------------------------------------------------
@@ -176,8 +189,9 @@ namespace Galabingus
             this.contentName = contentName;
             this.instanceNumber = instanceNumber;
             this.Transform = this.Animation.GetFrame(sprite);
-            this.Scale = 3.0f;
+            this.Scale = PostScaleRatio();
             this.spriteNumber = sprite;
+            isActive = true;
         }
 
         /// <summary>
@@ -194,8 +208,9 @@ namespace Galabingus
             this.contentName = contentName;
             this.instanceNumber = instanceNumber;
             this.Transform = this.Animation.GetFrame(0);
-            this.Scale = 3.0f;
+            this.Scale = PostScaleRatio();
             this.spriteNumber = sprite;
+            isActive = true;
         }
 
         // -------------------------------------------------
@@ -204,7 +219,7 @@ namespace Galabingus
 
         public void Update(GameTime gameTime)
         {
-            this.Position -= Camera.Instance.OffSet;
+            this.Position = new Vector2(this.Position.X,this.Position.Y - Camera.Instance.OffSet.Y);
         }
 
         public void Draw()
@@ -213,8 +228,8 @@ namespace Galabingus
             //Debug.WriteLine(Position.X);
             //Debug.WriteLine(Position.Y);
             //Debug.WriteLine(this.Position);
-            GameObject.Instance.SpriteBatch.End();
-            GameObject.Instance.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, effect: Effect);
+            //GameObject.Instance.SpriteBatch.End();
+            //GameObject.Instance.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, effect: Effect);
             //Effect.CurrentTechnique.Passes[0].Apply();
             GameObject.Instance.SpriteBatch.Draw(
                 this.Sprite,                          // The sprite-sheet for the player
@@ -227,14 +242,17 @@ namespace Galabingus
                 SpriteEffects.None,              // Which direction the sprite faces
                 0.0f                             // Layer depth of the player is 0.0
             );
-            GameObject.Instance.SpriteBatch.End();
-            GameObject.Instance.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, effect: GameObject.Instance.UniversalShader);
+            //GameObject.Instance.SpriteBatch.End();
+            //GameObject.Instance.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, effect: GameObject.Instance.UniversalShader);
         }
 
         public void Draw(float xTimes, float yTimes)
         {
             GameObject.Instance.SpriteBatch.End();
+            Effect.Parameters["bossEffect"].SetValue(GameObject.Instance.IsBossEffectActive);
+            Effect.Parameters["bossShade"].SetValue(GameObject.Instance.TimeShade);
             GameObject.Instance.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, effect: Effect);
+
             GameObject.Instance.SpriteBatch.Draw(
                 this.Sprite,                      
                 this.Position,                 

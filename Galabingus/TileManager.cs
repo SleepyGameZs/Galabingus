@@ -39,6 +39,7 @@ namespace Galabingus
         private List<ushort> layers;
         private List<ushort> spriteNumbers;
         private ushort currentSpriteNumber;
+        private ushort tileInstance;  
 
         private int counter;
         private bool turn = false;
@@ -51,6 +52,7 @@ namespace Galabingus
         {
             get { return layers[spriteNumbers[currentSpriteNumber]]; }
         }
+
 
         public ushort CurrentSpriteNumber
         {
@@ -78,6 +80,7 @@ namespace Galabingus
             tileList = new List<Tile>();
             borderList = new List<Tile>();
             backgroundList = new List<Tile>();
+            tileInstance = 1000;
 
             // temp counter for scroll
             counter = 0;
@@ -125,9 +128,11 @@ namespace Galabingus
                     break;
             }
 
+            /*
             // Top
             currentSpriteNumber = (index);
             Tile tile = new Tile(GameObject.Instance.Content.white_pixel_strip1, 0, index, true);
+
             tile.Scale = 25f;
             tile.ScaleVector = new Vector2(screenSize.X, 200);
             tile.Position = new Vector2(0, -200);
@@ -139,6 +144,7 @@ namespace Galabingus
             tile.ScaleVector = new Vector2(screenSize.X, 200);
             tile.Position = new Vector2(0, screenSize.Y);
             borderList.Add(tile);
+
 
             // Right
             tile = new Tile(GameObject.Instance.Content.white_pixel_strip1, 2, index, true);
@@ -153,6 +159,8 @@ namespace Galabingus
             tile.ScaleVector = new Vector2(200, screenSize.Y);
             tile.Position = new Vector2(-200, 0);
             borderList.Add(tile);
+            */
+
         }
 
         /// <summary>
@@ -166,7 +174,7 @@ namespace Galabingus
           
             background.Scale = GameObject.Instance.GraphicsDevice.Viewport.Height / background.Sprite.Width / (Player.PlayerInstance.Scale * 0.975f);
             background.ScaleVector = new Vector2(background.Scale, background.Scale);
-            background.Position = new Vector2(0, -GameObject.Instance.GraphicsDevice.Viewport.Height * 4.3f);
+            background.Position = new Vector2(-GameObject.Instance.GraphicsDevice.Viewport.Width * 2, -GameObject.Instance.GraphicsDevice.Viewport.Height * 4f);
             background.Position -= new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Width, 0);
             background.Effect = GameObject.Instance.ContentManager.Load<Effect>("background");
             background.Collider.Unload();
@@ -188,109 +196,204 @@ namespace Galabingus
         /// <param name="position"> The position of the asteriod </param>
         public void CreateObject(dynamic content, Vector2 position)
         {
-            Tile tile = new Tile(content, 666, 1, true);
-            tile.Transform = new Rectangle(0, 0, tile.Sprite.Width, tile.Sprite.Height);
-            tile.Scale = 1f;
+            Tile tile = new Tile(content, tileInstance, 1, true);
             tile.Position = position;
             tile.ScaleVector = new Vector2(tile.Scale, tile.Scale);
-            borderList.Add(tile);
+            tileList.Add(tile);
+            tileInstance++;
         }
+
+        /// <summary>
+        /// Creates asteriod objects
+        /// </summary>
+        /// <param name="position"> The position of the asteriod </param>
+        public void CreateObject(dynamic content, Vector2 position, ushort spriteNumber)
+        {
+            Tile tile = new Tile(content, tileInstance, spriteNumber);
+            tile.Position = position;
+            tile.ScaleVector = new Vector2(tile.Scale, tile.Scale);
+            tileList.Add(tile);
+            tileInstance++;
+        }
+
 
         public void Update(GameTime gameTime)
         {
+            #region Border Update
             for (int i = 0; i < borderList.Count; i++)
             {
                 //currentSpriteNumber = tilesList[i].SpriteNumber;
 
-
-                borderList[i].Collider.Resolved = true;
-                List<Collision> collisions = borderList[i].Collider.UpdateTransform(
-                    borderList[i].Sprite,
-                    borderList[i].Position,
-                    borderList[i].Transform,
-                    GameObject.Instance.GraphicsDevice,
-                    GameObject.Instance.SpriteBatch,
-                    borderList[i].ScaleVector,
-                    SpriteEffects.None,
-                    (ushort)CollisionGroup.Tile,
-                    borderList[i].InstanceNumber
+                if (borderList[i].IsActive)
+                {
+                    borderList[i].Collider.Resolved = true;
+                    List<Collision> collisions = borderList[i].Collider.UpdateTransform(
+                        borderList[i].Sprite,
+                        borderList[i].Position,
+                        borderList[i].Transform,
+                        GameObject.Instance.GraphicsDevice,
+                        GameObject.Instance.SpriteBatch,
+                        borderList[i].ScaleVector,
+                        SpriteEffects.None,
+                        (ushort)CollisionGroup.Tile,
+                        borderList[i].InstanceNumber
                     );
 
-                foreach (Collision collision in collisions)
-                {
-                    if (collision.other != null)
+                    foreach (Collision collision in collisions)
                     {
-                        if ( ((collision.other as Player) is Player) && collision.self is Tile )
+                        if (collision.other != null)
                         {
-                            Player.PlayerInstance.Position += collision.mtv;
-                            Player.PlayerInstance.Collider.Resolved = true;
+                            if (((collision.other as Player) is Player) && collision.self is Tile)
+                            {
+                                Player.PlayerInstance.Position += collision.mtv;
+                                Player.PlayerInstance.Collider.Resolved = true;
+                            }
                         }
                     }
+                    borderList[i].Collider.Resolved = true;
                 }
-                borderList[i].Collider.Resolved = true;
-
+                else
+                {
+                    if (borderList[i] != null && borderList[i].Collider != null)
+                    {
+                        borderList[i].Collider.Resolved = true;
+                        borderList[i].Collider.Unload();
+                    }
+                }
             }
+            #endregion
 
-            // Background Scroll
+            #region Object Update
+            for (int i = 0; i < tileList.Count; i++)
+            {
+                if (tileList[i].IsActive)
+                {
+                    tileList[i].Collider.Resolved = true;
+                    List<Collision> collisions = tileList[i].Collider.UpdateTransform(
+                        tileList[i].Sprite,
+                        tileList[i].Position,
+                        tileList[i].Transform,
+                        GameObject.Instance.GraphicsDevice,
+                        GameObject.Instance.SpriteBatch,
+                        tileList[i].ScaleVector,
+                        SpriteEffects.None,
+                        (ushort)CollisionGroup.Tile,
+                        tileList[i].InstanceNumber
+                    );
+
+                    foreach (Collision collision in collisions)
+                    {
+                        if (collision.other != null)
+                        {
+                            if (((collision.other as Player) is Player) && collision.self is Tile)
+                            {
+                                Player.PlayerInstance.Position += collision.mtv;
+                                Player.PlayerInstance.Collider.Resolved = true;
+                            }
+                        }
+                    }
+                    tileList[i].Collider.Resolved = true;
+                    tileList[i].Update(gameTime);
+                }
+                else
+                {
+                    if (borderList[i] != null && borderList[i].Collider != null)
+                    {
+                        borderList[i].Collider.Resolved = true;
+                        borderList[i].Collider.Unload();
+                    }
+                }
+            }
+            #endregion
+
+            #region Background Scroll
             for (int i = 0; i < backgroundList.Count; i++)
             {
                 backgroundList[i].Update(gameTime);
             }
 
-            if (turn == false)
+            // Scroll the camrea when the enemies are not on the screeen
+            if (EnemyManager.Instance.EnemiesOnScreen == 0)
             {
-                if (backgroundList[1].Position.Y >= GameObject.Instance.GraphicsDevice.Viewport.Height)
+                if (counter != 4)
                 {
-                    if (counter == 3)
+                    Camera.Instance.Start();
+                }
+                if (turn == false)
+                {
+                    if (backgroundList[1].Position.Y >= GameObject.Instance.GraphicsDevice.Viewport.Height)
                     {
-                        //Camera.Instance.Stop();
-                        Player.PlayerInstance.CameraLock = false;
-                        Camera.Instance.Reverse();
-                        turn = true;
+                        if (counter == 3)
+                        {
+                            Player.PlayerInstance.CameraLock = false;
+                            Camera.Instance.Reverse();
+                            turn = true;
+                        }
+
+                        counter++;
+                        backgroundList[1].Position = new Vector2(
+                            0, backgroundList[1].Position.Y - GameObject.Instance.GraphicsDevice.Viewport.Height
+                        );
                     }
-                    counter++;
-                    backgroundList[1].Position = new Vector2(
-                        0, backgroundList[1].Position.Y - GameObject.Instance.GraphicsDevice.Viewport.Height
-                    );
                 }
             }
+            #endregion
 
-
-
-            /*
-            // Background Loop
-            for (int i = 0; i < backgroundList.Count; i++)
+            // Stop the camera at the different camera stops
+            bool stopHit = false;
+            int indexOfStop = 0;
+            foreach (Vector2 position in GameObject.Instance.GetCameraStopPositions())
             {
-                if (backgroundList[i].Position.X == -backgroundList[i].Transform.Width)
+                if ((position.Y) >= Math.Floor(Camera.Instance.Position.Y))
                 {
-                    backgroundList[i].Position = new Vector2(backgroundList[i].Transform.Width, 0);
-                    counter++;
-                    Debug.WriteLine(counter);
-                }
-                else if (counter == 3) 
-                {
+                    Camera.Instance.OffSet = Vector2.Zero;
                     Camera.Instance.Stop();
+                    stopHit = true;
+                    break;
+                }
+                else if (!stopHit)
+                {
+                    indexOfStop++;
+                }
+                else
+                {
+                    continue;
                 }
             }
-            */
+            if (stopHit)
+            {
+                GameObject.Instance.CameraStopRemoveAt(indexOfStop);
+            } 
+
+            // Stop the camera at the end on the way back
+            if (turn && (Camera.Instance.Position.Y) >= (GameObject.Instance.GraphicsDevice.Viewport.Height))
+            {
+                Camera.Instance.Stop();
+            }
         }
 
         public void Draw()
         {
             backgroundList[0].Draw(
-                GameObject.Instance.GraphicsDevice.Viewport.Width / backgroundList[0].Transform.Width / backgroundList[0].ScaleVector.X * 4,
-                GameObject.Instance.GraphicsDevice.Viewport.Height / backgroundList[0].Transform.Height / backgroundList[0].ScaleVector.Y * 4.3f * 2
+                GameObject.Instance.GraphicsDevice.Viewport.Width * 4f,
+                GameObject.Instance.GraphicsDevice.Viewport.Height * 4f
 
             );
 
             for (int i = 0; i < borderList.Count; i++)
             {
-                borderList[i].Draw();
+                if (borderList[i].IsActive)
+                {
+                    borderList[i].Draw();
+                }
             }
 
             for (int i = 0; i < tileList.Count; i++)
             {
-                tileList[i].Draw();
+                if (tileList[i].IsActive)
+                {
+                    tileList[i].Draw();
+                }
             }
         }
     }

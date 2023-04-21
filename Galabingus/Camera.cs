@@ -37,10 +37,20 @@ namespace Galabingus
         private Vector2 offSet;
         private bool cameraLock;
         private bool stop;
+        private Vector2 position;
+        private Vector2 stopPoint;
 
         // -------------------------------------------------
         // Properties
         // -------------------------------------------------
+
+        public Vector2 Position
+        {
+            get
+            {
+                return position;
+            }
+        }
 
         public int X
         {
@@ -66,11 +76,25 @@ namespace Galabingus
             set { offSet = value; }
         }
 
+        public Vector2 StopPoint
+        {
+            get { return stopPoint; }
+            set { stopPoint = value; }
+        }
+
         public bool Stopped
         {
             get 
             {
                 return stop;
+            }
+        }
+
+        public bool CameraLock
+        {
+            get
+            {
+                return cameraLock;
             }
         }
 
@@ -85,6 +109,8 @@ namespace Galabingus
             initalCameraScroll = 2f;
             offSet = new Vector2(0, -initalCameraScroll);
             stop = false;
+            position = Vector2.Zero;
+
         }
 
         public Camera(int cameraScroll)
@@ -93,6 +119,7 @@ namespace Galabingus
             y = 0;
             this.initalCameraScroll = cameraScroll;
             offSet = new Vector2(0, -initalCameraScroll);
+            position = Vector2.Zero;
         }
 
         // -------------------------------------------------
@@ -121,6 +148,8 @@ namespace Galabingus
 
         public void Update(GameTime gameTime)
         {
+            Camera.Instance.position += offSet;
+
             Camera.Instance.offSet.Y = MathHelper.Lerp(Camera.Instance.offSet.Y, Camera.Instance.offSet.Y*1.2f, 0.1f);
 
             if (Camera.Instance.OffSet.Y > 2.5)
@@ -140,6 +169,11 @@ namespace Galabingus
                 Player.PlayerInstance.Position -= new Vector2(0, Camera.instance.offSet.Y);
                 //Debug.WriteLine(Player.PlayerInstance.Velocity.Y);
                 //Debug.WriteLine(Camera.Instance.OffSet.Y);
+            }
+
+            if (Camera.instance.Position.Y > 0 && Camera.instance.OffSet.Y > 0) 
+            {
+                Player.PlayerInstance.Health = 0;
             }
         }
     }

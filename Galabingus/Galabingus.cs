@@ -4,7 +4,9 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Security.Cryptography.X509Certificates;
 using static System.Formats.Asn1.AsnWriter;
+using static System.Net.Mime.MediaTypeNames;
 
 // Wabungus Corpsungus Duplicatungus
 // 2023, 3, 13
@@ -124,9 +126,13 @@ namespace Galabingus
 
             l_a4_obj_enemyData = GameObject.Instance.LoadEnemyLeveFile("GalabingusLevel.level");
 
+            //l_a4_obj_enemyData.Add(new int[] { 1, 6, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 0.5f), (GameObject.Instance.GraphicsDevice.Viewport.Height * -4), 1 });
+
+            //l_a4_obj_enemyData.Add(new int[] { 1, 1, 0, 0, 0 });
+
             // Create a player
             player = new Player(new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Height * 0.00875f, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.00875f), content.player_strip4);
-            player.Position = new Vector2(Player.PlayerInstance.Transform.Width * 2, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.5f - Player.PlayerInstance.Transform.Height);
+            player.Position = new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Width * 0.5f - Player.PlayerInstance.Transform.Width, GameObject.Instance.GraphicsDevice.Viewport.Height - Player.PlayerInstance.Transform.Height * 10);
             player.Health = 5;
 
             // Create Bullet Manager
@@ -137,11 +143,15 @@ namespace Galabingus
 
             // Create Camera
             camera = Camera.Instance;
-            camera.InitalCameraScroll = -2;
+            camera.InitalCameraScroll = -2f;
 
             // Create Tile Manager
             tileManager = TileManager.Instance;
             tileManager.CreateTile(1);
+
+            GameObject.Instance.LoadTileLevelFile("GalabingusTilesLevel.level");
+            //tileManager.CreateObject(GameObject.Instance.Content.tile_strip26, Vector2.Zero, 25);
+            //tileManager.CreateObject();
 
             // Load the temporary background
             //tempBackground = Content.Load<Texture2D>("spacebackground_strip1");
@@ -150,6 +160,8 @@ namespace Galabingus
             //tileManager.CreateObject(asteroid,new Vector2(50,50));
             //tileManager.CreateBackground();
             //tileManager.CreateObject(GameObject.Instance.Content.grayasteroid_strip1, new Vector2(Player.PlayerInstance.Transform.Width * 2 + 100, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.5f - Player.PlayerInstance.Transform.Height + 100));
+
+
 
             // Sound
             AudioManager.Instance.AddSound("Fire", 0.25f, "Bullet Fire", Content);
@@ -167,6 +179,13 @@ namespace Galabingus
                 GameObject.Instance.HoldCollider = false;
                 //colliderTimer = 2;
             }
+
+            //Debug.WriteLine(GameObject.Instance.TimeShade);
+
+            GameObject.Instance.PlayBossEffect();
+            shaders.Parameters["bossEffect"].SetValue(GameObject.Instance.IsBossEffectActive);
+            shaders.Parameters["shadeFadeTime"].SetValue(GameObject.Instance.TimeShade);
+            shaders.Parameters["redShade"].SetValue(1);
 
             colliderTimer--;
 
