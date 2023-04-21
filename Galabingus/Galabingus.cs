@@ -173,7 +173,7 @@ namespace Galabingus
             //Update the UI
             userInterface.Update();
             bool shiftBefore = transition;
-            transition = (userInterface.GS == GameState.Pause || userInterface.GS == GameState.GameOver);
+            transition = ( userInterface.GS == GameState.GameOver);
             if (!(userInterface.GS == GameState.Pause) && !(userInterface.GS == GameState.Menu) && !(userInterface.GS == GameState.GameOver))
             {
                 shaders.Parameters["fadeIn"].SetValue(true);
@@ -193,7 +193,7 @@ namespace Galabingus
 
                 tileManager.Update(gameTime);
             }
-            else if ( userInterface.GS == GameState.Pause || userInterface.GS == GameState.GameOver )
+            else if ( userInterface.GS == GameState.GameOver )
             {
                 shaders.Parameters["fadeIn"].SetValue(false);
                 shaders.Parameters["fadeOut"].SetValue(true);
