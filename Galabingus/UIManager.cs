@@ -307,7 +307,7 @@ namespace Galabingus
             event2 = HoverTexture;
             textEvent1 = null;
 
-            button = AddButton("buttonPlay_base", 0.5f,
+            AddButton("buttonPlay_base_strip1", 0.6f,
             new Vector2(width / 2, height / 2 + 30),
             event1, event2, menu1);
 
