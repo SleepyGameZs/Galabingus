@@ -14,6 +14,8 @@
   <ItemGroup>
     <None Remove="Content\grayasteroid_strip1-export.png" />
     <None Remove="Content\grayasteroid_strip1.png" />
+    <None Remove="Content\playButton_base_strip1.png" />
+    <None Remove="Content\playButton_hover_strip1.png" />
     <None Remove="Icon.ico" />
     <None Remove="Icon.bmp" />
   </ItemGroup>
