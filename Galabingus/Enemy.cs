@@ -402,7 +402,7 @@ namespace Galabingus
 
             if (ability == EnemyType.Boss)
             {
-                if (!enemyOnScreen)
+                if (this.Position.Y < this.Transform.Height * this.Scale * 0.05f)
                 {
                     // Final position change, and whether or not to include camera movement
                     if (Camera.Instance.CameraLock)
