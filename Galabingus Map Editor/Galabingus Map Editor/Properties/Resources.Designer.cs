@@ -63,9 +63,9 @@ namespace Galabingus_Map_Editor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap boss_green_strip4_1 {
+        internal static System.Drawing.Bitmap bomb_strip4_1 {
             get {
-                object obj = ResourceManager.GetObject("boss_green_strip4_1", resourceCulture);
+                object obj = ResourceManager.GetObject("bomb_strip4_1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -73,9 +73,9 @@ namespace Galabingus_Map_Editor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap enemy_dblue_strip4_1 {
+        internal static System.Drawing.Bitmap boss_green_strip4_1 {
             get {
-                object obj = ResourceManager.GetObject("enemy_dblue_strip4_1", resourceCulture);
+                object obj = ResourceManager.GetObject("boss_green_strip4_1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -93,39 +93,9 @@ namespace Galabingus_Map_Editor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap enemy_lblue_strip4_1 {
-            get {
-                object obj = ResourceManager.GetObject("enemy_lblue_strip4_1", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap enemy_orange_strip4_1 {
             get {
                 object obj = ResourceManager.GetObject("enemy_orange_strip4_1", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap enemy_pink_strip4_1 {
-            get {
-                object obj = ResourceManager.GetObject("enemy_pink_strip4_1", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap enemy_purple_strip4_1 {
-            get {
-                object obj = ResourceManager.GetObject("enemy_purple_strip4_1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -143,6 +113,16 @@ namespace Galabingus_Map_Editor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap enemy_violet_strip4_1 {
+            get {
+                object obj = ResourceManager.GetObject("enemy_violet_strip4_1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap enemy_yellow_strip4_1 {
             get {
                 object obj = ResourceManager.GetObject("enemy_yellow_strip4_1", resourceCulture);
@@ -153,9 +133,9 @@ namespace Galabingus_Map_Editor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap player_strip5_1 {
+        internal static System.Drawing.Bitmap player_strip4_1 {
             get {
-                object obj = ResourceManager.GetObject("player_strip5_1", resourceCulture);
+                object obj = ResourceManager.GetObject("player_strip4_1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

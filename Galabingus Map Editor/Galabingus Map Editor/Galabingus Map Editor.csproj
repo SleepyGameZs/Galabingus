@@ -278,5 +278,26 @@
   <ItemGroup>
     <None Include="Resources\tile_strip26-1.png.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\enemy_yellow_strip4-1.png.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\enemy_violet_strip4-1.png.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\enemy_red_strip4-1.png.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\enemy_orange_strip4-1.png.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\enemy_green_strip4-1.png.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bomb_strip4-1.png.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\player_strip4-1.png.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
