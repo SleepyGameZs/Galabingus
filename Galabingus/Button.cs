@@ -90,6 +90,8 @@ namespace Galabingus
             {
                 if(uiTexture != baseTexture)
                     uiTexture = baseTexture;
+                else if(clearColor != Color.White)
+                    clearColor = Color.White;
 
                 if (OnRelease != null)
                     OnRelease(this);
