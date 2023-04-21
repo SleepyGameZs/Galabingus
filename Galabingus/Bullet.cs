@@ -478,7 +478,7 @@ namespace Galabingus
                         velocity.X *= -1;
 
                         // Set the new boss sprite
-                        ushort newSprite = GameObject.Instance.Content.enemy_orange_bullet_45_strip4;
+                        ushort newSprite = GameObject.Instance.Content.enemy_orange_bullet_135_strip4;
                         this.Sprite = GetSpriteFrom(newSprite, bulletNumber);
                     }
 
@@ -547,7 +547,7 @@ namespace Galabingus
                     Player seekerPlayer = Player.PlayerInstance;
 
                     // Tracks the player initially then holds its velocity
-                    if (state_timer > 60)
+                    if (state_timer < 10)
                     {
                         if (this.Position.Y < seekerPlayer.Position.Y)
                         {
