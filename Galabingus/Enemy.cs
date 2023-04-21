@@ -509,6 +509,12 @@ namespace Galabingus
                             break;
 
                         case EnemyType.Boss:
+                            // Reverse the camera scroll direction
+                            if (Camera.Instance.Position.Y <= (GameObject.Instance.GraphicsDevice.Viewport.Height * -4))
+                            {
+                                Camera.Instance.Reverse();
+                            }
+
                             // Base data
                             int phaseTime = 0;
                             ushort newSprite = 0;

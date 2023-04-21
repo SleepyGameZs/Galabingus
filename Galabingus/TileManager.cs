@@ -332,7 +332,7 @@ namespace Galabingus
 
                         counter++;
                         backgroundList[1].Position = new Vector2(
-                            0, backgroundList[1].Position.Y - GameObject.Instance.GraphicsDevice.Viewport.Height
+                            0, backgroundList[1].Position.Y - GameObject.Instance.GraphicsDevice.Viewport.Height * 4
                         );
                     }
                 }
@@ -346,7 +346,7 @@ namespace Galabingus
                 int indexOfStop = 0;
                 foreach (Vector2 position in GameObject.Instance.GetCameraStopPositions())
                 {
-                    if ((position.Y) >= Math.Floor(Camera.Instance.Position.Y))
+                    if ((position.Y) >= Math.Floor(Camera.Instance.Position.Y) && !GameObject.Instance.UniversalShader.Parameters["bossEffect"].GetValueBoolean())
                     {
                         Camera.Instance.OffSet = Vector2.Zero;
                         Camera.Instance.Stop();
