@@ -703,26 +703,31 @@ namespace Galabingus
             {
                 if (collision.other != null && !destroy)
                 {
-                    // Tile collision
+                    // Tile specific collision
                     if ((collision.other as Tile) is Tile)
                     {
-                        switch (ability)
+                        // Check if tile is currently active
+                        if (((Tile)collision.other).IsActive)
                         {
-                            case BulletType.Explosion:
-                                // Not destroyed nor does it affect tiles
-                                break;
+                            // Run tile effects on active tile
+                            switch (ability)
+                            {
+                                case BulletType.Explosion:
+                                    // Not destroyed nor does it affect tiles
+                                    break;
 
-                            case BulletType.Wave:
-                            case BulletType.BigExplosion:
-                                // Destroy the touched tiles
-                                ((Tile)collision.other).IsActive = false;
-                                break;
+                                case BulletType.Wave:
+                                case BulletType.BigExplosion:
+                                    // Destroy the touched tiles
+                                    ((Tile)collision.other).IsActive = false;
+                                    break;
 
-                            default:
-                                // Destroy the bullet
-                                destroy = true;
-                                velocity = Vector2.Zero;
-                                break;
+                                default:
+                                    // Destroy the bullet
+                                    destroy = true;
+                                    velocity = Vector2.Zero;
+                                    break;
+                            }
                         }
                     }
 
@@ -849,15 +854,19 @@ namespace Galabingus
                                      );
 
             // Final position change, and whether or not to include camera movement
-            if (Camera.Instance.CameraLock)
-            { // In debug mode
-                Vector2 playerMovement = new Vector2(0, Player.PlayerInstance.Translation.Y);
-                this.Position += finalVelocity + (ignoreCamera ? Vector2.Zero : playerMovement);
-            } 
-            else
-            { // Normal camera movement
-                Vector2 cameraScroll = new Vector2(0, Camera.Instance.OffSet.Y);
-                this.Position += finalVelocity + (ignoreCamera ? Vector2.Zero : cameraScroll);
+            this.Position += finalVelocity;
+
+            // Include camera change?
+            if (ignoreCamera)
+            {
+                if (!Player.PlayerInstance.CameraLock)
+                { // In debug mode
+                    this.Position = new Vector2(this.Position.X, this.Position.Y - Player.PlayerInstance.Translation.Y);
+                }
+                else
+                { // Normal camera movement
+                    this.Position = new Vector2(this.Position.X, this.Position.Y - Camera.Instance.OffSet.Y);
+                }
             }
 
             // Returns position

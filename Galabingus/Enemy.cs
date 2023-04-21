@@ -401,42 +401,37 @@ namespace Galabingus
                                   this.Position.Y < BulletManager.Instance.ScreenDimensions.Y);
 
             if (ability == EnemyType.Boss)
-            {
+            { // Position change for the boss, boss will lock to screen once it appears
+
+                // Check if boss is on screen
                 if (this.Position.Y < this.Transform.Height * this.Scale * 0.05f)
-                {
-                    // Final position change, and whether or not to include camera movement
-                    if (Camera.Instance.CameraLock)
-                    { // In debug mode
-                        Vector2 playerMovement = new Vector2(0, Player.PlayerInstance.Translation.Y);
-                        Position -= playerMovement;
+                { // Not on screen, keep moving with scroll
+                    if (Player.PlayerInstance.CameraLock == true)
+                    { // Normal camera movement
+                        this.Position = new Vector2(this.Position.X, this.Position.Y - Camera.Instance.OffSet.Y);
                     }
                     else
-                    { // Normal camera movement
-                        Vector2 cameraScroll = new Vector2(0, Camera.Instance.OffSet.Y);
-                        Position -= cameraScroll;
+                    { // In debug mode
+                        this.Position = new Vector2(this.Position.X, this.Position.Y - Player.PlayerInstance.Translation.Y);
                     }
                 }
                 else
-                {
-                    // Start boss effect
+                { // On screen, set boss effect and no longer moves
                     GameObject.Instance.StartBossEffect();
                 }
             } 
             else
-            {
-                // Final position change, and whether or not to include camera movement
-                if (Camera.Instance.CameraLock)
-                { // In debug mode
-                    Vector2 playerMovement = new Vector2(0, Player.PlayerInstance.Translation.Y);
-                    Position -= playerMovement;
+            { // Normal position change, checks if in debug mode
+                if (Player.PlayerInstance.CameraLock == true)
+                { // Normal camera movement
+                    this.Position = new Vector2(this.Position.X, this.Position.Y - Camera.Instance.OffSet.Y);
                 }
                 else
-                { // Normal camera movement
-                    Vector2 cameraScroll = new Vector2(0, Camera.Instance.OffSet.Y);
-                    Position -= cameraScroll;
+                { // In debug mode
+                    this.Position = new Vector2(this.Position.X, this.Position.Y - Player.PlayerInstance.Translation.Y);
                 }
             }
-
+            
             if (enemyOnScreen)
             { // Only does these while on the screen
                 if (!destroy)
@@ -640,7 +635,7 @@ namespace Galabingus
                     shotTimer++;
 
                     // Movement
-                    if (ShouldMove)
+                    if (ShouldMove && Player.PlayerInstance.CameraLock)
                     {
                         this.Position += new Vector2(3 * direction.X, 0);
 
@@ -712,7 +707,7 @@ namespace Galabingus
 
                 // Get camera's movement direction
                 float cameraScrollY = Camera.Instance.OffSet.Y;
-                if (!Player.PlayerInstance.CameraLock && !Camera.Instance.CameraLock)
+                if (!Player.PlayerInstance.CameraLock && Player.PlayerInstance.CameraLock)
                 {
                     Vector2 cameraScroll = new Vector2(0, Camera.Instance.OffSet.Y);
 
@@ -732,21 +727,25 @@ namespace Galabingus
                 {
                     if (collision.other != null && !destroy)
                     {
-                        if ((collision.other as Tile) is Tile)
-                        { // Collided with Tile
-                            if (ability == EnemyType.Boss)
-                            { // Boss deletes tiles
-                                ((Tile)collision.other).IsActive = false;
-                            } 
-                            else
-                            { // Normal enemies bounce off tiles
-                                if (this.Position.X < ((Tile)collision.other).Position.X)
-                                { // Bounce right
-                                    EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, true);
+                        if ((collision.other as Tile) is Tile && Player.PlayerInstance.CameraLock)
+                        { // Collided with Tile, see if it is active
+
+                            if (((Tile)collision.other).IsActive)
+                            { // Tile is currently active
+                                if (ability == EnemyType.Boss)
+                                { // Boss deletes tiles
+                                    ((Tile)collision.other).IsActive = false;
                                 }
                                 else
-                                { // Bounce left
-                                    EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, false);
+                                { // Normal enemies bounce off tiles
+                                    if (this.Position.X < ((Tile)collision.other).Position.X)
+                                    { // Bounce right
+                                        EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, true);
+                                    }
+                                    else
+                                    { // Bounce left
+                                        EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, false);
+                                    }
                                 }
                             }
                         } 
@@ -773,8 +772,9 @@ namespace Galabingus
             } 
             else
             {
+                // Resets enemies when off screen so that they go to their starting
+                // positions and unload their colliders
                 Position = new Vector2(initialPosition.X, Position.Y);
-
 
                 this.Collider.Unload();
             }

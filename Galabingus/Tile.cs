@@ -219,7 +219,15 @@ namespace Galabingus
 
         public void Update(GameTime gameTime)
         {
-            this.Position = new Vector2(this.Position.X,this.Position.Y - Camera.Instance.OffSet.Y);
+            // Final position change, and whether or not to include camera movement
+            if (Camera.Instance.CameraLock)
+            { // In debug mode
+                this.Position = new Vector2(this.Position.X, this.Position.Y - Player.PlayerInstance.Translation.Y);
+            }
+            else
+            { // Normal camera movement
+                this.Position = new Vector2(this.Position.X, this.Position.Y - Camera.Instance.OffSet.Y);
+            }
         }
 
         public void Draw()
