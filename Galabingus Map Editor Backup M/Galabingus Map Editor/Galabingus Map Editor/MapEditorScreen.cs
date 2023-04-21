@@ -552,7 +552,7 @@ namespace Galabingus_Map_Editor
                 int tempH = mapGroup.Bounds.Height;
                 this.Controls.Remove(mapGroup);
                 mapGroup = new GroupBox();
-                mapGroup.SetBounds(tempX,tempY,tempW,tempH);
+                mapGroup.SetBounds(tempX, tempY, tempW, tempH);
                 mapGroup.Visible = false;
                 this.Controls.Add(mapGroup);
 
@@ -561,7 +561,7 @@ namespace Galabingus_Map_Editor
 
                 StreamReader reader = new StreamReader(fileName);
                 string data = "";
-     
+
                 int lineNumber = 0;
                 int yInput = 0;
                 int xInput = 0;
@@ -607,7 +607,7 @@ namespace Galabingus_Map_Editor
                     {
                         string[] row = data.Split('|');
                         //Debug.WriteLine(data);
-                        foreach (string num in row) 
+                        foreach (string num in row)
                         {
                             PictureBox tileBox = new PictureBox();
                             tileBox.Size = new Size(tileSize, tileSize);
@@ -623,7 +623,7 @@ namespace Galabingus_Map_Editor
                             boxImages.Add(MatchImageData(int.Parse(num)));
                             boxes.Add(tileBox);
                             tileBox.Image = boxImages[boxIdentifier].Image;
-                        
+
                             xInput++;
                             boxIdentifier++;
                         }
@@ -636,7 +636,6 @@ namespace Galabingus_Map_Editor
 
                 reader.Close();
             }
-
             /*
             this.SetBounds(
                 this.Bounds.X,

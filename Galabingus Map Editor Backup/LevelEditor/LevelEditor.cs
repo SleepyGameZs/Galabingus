@@ -345,7 +345,15 @@ namespace LevelEditor
                 string[] tiles = tilesProperties[2].Split(">");
                 int tilesPropertiesWidth = int.Parse(tilesProperties[0]);
                 int tilesPropertiesHeight = int.Parse(tilesProperties[1]);
-                mapGroup.Controls.Clear();
+
+                int mapGroupX = mapGroup.Bounds.X;
+                int mapGroupY = mapGroup.Bounds.Y;
+                int mapGroupW = mapGroup.Bounds.Width;
+                int mapGroupH = mapGroup.Bounds.Height;
+                Controls.Remove(mapGroup);
+                mapGroup = new GroupBox();
+                mapGroup.SetBounds(mapGroupX,mapGroupY, mapGroupW, mapGroupH);
+
                 int row = -1;
                 int column = 0;
 
@@ -388,6 +396,7 @@ namespace LevelEditor
                     tilesPropertiesWidth * this.tileWidth,
                     tilesPropertiesHeight * this.tileHeight
                 );
+                Controls.Add(mapGroup);
 
                 this.Width = mapGroup.Bounds.Width + mapGroup.Bounds.X + tileWidth * 2;
                 this.Height = mapGroup.Bounds.Height + mapGroup.Bounds.Y + tileHeight * 3;

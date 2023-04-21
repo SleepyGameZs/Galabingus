@@ -254,7 +254,7 @@ namespace Galabingus
                 }
                 else
                 {
-                    if (borderList[i] != null && borderList[i].Collider != null)
+                    if (i < borderList.Count && borderList[i] != null && borderList[i].Collider != null)
                     {
                         borderList[i].Collider.Resolved = true;
                         borderList[i].Collider.Unload();
@@ -297,7 +297,7 @@ namespace Galabingus
                 }
                 else
                 {
-                    if (borderList[i] != null && borderList[i].Collider != null)
+                    if (i < borderList.Count && borderList[i] != null && borderList[i].Collider != null)
                     {
                         borderList[i].Collider.Resolved = true;
                         borderList[i].Collider.Unload();
@@ -340,33 +340,36 @@ namespace Galabingus
             #endregion
 
             // Stop the camera at the different camera stops
-            bool stopHit = false;
-            int indexOfStop = 0;
-            foreach (Vector2 position in GameObject.Instance.GetCameraStopPositions())
+            if (Camera.Instance.CameraLock == false)
             {
-                if ((position.Y) >= Math.Floor(Camera.Instance.Position.Y))
+                bool stopHit = false;
+                int indexOfStop = 0;
+                foreach (Vector2 position in GameObject.Instance.GetCameraStopPositions())
                 {
-                    Camera.Instance.OffSet = Vector2.Zero;
-                    Camera.Instance.Stop();
-                    stopHit = true;
-                    break;
+                    if ((position.Y) >= Math.Floor(Camera.Instance.Position.Y))
+                    {
+                        Camera.Instance.OffSet = Vector2.Zero;
+                        Camera.Instance.Stop();
+                        stopHit = true;
+                        break;
+                    }
+                    else if (!stopHit)
+                    {
+                        indexOfStop++;
+                    }
+                    else
+                    {
+                        continue;
+                    }
                 }
-                else if (!stopHit)
+                if (stopHit)
                 {
-                    indexOfStop++;
-                }
-                else
-                {
-                    continue;
+                    GameObject.Instance.CameraStopRemoveAt(indexOfStop);
                 }
             }
-            if (stopHit)
-            {
-                GameObject.Instance.CameraStopRemoveAt(indexOfStop);
-            } 
 
             // Stop the camera at the end on the way back
-            if (turn && (Camera.Instance.Position.Y) >= (GameObject.Instance.GraphicsDevice.Viewport.Height))
+            if (turn && (Camera.Instance.Position.Y) >= 0)
             {
                 Camera.Instance.Stop();
             }
