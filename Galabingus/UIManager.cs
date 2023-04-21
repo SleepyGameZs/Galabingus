@@ -293,6 +293,7 @@ namespace Galabingus
             //dummy variables
             Button button;
             Background background;
+            Texture2D texture;
 
             //more dummy variables
             EventDelegate event1;
@@ -303,22 +304,30 @@ namespace Galabingus
 
             //Create the Play Button
             event1 = StartGame;
+            event2 = HoverTexture;
             textEvent1 = null;
 
-            AddButton("buttonPlay_strip1", 0.5f,
+            button = AddButton("buttonPlay_base", 0.5f,
             new Vector2(width / 2, height / 2 + 30),
-            event1, menu1);
+            event1, event2, menu1);
+
+            texture = cm.Load<Texture2D>("buttonPlay_hover");
+            button.HoverTexture = texture;
 
             //add the logo to the screen
             AddBackground("galabinguslogo_strip1", 5, 
                 new Vector2(width / 2,height / 4),
                 menu1);
 
+            /*
+
             //Create the Options Button
             event1 = null;
             event2 = UpMenu;
             textEvent1 = null;
+
             
+
             //create buttons to go in the menu it displays and add them to the list
             AddButton("buttonHowToPlay_strip1", 0.5f,
                 new Vector2(width / 2, height / 2 - 80),
@@ -336,6 +345,8 @@ namespace Galabingus
             AddButton("buttonOptions_strip1", 0.5f,
                 new Vector2(width / 2, height / 2 + 200),
                 event2, menu1);
+
+            */
 
             //Pause Text
             AddText("arial_36", "hello there you are now paused",
@@ -439,7 +450,6 @@ namespace Galabingus
                     }
 
                     break;
-
             }
 
             //set the previous KeyboardState to the current one for next frame
@@ -512,6 +522,20 @@ namespace Galabingus
             button.ClearColor = Color.LightGray;
         }
 
+        private void HoverTexture(object sender)
+        {
+            Button button = (Button)sender;
+            
+            button.UITexture = button.HoverTexture;
+        }
+
+        private void BaseTexture(object sender)
+        {
+            Button button = (Button)sender;
+
+            button.UITexture = button.BaseTexture;
+        }
+
         #endregion
 
         #region Element Creation and Updates
@@ -533,6 +557,23 @@ namespace Galabingus
             Button button = new Button(texture, position, scale);
 
             button.OnClick += clickEvent;
+
+            listToAdd.Add(button);
+
+            return button;
+        }
+
+        private Button AddButton
+            (string filename, float scale, Vector2 position, EventDelegate clickEvent, EventDelegate hoverEvent, List<UIElement> listToAdd)
+        {
+            //create the button texture
+            Texture2D texture = cm.Load<Texture2D>(filename);
+
+            //create the button
+            Button button = new Button(texture, position, scale);
+
+            button.OnClick += clickEvent;
+            button.OnHover += hoverEvent;
 
             listToAdd.Add(button);
 

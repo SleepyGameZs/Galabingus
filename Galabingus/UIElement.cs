@@ -35,12 +35,12 @@ namespace Galabingus
         #region Properties
 
         public Color ClearColor { get { return clearColor; } set { clearColor = value; } }
+
+        public Texture2D UITexture { get { return uiTexture; } set { uiTexture = value; } }
+
         public string UIText { get { return uiText; } set { uiText = value; } }
 
-        public Vector2 UITextPosition { 
-            get { return uiTextPosition; } 
-            set { uiTextPosition = value; } 
-        }
+        public Vector2 UITextPosition { get { return uiTextPosition; } set { uiTextPosition = value; } }
 
         #endregion
 

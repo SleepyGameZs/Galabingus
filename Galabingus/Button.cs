@@ -28,9 +28,25 @@ namespace Galabingus
         private MouseState currentMS;
         private MouseState prevMS;
 
+        //a second texture for hover
+        private Texture2D baseTexture;
+        private Texture2D hoverTexture;
+        
         #endregion
 
         #region Properties
+
+        public Texture2D BaseTexture
+        {
+            get { return baseTexture; }
+            set { baseTexture = value; }
+        }
+
+        public Texture2D HoverTexture
+        {
+            get { return hoverTexture; }
+            set { hoverTexture = value; }
+        }
 
         #endregion
 
@@ -43,7 +59,10 @@ namespace Galabingus
         /// <param name="position">its position rectangle</param>
         public Button
             (Texture2D texture, Vector2 position, float scale)
-            : base(texture, position, scale) { }
+            : base(texture, position, scale) 
+        {
+            baseTexture = texture;
+        }
 
         #endregion
 
@@ -69,6 +88,9 @@ namespace Galabingus
             }
             else
             {
+                if(uiTexture != baseTexture)
+                    uiTexture = baseTexture;
+
                 if (OnRelease != null)
                     OnRelease(this);
             }
