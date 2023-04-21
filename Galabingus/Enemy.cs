@@ -493,8 +493,8 @@ namespace Galabingus
                             BulletSpawning(160, 
                                            BulletType.Wave,
                                            ((Direction.Y == 1) ?    // CHECK DIRECTION
-                                               new Vector2(-135, 0) :    // DOWN
-                                               new Vector2(-140, -80)),  // UP
+                                               new Vector2(-145, 0) :    // DOWN
+                                               new Vector2(-155, -80)),  // UP
                                            0);
                             break;
 

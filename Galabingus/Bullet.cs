@@ -703,6 +703,30 @@ namespace Galabingus
             {
                 if (collision.other != null && !destroy)
                 {
+                    // Tile collision
+                    if ((collision.other as Tile) is Tile)
+                    {
+                        switch (ability)
+                        {
+                            case BulletType.Explosion:
+                                // Not destroyed nor does it affect tiles
+                                break;
+
+                            case BulletType.Wave:
+                            case BulletType.BigExplosion:
+                                // Destroy the touched tiles
+                                ((Tile)collision.other).IsActive = false;
+                                break;
+
+                            default:
+                                // Destroy the bullet
+                                destroy = true;
+                                velocity = Vector2.Zero;
+                                break;
+                        }
+                    }
+
+                    // Collision with player / enemies
                     switch (target)
                     {
                         case Targets.Player:
