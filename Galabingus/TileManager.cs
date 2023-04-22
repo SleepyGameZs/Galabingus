@@ -374,24 +374,24 @@ namespace Galabingus
             {
                 Camera.Instance.Start();
 
-                if (turn == false)
-                {
-                    if (Camera.Instance.Position.Y <= GameObject.EndPosition.Y)
-                    
-                    {
-                        Player.PlayerInstance.CameraLock = false;
-                        Camera.Instance.Reverse();
-                        counter++;
-                        turn = true;
+                
+            }
 
-                        backgroundList[1].Position = new Vector2(
-                            0, backgroundList[1].Position.Y - GameObject.Instance.GraphicsDevice.Viewport.Height * 4
-                        );
-                    }
+            if (turn == false)
+            {
+                if (Camera.Instance.Position.Y <= GameObject.EndPosition.Y)
+                {
+                    Player.PlayerInstance.CameraLock = false;
+                    Camera.Instance.Reverse();
+                    turn = true;
+
+                    //backgroundList[1].Position = new Vector2(
+                    //0, backgroundList[1].Position.Y - GameObject.Instance.GraphicsDevice.Viewport.Height * 4
+                    //);
                 }
             }
             #endregion
-    
+
             // Stop the camera at the different camera stops
             if (Camera.Instance.CameraLock == false)
             {
