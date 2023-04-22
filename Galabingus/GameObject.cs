@@ -1118,17 +1118,15 @@ namespace Galabingus
         {
             //System.Diagnostics.Debug.WriteLine("EEEEAA " + this.GetTransform(instance).Width);
             //System.Diagnostics.Debug.WriteLine("FFFEEEE " + universalScale);
-            return (universalScale / this.GetTransform(instance).Height) * 1.0f; //((this.GetTransform(instance).Width < this.GetTransform(instance).Height) ? universalScale / this.GetTransform(instance).Width : universalScale / this.GetTransform(instance).Height);
+            return ((this.GetTransform(instance).Width < this.GetTransform(instance).Height) ? universalScale / this.GetTransform(instance).Width * GameObject.Instance.GraphicsDevice.Viewport.Width / GameObject.Instance.GraphicsDevice.Viewport.Height : universalScale / this.GetTransform(instance).Height * GameObject.Instance.GraphicsDevice.Viewport.Height / GameObject.Instance.GraphicsDevice.Viewport.Width);
         }
 
         public Vector2 PostScaleRatio(bool isVector2)
         {
-            return new Vector2(1, 1);
-            /*
-                universalScale / this.GetTransform(instance).Width,
-                universalScale / this.GetTransform(instance).Height
+            return new Vector2(
+                universalScale / this.GetTransform(instance).Width * GameObject.Instance.GraphicsDevice.Viewport.Width / GameObject.Instance.GraphicsDevice.Viewport.Height,
+                universalScale / this.GetTransform(instance).Height * GameObject.Instance.GraphicsDevice.Viewport.Height / GameObject.Instance.GraphicsDevice.Viewport.Width
             );
-            */
         }
 
         public System.Type GameObjectType
