@@ -557,10 +557,10 @@ namespace Galabingus
         {
             get
             {
-                return new Vector2(0, -GameObject.Instance.GraphicsDevice.Viewport.Height * -4);
+                return new Vector2(0, GameObject.Instance.GraphicsDevice.Viewport.Height * -4);
             }
         }
-
+        
         public Texture2D GetSprite(ushort instancePass)
         {
 #nullable disable
@@ -1383,10 +1383,10 @@ namespace Galabingus
 
         public Vector2 CalculateLevelEditorPositions(int width, int height, int row, int column)
         {
-            float coordianteXScale = GameObject.Instance.GraphicsDevice.Viewport.Width / width * GameObject.Instance.GraphicsDevice.Viewport.Width / GameObject.Instance.GraphicsDevice.Viewport.Height;
+            float coordianteXScale = GameObject.Instance.GraphicsDevice.Viewport.Width / width;
             universalScale = coordianteXScale;
-            float coordinateYScale = GameObject.Instance.GraphicsDevice.Viewport.Height * 4 / height * GameObject.Instance.GraphicsDevice.Viewport.Height / GameObject.Instance.GraphicsDevice.Viewport.Width;
-            float startingY = GameObject.Instance.GraphicsDevice.Viewport.Height * -4;
+            float coordinateYScale = -EndPosition.Y / height;
+            float startingY = EndPosition.Y;
             return new Vector2(coordianteXScale * column, coordinateYScale * row + startingY );
         }
 
