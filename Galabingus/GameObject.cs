@@ -553,6 +553,14 @@ namespace Galabingus
             }
         }
 
+        public Vector2 EndPosition
+        {
+            get
+            {
+                return new Vector2(0, -GameObject.Instance.GraphicsDevice.Viewport.Height * -4);
+            }
+        }
+
         public Texture2D GetSprite(ushort instancePass)
         {
 #nullable disable
@@ -1198,6 +1206,14 @@ namespace Galabingus
             return GameObject.Instance.collisionGroups[contentName][instance];
         }
 
+        public Rectangle Transform
+        {
+            get
+            {
+                return GetTransform(instance);
+            }
+        }
+
 
         public TypeCode GetTypeCode()
         {
@@ -1360,11 +1376,11 @@ namespace Galabingus
 
         public Vector2 CalculateLevelEditorPositions(int width, int height, int row, int column)
         {
-            float coordianteXScale = GameObject.Instance.GraphicsDevice.Viewport.Width / width;
+            float coordianteXScale = GameObject.Instance.GraphicsDevice.Viewport.Width / width * GameObject.Instance.GraphicsDevice.Viewport.Width / GameObject.Instance.GraphicsDevice.Viewport.Height;
             universalScale = coordianteXScale;
-            float coordinateYScale = GameObject.Instance.GraphicsDevice.Viewport.Height / height * 4;
+            float coordinateYScale = GameObject.Instance.GraphicsDevice.Viewport.Height * 4 / height * GameObject.Instance.GraphicsDevice.Viewport.Height / GameObject.Instance.GraphicsDevice.Viewport.Width;
             float startingY = GameObject.Instance.GraphicsDevice.Viewport.Height * -4;
-            return new Vector2(coordianteXScale * column, coordinateYScale * row * 1.5f + startingY );
+            return new Vector2(coordianteXScale * column, coordinateYScale * row + startingY );
         }
 
         public void LoadTileLevelFile(string fileName)
