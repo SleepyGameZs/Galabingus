@@ -553,6 +553,14 @@ namespace Galabingus
             }
         }
 
+        public Vector2 EndPosition
+        {
+            get
+            {
+                return new Vector2(0, -GameObject.Instance.GraphicsDevice.Viewport.Height * -4);
+            }
+        }
+
         public Texture2D GetSprite(ushort instancePass)
         {
 #nullable disable
@@ -1118,17 +1126,15 @@ namespace Galabingus
         {
             //System.Diagnostics.Debug.WriteLine("EEEEAA " + this.GetTransform(instance).Width);
             //System.Diagnostics.Debug.WriteLine("FFFEEEE " + universalScale);
-            return (universalScale / this.GetTransform(instance).Height) * 1.0f; //((this.GetTransform(instance).Width < this.GetTransform(instance).Height) ? universalScale / this.GetTransform(instance).Width : universalScale / this.GetTransform(instance).Height);
+            return ((this.GetTransform(instance).Width < this.GetTransform(instance).Height) ? universalScale / this.GetTransform(instance).Width * GameObject.Instance.GraphicsDevice.Viewport.Width / GameObject.Instance.GraphicsDevice.Viewport.Height : universalScale / this.GetTransform(instance).Height * GameObject.Instance.GraphicsDevice.Viewport.Height / GameObject.Instance.GraphicsDevice.Viewport.Width);
         }
 
         public Vector2 PostScaleRatio(bool isVector2)
         {
-            return new Vector2(1, 1);
-            /*
-                universalScale / this.GetTransform(instance).Width,
-                universalScale / this.GetTransform(instance).Height
+            return new Vector2(
+                universalScale / this.GetTransform(instance).Width * GameObject.Instance.GraphicsDevice.Viewport.Width / GameObject.Instance.GraphicsDevice.Viewport.Height,
+                universalScale / this.GetTransform(instance).Height * GameObject.Instance.GraphicsDevice.Viewport.Height / GameObject.Instance.GraphicsDevice.Viewport.Width
             );
-            */
         }
 
         public System.Type GameObjectType
@@ -1198,6 +1204,14 @@ namespace Galabingus
                 GameObject.Instance.collisionGroups[contentName].Add(value);
             }
             return GameObject.Instance.collisionGroups[contentName][instance];
+        }
+
+        public Rectangle Transform
+        {
+            get
+            {
+                return GetTransform(instance);
+            }
         }
 
 
@@ -1362,11 +1376,11 @@ namespace Galabingus
 
         public Vector2 CalculateLevelEditorPositions(int width, int height, int row, int column)
         {
-            float coordianteXScale = GameObject.Instance.GraphicsDevice.Viewport.Width / width;
+            float coordianteXScale = GameObject.Instance.GraphicsDevice.Viewport.Width / width * GameObject.Instance.GraphicsDevice.Viewport.Width / GameObject.Instance.GraphicsDevice.Viewport.Height;
             universalScale = coordianteXScale;
-            float coordinateYScale = GameObject.Instance.GraphicsDevice.Viewport.Height / height * 4;
+            float coordinateYScale = GameObject.Instance.GraphicsDevice.Viewport.Height * 4 / height * GameObject.Instance.GraphicsDevice.Viewport.Height / GameObject.Instance.GraphicsDevice.Viewport.Width;
             float startingY = GameObject.Instance.GraphicsDevice.Viewport.Height * -4;
-            return new Vector2(coordianteXScale * column, coordinateYScale * row * 1.5f + startingY );
+            return new Vector2(coordianteXScale * column, coordinateYScale * row + startingY );
         }
 
         public void LoadTileLevelFile(string fileName)
