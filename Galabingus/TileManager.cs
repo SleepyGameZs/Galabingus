@@ -288,15 +288,24 @@ namespace Galabingus
                             if (((collision.other as Player) is Player) && collision.self is Tile)
                             {
                                 Rectangle playerHitbox = Player.PlayerInstance.Transform;
+                                Rectangle otherHitbox = tileList[i].Transform;
                                 List<Rectangle> intersecting = new List<Rectangle>();
 
+                                playerHitbox.X = (int)Player.PlayerInstance.Position.X;
+                                playerHitbox.Y = (int)Player.PlayerInstance.Position.Y;
+                                otherHitbox.X = (int)tileList[i].Position.X;
+                                otherHitbox.Y = (int)tileList[i].Position.Y;
+
+
+                                playerHitbox.Width = playerHitbox.Width * (int)Player.PlayerInstance.Scale;
+                                playerHitbox.Height = playerHitbox.Height * (int)Player.PlayerInstance.Scale;
+                                otherHitbox.Width = (int)tileList[i].ScaleVector.X * otherHitbox.Width;
+                                otherHitbox.Height = (int)tileList[i].ScaleVector.Y * otherHitbox.Height;
+
                                 // Check for any collisions
-                                foreach (Rectangle brick in collision.other.)
+                                if (playerHitbox.Intersects(otherHitbox))
                                 {
-                                    if (playerHitbox.Intersects(brick))
-                                    {
-                                        intersecting.Add(brick);
-                                    }
+                                    intersecting.Add(otherHitbox);
                                 }
 
                                 // Adjust player position based on the player intersection
@@ -309,13 +318,13 @@ namespace Galabingus
                                     {
                                         if (playerHitbox.Y < brick.Y)
                                         {
-                                            playerHitbox.Y -= collisionBox.Height;
-                                            Player.PlayerInstance.Translation = new Vector2(pl);
+                                            Player.PlayerInstance.Position -= new Vector2(0, collisionBox.Height);
+                                            Player.PlayerInstance.Translation = new Vector2(Player.PlayerInstance.Translation.X, 0);
                                         }
                                         else
                                         {
-                                            playerHitbox.Y += collisionBox.Height;
-                                            playerVelocity.Y = 0;
+                                            Player.PlayerInstance.Position += new Vector2(0, collisionBox.Height);
+                                            Player.PlayerInstance.Translation = new Vector2(Player.PlayerInstance.Translation.X, 0);
                                         }
                                     }
                                     // X adjustment
@@ -323,17 +332,19 @@ namespace Galabingus
                                     {
                                         if (playerHitbox.X < brick.X)
                                         {
-                                            playerHitbox.X -= collisionBox.Width;
+                                            Player.PlayerInstance.Position -= new Vector2(collisionBox.Width, 0);
+                                            Player.PlayerInstance.Translation = new Vector2(0, Player.PlayerInstance.Translation.Y);
                                         }
                                         else
                                         {
-                                            playerHitbox.X += collisionBox.Width;
+                                            Player.PlayerInstance.Position += new Vector2(collisionBox.Width, 0);
+                                            Player.PlayerInstance.Translation = new Vector2(0, Player.PlayerInstance.Translation.Y);
                                         }
                                     }
 
                                     // Update player position
-                                    playerPosition.X = playerHitbox.X;
-                                    playerPosition.Y = playerHitbox.Y;
+                                    Player.PlayerInstance.Translation = new Vector2(playerHitbox.X, Player.PlayerInstance.Translation.Y);
+                                    Player.PlayerInstance.Translation = new Vector2(Player.PlayerInstance.Translation.X, playerHitbox.Y);
                                     Player.PlayerInstance.Collider.Resolved = true;
                                 }
                             }
@@ -365,7 +376,7 @@ namespace Galabingus
 
                 if (turn == false)
                 {
-                    if (Camera.Instance.Position == Camera.Instance.StopPoint)
+                    if (Camera.Instance.Position.Y <= GameObject.Instance.EndPosition.Y)
                     {
                         Player.PlayerInstance.CameraLock = false;
                         Camera.Instance.Reverse();
