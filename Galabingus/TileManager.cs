@@ -376,7 +376,8 @@ namespace Galabingus
 
                 if (turn == false)
                 {
-                    if (Camera.Instance.Position.Y <= GameObject.Instance.EndPosition.Y)
+                    if (Camera.Instance.Position.Y <= GameObject.EndPosition.Y)
+                    
                     {
                         Player.PlayerInstance.CameraLock = false;
                         Camera.Instance.Reverse();

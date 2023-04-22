@@ -553,7 +553,7 @@ namespace Galabingus
             }
         }
 
-        public Vector2 EndPosition
+        public static Vector2 EndPosition
         {
             get
             {
