@@ -226,7 +226,7 @@ namespace Galabingus
             }
             else
             { // Normal camera movement
-                this.Position += new Vector2(0, Camera.Instance.OffSet.Y);
+                this.Position = new Vector2(this.Position.X, this.Position.Y - Camera.Instance.OffSet.Y);
             }
         }
 

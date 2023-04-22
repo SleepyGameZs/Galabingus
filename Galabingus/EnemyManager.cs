@@ -41,9 +41,6 @@ namespace Galabingus
         private ushort enemyTotal;
         private ushort enemiesOnScreen;
 
-        // Screen data
-        private Vector2 screenSize;
-
         #endregion
 
         #region-------------------[ Properties ]-------------------
@@ -60,17 +57,6 @@ namespace Galabingus
                     instance = new EnemyManager();
                 }
                 return instance;
-            }
-        }
-
-        /// <summary>
-        /// Used to get screen dimensions for bullets
-        /// </summary>
-        public Vector2 ScreenDimensions
-        {
-            get 
-            {
-                return Instance.screenSize;
             }
         }
 
@@ -108,11 +94,6 @@ namespace Galabingus
             storeCreatorEnemies = new List<object>();
             storeShouldMoveEnemies = new List<bool>();
 
-            // Gets screen size data
-            screenSize = new Vector2(
-                GameObject.Instance.GraphicsDevice.Viewport.Width, // Width of screen
-                GameObject.Instance.GraphicsDevice.Viewport.Height // Height of screen
-                );
         }
 
         #endregion

@@ -33,9 +33,6 @@ namespace Galabingus
         // Bullet Total
         private ushort bulletTotal;
 
-        // Screen data
-        private Vector2 screenSize;
-
         #endregion
 
         #region------------------[ Parameters ]------------------
@@ -52,16 +49,6 @@ namespace Galabingus
                     instance = new BulletManager();
                 }
                 return instance;
-            }
-        }
-
-        /// <summary>
-        /// Used to get screen dimensions for bullets
-        /// </summary>
-        public Vector2 ScreenDimensions
-        {
-            get { 
-                return Instance.screenSize;
             }
         }
 
@@ -86,12 +73,6 @@ namespace Galabingus
             bulletTotal = 0;
 
             content = new List<ushort>();
-
-            // Gets size of screen
-            screenSize = new Vector2(
-                GameObject.Instance.GraphicsDevice.Viewport.Width, // Width of screen
-                GameObject.Instance.GraphicsDevice.Viewport.Height // Height of screen
-                );
 
         }
 

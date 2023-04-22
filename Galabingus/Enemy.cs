@@ -292,7 +292,7 @@ namespace Galabingus
         {
             get { 
                 return (this.Position.Y > 0 &&
-                        this.Position.Y < BulletManager.Instance.ScreenDimensions.Y
+                        this.Position.Y < GameObject.Instance.GraphicsDevice.Viewport.Height
                         - this.Transform.Height * this.Scale);
             }
         }
@@ -416,7 +416,7 @@ namespace Galabingus
         {
             // Check if off screen
             bool enemyOnScreen = (this.Position.Y > - this.Transform.Height * this.Scale &&
-                                  this.Position.Y < BulletManager.Instance.ScreenDimensions.Y);
+                                  this.Position.Y < GameObject.Instance.GraphicsDevice.Viewport.Height);
 
             if (ability == EnemyType.Boss)
             { // Position change for the boss, boss will lock to screen once it appears
@@ -667,7 +667,7 @@ namespace Galabingus
 
                         // Bounce on right side of screen
                         if (this.Position.X + this.Transform.Width * this.Scale >=  // Enemy's right side
-                            EnemyManager.Instance.ScreenDimensions.X)               // Screen's right side
+                            GameObject.Instance.GraphicsDevice.Viewport.Width)      // Screen's right side
                         {
                             EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, true);
                         }
@@ -710,8 +710,9 @@ namespace Galabingus
                     }
                 }
 
-                // Creates currect collider for Enemy
+                // Manage Animation
                 this.Transform = this.Animation.Play(gameTime);
+                this.Animation.AnimationDuration = 0.03f;
 
                 this.Collider.Resolved = true;
 
@@ -790,10 +791,6 @@ namespace Galabingus
                         }
                     }
                 }
-
-                // Manage Animation
-                this.Animation.AnimationDuration = 0.03f;
-                this.Transform = this.Animation.Play(gameTime);
 
             } 
             else

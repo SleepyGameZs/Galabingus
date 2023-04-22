@@ -468,7 +468,7 @@ namespace Galabingus
 
                     // Check for wall collison
                     bool LeftWallHit = this.Position.X < Sprite.Width - this.Transform.Width * this.Scale;
-                    bool RightWallHit = this.Position.X > BulletManager.Instance.ScreenDimensions.X;
+                    bool RightWallHit = this.Position.X > GameObject.Instance.GraphicsDevice.Viewport.Width;
 
                     
                     // Hit left wall
@@ -641,7 +641,7 @@ namespace Galabingus
 
             // If the bullet is off the screen, destroy it
             bool bulletOffScreen = this.Position.Y < 0 ||
-                                   this.Position.Y > BulletManager.Instance.ScreenDimensions.Y;
+                                   this.Position.Y > GameObject.Instance.GraphicsDevice.Viewport.Height;
 
             if (bulletOffScreen && ability != BulletType.Explosion && ability != BulletType.BigExplosion)
             {
