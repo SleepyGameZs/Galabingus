@@ -472,7 +472,7 @@ namespace Galabingus
             Scale = scale;
             Vector2 shiftedScale = Vector2.Zero;
             float resolution = 5.0f;
-            /*
+            
             if (transform.Width >= transform.Height)
             {
                 shiftedScale.X = resolution / transform.Width;
@@ -483,9 +483,12 @@ namespace Galabingus
                 shiftedScale.X = resolution / transform.Height;
                 shiftedScale.Y = resolution / transform.Height;
             }
-            */
-            shiftedScale.X = 0.05f;
-            shiftedScale.Y = 0.05f;
+
+            if (shiftedScale.X > 0.2f || shiftedScale.Y > 0.2f)
+            {
+                shiftedScale.X = 0.2f;
+                shiftedScale.Y = 0.2f;
+            }
 
 
             //Debug.WriteLine(shiftedScale);
@@ -532,18 +535,29 @@ namespace Galabingus
                 };
             }
 
-            float screenWidth = GameObject.Instance.GraphicsDevice.Viewport.Width;
-            float screenHeight = GameObject.Instance.GraphicsDevice.Viewport.Height;
-            float afterScaleWidth = GameObject.Instance.GraphicsDevice.Viewport.Width * shiftedScale.X;
-            float afterScaleHeight = GameObject.Instance.GraphicsDevice.Viewport.Height * shiftedScale.Y;
-            float screenSRatioX = afterScaleWidth / screenWidth;
-            float screenSRatioY = afterScaleHeight / screenHeight;
-            float screenRatioX = screenHeight / screenWidth;
-            float screenRatioY = screenWidth / screenHeight;
+            //Debug.WriteLine(shiftedScale);
+
+            float fixedMinimumScale = 0.2f;
+            float adjustedScaleX = fixedMinimumScale;
+            float adjustedScaleY = fixedMinimumScale;
+
+            /*
+            if (shiftedScale.X < adjustedScaleX)
+            {
+                adjustedScaleX = shiftedScale.X;
+            }
+
+            if (shiftedScale.Y < adjustedScaleY)
+            {
+                adjustedScaleY = shiftedScale.Y;
+            }
+            */
+            adjustedScaleX = shiftedScale.X;
+            adjustedScaleY = shiftedScale.Y;
 
             this.transform = new Rectangle(
-                (int)(Math.Round((position.X * shiftedScale.X), MidpointRounding.AwayFromZero)),
-                (int)(Math.Round((position.Y * shiftedScale.Y), MidpointRounding.AwayFromZero)),
+                (int)(Math.Round((position.X * adjustedScaleX), MidpointRounding.AwayFromZero)),
+                (int)(Math.Round((position.Y * adjustedScaleY), MidpointRounding.AwayFromZero)),
                 (int)Math.Round((transform.Width * (Scale.X) * shiftedScale.X), MidpointRounding.AwayFromZero),
                 (int)Math.Round((transform.Height * (Scale.Y) * shiftedScale.Y), MidpointRounding.AwayFromZero)
             );
