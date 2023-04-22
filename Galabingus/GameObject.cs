@@ -1214,6 +1214,13 @@ namespace Galabingus
             }
         }
 
+        public Vector2 Position
+        {
+            get
+            {
+                return GetPosition(instance);
+            }
+        }
 
         public TypeCode GetTypeCode()
         {
