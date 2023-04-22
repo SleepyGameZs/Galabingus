@@ -310,7 +310,7 @@ namespace Galabingus
                                         if (playerHitbox.Y < brick.Y)
                                         {
                                             playerHitbox.Y -= collisionBox.Height;
-                                            Player.PlayerInstance.Velocity.Y = 0;
+                                            Player.PlayerInstance.Translation = new Vector2(pl);
                                         }
                                         else
                                         {
