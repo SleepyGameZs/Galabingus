@@ -467,15 +467,15 @@ namespace Galabingus
                     currentPosition = SetPosition(gameTime, 3, false);
 
                     // Check for wall collison
-                    bool LeftWallHit = this.Position.X < Sprite.Width;
-                    bool RightWallHit = this.Position.X > BulletManager.Instance.ScreenDimensions.X - 
-                                        this.Transform.Width * this.Scale;
+                    bool LeftWallHit = this.Position.X < Sprite.Width - this.Transform.Width * this.Scale;
+                    bool RightWallHit = this.Position.X > BulletManager.Instance.ScreenDimensions.X;
 
                     
                     // Hit left wall
                     if (LeftWallHit)
                     { // Flip bullet
                         velocity.X *= -1;
+                        Position = new Vector2(Position.X + this.Transform.Width * this.Scale, Position.Y);
 
                         // Set the new boss sprite
                         ushort newSprite = GameObject.Instance.Content.enemy_orange_bullet_135_strip4;
@@ -486,6 +486,7 @@ namespace Galabingus
                     if (RightWallHit)
                     { // Flip bullet
                         velocity.X *= -1;
+                        Position = new Vector2(Position.X - this.Transform.Width * this.Scale, Position.Y);
 
                         // Set the new boss sprite
                         ushort newSprite = GameObject.Instance.Content.enemy_orange_bullet_135_strip4;
@@ -712,6 +713,31 @@ namespace Galabingus
                             // Run tile effects on active tile
                             switch (ability)
                             {
+                                case BulletType.BouncingSide:
+                                    Vector2 overlapZone = ((Tile)collision.other).ScaleVector;
+
+                                    if (overlapZone.X > overlapZone.Y)
+                                    {
+                                        // Flip velocity
+                                        velocity.X *= -1;
+
+                                        // Pove position over from tile
+                                        if (this.Position.X < ((Tile)collision.other).Position.X)
+                                        { // Left
+                                            Position = new Vector2(Position.X + this.Transform.Width * this.Scale, Position.Y + overlapZone.X);
+                                        }
+                                        else
+                                        { // Right
+                                            Position = new Vector2(Position.X - this.Transform.Width * this.Scale, Position.Y - overlapZone.X);
+                                        }
+                                    } 
+                                    else
+                                    { // Head on collision, destroy bullet
+                                        destroy = true;
+                                        velocity = Vector2.Zero;
+                                    }
+                                    break;
+
                                 case BulletType.Explosion:
                                     // Not destroyed nor does it affect tiles
                                     break;
