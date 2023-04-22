@@ -316,16 +316,34 @@ namespace Galabingus
 
             #region Add stuffs
 
-            //Create the Play Button
+            //Create the buttons
             event1 = StartGame;
             event2 = HoverTexture;
             textEvent1 = null;
 
             button = AddButton("buttonPlay_base_strip1", 0.6f,
-            new Vector2(width / 2, height / 2 + 30),
+            new Vector2(width / 2 + 30, height / 2),
             event1, event2, menu1);
 
             button.HoverTexture = cm.Load<Texture2D>("buttonPlay_hover_strip1");
+
+            button = AddButton("buttonHowToPlay_base_strip1", 0.6f,
+            new Vector2(width / 2 + 30, height / 2 + 100),
+            event1, event2, menu1);
+
+            button.HoverTexture = cm.Load<Texture2D>("buttonHowToPlay_hover_strip1");
+
+            button = AddButton("buttonOptions_base_strip1", 0.6f,
+            new Vector2(width / 2 + 30, height / 2 + 200),
+            event1, event2, menu1);
+
+            button.HoverTexture = cm.Load<Texture2D>("buttonOptions_hover_strip1");
+
+            button = AddButton("buttonCredits_base_strip1", 0.6f,
+            new Vector2(width / 2 + 30, height / 2 +  300),
+            event1, event2, menu1);
+
+            button.HoverTexture = cm.Load<Texture2D>("buttonCredits_hover_strip1");
 
             //add the logo to the screen
             AddBackground("galabinguslogo_strip1", 5, 
