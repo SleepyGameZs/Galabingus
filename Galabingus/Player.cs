@@ -641,6 +641,10 @@ namespace Galabingus
                     {
                         translation = (velocity == Vector2.Zero ? velocity : Vector2.Normalize(velocity) * (float)Animation.EllapsedTime * ((boost) ? boostSpeed : 1) * speed * translationAjdustedRatio);
                     }
+                    else
+                    {
+                        translation = Vector2.Zero;
+                    }
                     Position += translation;
                 }
             }
