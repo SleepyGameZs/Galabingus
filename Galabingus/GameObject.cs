@@ -1089,7 +1089,7 @@ namespace Galabingus
             //instance = instanceNumber;
             string path = GameObject.ObjectEnumsI[contentName];
             string start = "../../../Content";
-            string[] files = Directory.GetFiles(start, path+".*", SearchOption.AllDirectories);
+            string[] files = Directory.GetFiles(start, path + ".*", SearchOption.AllDirectories);
             files[0] = files[0].Replace(start, "");
             files[0] = files[0].Replace("\\", "/");
             files[0] = files[0].Substring(1);
@@ -1343,7 +1343,7 @@ namespace Galabingus
             {
                 preI.Add(GameObject.cameraStopPositions[i]);
             }
-            for (int i = index+1; i < GameObject.cameraStopPositions.Count; i++)
+            for (int i = index + 1; i < GameObject.cameraStopPositions.Count; i++)
             {
                 postI.Add(GameObject.cameraStopPositions[i]);
             }
@@ -1420,7 +1420,7 @@ namespace Galabingus
                         {
                             //System.Diagnostics.Debug.WriteLine(assetPosition);
                             //TileManager.Instance.CreateObject(GameObject.Instance.Content.smallbullet_strip4, Vector2.Zero);
-                            TileManager.Instance.CreateObject(GameObject.Instance.Content.tile_strip26,assetPosition,(ushort)(int.Parse(num) - 10));
+                            TileManager.Instance.CreateObject(GameObject.Instance.Content.tile_strip26, assetPosition, (ushort)(int.Parse(num) - 10));
                         }
 
                         xInput++;
@@ -1437,13 +1437,13 @@ namespace Galabingus
 
         public void TriggerBossEffect()
         {
-            
+
         }
 
 
         public List<int[]> LoadEnemyLeveFile(string fileName)
         {
-            List <int[]> enemies = new List<int[]>();
+            List<int[]> enemies = new List<int[]>();
             StreamReader reader = new StreamReader("../../../" + fileName);
 
             int lineNumber = 0;
@@ -1515,6 +1515,31 @@ namespace Galabingus
             reader.Close();
 
             return enemies;
+        }
+
+        public void Reset()
+        {
+            allGameObjects = null;
+            animations = null;
+            colliders = null;
+            transforms = null;
+            positions = null;
+            sprites = null;
+            scales = null;
+            objectEnums = null;
+            effects = null;
+
+            animationsI = new GameObjectTrie<Animation>();
+            collidersI = new GameObjectTrie<Collider>();
+            transformsI = new GameObjectTrie<Rectangle>();
+            positionsI = new GameObjectTrie<Vector2>();
+            spritesI = new GameObjectTrie<Texture2D>();
+            scalesI = new GameObjectTrie<float>();
+            objectEnumsI = new GameObjectTrie<string>();
+            effectI = new GameObjectTrie<Effect>();
+            trie = null;
+
+            cameraStopPositions = null;
         }
     }
 }

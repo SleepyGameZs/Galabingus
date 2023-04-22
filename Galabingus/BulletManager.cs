@@ -322,6 +322,11 @@ namespace Galabingus
             }
         }
 
+        public void Reset()
+        {
+            instance = null;
+        }
+
         #endregion
     }
 }

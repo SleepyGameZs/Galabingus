@@ -420,6 +420,11 @@ namespace Galabingus
             return false;
         }
 
+
+        public void Reset()
+        {
+            instance = null;
+        }
         #endregion
 
     }

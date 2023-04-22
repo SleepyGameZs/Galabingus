@@ -309,7 +309,7 @@ namespace Galabingus
             #region Background Scroll
             for (int i = 0; i < backgroundList.Count; i++)
             {
-                backgroundList[i].Update(gameTime);
+                backgroundList[i].UpdateBackground(gameTime);
             }
 
             // Scroll the camrea when the enemies are not on the screeen
@@ -399,5 +399,10 @@ namespace Galabingus
                 }
             }
         }
+        public void Reset()
+        {
+            instance = null;
+        }
+
     }
 }

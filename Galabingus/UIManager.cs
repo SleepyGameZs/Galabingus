@@ -129,6 +129,8 @@ namespace Galabingus
     {
         #region Fields
 
+        private bool reset;
+
         //the instance of the UIManager
         private static UIManager instance = null;
 
@@ -184,6 +186,18 @@ namespace Galabingus
         #endregion
 
         #region Properties
+
+        public bool IsReset
+        {
+            get
+            {
+                return reset;
+            }
+            set
+            {
+                reset = value;
+            }
+        }
 
         /// <summary>
         /// returns the instance of the UI manager
@@ -445,6 +459,8 @@ namespace Galabingus
                     //if enter is hit in the game over state, go back to the menu
                     if (SingleKeyPress(Keys.Enter))
                     {
+                        reset = true;
+                        //Galabingus.Reset();
                         gs = GameState.Menu;
                     }
 
@@ -493,6 +509,11 @@ namespace Galabingus
                 }
             }
 
+        }
+
+        public void Reset()
+        {
+            instance = null;
         }
 
         #endregion

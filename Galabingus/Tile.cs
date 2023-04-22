@@ -230,6 +230,11 @@ namespace Galabingus
             }
         }
 
+        public void UpdateBackground(GameTime gameTime)
+        {
+            this.Position = new Vector2(this.Position.X - Camera.Instance.OffSet.X, this.Position.Y - Camera.Instance.OffSet.Y);
+        }
+
         public void Draw()
         {
             //this.Position = new Vector2(0, 0);
