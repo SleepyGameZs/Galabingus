@@ -186,7 +186,7 @@ namespace Galabingus
                     break;
 
                 case EnemyType.Seeker:
-                    sprite = GameObject.Instance.Content.enemy_violet_strip4;
+                    sprite = GameObject.Instance.Content.enemy_purple_strip4;
                     break;
 
                 case EnemyType.Bomb:
@@ -198,7 +198,7 @@ namespace Galabingus
                     break;
 
                 default:
-                    sprite = GameObject.Instance.Content.enemy_violet_strip4;
+                    sprite = GameObject.Instance.Content.enemy_purple_strip4;
                     break;
             }
 

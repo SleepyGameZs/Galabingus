@@ -71,6 +71,9 @@ namespace Galabingus
         private EnemyType bossPhase;
         private int stateTimer;
 
+        // Whether or not this enemy contains health
+        private bool dropHealth;
+
         // Reference to what thing created this enemy (can be null)
         private object creatorReference;
 
@@ -258,6 +261,14 @@ namespace Galabingus
         }
 
         /// <summary>
+        /// Returns the ability this enemy has to figure out what kind of enemy this is
+        /// </summary>
+        public EnemyType Ability
+        {
+            get { return ability; }
+        }
+
+        /// <summary>
         /// Returns the initial Y position of the enemy, for the dictionary
         /// in EnemyManager's keys
         /// </summary>
@@ -356,8 +367,6 @@ namespace Galabingus
             // Set shot timer with some randomization
             shotTimer = rng.Next(50);
 
-            
-
             // Set if enemy should move
             this.shouldMove = shouldMove;
 
@@ -369,16 +378,25 @@ namespace Galabingus
             {
                 case EnemyType.Bomb:
                     totalHealth = 1;
+
+                    // Bombs cannot drop health
+                    dropHealth = false;
                     break;
 
                 case EnemyType.Boss:
                     // Set Health
                     totalHealth = 150;
+
+                    // Boss has special health dropping mechanics in Update
+                    dropHealth = true;
                     break;
 
                 default:
                     // Normal health
                     totalHealth = 3;
+
+                    // Does this enemy drop health?
+                    dropHealth = (rng.Next(3) == 1) ? true : false;
                     break;
             }
             currentHealth = totalHealth;
@@ -508,6 +526,20 @@ namespace Galabingus
                             int phaseTime = 0;
                             ushort newSprite = 0;
 
+                            // Health drops every 30 hits dealt to the boss
+                            if (currentHealth % 30 == 0)
+                            {
+                                if (dropHealth == true)
+                                { // Spawns a heart
+                                    BulletSpawning(0, BulletType.Heart, new Vector2(-25, 0), 0);
+                                    dropHealth = false;
+                                }
+                            } 
+                            else
+                            {
+                                dropHealth = true;
+                            }
+
                             // Switch for various attacks
                             switch (bossPhase)
                             {
@@ -595,7 +627,7 @@ namespace Galabingus
 
                                 case EnemyType.Seeker:
                                     // Set the new boss sprite
-                                    newSprite = GameObject.Instance.Content.boss_violet_strip4;
+                                    newSprite = GameObject.Instance.Content.boss_purple_strip4;
                                     this.Sprite = GetSpriteFrom(newSprite, enemyNumber);
 
                                     // Shooting
@@ -670,7 +702,7 @@ namespace Galabingus
                             AudioManager.Instance.CallSound("Explosion");
 
                             // Has a chance to spawn hearts
-                            if (rng.Next(3) == 1)
+                            if (dropHealth == true)
                             {
                                 BulletSpawning(0, BulletType.Heart, new Vector2(-25, 0), 0);
                             }
@@ -721,7 +753,7 @@ namespace Galabingus
                 {
                     if (collision.other != null && !destroy)
                     {
-                        if ((collision.other as Tile) is Tile && Player.PlayerInstance.CameraLock)
+                        if ((collision.other as Tile) is Tile)
                         { // Collided with Tile, see if it is active
 
                             if (((Tile)collision.other).IsActive)

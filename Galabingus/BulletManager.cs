@@ -149,7 +149,7 @@ namespace Galabingus
                     break;
 
                 case BulletType.Seeker:
-                    sprite = GameObject.Instance.Content.enemy_violet_bullet_strip4;
+                    sprite = GameObject.Instance.Content.enemy_purple_bullet_strip4;
                     break;
 
                 case BulletType.Explosion:
@@ -161,7 +161,7 @@ namespace Galabingus
                     break;
 
                 case BulletType.Heart:
-                    sprite = GameObject.Instance.Content.heartbullet_strip4;
+                    sprite = GameObject.Instance.Content.heart_bullet_strip4;
                     break;
 
                 default:
