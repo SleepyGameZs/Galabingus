@@ -112,6 +112,18 @@
 /processorParam:TextureFormat=Color
 /build:Boss/boss_orange_strip4.png
 
+#begin Boss/boss_purple_strip4.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Boss/boss_purple_strip4.png
+
 #begin Boss/boss_red_strip4.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -123,18 +135,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Boss/boss_red_strip4.png
-
-#begin Boss/boss_violet_strip4.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Boss/boss_violet_strip4.png
 
 #begin Boss/boss_yellow_strip4.png
 /importer:TextureImporter
@@ -166,6 +166,18 @@
 /processorParam:Quality=Best
 /build:Bullet Fire.mp3
 
+#begin Bullets/enemy_purple_bullet_strip4.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Bullets/enemy_purple_bullet_strip4.png
+
 #begin Bullets/enemy_red_bullet_strip4.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -177,18 +189,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Bullets/enemy_red_bullet_strip4.png
-
-#begin Bullets/enemy_violet_bullet_strip4.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Bullets/enemy_violet_bullet_strip4.png
 
 #begin Bullets/enemy_yellow_bullet_strip3.png
 /importer:TextureImporter
@@ -225,6 +225,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Bullets/Green/enemy_green_bullet_split_strip4.png
+
+#begin Bullets/heart_bullet_strip4.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Bullets/heart_bullet_strip4.png
 
 #begin Bullets/Laser/laser_bullet_full_strip11.png
 /importer:TextureImporter
@@ -424,6 +436,18 @@
 /processorParam:TextureFormat=Color
 /build:Enemy/enemy_orange_strip4.png
 
+#begin Enemy/enemy_purple_strip4.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Enemy/enemy_purple_strip4.png
+
 #begin Enemy/enemy_red_strip4.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -435,18 +459,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Enemy/enemy_red_strip4.png
-
-#begin Enemy/enemy_violet_strip4.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Enemy/enemy_violet_strip4.png
 
 #begin Enemy/enemy_yellow_strip4.png
 /importer:TextureImporter
@@ -537,18 +549,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:heart_strip1.png
-
-#begin heartbullet_strip4.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:heartbullet_strip4.png
 
 #begin menubackground_strip1.png
 /importer:TextureImporter

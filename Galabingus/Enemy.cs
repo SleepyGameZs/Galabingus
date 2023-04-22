@@ -601,7 +601,7 @@ namespace Galabingus
 
                                 case EnemyType.Seeker:
                                     // Set the new boss sprite
-                                    newSprite = GameObject.Instance.Content.boss_violet_strip4;
+                                    newSprite = GameObject.Instance.Content.boss_purple_strip4;
                                     this.Sprite = GetSpriteFrom(newSprite, enemyNumber);
 
                                     // Shooting

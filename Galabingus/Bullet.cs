@@ -397,8 +397,8 @@ namespace Galabingus
                     break;
 
                 case BulletType.Seeker:
-                    // Violet Enemy: Tracks the player, however it eventually loses focus
-                    GameObject.Instance.Content = GameObject.Instance.Content.enemy_violet_bullet_strip4;
+                    // Purple Enemy: Tracks the player, however it eventually loses focus
+                    GameObject.Instance.Content = GameObject.Instance.Content.enemy_purple_bullet_strip4;
 
                     // Can target: Player
                     target = Targets.Player;
@@ -423,8 +423,8 @@ namespace Galabingus
                     break;
 
                 case BulletType.Heart:
-                    // Violet Enemy: Tracks the player, however it eventually loses focus
-                    GameObject.Instance.Content = GameObject.Instance.Content.heartbullet_strip4;
+                    // Healing Heart: Tracks the player, however it eventually loses focus
+                    GameObject.Instance.Content = GameObject.Instance.Content.heart_bullet_strip4;
 
                     // Can target: Player
                     target = Targets.Player;
@@ -624,7 +624,7 @@ namespace Galabingus
                                                              ));
 
                     // Set Current Position
-                    currentPosition = SetPosition(gameTime, 3, false);
+                    currentPosition = SetPosition(gameTime, 4, false);
 
                     break;
 
