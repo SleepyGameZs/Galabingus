@@ -176,5 +176,10 @@ namespace Galabingus
                 Player.PlayerInstance.Health = 0;
             }
         }
+
+        public void Reset()
+        {
+            instance = null;
+        }
     }
 }

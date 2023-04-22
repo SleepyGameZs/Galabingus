@@ -560,7 +560,6 @@ namespace Galabingus
             }
             else
             {
-
                 if (Math.Abs(normPreVelocity.X) < 0.0000001)
                 {
                     normPreVelocity.X = 0;
@@ -1102,6 +1101,11 @@ namespace Galabingus
                 SpriteEffects.None,              // Which direction the sprite faces
                 0.0f                             // Layer depth of the player is 0.0
             );
+        }
+
+        public void Reset()
+        {
+            playerInstance = null;
         }
     }
 }
