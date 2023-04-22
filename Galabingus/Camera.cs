@@ -175,6 +175,7 @@ namespace Galabingus
             {
                 Player.PlayerInstance.Health = 0;
             }
+            //Debug.WriteLine(offSet.Y);
         }
 
         public void Reset()

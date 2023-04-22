@@ -287,8 +287,55 @@ namespace Galabingus
                         {
                             if (((collision.other as Player) is Player) && collision.self is Tile)
                             {
-                                Player.PlayerInstance.Position += collision.mtv;
-                                Player.PlayerInstance.Collider.Resolved = true;
+                                Rectangle playerHitbox = Player.PlayerInstance.Transform;
+                                List<Rectangle> intersecting = new List<Rectangle>();
+
+                                // Check for any collisions
+                                foreach (Rectangle brick in collision.other.)
+                                {
+                                    if (playerHitbox.Intersects(brick))
+                                    {
+                                        intersecting.Add(brick);
+                                    }
+                                }
+
+                                // Adjust player position based on the player intersection
+                                foreach (Rectangle brick in intersecting)
+                                {
+                                    Rectangle collisionBox = Rectangle.Intersect(playerHitbox, brick);
+
+                                    // Y adjustment
+                                    if (collisionBox.Width > collisionBox.Height)
+                                    {
+                                        if (playerHitbox.Y < brick.Y)
+                                        {
+                                            playerHitbox.Y -= collisionBox.Height;
+                                            Player.PlayerInstance.Velocity.Y = 0;
+                                        }
+                                        else
+                                        {
+                                            playerHitbox.Y += collisionBox.Height;
+                                            playerVelocity.Y = 0;
+                                        }
+                                    }
+                                    // X adjustment
+                                    else
+                                    {
+                                        if (playerHitbox.X < brick.X)
+                                        {
+                                            playerHitbox.X -= collisionBox.Width;
+                                        }
+                                        else
+                                        {
+                                            playerHitbox.X += collisionBox.Width;
+                                        }
+                                    }
+
+                                    // Update player position
+                                    playerPosition.X = playerHitbox.X;
+                                    playerPosition.Y = playerHitbox.Y;
+                                    Player.PlayerInstance.Collider.Resolved = true;
+                                }
                             }
                         }
                     }
@@ -311,26 +358,20 @@ namespace Galabingus
             {
                 backgroundList[i].UpdateBackground(gameTime);
             }
-
             // Scroll the camrea when the enemies are not on the screeen
             if (EnemyManager.Instance.EnemiesOnScreen == 0)
             {
-                if (counter != 4)
-                {
-                    Camera.Instance.Start();
-                }
+                Camera.Instance.Start();
+
                 if (turn == false)
                 {
-                    if (backgroundList[1].Position.Y >= GameObject.Instance.GraphicsDevice.Viewport.Height)
+                    if (Camera.Instance.Position == Camera.Instance.StopPoint)
                     {
-                        if (counter == 3)
-                        {
-                            Player.PlayerInstance.CameraLock = false;
-                            Camera.Instance.Reverse();
-                            turn = true;
-                        }
-
+                        Player.PlayerInstance.CameraLock = false;
+                        Camera.Instance.Reverse();
                         counter++;
+                        turn = true;
+
                         backgroundList[1].Position = new Vector2(
                             0, backgroundList[1].Position.Y - GameObject.Instance.GraphicsDevice.Viewport.Height * 4
                         );
@@ -338,7 +379,7 @@ namespace Galabingus
                 }
             }
             #endregion
-
+    
             // Stop the camera at the different camera stops
             if (Camera.Instance.CameraLock == false)
             {
