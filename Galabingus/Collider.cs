@@ -577,6 +577,7 @@ namespace Galabingus
                         // Then we can activate the collider
                         if (active || this.resolved &&
                             otherCollider.layer != this.layer
+                            && otherCollider.transform.Intersects(this.transform)
                         )
                         {
                             //Debug.WriteLineIf(this.layer == (ushort)CollisionGroup.FromPlayer, "AAA");
