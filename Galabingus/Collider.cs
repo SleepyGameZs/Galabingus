@@ -470,13 +470,32 @@ namespace Galabingus
             bool updated = false; // The collider needs to update its pixel data
             this.layer = layer;   // The collider's layer
             Scale = scale;
+            Vector2 shiftedScale = Vector2.Zero;
+            float resolution = 5.0f;
+            /*
+            if (transform.Width >= transform.Height)
+            {
+                shiftedScale.X = resolution / transform.Width;
+                shiftedScale.Y = resolution / transform.Width;
+            }
+            else
+            {
+                shiftedScale.X = resolution / transform.Height;
+                shiftedScale.Y = resolution / transform.Height;
+            }
+            */
+            shiftedScale.X = 0.05f;
+            shiftedScale.Y = 0.05f;
+
+
+            //Debug.WriteLine(shiftedScale);
 
             // Create transform from scale and position
             this.transform = new Rectangle(
                 (int)(Math.Round(position.X, MidpointRounding.AwayFromZero)),
                 (int)(Math.Round(position.Y, MidpointRounding.AwayFromZero)),
-                (int)Math.Round((transform.Width * (Scale.X)), MidpointRounding.AwayFromZero),
-                (int)Math.Round((transform.Height * (Scale.Y)), MidpointRounding.AwayFromZero)
+                (int)Math.Round((transform.Width * (Scale.X) * shiftedScale.X), MidpointRounding.AwayFromZero),
+                (int)Math.Round((transform.Height * (Scale.Y) * shiftedScale.Y), MidpointRounding.AwayFromZero)
             );
 
             // Determine the bounds of the collider
@@ -502,16 +521,32 @@ namespace Galabingus
                     spriteBatch.Draw(
                         copyOfTarget,
                         new Vector2(position.X, position.Y),
-                        new Rectangle(0,0,this.transform.Width, this.transform.Height),
+                        new Rectangle(0, 0, this.transform.Width, this.transform.Height),
                         Color.Blue,
                         0.0f,
                         Vector2.Zero,
-                        1.0f,
+                        new Vector2(1 / shiftedScale.X, 1 / shiftedScale.Y),
                         SpriteEffects.None,
                         1.0f
                     );
                 };
             }
+
+            float screenWidth = GameObject.Instance.GraphicsDevice.Viewport.Width;
+            float screenHeight = GameObject.Instance.GraphicsDevice.Viewport.Height;
+            float afterScaleWidth = GameObject.Instance.GraphicsDevice.Viewport.Width * shiftedScale.X;
+            float afterScaleHeight = GameObject.Instance.GraphicsDevice.Viewport.Height * shiftedScale.Y;
+            float screenSRatioX = afterScaleWidth / screenWidth;
+            float screenSRatioY = afterScaleHeight / screenHeight;
+            float screenRatioX = screenHeight / screenWidth;
+            float screenRatioY = screenWidth / screenHeight;
+
+            this.transform = new Rectangle(
+                (int)(Math.Round((position.X * shiftedScale.X), MidpointRounding.AwayFromZero)),
+                (int)(Math.Round((position.Y * shiftedScale.Y), MidpointRounding.AwayFromZero)),
+                (int)Math.Round((transform.Width * (Scale.X) * shiftedScale.X), MidpointRounding.AwayFromZero),
+                (int)Math.Round((transform.Height * (Scale.Y) * shiftedScale.Y), MidpointRounding.AwayFromZero)
+            );
 
             List<Collision> result = new List<Collision>();
             ushort layer4 = GameObject.Instance.ColliderLayer4Instance(instanceNumber);
@@ -530,10 +565,7 @@ namespace Galabingus
                         // When the bounds are intercepting and the layer isn't the same and all collisions have been resolved
                         // Then we can activate the collider
                         if (active || this.resolved &&
-                            otherCollider.layer != this.layer &&
-                            (otherCollider.layer != (ushort)CollisionGroup.Tile || ((ushort)CollisionGroup.Enemy != otherCollider.layer && this.layer != (ushort)CollisionGroup.Tile)
-                            ) &&
-                            collidersR[colliderIndex].transform.Intersects(this.transform)
+                            otherCollider.layer != this.layer
                         )
                         {
                             //Debug.WriteLineIf(this.layer == (ushort)CollisionGroup.FromPlayer, "AAA");
@@ -552,11 +584,16 @@ namespace Galabingus
                             // Load pixel data to CPU memory
                             if (!GameObject.Instance.HoldCollider && (pixels == null || spriteEffects != effect))
                             {
-                                
+
+                                if (this.transform.Width == 0 || this.transform.Height == 0)
+                                {
+                                    continue;
+                                }
+
                                 // Setup the renderTarget
                                 targetSprite = new RenderTarget2D(graphicsDevice,
-                                    (int)Math.Round((transform.Width * (Scale.X)), MidpointRounding.AwayFromZero) <= 0 ? 1 : (int)Math.Round((transform.Width * (Scale.X)), MidpointRounding.AwayFromZero),
-                                    (int)Math.Round((transform.Height * (Scale.Y)), MidpointRounding.AwayFromZero) <= 0 ? 1 : (int)Math.Round((transform.Height * (Scale.Y)), MidpointRounding.AwayFromZero),
+                                    this.transform.Width,
+                                    this.transform.Height,
                                     true,
                                     SurfaceFormat.Alpha8,
                                     DepthFormat.None,
@@ -575,7 +612,7 @@ namespace Galabingus
                                     Color.Blue,
                                     0.0f,
                                     Vector2.Zero,
-                                    Scale,
+                                    Scale*shiftedScale,
                                     effect,
                                     1.0f
                                 );
@@ -676,7 +713,6 @@ namespace Galabingus
                 Texture2D pixelWhite = GameObject.Instance.ContentManager.Load<Texture2D>("white_pixel_strip1");
                 GameObject.Instance.Debug += delegate (SpriteBatch spriteBatch)
                 {
-                    /*
                     spriteBatch.Draw(
                         pixelWhite,
                         new Vector2(transform.X, transform.Y),
@@ -699,6 +735,7 @@ namespace Galabingus
                         0
                     );
                     */
+                    
                 };
             }
 
