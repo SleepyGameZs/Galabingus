@@ -1116,17 +1116,19 @@ namespace Galabingus
 
         public float PostScaleRatio()
         {
-            System.Diagnostics.Debug.WriteLine("EEEEAA " + this.GetTransform(instance).Width);
-            System.Diagnostics.Debug.WriteLine("FFFEEEE " + universalScale);
-            return (this.GetTransform(instance).Width > this.GetTransform(instance).Height ? universalScale / this.GetTransform(instance).Width : universalScale / this.GetTransform(instance).Height);
+            //System.Diagnostics.Debug.WriteLine("EEEEAA " + this.GetTransform(instance).Width);
+            //System.Diagnostics.Debug.WriteLine("FFFEEEE " + universalScale);
+            return (universalScale / this.GetTransform(instance).Height) * 1.0f; //((this.GetTransform(instance).Width < this.GetTransform(instance).Height) ? universalScale / this.GetTransform(instance).Width : universalScale / this.GetTransform(instance).Height);
         }
 
         public Vector2 PostScaleRatio(bool isVector2)
         {
-            return new Vector2(
+            return new Vector2(1, 1);
+            /*
                 universalScale / this.GetTransform(instance).Width,
                 universalScale / this.GetTransform(instance).Height
             );
+            */
         }
 
         public System.Type GameObjectType
@@ -1364,7 +1366,7 @@ namespace Galabingus
             universalScale = coordianteXScale;
             float coordinateYScale = GameObject.Instance.GraphicsDevice.Viewport.Height / height * 4;
             float startingY = GameObject.Instance.GraphicsDevice.Viewport.Height * -4;
-            return new Vector2(coordianteXScale * column, coordinateYScale * row + startingY);
+            return new Vector2(coordianteXScale * column, coordinateYScale * row * 1.5f + startingY );
         }
 
         public void LoadTileLevelFile(string fileName)
