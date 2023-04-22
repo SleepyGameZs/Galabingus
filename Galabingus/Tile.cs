@@ -189,7 +189,7 @@ namespace Galabingus
             this.contentName = contentName;
             this.instanceNumber = instanceNumber;
             this.Transform = this.Animation.GetFrame(sprite);
-            this.Scale = PostScaleRatio();
+            this.ScaleVector = PostScaleRatio(true);
             this.spriteNumber = sprite;
             isActive = true;
         }
@@ -208,7 +208,7 @@ namespace Galabingus
             this.contentName = contentName;
             this.instanceNumber = instanceNumber;
             this.Transform = this.Animation.GetFrame(0);
-            this.Scale = PostScaleRatio();
+            this.ScaleVector = PostScaleRatio(true);
             this.spriteNumber = sprite;
             isActive = true;
         }

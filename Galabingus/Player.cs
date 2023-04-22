@@ -81,12 +81,18 @@ namespace Galabingus
         private bool cameraLock;
         private Vector2 translation;
         private Text textTest;
+        private bool tSet;
 
         public Vector2 Translation
         {
             get
             {
                 return translation;
+            }
+            set
+            {
+                tSet = true;
+                translation = value;
             }
         }
 
@@ -326,6 +332,7 @@ namespace Galabingus
             PlayerInstance.cameraLock = true;
             textTest = UIManager.Instance.AddText("Testing", Vector2.Zero, 12, Color.White, UIState.BaseGame);
             iFrame = false;
+            tSet = false;
         }
 
         /// <summary>
@@ -630,10 +637,19 @@ namespace Galabingus
 
                 if (normPreVelocity != normVelocity && normVelocity != Vector2.Zero && normPreVelocity != Vector2.Zero && previousCollision || !collides)
                 {
-                    translation = (velocity == Vector2.Zero ? velocity : Vector2.Normalize(velocity) * (float)Animation.EllapsedTime * ((boost) ? boostSpeed : 1) * speed * translationAjdustedRatio);
+                    if (!tSet)
+                    {
+                        translation = (velocity == Vector2.Zero ? velocity : Vector2.Normalize(velocity) * (float)Animation.EllapsedTime * ((boost) ? boostSpeed : 1) * speed * translationAjdustedRatio);
+                    }
+                    else
+                    {
+                        translation = Vector2.Zero;
+                    }
                     Position += translation;
                 }
             }
+            tSet = false;
+
 
             previousCollision = collides;
 
