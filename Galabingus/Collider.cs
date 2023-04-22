@@ -559,6 +559,8 @@ namespace Galabingus
                 (int)Math.Round((transform.Height * (Scale.Y) * shiftedScale.Y), MidpointRounding.AwayFromZero)
             );
 
+            this.Scale = new Vector2(Scale.X * adjustedScaleX, Scale.Y * adjustedScaleY);
+
             List<Collision> result = new List<Collision>();
             ushort layer4 = GameObject.Instance.ColliderLayer4Instance(instanceNumber);
             unsafe
@@ -624,7 +626,7 @@ namespace Galabingus
                                     Color.Blue,
                                     0.0f,
                                     Vector2.Zero,
-                                    Scale*shiftedScale,
+                                    this.Scale,
                                     effect,
                                     1.0f
                                 );
@@ -828,6 +830,7 @@ namespace Galabingus
         /// <returns></returns>
         private Vector2 MTV(Collider other, int x2, int y2, int y1, int x1, float y, float x)
         {
+
             Vector2 mtv = new Vector2();
             Vector2 overlap = new Vector2((float)Math.Sqrt((x2 - x1) * (x2 - x1)), (float)Math.Sqrt((y2 - y1) * (y2 - y1)));
 
@@ -887,7 +890,7 @@ namespace Galabingus
             }
             */
 
-      
+
             /*
             if (xComparison)
             {
@@ -910,14 +913,15 @@ namespace Galabingus
             }
             */
 
-            if (mtv == Vector2.Zero)
+            //if (mtv == Vector2.Zero)
             {
                 return Vector2.Zero;
             }
 
-            mtv = Vector2.Normalize(mtv) * Player.PlayerInstance.Speed;
+            mtv = (Vector2.Normalize(mtv) * Player.PlayerInstance.Speed) * Scale;
 
             return mtv;
+            //return CalculateMTV(this.transform, other.transform);
         }
     }
 }
