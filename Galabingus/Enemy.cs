@@ -725,24 +725,37 @@ namespace Galabingus
                     shotTimer++;
 
                     // Movement
-                    if (ShouldMove && Player.PlayerInstance.CameraLock)
+                    if (ShouldMove)
                     {
                         this.Position += velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
 
-                        // Bounce on right side of screen
+                        // Collide with walls
                         if (this.Position.X + this.Transform.Width * this.Scale >=  // Enemy's right side
                             GameObject.Instance.GraphicsDevice.Viewport.Width &&    // Screen's right side
                             Velocity.X > 0)                                         // Can only occur when facing Right
-                        {
+                        { // Bounce on right side of screen
+                            this.Position -= velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 120;
+                            if (ability == EnemyType.Boss)
+                            {
+                                Velocity = new Vector2(Velocity.X * -1 * (float)Animation.EllapsedTime, Velocity.Y);
+                            }
+                            else
+                            {
+                                EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, true);
+                            }
+                            
+                        } 
+                        else if (this.Position.X <= 0 && Velocity.X < 0)
+                        { // Bounce on left side of screen
                             this.Position -= velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
-                            EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, true);
-                        }
-
-                        // Bounce on left side of screen
-                        if (this.Position.X <= 0 && Velocity.X < 0)
-                        {
-                            this.Position -= velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
-                            EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, false);
+                            if (ability == EnemyType.Boss)
+                            {
+                                Velocity = new Vector2(Velocity.X * -1 * (float)Animation.EllapsedTime, Velocity.Y);
+                            }
+                            else
+                            {
+                                EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, false);
+                            }
                         }
                     }
                 }
