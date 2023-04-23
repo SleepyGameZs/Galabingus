@@ -1394,7 +1394,7 @@ namespace Galabingus
             float startingY = EndPosition.Y;
             universalScaleX = coordianteXScale;
             universalScaleY = coordinateYScale;
-            return new Vector2(coordianteXScale * column, coordinateYScale * row + startingY + GameObject.Instance.GraphicsDevice.Viewport.Height + coordinateYScale);
+            return new Vector2(coordianteXScale * column, coordinateYScale * row + startingY + GameObject.Instance.GraphicsDevice.Viewport.Height);
         }
 
         public void LoadTileLevelFile(string fileName)
@@ -1413,7 +1413,7 @@ namespace Galabingus
             {
                 //Debug.WriteLine(data);
 
-                if (lineNumber < 6)
+                if (lineNumber < 5)
                 {
                     switch (lineNumber)
                     {
