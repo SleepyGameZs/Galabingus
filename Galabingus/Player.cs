@@ -471,8 +471,10 @@ namespace Galabingus
                 {
                     velocity.X = -speed.X;
                 }
-
+                Player.playerInstance.Health = Player.PlayerInstance.Health - 1;
                 collides = true;
+
+                Position += velocity * 0.5f;
             }
             else if (previousCollision)
             {
@@ -1042,7 +1044,7 @@ namespace Galabingus
 
             if (godMode)
             {
-                PlayerInstance.Health = 5;
+                Player.PlayerInstance.health = 5;
             }
 
             if (cameraLock)
