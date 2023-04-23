@@ -114,7 +114,7 @@ namespace Galabingus
                                   object creator, 
                                   bool sourceIsBullet)
         {
-            AudioManager.Instance.CallSound("Fire");
+            
 
             // Sets the sprite to use for the bullet for GameObject storage purposes
             ushort sprite;
@@ -122,10 +122,12 @@ namespace Galabingus
             {
                 case BulletType.PlayerNormal:
                     sprite = GameObject.Instance.Content.smallbullet_strip4;
+                    AudioManager.Instance.CallSound("Fire");
                     break;
 
                 case BulletType.EnemyNormal:
                     sprite = GameObject.Instance.Content.enemy_red_bullet_strip4;
+                    AudioManager.Instance.CallSound("Enemy Fire");
                     break;
 
                 case BulletType.BouncingSide:
@@ -134,22 +136,27 @@ namespace Galabingus
 
                 case BulletType.BouncingCenter:
                     sprite = GameObject.Instance.Content.enemy_orange_bullet_90_strip4;
+                    AudioManager.Instance.CallSound("Scatter");
                     break;
 
                 case BulletType.Splitter:
                     sprite = GameObject.Instance.Content.enemy_green_bullet_main_strip4;
+                    AudioManager.Instance.CallSound("Split");
                     break;
 
                 case BulletType.SplitOff:
                     sprite = GameObject.Instance.Content.enemy_green_bullet_split_strip4;
+                    AudioManager.Instance.CallSound("Break");
                     break;
 
                 case BulletType.Wave:
                     sprite = GameObject.Instance.Content.enemy_yellow_bullet_strip3;
+                    AudioManager.Instance.CallSound("Wave");
                     break;
 
                 case BulletType.Seeker:
                     sprite = GameObject.Instance.Content.enemy_purple_bullet_strip4;
+                    AudioManager.Instance.CallSound("Homing");
                     break;
 
                 case BulletType.Explosion:
