@@ -96,7 +96,7 @@ namespace Galabingus
         {
             get { return menu; }
         }
-        
+
         /// <summary>
         /// returns the gameState which this UILevel is apart of
         /// </summary>
@@ -204,6 +204,9 @@ namespace Galabingus
         List<UIElement> currentMenu;
 
         private bool prevBossOnScreen;
+
+        bool currentActive;
+        bool previousActive;
 
         #endregion
 
@@ -336,7 +339,7 @@ namespace Galabingus
 
             fadeValue = 0.00009;
             prevBossOnScreen = false;
-    }
+        }
 
         #endregion
 
@@ -363,8 +366,8 @@ namespace Galabingus
 
             //different menus
             List<UIElement> howToPlayMenu = new List<UIElement>();
-            List <UIElement> optionsMenu = new List<UIElement>();
-            List < UIElement > creditsMenu = new List<UIElement>();
+            List<UIElement> optionsMenu = new List<UIElement>();
+            List<UIElement> creditsMenu = new List<UIElement>();
 
 
             //more dummy variables
@@ -384,6 +387,7 @@ namespace Galabingus
             event1, event2, menu1);
 
             button.HoverTexture = cm.Load<Texture2D>("buttonPlay_hover_strip1");
+            button.UITexture = button.HoverTexture;
 
             // Change button selection:
             selectedButton = button.UIPosition.Y;
@@ -397,10 +401,10 @@ namespace Galabingus
             event1, event2, menu1);
 
             button.HoverTexture = cm.Load<Texture2D>("buttonHowToPlay_hover_strip1");
-            
+
             AddBackground(
-                "HowToPlayMenu_strip1", 0.4f, 
-                new Vector2(width / 2, height / 2 - 50), 
+                "HowToPlayMenu_strip1", 0.4f,
+                new Vector2(width / 2, height / 2 - 50),
                 howToPlayMenu);
 
             button.DisplayMenu = howToPlayMenu;
@@ -419,10 +423,10 @@ namespace Galabingus
                 Color.White, textEvent1, optionsMenu);
 
             button.DisplayMenu = optionsMenu;
-                
+
             //credits button
             button = AddButton("buttonCredits_base_strip1", 0.6f,
-            new Vector2(width / 2 + 30, height / 2 +  300),
+            new Vector2(width / 2 + 30, height / 2 + 300),
             event1, event2, menu1);
 
             AddText(
@@ -435,8 +439,8 @@ namespace Galabingus
             button.HoverTexture = cm.Load<Texture2D>("buttonCredits_hover_strip1");
 
             //add the logo to the screen
-            AddBackground("galabinguslogo_strip1", 5, 
-                new Vector2(width / 2,height / 4),
+            AddBackground("galabinguslogo_strip1", 5,
+                new Vector2(width / 2, height / 4),
                 menu1);
 
             //Pause Text
@@ -445,7 +449,7 @@ namespace Galabingus
                 height / 2 - 200), Color.White, textEvent1, pause1);
 
             //GameOver Text
-            AddText("arial_36", "Game Over", 
+            AddText("arial_36", "Game Over",
                 new Vector2(width / 2 - 100,
                 height / 2 - 150), Color.White, textEvent1, gameOver1);
 
@@ -520,11 +524,21 @@ namespace Galabingus
             //set the keyboardstate
             currentKBS = Keyboard.GetState();
             currentMS = Mouse.GetState();
+            currentActive = keyboardIsActive;
+            
 
             // Arrow keys trigger keyboard take over
-            if (SingleKeyPress(Keys.Down) || SingleKeyPress(Keys.Up))
+            if (SingleKeyPress(Keys.Down) || SingleKeyPress(Keys.Up) && !keyboardIsActive)
             {
                 keyboardIsActive = true;
+
+                ResetButtons();
+            }
+            else if (currentMS != previousMS)
+            {
+                keyboardIsActive = false;
+
+                ResetButtons();
             }
             else
             {
@@ -542,35 +556,7 @@ namespace Galabingus
                         // Use the keyboard to take control of selections
                         if (keyboardIsActive)
                         {
-                            bool switchedButton = false;
-                            float closeButton = 10000000;
-                            foreach (UIElement element in level.Menu)
-                            {
-                                if (element is Button)
-                                {
-                                    if (currentKBS.IsKeyDown(Keys.Down) && element.UIPosition.Y > selectedButton)
-                                    {
-                                        if (Math.Abs(selectedButton - element.UIPosition.Y) < Math.Abs(selectedButton - closeButton))
-                                        {
-                                            closeButton = element.UIPosition.Y;
-                                        }
-                                        switchedButton = true;
-                                    }
-                                    if (currentKBS.IsKeyDown(Keys.Up) && element.UIPosition.Y < selectedButton)
-                                    {
-                                        switchedButton = true;
-                                        if (Math.Abs(selectedButton - element.UIPosition.Y) < Math.Abs(selectedButton - closeButton))
-                                        {
-                                            closeButton = element.UIPosition.Y;
-                                        }
-                                    }
-
-                                }
-                            }
-                            if (switchedButton)
-                            {
-                                selectedButton = closeButton;
-                            }
+                            KeyboardSelection(level.Menu);
                         }
 
                         // Update the UI objects
@@ -585,6 +571,8 @@ namespace Galabingus
                 {
                     element.Update();
                 }
+
+                KeyboardSelection(currentMenu);
             }
 
             //if the back key is pressed and the current level isn't the base one
@@ -603,7 +591,7 @@ namespace Galabingus
                     currentMenu = null;
                 }
             }
-            
+
 
             //finite state machine for the UI to update the UI based on user input
             switch (gs)
@@ -640,11 +628,11 @@ namespace Galabingus
 
                     //if boss health = 0
                     //go to player wins
-                    if(!EnemyManager.Instance.BossOnScreen && prevBossOnScreen)
+                    if (!EnemyManager.Instance.BossOnScreen && prevBossOnScreen)
                     {
                         gs = GameState.PlayerWins;
                     }
-                    
+
                     prevBossOnScreen = EnemyManager.Instance.BossOnScreen;
 
                     //if player health = 0
@@ -653,7 +641,7 @@ namespace Galabingus
                     {
                         gs = GameState.PlayerDead;
                     }
-                    
+
 
                     break;
 
@@ -679,11 +667,11 @@ namespace Galabingus
 
                 case GameState.PlayerWins:
 
-                    
+
                     if (GameObject.Fade < fadeValue)
                     {
                         gs = GameState.Victory;
-                        
+
                     }
 
                     break;
@@ -714,6 +702,7 @@ namespace Galabingus
             //set the previous KeyboardState to the current one for next frame
             previousKBS = currentKBS;
             previousMS = currentMS;
+            previousActive = currentActive;
         }
 
         #endregion
@@ -761,7 +750,7 @@ namespace Galabingus
             }
             else
             {
-                foreach(UIElement element in currentMenu)
+                foreach (UIElement element in currentMenu)
                 {
                     element.Draw(sb);
                 }
@@ -796,7 +785,7 @@ namespace Galabingus
 
         private void DownMenu(object sender)
         {
-            if(currentLevel < 1)
+            if (currentLevel < 1)
                 currentLevel--;
         }
 
@@ -827,7 +816,7 @@ namespace Galabingus
         private void HoverTexture(object sender)
         {
             Button button = (Button)sender;
-            
+
             button.UITexture = button.HoverTexture;
         }
 
@@ -890,7 +879,7 @@ namespace Galabingus
         /// <param name="uiEvent">the data which it needs for its events</param>
         /// <param name="types">the event types it can call</param>
         private Background AddBackground
-            (string filename, float scale, Vector2 position,  List<UIElement> listToAdd)
+            (string filename, float scale, Vector2 position, List<UIElement> listToAdd)
         {
             //create the menus texture
             Texture2D texture = cm.Load<Texture2D>(filename);
@@ -906,15 +895,15 @@ namespace Galabingus
         public Text AddText(string content, Vector2 position, float scale, Color tint, UIState uIState)
         {
 
-            if(scale < 14 && scale > 0)
+            if (scale < 14 && scale > 0)
             {
                 scale = 12;
             }
-            else if(scale < 24 && scale > 15)
+            else if (scale < 24 && scale > 15)
             {
                 scale = 18;
             }
-            else if(scale > 25)
+            else if (scale > 25)
             {
                 scale = 36;
             }
@@ -923,7 +912,7 @@ namespace Galabingus
                 scale = 12;
             }
 
-            switch(uIState)
+            switch (uIState)
             {
                 case UIState.BaseMenu:
                     return AddText($"arial_{scale}", content, position, tint, null, menu1);
@@ -969,7 +958,7 @@ namespace Galabingus
             return text;
         }
 
-        private List<Text> AddText(string filename, string content, Vector2 position, int lineCapacity, int spacing,  List<UIElement> listToAdd)
+        private List<Text> AddText(string filename, string content, Vector2 position, int lineCapacity, int spacing, List<UIElement> listToAdd)
         {
             SpriteFont font = cm.Load<SpriteFont>(filename);
 
@@ -981,7 +970,7 @@ namespace Galabingus
 
                 for (int i = 0; i < lineCapacity; i++)
                 {
-                    if(i + 1 == content.Length)
+                    if (i + 1 == content.Length)
                     {
                         finalPoint = i;
                         break;
@@ -990,13 +979,13 @@ namespace Galabingus
                     {
                         finalPoint = i;
                     }
-                    
+
                 }
 
                 string dividedPortion = content.Substring(0, finalPoint + 1);
                 contentDivided.Add(dividedPortion);
 
-                if(content.Length != 0)
+                if (content.Length != 0)
                 {
                     content = content.Substring(finalPoint + 1, content.Length - finalPoint - 1);
                 }
@@ -1004,10 +993,10 @@ namespace Galabingus
 
             List<Text> textList = new List<Text>();
 
-            for(int i = 0; i < contentDivided.Count; i++)
+            for (int i = 0; i < contentDivided.Count; i++)
             {
-                Text text = new Text(font, contentDivided[i], 
-                    new Vector2 (position.X, position.Y + spacing));
+                Text text = new Text(font, contentDivided[i],
+                    new Vector2(position.X, position.Y + spacing));
 
                 listToAdd.Add(text);
 
@@ -1054,7 +1043,7 @@ namespace Galabingus
             for (int i = 0; i < contentDivided.Count; i++)
             {
                 Text text = new Text(font, contentDivided[i],
-                    new Vector2(position.X, position.Y + (spacing*i)), tint);
+                    new Vector2(position.X, position.Y + (spacing * i)), tint);
 
                 listToAdd.Add(text);
 
@@ -1077,7 +1066,7 @@ namespace Galabingus
             foreach (UIElement element in elementList)
             {
                 //casting the object down to its original form
-                if(element is Button)
+                if (element is Button)
                 {
                     Button button = (Button)element;
 
@@ -1130,7 +1119,7 @@ namespace Galabingus
                     text.Draw(sb);
                 }
             }
-            
+
         }
 
         #endregion
@@ -1153,6 +1142,79 @@ namespace Galabingus
                 return false;
             }
         }
+
+        public void KeyboardSelection(List<UIElement> current)
+        {
+            if (keyboardIsActive)
+            {
+                bool switchedButton = false;
+                float closeButton = 10000000;
+                foreach (UIElement element in current)
+                {
+                    if (element is Button)
+                    {
+                        if (currentKBS.IsKeyDown(Keys.Down) && element.UIPosition.Y > selectedButton)
+                        {
+                            if (Math.Abs(selectedButton - element.UIPosition.Y) < Math.Abs(selectedButton - closeButton))
+                            {
+                                closeButton = element.UIPosition.Y;
+                            }
+                            switchedButton = true;
+                        }
+                        if (currentKBS.IsKeyDown(Keys.Up) && element.UIPosition.Y < selectedButton)
+                        {
+                            switchedButton = true;
+                            if (Math.Abs(selectedButton - element.UIPosition.Y) < Math.Abs(selectedButton - closeButton))
+                            {
+                                closeButton = element.UIPosition.Y;
+                            }
+                        }
+
+                    }
+                }
+                if (switchedButton)
+                {
+                    selectedButton = closeButton;
+                }
+                
+            }
+        }
+
+        public void ResetButtons()
+        {
+            if (!displayMenu)
+            {
+                foreach (UILevel level in gameLevels)
+                {
+                    if (level.Level == currentLevel && level.GS == gs)
+                    {
+                        foreach (UIElement element in level.Menu)
+                        {
+                            if (element is Button)
+                            {
+                                Button button = (Button)element;
+
+                                button.UITexture = button.BaseTexture;
+                            }
+                        }
+                    }
+                }
+
+            }
+            else
+            {
+                foreach(UIElement element in currentMenu)
+                {
+                    if(element is Button)
+                    {
+                        Button button = (Button)element;
+
+                        button.UITexture = button.BaseTexture;
+                    }
+                }
+            }
+        }
+           
 
         #endregion
 
@@ -1204,6 +1266,6 @@ namespace Galabingus
             return returnList;
         }
 
-        #endregion
+            #endregion
+        }
     }
-}
