@@ -66,6 +66,7 @@ namespace Galabingus
         // Health value of this enemy
         private int currentHealth;
         private int totalHealth;
+        private Color colorHealth;
 
         // Whether or not this enemy is a boss
         private EnemyType bossPhase;
@@ -314,7 +315,7 @@ namespace Galabingus
         /// </summary>
         /// <param name="ability">The ability of the enemy</param>
         /// <param name="position">The position of the enemy</param>
-        /// <param name="position">The thing that created this enemy (may be null)</param>
+        /// <param name="creator">The thing that created this enemy (may be null)</param>
         /// <param name="contentName">Name to use for GameObject storage</param>
         /// <param name="enemyNumber">Number to give bullet in GameObject list</param>
         public Enemy (
@@ -343,20 +344,33 @@ namespace Galabingus
 
             // Set Scale
             Vector2 scaleGet = GameObject.Instance.PostScaleRatio(true);
-            this.Scale = scaleGet.Y;
+            this.Scale = scaleGet.Y * 0.9f;
             //this.Scale = PostScaleRatio();
 
+            // Set type of enemy for its abilities
+            this.ability = ability;
+
             // Set Position
-            if (ability == EnemyType.Bomb)
+            switch (this.ability)
             {
-                this.Position = new Vector2(position.X - 20,  // X
-                                        position.Y);// Y
-            } else
-            {
-                this.Position = new Vector2(position.X - 10,  // X
-                                        position.Y);// Y
+                case EnemyType.Bomb:
+                    this.Scale = scaleGet.Y * 0.7f;
+                    this.Position = new Vector2(position.X + 5, // X
+                                                position.Y);// Y
+                    break;
+
+                case EnemyType.Boss:
+                    this.Scale = Player.PlayerInstance.Scale;
+                    this.Position = new Vector2(position.X + Transform.Width * Scale / 1.5f,
+                                                position.Y - Transform.Height * Scale / 2.0f);
+                    break;
+
+                default:
+                    this.Scale = scaleGet.Y * 0.9f;
+                    this.Position = new Vector2(position.X - 10,    // X
+                                                position.Y);        // Y
+                    break;
             }
-            
 
             #endregion
 
@@ -365,8 +379,37 @@ namespace Galabingus
             // Set creator
             creatorReference = creator;
 
-            // Set type of enemy for its abilities
-            this.ability = ability;
+            // Set the color of the enemy's health bar
+            switch (ability)
+            {
+                case EnemyType.Normal:
+                    colorHealth = Color.Red;
+                    break;
+
+                case EnemyType.Bouncing:
+                    colorHealth = Color.Orange;
+                    break;
+
+                case EnemyType.Wave:
+                    colorHealth = Color.Yellow;
+                    break;
+
+                case EnemyType.Splitter:
+                    colorHealth = Color.LimeGreen;
+                    break;
+
+                case EnemyType.Seeker:
+                    colorHealth = Color.Purple;
+                    break;
+
+                case EnemyType.Bomb:
+                    colorHealth = Color.LightGray;
+                    break;
+
+                case EnemyType.Boss:
+                    colorHealth = Color.LightGray;
+                    break;
+            }
 
             // Set base direction
             direction = new Vector2(1, 1);
@@ -381,10 +424,10 @@ namespace Galabingus
 
             // Set if enemy should move
             this.shouldMove = shouldMove;
-            velocity = (this.shouldMove) ? new Vector2(3, 0) : Vector2.Zero;
+            velocity = (this.shouldMove) ? new Vector2(2.5f, 0) : Vector2.Zero;
 
             // Set base position to be stored for dictionary keys
-            initialPosition = position;
+            initialPosition = this.Position;
 
             // Boss Data + Health
             switch (ability)
@@ -468,6 +511,12 @@ namespace Galabingus
             { // Only does these while on the screen
                 if (!destroy)
                 { // Actions while Enemy is alive
+                    // Draw the healthbar
+                    Player.PlayerInstance.CreateHealthBar(currentHealth, totalHealth,
+                                                          (int)(this.Position.X + velocity.X), (int)(this.Position.Y + velocity.Y), 
+                                                          this.Transform.Width * this.Scale, this.Transform.Height * this.Scale * 0.1f,
+                                                          Color.Black, colorHealth);
+
                     switch (this.ability)
                     {
                         case EnemyType.Normal:
@@ -657,6 +706,28 @@ namespace Galabingus
 
                             }
 
+                            // Movement for Boss
+                            if (ShouldMove && Player.PlayerInstance.CameraLock)
+                            {
+                                this.Position += velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
+
+                                // Bounce on right side of screen
+                                if (this.Position.X + this.Transform.Width * this.Scale >=  // Enemy's right side
+                                    GameObject.Instance.GraphicsDevice.Viewport.Width &&    // Screen's right side
+                                    Velocity.X > 0)                                         // Can only occur when facing Right
+                                {
+                                    this.Position -= velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
+                                    EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, true);
+                                }
+
+                                // Bounce on left side of screen
+                                if (this.Position.X <= 0 && Velocity.X < 0)
+                                {
+                                    this.Position -= velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
+                                    EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, false);
+                                }
+                            }
+
                             // Change to make use of game time
                             if (stateTimer >= phaseTime)
                             {
@@ -674,27 +745,7 @@ namespace Galabingus
                     }
                     shotTimer++;
 
-                    // Movement
-                    if (ShouldMove && Player.PlayerInstance.CameraLock)
-                    {
-                        this.Position += velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
 
-                        // Bounce on right side of screen
-                        if (this.Position.X + this.Transform.Width * this.Scale >=  // Enemy's right side
-                            GameObject.Instance.GraphicsDevice.Viewport.Width &&    // Screen's right side
-                            Velocity.X > 0)                                         // Can only occur when facing Right
-                        {
-                            this.Position -= velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
-                            EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, true);
-                        }
-
-                        // Bounce on left side of screen
-                        if (this.Position.X <= 0 && Velocity.X < 0)
-                        {
-                            this.Position -= velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
-                            EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, false);
-                        }
-                    }
                 }
                 else
                 { // On kill effects
@@ -817,9 +868,31 @@ namespace Galabingus
             {
                 // Resets enemies when off screen so that they go to their starting
                 // positions and unload their colliders
-                Position = new Vector2(initialPosition.X, Position.Y);
+                this.Position = new Vector2(initialPosition.X, Position.Y);
 
                 this.Collider.Unload();
+            }
+
+            // Movement
+            if (ShouldMove && Player.PlayerInstance.CameraLock && ability != EnemyType.Boss)
+            {
+                this.Position += velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
+
+                // Bounce on right side of screen
+                if (this.Position.X + this.Transform.Width * this.Scale >=  // Enemy's right side
+                    GameObject.Instance.GraphicsDevice.Viewport.Width &&    // Screen's right side
+                    Velocity.X > 0)                                         // Can only occur when facing Right
+                {
+                    this.Position -= velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
+                    EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, true);
+                }
+
+                // Bounce on left side of screen
+                if (this.Position.X <= 0 && Velocity.X < 0)
+                {
+                    this.Position -= velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
+                    EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, false);
+                }
             }
 
         }
