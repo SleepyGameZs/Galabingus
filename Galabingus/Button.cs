@@ -31,6 +31,9 @@ namespace Galabingus
         //a second texture for hover
         private Texture2D baseTexture;
         private Texture2D hoverTexture;
+
+        //list of UIElements for new menu
+        private List<UIElement> displayMenu;
         
         #endregion
 
@@ -46,6 +49,12 @@ namespace Galabingus
         {
             get { return hoverTexture; }
             set { hoverTexture = value; }
+        }
+
+        public List<UIElement> DisplayMenu
+        {
+            get { return displayMenu; }
+            set { displayMenu = value; }
         }
 
         #endregion

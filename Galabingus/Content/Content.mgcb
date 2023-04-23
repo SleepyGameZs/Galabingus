@@ -40,6 +40,18 @@
 /processorParam:DebugMode=Auto
 /build:background.fx
 
+#begin background1_strip1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:background1_strip1.png
+
 #begin Bomb/big_explode_strip5.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -358,6 +370,30 @@
 /processorParam:TextureFormat=Color
 /build:Bullets/smallbullet_strip4.png
 
+#begin buttonCredits_base_strip1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:buttonCredits_base_strip1.png
+
+#begin buttonCredits_hover_strip1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:buttonCredits_hover_strip1.png
+
 #begin buttonCredits_strip1.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -370,6 +406,30 @@
 /processorParam:TextureFormat=Color
 /build:buttonCredits_strip1.png
 
+#begin buttonHowToPlay_base_strip1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:buttonHowToPlay_base_strip1.png
+
+#begin buttonHowToPlay_hover_strip1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:buttonHowToPlay_hover_strip1.png
+
 #begin buttonHowToPlay_strip1.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -381,6 +441,54 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:buttonHowToPlay_strip1.png
+
+#begin buttonMenu_base_strip1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:buttonMenu_base_strip1.png
+
+#begin buttonMenu_hover_strip1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:buttonMenu_hover_strip1.png
+
+#begin buttonOptions_base_strip1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:buttonOptions_base_strip1.png
+
+#begin buttonOptions_hover_strip1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:buttonOptions_hover_strip1.png
 
 #begin buttonOptions_strip1.png
 /importer:TextureImporter
@@ -423,6 +531,12 @@
 /processor:EffectProcessor
 /processorParam:DebugMode=Auto
 /build:Collider.fx
+
+#begin Enemy Fire.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Enemy Fire.mp3
 
 #begin Enemy/enemy_green_strip4.png
 /importer:TextureImporter
@@ -562,6 +676,12 @@
 /processorParam:TextureFormat=Color
 /build:heart_strip1.png
 
+#begin Homing Shot.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Homing Shot.mp3
+
 #begin menubackground_strip1.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -610,6 +730,12 @@
 /processorParam:TextureFormat=Color
 /build:Player/player_white_strip4.png
 
+#begin Scatter Shot.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Scatter Shot.mp3
+
 #begin shaders.fx
 /importer:EffectImporter
 /processor:EffectProcessor
@@ -652,6 +778,18 @@
 /processorParam:TextureFormat=Color
 /build:space_only_background_strip1.png
 
+#begin Split Shot Break.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Split Shot Break.mp3
+
+#begin Split Shot.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Split Shot.mp3
+
 #begin tempMenu_strip1.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -675,6 +813,12 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:tile_strip26.png
+
+#begin Wave Shot.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Wave Shot.mp3
 
 #begin white_pixel_strip1.png
 /importer:TextureImporter

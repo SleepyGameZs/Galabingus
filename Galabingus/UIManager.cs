@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Reflection.Emit;
 
 namespace Galabingus
 {
@@ -22,7 +23,10 @@ namespace Galabingus
         Menu,
         Game,
         Pause,
+        PlayerDead,
+        PlayerWins,
         GameOver,
+        Victory,
         NoState
     }
 
@@ -131,6 +135,8 @@ namespace Galabingus
 
         private bool reset;
 
+        private double fadeValue;
+
         //the instance of the UIManager
         private static UIManager instance = null;
 
@@ -182,6 +188,11 @@ namespace Galabingus
         List<UIElement> game1;
         List<UIElement> pause1;
         List<UIElement> gameOver1;
+        List<UIElement> victory1;
+
+        //for unique menus
+        bool displayMenu;
+        List<UIElement> currentMenu;
 
         #endregion
 
@@ -268,7 +279,7 @@ namespace Galabingus
 
         #endregion
 
-        #region Methods
+        #region Initialize
 
         /// <summary>
         /// initializes the UIManager with data from the Game1(Galabingus) class
@@ -289,7 +300,13 @@ namespace Galabingus
             //set the viewport size to the current screen width and height
             width = gr.GraphicsDevice.Viewport.Width;
             height = gr.GraphicsDevice.Viewport.Height;
+
+            fadeValue = 0.00009;
         }
+
+        #endregion
+
+        #region Load Content
 
         /// <summary>
         /// loads all of the necesary content for the game and creates the
@@ -303,11 +320,18 @@ namespace Galabingus
             game1 = new List<UIElement>();
             pause1 = new List<UIElement>();
             gameOver1 = new List<UIElement>();
+            victory1 = new List<UIElement>();
 
             //dummy variables
             Button button;
             Background background;
             Texture2D texture;
+
+            //different menus
+            List<UIElement> howToPlayMenu = new List<UIElement>();
+            List <UIElement> optionsMenu = new List<UIElement>();
+            List < UIElement > creditsMenu = new List<UIElement>();
+
 
             //more dummy variables
             EventDelegate event1;
@@ -316,60 +340,95 @@ namespace Galabingus
 
             #region Add stuffs
 
-            //Create the Play Button
+            //Create the play button
             event1 = StartGame;
             event2 = HoverTexture;
             textEvent1 = null;
 
             button = AddButton("buttonPlay_base_strip1", 0.6f,
-            new Vector2(width / 2, height / 2 + 30),
+            new Vector2(width / 2 + 30, height / 2),
             event1, event2, menu1);
 
             button.HoverTexture = cm.Load<Texture2D>("buttonPlay_hover_strip1");
+
+            //Create the other buttons
+            event1 = DisplayMenu;
+
+            //how to play button
+            button = AddButton("buttonHowToPlay_base_strip1", 0.6f,
+            new Vector2(width / 2 + 30, height / 2 + 100),
+            event1, event2, menu1);
+
+            button.HoverTexture = cm.Load<Texture2D>("buttonHowToPlay_hover_strip1");
+            
+            AddText(
+                "arial_18",
+                "you can play by getting good",
+                new Vector2(width / 2, height / 2), 
+                Color.White, textEvent1, howToPlayMenu);
+
+            button.DisplayMenu = howToPlayMenu;
+
+            //options button
+            button = AddButton("buttonOptions_base_strip1", 0.6f,
+            new Vector2(width / 2 + 30, height / 2 + 200),
+            event1, event2, menu1);
+
+            button.HoverTexture = cm.Load<Texture2D>("buttonOptions_hover_strip1");
+
+            AddText(
+                "arial_18",
+                "sorry, you just gotta get good",
+                new Vector2(width / 2, height / 2),
+                Color.White, textEvent1, optionsMenu);
+
+            button.DisplayMenu = optionsMenu;
+                
+            //credits button
+            button = AddButton("buttonCredits_base_strip1", 0.6f,
+            new Vector2(width / 2 + 30, height / 2 +  300),
+            event1, event2, menu1);
+
+            AddText(
+                "arial_18",
+                "gamer",
+                new Vector2(width / 2, height / 2),
+                Color.White, textEvent1, creditsMenu);
+
+            button.DisplayMenu = creditsMenu;
+            button.HoverTexture = cm.Load<Texture2D>("buttonCredits_hover_strip1");
 
             //add the logo to the screen
             AddBackground("galabinguslogo_strip1", 5, 
                 new Vector2(width / 2,height / 4),
                 menu1);
 
-            /*
-
-            //Create the Options Button
-            event1 = null;
-            event2 = UpMenu;
-            textEvent1 = null;
-
-            
-
-            //create buttons to go in the menu it displays and add them to the list
-            AddButton("buttonHowToPlay_strip1", 0.5f,
-                new Vector2(width / 2, height / 2 - 80),
-                event1, menu2);
-
-            AddButton("buttonCredits_strip1", 0.5f,
-                new Vector2(width / 2, height / 2 + 100),
-                event1, menu2);
-
-            AddText("arial_18", "use backspace to go back",
-                new Vector2(width / 2 - 200,
-                height / 2 - 200), Color.White, textEvent1, menu2);
-
-            //create the options button in the main list
-            AddButton("buttonOptions_strip1", 0.5f,
-                new Vector2(width / 2, height / 2 + 200),
-                event2, menu1);
-
-            */
-
             //Pause Text
-            AddText("arial_36", "hello there you are now paused",
+            AddText("arial_36", "Pause",
                 new Vector2(width / 2 - 200,
                 height / 2 - 200), Color.White, textEvent1, pause1);
 
             //GameOver Text
-            AddText("arial_36", "LOLLLLL :skull_emoji", 
+            AddText("arial_36", "You Died", 
                 new Vector2(width / 2 - 100,
                 height / 2 - 150), Color.White, textEvent1, gameOver1);
+
+            event1 = ReturnMenu;
+            event2 = HoverTexture;
+
+            //add the return to the menu in the game over
+            button = AddButton("buttonMenu_base_strip1", 0.6f,
+            new Vector2(width / 2 + 30, height / 2 + 150),
+            event1, event2, gameOver1);
+
+            button.HoverTexture = cm.Load<Texture2D>("buttonMenu_hover_strip1");
+
+            //add the return to the menu in victory
+            button = AddButton("buttonMenu_base_strip1", 0.6f,
+            new Vector2(width / 2 + 30, height / 2 + 150),
+            event1, event2, victory1);
+
+            button.HoverTexture = cm.Load<Texture2D>("buttonMenu_hover_strip1");
 
             #endregion
 
@@ -385,6 +444,10 @@ namespace Galabingus
 
         }
 
+        #endregion
+
+        #region Update
+
         /// <summary>
         /// updates the UI every frame
         /// </summary>
@@ -395,19 +458,42 @@ namespace Galabingus
             currentMS = Mouse.GetState();
 
             //find the current UILevel and update its objects
-            foreach (UILevel level in gameLevels)
+            if (!displayMenu)
             {
-                if(level.Level == currentLevel && level.GS == gs)
+                foreach (UILevel level in gameLevels)
                 {
-                    UpdateObjects(level.Menu);
+                    if (level.Level == currentLevel && level.GS == gs)
+                    {
+                        UpdateObjects(level.Menu);
+                    }
+                }
+            }
+            else
+            {
+                foreach (UIElement element in currentMenu)
+                {
+                    element.Update();
                 }
             }
 
+
             //if the back key is pressed and the current level isn't the base one
-            if (SingleKeyPress(Keys.Back) && currentLevel > 1)
+            if (!displayMenu)
             {
-                currentLevel--;
+                if (SingleKeyPress(Keys.Back) && currentLevel > 1)
+                {
+                    currentLevel--;
+                }
             }
+            else
+            {
+                if (SingleKeyPress(Keys.Back))
+                {
+                    displayMenu = false;
+                    currentMenu = null;
+                }
+            }
+            
 
             //finite state machine for the UI to update the UI based on user input
             switch (gs)
@@ -442,10 +528,39 @@ namespace Galabingus
                         gs = GameState.Pause;
                     }
 
+                    //if boss health = 0
+                    //go to player wins
+                    
+                    /*
+                    if(Camera.Instance.OffSet.Y < 0 && EnemyManager.Instance.EnemiesOnScreen == 0)
+                    {
+                        gs = GameState.PlayerWins;
+                    }
+                    */
+
+                    //if player health = 0
+                    //go to player dead
+                    if (Player.PlayerInstance.Health == 0)
+                    {
+                        gs = GameState.PlayerDead;
+                    }
+                    
+
+                    break;
+
+                case GameState.PlayerDead:
+
+                    if (GameObject.Fade < fadeValue)
+                    {
+                        System.Diagnostics.Debug.WriteLine(GameObject.Fade);
+                        gs = GameState.GameOver;
+
+                    }
+
                     break;
 
                 case GameState.Pause:
-                    
+
                     //if the game is paused, unpause when tab is hit
                     if (SingleKeyPress(Keys.Tab))
                     {
@@ -454,14 +569,35 @@ namespace Galabingus
 
                     break;
 
+                case GameState.PlayerWins:
+
+                    
+                    if (GameObject.Fade < fadeValue)
+                    {
+                        gs = GameState.Victory;
+                        
+                    }
+
+                    break;
+
                 case GameState.GameOver:
 
-                    //if enter is hit in the game over state, go back to the menu
+                    System.Diagnostics.Debug.WriteLine("hello");
+
                     if (SingleKeyPress(Keys.Enter))
                     {
-                        reset = true;
-                        //Galabingus.Reset();
                         gs = GameState.Menu;
+                        reset = true;
+                    }
+
+                    break;
+
+                case GameState.Victory:
+
+                    if (SingleKeyPress(Keys.Enter))
+                    {
+                        gs = GameState.Menu;
+                        reset = true;
                     }
 
                     break;
@@ -471,6 +607,10 @@ namespace Galabingus
             previousKBS = currentKBS;
             previousMS = currentMS;
         }
+
+        #endregion
+
+        #region Draw
 
         /// <summary>
         /// draws UI elements to the screen
@@ -501,14 +641,23 @@ namespace Galabingus
 
             }
 
-            foreach (UILevel level in gameLevels)
+            if (!displayMenu)
             {
-                if (level.Level == currentLevel && level.GS == gs)
+                foreach (UILevel level in gameLevels)
                 {
-                    DrawObjects(level.Menu);
+                    if (level.Level == currentLevel && level.GS == gs)
+                    {
+                        DrawObjects(level.Menu);
+                    }
                 }
             }
-
+            else
+            {
+                foreach(UIElement element in currentMenu)
+                {
+                    element.Draw(sb);
+                }
+            }
         }
 
         public void Reset()
@@ -525,6 +674,13 @@ namespace Galabingus
             gs = GameState.Game;
         }
 
+        private void ReturnMenu(object sender)
+        {
+            gs = GameState.Menu;
+            reset = true;
+
+        }
+
         private void UpMenu(object sender)
         {
             currentLevel++;
@@ -532,7 +688,25 @@ namespace Galabingus
 
         private void DownMenu(object sender)
         {
-            currentLevel--;
+            if(currentLevel < 1)
+                currentLevel--;
+        }
+
+        private void DisplayMenu(object sender)
+        {
+            Button button = (Button)sender;
+
+            displayMenu = true;
+            currentMenu = button.DisplayMenu;
+
+        }
+
+        private void HideMenu(object sender)
+        {
+            Button button = (Button)sender;
+
+            displayMenu = false;
+            currentMenu = null;
         }
 
         private void HoverLightGray(object sender)
@@ -558,7 +732,7 @@ namespace Galabingus
 
         #endregion
 
-        #region Element Creation and Updates
+        #region Element Creation
 
         /// <summary>
         /// creates a UIElement and adds it to the list elements
@@ -781,6 +955,10 @@ namespace Galabingus
 
             return textList;
         }
+
+        #endregion
+
+        #region Element Updates
 
         /// <summary>
         /// updates all of the objects within the list of UIElements
