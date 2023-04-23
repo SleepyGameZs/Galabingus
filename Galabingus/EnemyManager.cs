@@ -41,6 +41,9 @@ namespace Galabingus
         private ushort enemyTotal;
         private ushort enemiesOnScreen;
 
+        // Boss Detection
+        private bool bossOnScreen;
+
         #endregion
 
         #region-------------------[ Properties ]-------------------
@@ -69,6 +72,15 @@ namespace Galabingus
             {
                 return enemiesOnScreen;
             }
+        }
+
+        /// <summary>
+        /// Is the boss currently on the screen?
+        /// </summary>
+        public bool BossOnScreen
+        {
+            get { return bossOnScreen; }
+            set { bossOnScreen = value }
         }
 
         #endregion
@@ -364,14 +376,10 @@ namespace Galabingus
                 List<Enemy> enemyList = Instance.enemyRows[positionY];
                 for (int i = 0; i < enemyList.Count; i++)
                 {
-                    enemyList[i].Direction = new Vector2(enemyList[i].Direction.X * -1, enemyList[i].Direction.Y);
-                    if (i != 0)
-                    {
-                        enemyList[i].Position = new Vector2(enemyList[i].Position.X + 10 * enemyList[i].Direction.X, enemyList[i].Position.Y);
-                    } 
-                    else if (!collideOnRight || enemyList.Count == 1)
+                    enemyList[i].Velocity = new Vector2(enemyList[i].Velocity.X * -1 * (float)enemyList[i].Animation.EllapsedTime, enemyList[i].Velocity.Y);
+                    if (!collideOnRight || enemyList.Count == 1)
                     { // Fixes slight offset on first ship in row with each bonce
-                        enemyList[i].Position = new Vector2(enemyList[i].Position.X + 11 * enemyList[i].Direction.X, enemyList[i].Position.Y);
+                        enemyList[i].Position += enemyList[i].Velocity;
                     }
                 }
             }

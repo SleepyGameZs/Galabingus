@@ -85,6 +85,9 @@ namespace Galabingus
         private object creator;
         private Targets target;
 
+        // Bouncing Bullet Collision
+        private bool didBounce;
+
         // Collision layer of the bullet
         private CollisionGroup collisionLayer;
 
@@ -332,7 +335,9 @@ namespace Galabingus
 
             // Set Velocity
             velocity = Vector2.Normalize(direction);
-            
+
+            // Bouncing on Tile collision
+            didBounce = false;
 
             // Set Empty hit objects list
             hitObjects = new List<object>();
@@ -714,22 +719,30 @@ namespace Galabingus
                             switch (ability)
                             {
                                 case BulletType.BouncingSide:
-                                    Vector2 overlapZone = ((Tile)collision.other).ScaleVector;
-
-                                    if (overlapZone.X > overlapZone.Y)
+                                    Vector2 overlapZone = collision.overlap;
+                                    //System.Diagnostics.Debug.WriteLine("eee");
+                                    //System.Diagnostics.Debug.WriteLine(overlapZone.X);
+                                    //System.Diagnostics.Debug.WriteLine(overlapZone.Y);
+                                    if (didBounce == false)
                                     {
-                                        // Flip velocity
-                                        velocity.X *= -1;
+                                        didBounce = true;
 
                                         // Pove position over from tile
-                                        if (this.Position.X < ((Tile)collision.other).Position.X)
+                                        if (velocity.X > 1)
                                         { // Left
-                                            Position = new Vector2(Position.X + this.Transform.Width * this.Scale, Position.Y + overlapZone.X);
+                                            Position = new Vector2(Position.X - this.Transform.Width * this.Scale, Position.Y);
+                                            ushort newSprite = GameObject.Instance.Content.enemy_orange_bullet_135_strip4;
+                                            this.Sprite = GetSpriteFrom(newSprite, bulletNumber);
                                         }
-                                        else
+                                        else if (velocity.X < 1)
                                         { // Right
-                                            Position = new Vector2(Position.X - this.Transform.Width * this.Scale, Position.Y - overlapZone.X);
+                                            ushort newSprite = GameObject.Instance.Content.enemy_orange_bullet_135_strip4;
+                                            this.Sprite = GetSpriteFrom(newSprite, bulletNumber);
+                                            //Position = new Vector2(Position.X + this.Transform.Width * this.Scale, Position.Y);
                                         }
+
+                                        // Flip velocity
+                                        velocity.X *= -1;
                                     } 
                                     else
                                     { // Head on collision, destroy bullet
@@ -754,6 +767,10 @@ namespace Galabingus
                                     velocity = Vector2.Zero;
                                     break;
                             }
+                        } 
+                        else
+                        {
+                            didBounce = false;
                         }
                     }
 
