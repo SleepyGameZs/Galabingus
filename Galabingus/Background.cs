@@ -23,18 +23,15 @@ namespace Galabingus
         #endregion
 
         #region Constructor
-        public Background(Texture2D texture, Vector2 position, GameState gs)
-            : base(texture, position, 5) { }
+        public Background(Texture2D texture, Vector2 position, float scale)
+            : base(texture, position, scale) { }
         #endregion
 
         #region Methods
 
         public override void Update()
         {
-            if(UIManager.Instance.SingleKeyPress(Keys.Back))
-            {
-                OnMenuBack(this);
-            }
+
         }
 
         public override void Draw(SpriteBatch sb)

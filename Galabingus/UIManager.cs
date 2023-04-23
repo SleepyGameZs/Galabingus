@@ -361,11 +361,10 @@ namespace Galabingus
 
             button.HoverTexture = cm.Load<Texture2D>("buttonHowToPlay_hover_strip1");
             
-            AddText(
-                "arial_18",
-                "you can play by getting good",
+            AddBackground(
+                "HowToPlayMenu_strip1", 0.4f, 
                 new Vector2(width / 2, height / 2), 
-                Color.White, textEvent1, howToPlayMenu);
+                howToPlayMenu);
 
             button.DisplayMenu = howToPlayMenu;
 
@@ -531,12 +530,12 @@ namespace Galabingus
                     //if boss health = 0
                     //go to player wins
                     
-                    /*
-                    if(Camera.Instance.OffSet.Y < 0 && EnemyManager.Instance.EnemiesOnScreen == 0)
+                    
+                    if(!EnemyManager.Instance.BossOnScreen)
                     {
                         gs = GameState.PlayerWins;
                     }
-                    */
+                    
 
                     //if player health = 0
                     //go to player dead
@@ -788,7 +787,7 @@ namespace Galabingus
             Texture2D texture = cm.Load<Texture2D>(filename);
 
             //create the button
-            Background background = new Background(texture, position, gs);
+            Background background = new Background(texture, position, scale);
 
             listToAdd.Add(background);
 

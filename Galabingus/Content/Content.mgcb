@@ -682,6 +682,18 @@
 /processorParam:Quality=Best
 /build:Homing Shot.mp3
 
+#begin HowToPlayMenu_strip1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:HowToPlayMenu_strip1.png
+
 #begin menubackground_strip1.png
 /importer:TextureImporter
 /processor:TextureProcessor
