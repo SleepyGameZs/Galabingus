@@ -174,7 +174,7 @@ namespace Galabingus
           
             background.Scale = GameObject.Instance.GraphicsDevice.Viewport.Height / background.Sprite.Width / (Player.PlayerInstance.Scale * 0.975f);
             background.ScaleVector = new Vector2(background.Scale, background.Scale);
-            background.Position = new Vector2(-GameObject.Instance.GraphicsDevice.Viewport.Width * 2, -GameObject.Instance.GraphicsDevice.Viewport.Height * 4f);
+            background.Position = new Vector2(-GameObject.Instance.GraphicsDevice.Viewport.Width * 2, -GameObject.Instance.GraphicsDevice.Viewport.Height * 5f);
             background.Position -= new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Width, 0);
             background.Effect = GameObject.Instance.ContentManager.Load<Effect>("background");
             background.Collider.Unload();
@@ -372,28 +372,33 @@ namespace Galabingus
             {
                 backgroundList[i].UpdateBackground(gameTime);
             }
-            // Scroll the camrea when the enemies are not on the screeen
-            if (EnemyManager.Instance.EnemiesOnScreen == 0)
-            {
-                Camera.Instance.Start();
-
-                
-            }
 
             if (turn == false)
             {
-                if (Camera.Instance.Position.Y <= (GameObject.EndPosition.Y + GameObject.Instance.GraphicsDevice.Viewport.Height + GameObject.Instance.GraphicsDevice.Viewport.Height * 0.5f))
+                if (Camera.Instance.Position.Y <= (GameObject.EndPosition.Y * 1.5f - 150))
                 {
-
-                    //Camera.Instance.Reverse();
+                    Camera.Instance.Start();
+                    Camera.Instance.Reverse();
                     Player.PlayerInstance.CameraLock = true;
                     turn = true;
-
+                    Debug.Write("8888");
                     //backgroundList[1].Position = new Vector2(
                     //0, backgroundList[1].Position.Y - GameObject.Instance.GraphicsDevice.Viewport.Height * 4
                     //);
                 }
             }
+
+            // Scroll the camrea when the enemies are not on the screeen
+            if (EnemyManager.Instance.EnemiesOnScreen == 0 && turn == false)
+            {
+                Camera.Instance.Start();
+            }
+            else if (!(Camera.Instance.Position.Y >= 0) && EnemyManager.Instance.EnemiesOnScreen == 0 && Camera.Instance.OffSet.Y == 0)
+            {
+                Camera.Instance.Start();
+            }
+
+
             #endregion
 
             // Stop the camera at the different camera stops
@@ -435,8 +440,8 @@ namespace Galabingus
         public void Draw()
         {
             backgroundList[0].Draw(
-                GameObject.Instance.GraphicsDevice.Viewport.Width * 4f,
-                GameObject.Instance.GraphicsDevice.Viewport.Height * 4f
+                GameObject.Instance.GraphicsDevice.Viewport.Width * 5f,
+                GameObject.Instance.GraphicsDevice.Viewport.Height * 5f
 
             );
 

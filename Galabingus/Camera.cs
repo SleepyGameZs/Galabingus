@@ -147,11 +147,14 @@ namespace Galabingus
         {
             Player.PlayerInstance.CameraLock = true;
             offSet.Y = -offSet.Y;
+
         }
 
         public void Update(GameTime gameTime)
         {
             Camera.Instance.position += offSet;
+
+            //Debug.Write(offSet);
 
             //Camera.Instance.offSet.Y = MathHelper.Lerp(Camera.Instance.offSet.Y, Camera.Instance.offSet.Y*1.2f, 0.1f);
 
