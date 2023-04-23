@@ -411,7 +411,7 @@ namespace Galabingus
                 height / 2 - 200), Color.White, textEvent1, pause1);
 
             //GameOver Text
-            AddText("arial_36", "You Died", 
+            AddText("arial_36", "Game Over", 
                 new Vector2(width / 2 - 100,
                 height / 2 - 150), Color.White, textEvent1, gameOver1);
 
@@ -424,6 +424,12 @@ namespace Galabingus
             event1, event2, gameOver1);
 
             button.HoverTexture = cm.Load<Texture2D>("buttonMenu_hover_strip1");
+
+            //GameOver Text
+            AddText("arial_36", "Victory!",
+                new Vector2(width / 2 - 100,
+                height / 2 - 150), Color.White, textEvent1, victory1);
+
 
             //add the return to the menu in victory
             button = AddButton("buttonMenu_base_strip1", 0.6f,
@@ -443,6 +449,7 @@ namespace Galabingus
             gameLevels.Add(new UILevel(game1, GameState.Game, 1));
             gameLevels.Add(new UILevel(pause1, GameState.Pause, 1));
             gameLevels.Add(new UILevel(gameOver1, GameState.GameOver, 1));
+            gameLevels.Add(new UILevel(victory1, GameState.Victory, 1));
 
         }
 
@@ -555,7 +562,6 @@ namespace Galabingus
 
                     if (GameObject.Fade < fadeValue)
                     {
-                        System.Diagnostics.Debug.WriteLine(GameObject.Fade);
                         gs = GameState.GameOver;
 
                     }
