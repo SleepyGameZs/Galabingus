@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
 using System.Diagnostics;
 using System.Xml.Linq;
 
@@ -307,7 +308,7 @@ namespace Galabingus
             //list of menu levels
             gameLevels = new List<UILevel>();
             currentLevel = 1;
-    }
+        }
 
         #endregion
 
@@ -399,7 +400,7 @@ namespace Galabingus
             
             AddBackground(
                 "HowToPlayMenu_strip1", 0.4f, 
-                new Vector2(width / 2, height / 2), 
+                new Vector2(width / 2, height / 2 - 50), 
                 howToPlayMenu);
 
             button.DisplayMenu = howToPlayMenu;
@@ -444,7 +445,7 @@ namespace Galabingus
                 height / 2 - 200), Color.White, textEvent1, pause1);
 
             //GameOver Text
-            AddText("arial_36", "You Died", 
+            AddText("arial_36", "Game Over", 
                 new Vector2(width / 2 - 100,
                 height / 2 - 150), Color.White, textEvent1, gameOver1);
 
@@ -458,12 +459,39 @@ namespace Galabingus
 
             button.HoverTexture = cm.Load<Texture2D>("buttonMenu_hover_strip1");
 
+            //GameOver Text
+            AddText("arial_36", "Victory!",
+                new Vector2(width / 2 - 100,
+                height / 2 - 150), Color.White, textEvent1, victory1);
+
+
             //add the return to the menu in victory
             button = AddButton("buttonMenu_base_strip1", 0.6f,
             new Vector2(width / 2 + 30, height / 2 + 150),
             event1, event2, victory1);
 
             button.HoverTexture = cm.Load<Texture2D>("buttonMenu_hover_strip1");
+
+            //add menu back buttons
+            event1 = HideMenu;
+
+            button = AddButton("buttonBack_base_strip1", 0.6f,
+                new Vector2(width / 2 + 30, height / 2 + 350),
+                event1, howToPlayMenu);
+
+            button.HoverTexture = cm.Load<Texture2D>("buttonBack_hover_strip1");
+
+            button = AddButton("buttonBack_base_strip1", 0.6f,
+                new Vector2(width / 2 + 30, height / 2 + 350),
+                event1, optionsMenu);
+
+            button.HoverTexture = cm.Load<Texture2D>("buttonBack_hover_strip1");
+
+            button = AddButton("buttonBack_base_strip1", 0.6f,
+                new Vector2(width / 2 + 30, height / 2 + 350),
+                event1, creditsMenu);
+
+            button.HoverTexture = cm.Load<Texture2D>("buttonBack_hover_strip1");
 
             #endregion
 
@@ -476,6 +504,7 @@ namespace Galabingus
             gameLevels.Add(new UILevel(game1, GameState.Game, 1));
             gameLevels.Add(new UILevel(pause1, GameState.Pause, 1));
             gameLevels.Add(new UILevel(gameOver1, GameState.GameOver, 1));
+            gameLevels.Add(new UILevel(victory1, GameState.Victory, 1));
 
         }
 
@@ -611,8 +640,6 @@ namespace Galabingus
 
                     //if boss health = 0
                     //go to player wins
-                    
-                    
                     if(!EnemyManager.Instance.BossOnScreen && prevBossOnScreen)
                     {
                         gs = GameState.PlayerWins;
@@ -634,7 +661,6 @@ namespace Galabingus
 
                     if (GameObject.Fade < fadeValue)
                     {
-                        System.Diagnostics.Debug.WriteLine(GameObject.Fade);
                         gs = GameState.GameOver;
 
                     }

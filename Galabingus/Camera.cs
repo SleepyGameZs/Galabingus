@@ -174,10 +174,12 @@ namespace Galabingus
                 //Debug.WriteLine(Camera.Instance.OffSet.Y);
             }
 
+            /*
             if (Camera.instance.Position.Y > 0 && Camera.instance.OffSet.Y > 0) 
             {
                 Player.PlayerInstance.Health = 0;
             }
+            */
             //Debug.WriteLine(EnemyManager.Instance.EnemiesOnScreen);
             //Debug.WriteLine(offSet.Y);
             //Debug.WriteLine(position.Y);
