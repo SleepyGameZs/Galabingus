@@ -44,6 +44,7 @@ namespace Galabingus
         public Vector2 positionOfCollision; // Point of the collision Default: (-1,-1)
         public Vector2 position;            // Position of which to avoid the collison Default (-1,-1)
         public Vector2 mtv;
+        public Vector2 overlap;
 
         /// <summary>
         ///  Base collision, default
@@ -69,6 +70,7 @@ namespace Galabingus
             this.positionOfCollision = new Vector2(-1, -1);
             this.position = new Vector2(-1, -1);
             this.mtv = new Vector2(-1, -1);
+            this.overlap = new Vector2(-1, -1);
         }
 
         /// <summary>
@@ -83,7 +85,8 @@ namespace Galabingus
             GameObject other,
             Vector2 positionOfCollision,
             Vector2 position,
-            Vector2 mtv
+            Vector2 mtv,
+            Vector2 overlap
         )
         {
             this.self = self;
@@ -91,6 +94,7 @@ namespace Galabingus
             this.positionOfCollision = positionOfCollision;
             this.position = position;
             this.mtv = mtv;
+            this.overlap = overlap;
         }
     }
 
@@ -671,7 +675,8 @@ namespace Galabingus
                                     collidersR[colliderIndex].self,
                                     other[0],
                                     other[1],
-                                    other[2]
+                                    other[2],
+                                    other[3]
                                 ));
                             }
                         }
@@ -806,7 +811,8 @@ namespace Galabingus
                                     intercept.X, // Position to avoid intercept X
                                     intercept.Y  // Position to avoid intercept Y
                                 ),
-                                colldierCurrentMTV
+                                colldierCurrentMTV,
+                                new Vector2(Math.Abs(x2 - x1), Math.Abs(y2 - x1))
                             };
                         }
                     }
