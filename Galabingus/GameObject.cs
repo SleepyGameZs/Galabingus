@@ -1551,6 +1551,8 @@ namespace Galabingus
 
             //for (int e = 0; e < enemies.Count; e++)
             //{
+
+            /*
             for (int ei = 0; ei < enemies.Count; ei++)
             {
                 previousPosition = new Vector2(-100000, -100000);
@@ -1567,6 +1569,8 @@ namespace Galabingus
                     currentEnemy++;
                 }
             }
+            */
+
             //}
             return enemies;
         }
