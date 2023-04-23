@@ -441,7 +441,7 @@ namespace Galabingus
 
                 case EnemyType.Boss:
                     // Set Health
-                    totalHealth = 150;
+                    totalHealth = 100;
 
                     // Boss has special health dropping mechanics in Update
                     dropHealth = true;
@@ -461,8 +461,9 @@ namespace Galabingus
             // Sets the state timer to zero
             stateTimer = 0;
 
-        #endregion
-    }
+            #endregion
+
+        }
 
         #endregion
 
@@ -706,28 +707,6 @@ namespace Galabingus
 
                             }
 
-                            // Movement for Boss
-                            if (ShouldMove && Player.PlayerInstance.CameraLock)
-                            {
-                                this.Position += velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
-
-                                // Bounce on right side of screen
-                                if (this.Position.X + this.Transform.Width * this.Scale >=  // Enemy's right side
-                                    GameObject.Instance.GraphicsDevice.Viewport.Width &&    // Screen's right side
-                                    Velocity.X > 0)                                         // Can only occur when facing Right
-                                {
-                                    this.Position -= velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
-                                    EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, true);
-                                }
-
-                                // Bounce on left side of screen
-                                if (this.Position.X <= 0 && Velocity.X < 0)
-                                {
-                                    this.Position -= velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
-                                    EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, false);
-                                }
-                            }
-
                             // Change to make use of game time
                             if (stateTimer >= phaseTime)
                             {
@@ -745,7 +724,27 @@ namespace Galabingus
                     }
                     shotTimer++;
 
+                    // Movement
+                    if (ShouldMove && Player.PlayerInstance.CameraLock)
+                    {
+                        this.Position += velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
 
+                        // Bounce on right side of screen
+                        if (this.Position.X + this.Transform.Width * this.Scale >=  // Enemy's right side
+                            GameObject.Instance.GraphicsDevice.Viewport.Width &&    // Screen's right side
+                            Velocity.X > 0)                                         // Can only occur when facing Right
+                        {
+                            this.Position -= velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
+                            EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, true);
+                        }
+
+                        // Bounce on left side of screen
+                        if (this.Position.X <= 0 && Velocity.X < 0)
+                        {
+                            this.Position -= velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
+                            EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, false);
+                        }
+                    }
                 }
                 else
                 { // On kill effects
@@ -873,27 +872,7 @@ namespace Galabingus
                 this.Collider.Unload();
             }
 
-            // Movement
-            if (ShouldMove && Player.PlayerInstance.CameraLock && ability != EnemyType.Boss)
-            {
-                this.Position += velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
-
-                // Bounce on right side of screen
-                if (this.Position.X + this.Transform.Width * this.Scale >=  // Enemy's right side
-                    GameObject.Instance.GraphicsDevice.Viewport.Width &&    // Screen's right side
-                    Velocity.X > 0)                                         // Can only occur when facing Right
-                {
-                    this.Position -= velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
-                    EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, true);
-                }
-
-                // Bounce on left side of screen
-                if (this.Position.X <= 0 && Velocity.X < 0)
-                {
-                    this.Position -= velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
-                    EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, false);
-                }
-            }
+            
 
         }
 
