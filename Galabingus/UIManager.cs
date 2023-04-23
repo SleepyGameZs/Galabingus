@@ -9,6 +9,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Reflection.Emit;
+using System.Diagnostics;
+using System.Xml.Linq;
 
 namespace Galabingus
 {
@@ -153,6 +155,12 @@ namespace Galabingus
         //controls whether the user naviagtes with mouse or keyboard
         private UIControlState cs;
 
+        //keyboard control state
+        private bool keyboardIsActive;
+
+        //selected button identifier
+        private float selectedButton;
+
         //create a current and previous keyboardstate variable
         private KeyboardState currentKBS;
         private KeyboardState previousKBS;
@@ -251,7 +259,29 @@ namespace Galabingus
         public UIControlState CS
         {
             get { return cs; }
-            set { cs = value;  }
+            set { cs = value; }
+        }
+
+        /// <summary>
+        ///  The keyboard is in control?
+        /// </summary>
+        public bool KeyboardTakeOver
+        {
+            get
+            {
+                return keyboardIsActive;
+            }
+        }
+
+        /// <summary>
+        ///  Y coordinate of the button
+        /// </summary>
+        public float ButtonSelection
+        {
+            get
+            {
+                return selectedButton;
+            }
         }
 
         #endregion
@@ -353,6 +383,9 @@ namespace Galabingus
             event1, event2, menu1);
 
             button.HoverTexture = cm.Load<Texture2D>("buttonPlay_hover_strip1");
+
+            // Change button selection:
+            selectedButton = button.UIPosition.Y;
 
             //Create the other buttons
             event1 = DisplayMenu;
@@ -459,25 +492,71 @@ namespace Galabingus
             currentKBS = Keyboard.GetState();
             currentMS = Mouse.GetState();
 
+            // Arrow keys trigger keyboard take over
+            if (SingleKeyPress(Keys.Down) || SingleKeyPress(Keys.Up))
+            {
+                keyboardIsActive = true;
+            }
+            else
+            {
+                keyboardIsActive = false;
+            }
+
             //find the current UILevel and update its objects
             if (!displayMenu)
             {
                 foreach (UILevel level in gameLevels)
                 {
+                    // Update UI objects
                     if (level.Level == currentLevel && level.GS == gs)
                     {
+                        // Use the keyboard to take control of selections
+                        if (keyboardIsActive)
+                        {
+                            bool switchedButton = false;
+                            float closeButton = 10000000;
+                            foreach (UIElement element in level.Menu)
+                            {
+                                if (element is Button)
+                                {
+                                    if (currentKBS.IsKeyDown(Keys.Down) && element.UIPosition.Y > selectedButton)
+                                    {
+                                        if (Math.Abs(selectedButton - element.UIPosition.Y) < Math.Abs(selectedButton - closeButton))
+                                        {
+                                            closeButton = element.UIPosition.Y;
+                                        }
+                                        switchedButton = true;
+                                    }
+                                    if (currentKBS.IsKeyDown(Keys.Up) && element.UIPosition.Y < selectedButton)
+                                    {
+                                        switchedButton = true;
+                                        if (Math.Abs(selectedButton - element.UIPosition.Y) < Math.Abs(selectedButton - closeButton))
+                                        {
+                                            closeButton = element.UIPosition.Y;
+                                        }
+                                    }
+
+                                }
+                            }
+                            if (switchedButton)
+                            {
+                                selectedButton = closeButton;
+                            }
+                        }
+
+                        // Update the UI objects
                         UpdateObjects(level.Menu);
                     }
                 }
             }
             else
             {
+                // Update UI elemnts
                 foreach (UIElement element in currentMenu)
                 {
                     element.Update();
                 }
             }
-
 
             //if the back key is pressed and the current level isn't the base one
             if (!displayMenu)

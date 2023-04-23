@@ -48,6 +48,11 @@ namespace Galabingus
         
         }
 
+        public Vector2 UIPosition
+        {
+            get { return new Vector2(uiPosition.X, uiPosition.Y); }
+        }
+
         public string UIText { 
 
             get { return uiText; } 

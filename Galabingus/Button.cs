@@ -34,7 +34,7 @@ namespace Galabingus
 
         //list of UIElements for new menu
         private List<UIElement> displayMenu;
-        
+
         #endregion
 
         #region Properties
@@ -68,7 +68,7 @@ namespace Galabingus
         /// <param name="position">its position rectangle</param>
         public Button
             (Texture2D texture, Vector2 position, float scale)
-            : base(texture, position, scale) 
+            : base(texture, position, scale)
         {
             baseTexture = texture;
         }
@@ -77,11 +77,26 @@ namespace Galabingus
 
         #region Methods
 
+        /// <summary>
+        ///  Determines if the button is selected by keyboard.
+        /// </summary>
+        private bool KeyboardTakeOver()
+        {
+            if (UIManager.Instance.KeyboardTakeOver && UIPosition.Y == UIManager.Instance.ButtonSelection)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public override void Update()
         {
             currentMS = Mouse.GetState();
 
-            if (uiPosition.Contains(currentMS.Position))
+            if (uiPosition.Contains(currentMS.Position) && !KeyboardTakeOver())
             {
                 if (currentMS.LeftButton == ButtonState.Pressed)
                 {
@@ -95,9 +110,20 @@ namespace Galabingus
                         OnHover(this);
                 }
             }
+            else if (KeyboardTakeOver())
+            {
+                if (OnHover != null)
+                    OnHover(this);
+            }
             else
             {
-                if(uiTexture != baseTexture)
+                if (UIPosition.Y == UIManager.Instance.ButtonSelection && Keyboard.GetState().IsKeyDown(Keys.Enter))
+                {
+                    if (OnClick != null)
+                        OnClick(this);
+                }
+
+                if(uiTexture != baseTexture && UIPosition.Y != UIManager.Instance.ButtonSelection)
                     uiTexture = baseTexture;
                 else if(clearColor != Color.White)
                     clearColor = Color.White;
