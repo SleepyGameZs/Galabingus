@@ -43,6 +43,7 @@ namespace Galabingus
 
         // Boss Detection
         private bool bossOnScreen;
+        private Enemy boss;
 
         #endregion
 
@@ -80,7 +81,12 @@ namespace Galabingus
         public bool BossOnScreen
         {
             get { return bossOnScreen; }
-            set { bossOnScreen = value }
+            set { bossOnScreen = value; }
+        }
+
+        public int BossHealth
+        {
+            get { return boss.Health; }
         }
 
         #endregion
@@ -229,6 +235,9 @@ namespace Galabingus
                 }
             }
 
+            // Reference for the current enemy
+            Enemy createdEnemy = null;
+
             // Add bullet itself to list
             if (isSourceEnemy)
             { // Was created by an enemy, store the data
@@ -241,7 +250,7 @@ namespace Galabingus
             { // Add enemy itself to list
                 if (isReplacing == false)
                 {
-                    Enemy newEnemy = new Enemy(ability,    // Ability of the Enemy spawned
+                    createdEnemy = new Enemy(ability,    // Ability of the Enemy spawned
                                                position,   // Position of Enemy
                                                creator,    // What created this enemy
                                                shouldMove, // Should enemy move back and forth
@@ -249,7 +258,7 @@ namespace Galabingus
                                                enemyTotal  // Total enemies
                                                );
 
-                    Instance.activeEnemies.Add(newEnemy);
+                    Instance.activeEnemies.Add(createdEnemy);
 
                     // Create list if needed
                     if (shouldMove)
@@ -260,22 +269,35 @@ namespace Galabingus
                         }
 
                         // Add item to rows list
-                        Instance.enemyRows[(int)position.Y].Add(newEnemy);
+                        Instance.enemyRows[(int)position.Y].Add(createdEnemy);
                     }
-                    
+
+                    // Check if this enemy is the boss
+                    if (createdEnemy.Ability == EnemyType.Boss)
+                    {
+                        boss = Instance.activeEnemies[setNumber];
+                    }
 
                     // Increment total
                     enemyTotal++;
                 }
                 else
                 {
-                    Instance.activeEnemies[setNumber] = new Enemy(ability,    // Ability of the Enemy spawned
+                    createdEnemy = new Enemy(ability,    // Ability of the Enemy spawned
                                                                   position,   // Position of Enemy
                                                                   creator,    // What created this enemy
                                                                   shouldMove, // Should enemy move back and forth
                                                                   sprite,     // Sprite for Enemy
                                                                   enemyTotal  // Total enemies
                                                                   );
+
+                    Instance.activeEnemies[setNumber] = createdEnemy;
+
+                    // Check if this enemy is the boss
+                    if (createdEnemy.Ability == EnemyType.Boss)
+                    {
+                        boss = Instance.activeEnemies[setNumber];
+                    }
                 }
             }
         }
