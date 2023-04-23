@@ -197,6 +197,12 @@ namespace Galabingus
 
         #region ENEMY SPECIFIC PROPERTIES
 
+        public Vector2 Velocity
+        {
+            get { return velocity; }
+            set { velocity = value; }
+        }
+
         /// <summary>
         /// Used to see if this bullet should be destroyed now.
         /// </summary>
@@ -292,7 +298,7 @@ namespace Galabingus
         {
             get { 
                 return (this.Position.Y > 0 &&
-                        this.Position.Y < BulletManager.Instance.ScreenDimensions.Y
+                        this.Position.Y < GameObject.Instance.GraphicsDevice.Viewport.Height
                         - this.Transform.Height * this.Scale);
             }
         }
@@ -356,9 +362,6 @@ namespace Galabingus
             // Set base direction
             direction = new Vector2(1, 1);
 
-            // Set velocity to zero at start
-            velocity = Vector2.Zero;
-
             // set randomizer + extra time between next shot
             rng = new Random();
             shotWaitVariance = 9;
@@ -369,6 +372,7 @@ namespace Galabingus
 
             // Set if enemy should move
             this.shouldMove = shouldMove;
+            velocity = (this.shouldMove) ? new Vector2(3, 0) : Vector2.Zero;
 
             // Set base position to be stored for dictionary keys
             initialPosition = position;
@@ -416,7 +420,7 @@ namespace Galabingus
         {
             // Check if off screen
             bool enemyOnScreen = (this.Position.Y > - this.Transform.Height * this.Scale &&
-                                  this.Position.Y < BulletManager.Instance.ScreenDimensions.Y);
+                                  this.Position.Y < GameObject.Instance.GraphicsDevice.Viewport.Height);
 
             if (ability == EnemyType.Boss)
             { // Position change for the boss, boss will lock to screen once it appears
@@ -436,6 +440,7 @@ namespace Galabingus
                 else
                 { // On screen, set boss effect and no longer moves
                     GameObject.Instance.StartBossEffect();
+                    EnemyManager.Instance.BossOnScreen = true;
                 }
             } 
             else
@@ -663,18 +668,21 @@ namespace Galabingus
                     // Movement
                     if (ShouldMove && Player.PlayerInstance.CameraLock)
                     {
-                        this.Position += new Vector2(3 * direction.X, 0);
+                        this.Position += velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
 
                         // Bounce on right side of screen
                         if (this.Position.X + this.Transform.Width * this.Scale >=  // Enemy's right side
-                            EnemyManager.Instance.ScreenDimensions.X)               // Screen's right side
+                            GameObject.Instance.GraphicsDevice.Viewport.Width &&    // Screen's right side
+                            Velocity.X > 0)                                         // Can only occur when facing Right
                         {
+                            this.Position -= velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
                             EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, true);
                         }
 
                         // Bounce on left side of screen
-                        if (this.Position.X <= 0)
+                        if (this.Position.X <= 0 && Velocity.X < 0)
                         {
+                            this.Position -= velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
                             EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, false);
                         }
                     }
@@ -694,6 +702,7 @@ namespace Galabingus
                             BulletSpawning(0, BulletType.BigExplosion, new Vector2(-400, 0), 0);
                             AudioManager.Instance.CallSound("Explosion");
                             GameObject.Instance.StopBossEffect();
+                            EnemyManager.Instance.BossOnScreen = false;
                             break;
 
                         default:
@@ -710,8 +719,9 @@ namespace Galabingus
                     }
                 }
 
-                // Creates currect collider for Enemy
+                // Manage Animation
                 this.Transform = this.Animation.Play(gameTime);
+                this.Animation.AnimationDuration = 0.03f;
 
                 this.Collider.Resolved = true;
 
@@ -764,12 +774,14 @@ namespace Galabingus
                                 }
                                 else
                                 { // Normal enemies bounce off tiles
-                                    if (this.Position.X < ((Tile)collision.other).Position.X)
+                                    if (this.Position.X < ((Tile)collision.other).Position.X && Velocity.X > 0)
                                     { // Bounce right
+                                        this.Position -= velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
                                         EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, true);
                                     }
-                                    else
+                                    else if (this.Position.X > ((Tile)collision.other).Position.X && Velocity.X < 0)
                                     { // Bounce left
+                                        this.Position -= velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
                                         EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, false);
                                     }
                                 }
@@ -790,10 +802,6 @@ namespace Galabingus
                         }
                     }
                 }
-
-                // Manage Animation
-                this.Animation.AnimationDuration = 0.03f;
-                this.Transform = this.Animation.Play(gameTime);
 
             } 
             else

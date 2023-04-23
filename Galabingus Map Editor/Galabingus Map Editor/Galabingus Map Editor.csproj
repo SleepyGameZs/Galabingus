@@ -299,5 +299,14 @@
   <ItemGroup>
     <None Include="Resources\player_strip4-1.png.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\camera_stop_strip1-1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\enemy_violet_strip4-1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bomb_strip4-1.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

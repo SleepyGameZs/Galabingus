@@ -41,8 +41,8 @@ namespace Galabingus
         private ushort enemyTotal;
         private ushort enemiesOnScreen;
 
-        // Screen data
-        private Vector2 screenSize;
+        // Boss Detection
+        private bool bossOnScreen;
 
         #endregion
 
@@ -64,17 +64,6 @@ namespace Galabingus
         }
 
         /// <summary>
-        /// Used to get screen dimensions for bullets
-        /// </summary>
-        public Vector2 ScreenDimensions
-        {
-            get 
-            {
-                return Instance.screenSize;
-            }
-        }
-
-        /// <summary>
         /// Returns the total enemies on screen
         /// </summary>
         public ushort EnemiesOnScreen
@@ -83,6 +72,15 @@ namespace Galabingus
             {
                 return enemiesOnScreen;
             }
+        }
+
+        /// <summary>
+        /// Is the boss currently on the screen?
+        /// </summary>
+        public bool BossOnScreen
+        {
+            get { return bossOnScreen; }
+            set { bossOnScreen = value; }
         }
 
         #endregion
@@ -108,11 +106,6 @@ namespace Galabingus
             storeCreatorEnemies = new List<object>();
             storeShouldMoveEnemies = new List<bool>();
 
-            // Gets screen size data
-            screenSize = new Vector2(
-                GameObject.Instance.GraphicsDevice.Viewport.Width, // Width of screen
-                GameObject.Instance.GraphicsDevice.Viewport.Height // Height of screen
-                );
         }
 
         #endregion
@@ -383,14 +376,10 @@ namespace Galabingus
                 List<Enemy> enemyList = Instance.enemyRows[positionY];
                 for (int i = 0; i < enemyList.Count; i++)
                 {
-                    enemyList[i].Direction = new Vector2(enemyList[i].Direction.X * -1, enemyList[i].Direction.Y);
-                    if (i != 0)
-                    {
-                        enemyList[i].Position = new Vector2(enemyList[i].Position.X + 10 * enemyList[i].Direction.X, enemyList[i].Position.Y);
-                    } 
-                    else if (!collideOnRight || enemyList.Count == 1)
+                    enemyList[i].Velocity = new Vector2(enemyList[i].Velocity.X * -1 * (float)enemyList[i].Animation.EllapsedTime, enemyList[i].Velocity.Y);
+                    if (!collideOnRight || enemyList.Count == 1)
                     { // Fixes slight offset on first ship in row with each bonce
-                        enemyList[i].Position = new Vector2(enemyList[i].Position.X + 11 * enemyList[i].Direction.X, enemyList[i].Position.Y);
+                        enemyList[i].Position += enemyList[i].Velocity;
                     }
                 }
             }

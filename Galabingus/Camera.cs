@@ -175,9 +175,9 @@ namespace Galabingus
             {
                 Player.PlayerInstance.Health = 0;
             }
-            Debug.WriteLine(EnemyManager.Instance.EnemiesOnScreen);
-            Debug.WriteLine(offSet.Y);
-            Debug.WriteLine(position.Y);
+            //Debug.WriteLine(EnemyManager.Instance.EnemiesOnScreen);
+            //Debug.WriteLine(offSet.Y);
+            //Debug.WriteLine(position.Y);
             //Debug.WriteLine(GameObject.EndPosition.Y);
         }
 
