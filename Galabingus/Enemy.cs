@@ -342,12 +342,21 @@ namespace Galabingus
             Animation.AnimationDuration = 0.01f;
 
             // Set Scale
-            this.Scale = Player.PlayerInstance.Scale;
+            Vector2 scaleGet = GameObject.Instance.PostScaleRatio(true);
+            this.Scale = scaleGet.Y;
             //this.Scale = PostScaleRatio();
 
             // Set Position
-            this.Position = new Vector2(position.X + this.Transform.Width * this.Scale * 0.5f - 10,  // X
-                                        position.Y + this.Transform.Height * this.Scale * 0.5f);// Y
+            if (ability == EnemyType.Bomb)
+            {
+                this.Position = new Vector2(position.X - 20,  // X
+                                        position.Y);// Y
+            } else
+            {
+                this.Position = new Vector2(position.X - 10,  // X
+                                        position.Y);// Y
+            }
+            
 
             #endregion
 
