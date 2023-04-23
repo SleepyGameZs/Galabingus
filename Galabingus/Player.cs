@@ -84,6 +84,10 @@ namespace Galabingus
         private bool tSet;
         private float fadeDuration;
         private double fadeTimeTotal;
+        private bool godMode;
+        private bool holdShoot;
+        private double totalShootTime;
+        private float shootDuration;
 
         public Vector2 Translation
         {
@@ -146,7 +150,7 @@ namespace Galabingus
             }
             set
             {
-                if (!iFrame)
+                if (!iFrame && !godMode)
                 {
                     iFrame = true;
                     PlayerInstance.health = value;
@@ -336,8 +340,12 @@ namespace Galabingus
             textTest = UIManager.Instance.AddText("Testing", Vector2.Zero, 12, Color.White, UIState.BaseGame);
             iFrame = false;
             tSet = false;
+            godMode = false;
+            holdShoot = false;
             fadeDuration = 0.5f;
             fadeTimeTotal = 0;
+            totalShootTime = 0;
+            shootDuration = 0.2f;
         }
 
         /// <summary>
@@ -463,11 +471,11 @@ namespace Galabingus
                 {
                     velocity.X = -speed.X;
                 }
-                
+
                 collides = true;
             }
             else if (previousCollision)
-            { 
+            {
                 collides = ((PlayerInstance.Position.Y <= 0 || PlayerInstance.Position.X <= 0) ||
                 (PlayerInstance.Position.X + PlayerInstance.Transform.Width * Scale) >= GameObject.Instance.GraphicsDevice.Viewport.Width ||
                 (PlayerInstance.Position.Y + PlayerInstance.Transform.Height * Scale) >= GameObject.Instance.GraphicsDevice.Viewport.Height)
@@ -680,6 +688,7 @@ namespace Galabingus
 
             previousVelocity = velocity;
 
+            totalShootTime += gameTime.ElapsedGameTime.TotalSeconds;
             totalBoostTime += gameTime.ElapsedGameTime.TotalSeconds;
             totalTime += gameTime.ElapsedGameTime.TotalSeconds;
             fadeTimeTotal += gameTime.ElapsedGameTime.TotalSeconds;
@@ -926,10 +935,28 @@ namespace Galabingus
                 //shot = false;
             }
 
+            if (previousKeyboardState.IsKeyDown(Keys.G) && currentKeyboardState.IsKeyUp(Keys.G))
+            {
+                godMode = !godMode;
+            }
+
             // When space is pressed trigger shoot
-            if (previousKeyboardState.IsKeyDown(Keys.Space) && currentKeyboardState.IsKeyUp(Keys.Space))
+            if (currentKeyboardState.IsKeyUp(Keys.Space) && previousKeyboardState.IsKeyDown(Keys.Space))
+            {
+                totalShootTime = shootDuration;
+            }
+
+            if (previousKeyboardState.IsKeyDown(Keys.Space))
+            {
+                holdShoot = true;
+            }
+            if (holdShoot && (godMode || (totalShootTime >= shootDuration)))
             {
                 Shoot();
+            }
+            if (currentKeyboardState.IsKeyUp(Keys.Space))
+            {
+                holdShoot = false;
             }
 
             /*
@@ -1013,7 +1040,7 @@ namespace Galabingus
                 totalBoostTime -= boostFrameRate;
             }
 
-            if (currentKeyboardState.IsKeyDown(Keys.G))
+            if (godMode)
             {
                 PlayerInstance.Health = 5;
             }
@@ -1042,6 +1069,11 @@ namespace Galabingus
                 fadeTimeTotal -= fadeDuration;
             }
 
+            if (totalShootTime >= shootDuration)
+            {
+                //holdShoot = false;
+                totalShootTime -= shootDuration;
+            }
             //Debug.WriteLine();
         }
 
@@ -1101,7 +1133,7 @@ namespace Galabingus
                 );
 
             }
-            else if (!Keyboard.GetState().IsKeyDown(Keys.G))
+            else if (godMode)
             {
                 Collider.Resolved = false;
                 UIManager.Instance.GS = GameState.PlayerDead;
