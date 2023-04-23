@@ -248,10 +248,9 @@ namespace Galabingus
 
                 colliderTimer--;
 
-
                 bool shiftBefore = transition;
-                transition = (userInterface.GS == GameState.GameOver);
-                if (!(userInterface.GS == GameState.Pause) && !(userInterface.GS == GameState.Menu) && !(userInterface.GS == GameState.GameOver))
+                transition = (userInterface.GS == GameState.PlayerDead || userInterface.GS == GameState.PlayerWins);
+                if (userInterface.GS == GameState.Game)
                 {
                     shaders.Parameters["fadeIn"].SetValue(true);
                     shaders.Parameters["fadeOut"].SetValue(false);
@@ -270,7 +269,7 @@ namespace Galabingus
 
                     tileManager.Update(gameTime);
                 }
-                else if (userInterface.GS == GameState.GameOver)
+                else if (userInterface.GS == GameState.PlayerDead || userInterface.GS == GameState.PlayerWins)
                 {
                     shaders.Parameters["fadeIn"].SetValue(false);
                     shaders.Parameters["fadeOut"].SetValue(true);
@@ -313,7 +312,7 @@ namespace Galabingus
 
                 GraphicsDevice.Clear(Color.Transparent);
 
-                if (!(userInterface.GS == GameState.Menu))
+                if (!(userInterface.GS == GameState.Menu) && !(userInterface.GS == GameState.GameOver) && !(userInterface.GS == GameState.Victory))
                 {
                     GameObject.Fade = GameObject.Fade * 0.96f;
                     shaders.Parameters["fade"].SetValue(GameObject.Fade);
@@ -324,7 +323,7 @@ namespace Galabingus
                     _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap);
                 }
 
-                if (!(userInterface.GS == GameState.Menu))
+                if (!(userInterface.GS == GameState.Menu) && !(userInterface.GS == GameState.GameOver) && !(userInterface.GS == GameState.Victory))
                 {
                     if (TileManager.Instance.CurrentSpriteNumber == 0)
                     {

@@ -418,6 +418,30 @@
 /processorParam:TextureFormat=Color
 /build:buttonHowToPlay_strip1.png
 
+#begin buttonMenu_base_strip1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:buttonMenu_base_strip1.png
+
+#begin buttonMenu_hover_strip1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:buttonMenu_hover_strip1.png
+
 #begin buttonOptions_base_strip1.png
 /importer:TextureImporter
 /processor:TextureProcessor

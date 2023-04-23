@@ -1059,7 +1059,7 @@ namespace Galabingus
             else if (!Keyboard.GetState().IsKeyDown(Keys.G))
             {
                 Collider.Resolved = false;
-                UIManager.Instance.GS = GameState.GameOver;
+                UIManager.Instance.GS = GameState.PlayerDead;
                 //UIManager.Instance.GS = GameState.Pause;
             }
 
