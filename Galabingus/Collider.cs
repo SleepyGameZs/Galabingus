@@ -494,6 +494,8 @@ namespace Galabingus
                 shiftedScale.Y = 0.07f;
             }
 
+            shiftedScale.X = 0.06f;
+            shiftedScale.Y = 0.06f;
 
             // Create transform from scale and position
             this.transform = new Rectangle(
@@ -670,7 +672,7 @@ namespace Galabingus
                             {
                                 // Set the resolved collision to false
                                 // Return the Collision
-                                this.resolved = false;
+                                //this.resolved = false;
                                 result.Add(new Collision(
                                     self,
                                     collidersR[colliderIndex].self,
