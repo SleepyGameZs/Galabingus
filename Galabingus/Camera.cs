@@ -128,6 +128,7 @@ namespace Galabingus
 
         public void Start()
         {
+            Player.PlayerInstance.CameraLock = true;
             stop = false;
             cameraLock = false;
             offSet.Y = initalCameraScroll;
@@ -135,6 +136,7 @@ namespace Galabingus
 
         public void Stop()
         {
+            Player.PlayerInstance.CameraLock = true;
             stop = true;
             cameraLock = false;
             offSet.X = 0;
@@ -143,6 +145,7 @@ namespace Galabingus
 
         public void Reverse()
         {
+            Player.PlayerInstance.CameraLock = true;
             offSet.Y = -offSet.Y;
         }
 
@@ -163,7 +166,7 @@ namespace Galabingus
             }
             if (cameraLock == true)
             {
-                Player.PlayerInstance.CameraLock = false;
+                Player.PlayerInstance.CameraLock = true;
                 Camera.Instance.offSet.Y = Player.PlayerInstance.Velocity == Vector2.Zero ? Vector2.Zero.Y :
                     Player.PlayerInstance.Translation.Y;
                 Player.PlayerInstance.Position -= new Vector2(0, Camera.instance.offSet.Y);
