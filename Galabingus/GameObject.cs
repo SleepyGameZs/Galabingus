@@ -1386,7 +1386,7 @@ namespace Galabingus
             GameObject.cameraStopPositions = result;
         }
 
-        public Vector2 CalculateLevelEditorPositions(int width, int height, int row, int column)
+        public Vector2 CalculateLevelEditorPositions(float width, float height, float row, float column)
         {
             float coordianteXScale = GameObject.Instance.GraphicsDevice.Viewport.Width / width;
             
@@ -1544,6 +1544,30 @@ namespace Galabingus
 
             reader.Close();
 
+            float columnScaleOverlap = GameObject.Instance.GraphicsDevice.Viewport.Width / width * 1.5f;
+            float rowScaleOverlap = -EndPosition.Y / height * 1.0f;
+            Vector2 previousPosition = new Vector2(-100000, -100000);
+            int currentEnemy = 0;
+
+            //for (int e = 0; e < enemies.Count; e++)
+            //{
+            for (int ei = 0; ei < enemies.Count; ei++)
+            {
+                previousPosition = new Vector2(-100000, -100000);
+                currentEnemy = 0;
+
+                for (int ef = 0; ef < enemies.Count; ef++)
+                {
+                    Vector2 currentPosition = new Vector2(enemies[currentEnemy][2], enemies[currentEnemy][3]);
+                    if ((previousPosition.Y + columnScaleOverlap) >= currentPosition.Y && (previousPosition.X + columnScaleOverlap) >= currentPosition.X)
+                    {
+                        enemies.Remove(enemies[currentEnemy - 1]);
+                    }
+                    previousPosition = currentPosition;
+                    currentEnemy++;
+                }
+            }
+            //}
             return enemies;
         }
 
