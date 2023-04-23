@@ -266,7 +266,7 @@ namespace Galabingus
             #region Object Update
             for (int i = 0; i < tileList.Count; i++)
             {
-                if (tileList[i].IsActive)
+                if (tileList[i].IsActive && !Player.PlayerInstance.GodMode)
                 {
                     tileList[i].Collider.Resolved = true;
                     List<Collision> collisions = tileList[i].Collider.UpdateTransform(

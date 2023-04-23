@@ -102,6 +102,14 @@ namespace Galabingus
             }
         }
 
+        public bool GodMode
+        {
+            get
+            {
+                return godMode;
+            }
+        }
+
         public Vector2 Speed
         {
             get
