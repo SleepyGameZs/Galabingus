@@ -1134,8 +1134,8 @@ namespace Galabingus
         public Vector2 PostScaleRatio(bool isVector2)
         {
             return new Vector2(
-                universalScaleX / this.GetTransform(instance).Width * GameObject.Instance.GraphicsDevice.Viewport.Width / GameObject.Instance.GraphicsDevice.Viewport.Height,
-                universalScaleY / this.GetTransform(instance).Width * GameObject.Instance.GraphicsDevice.Viewport.Width / GameObject.Instance.GraphicsDevice.Viewport.Height
+                universalScaleX / this.GetTransform(instance).Width,
+                universalScaleY / this.GetTransform(instance).Height
             //universalScaleY / this.GetTransform(instance).Height * GameObject.Instance.GraphicsDevice.Viewport.Height / GameObject.Instance.GraphicsDevice.Viewport.Width
             );
         }
@@ -1386,15 +1386,15 @@ namespace Galabingus
             GameObject.cameraStopPositions = result;
         }
 
-        public Vector2 CalculateLevelEditorPositions(int width, int height, int row, int column)
+        public Vector2 CalculateLevelEditorPositions(float width, float height, float row, float column)
         {
-            float coordianteXScale = GameObject.Instance.GraphicsDevice.Viewport.Width / width * GameObject.Instance.GraphicsDevice.Viewport.Width/GameObject.Instance.GraphicsDevice.Viewport.Height;
+            float coordianteXScale = GameObject.Instance.GraphicsDevice.Viewport.Width / width;
             
-            float coordinateYScale = -EndPosition.Y / height * GameObject.Instance.GraphicsDevice.Viewport.Height / GameObject.Instance.GraphicsDevice.Viewport.Width;
+            float coordinateYScale = -EndPosition.Y / height;
             float startingY = EndPosition.Y;
             universalScaleX = coordianteXScale;
             universalScaleY = coordinateYScale;
-            return new Vector2(coordianteXScale * column, coordinateYScale * row + startingY + GameObject.Instance.GraphicsDevice.Viewport.Height);
+            return new Vector2(coordianteXScale * column, coordinateYScale * row + startingY + GameObject.Instance.GraphicsDevice.Viewport.Height + coordinateYScale);
         }
 
         public void LoadTileLevelFile(string fileName)
@@ -1544,6 +1544,30 @@ namespace Galabingus
 
             reader.Close();
 
+            float columnScaleOverlap = GameObject.Instance.GraphicsDevice.Viewport.Width / width * 1.5f;
+            float rowScaleOverlap = -EndPosition.Y / height * 1.0f;
+            Vector2 previousPosition = new Vector2(-100000, -100000);
+            int currentEnemy = 0;
+
+            //for (int e = 0; e < enemies.Count; e++)
+            //{
+            for (int ei = 0; ei < enemies.Count; ei++)
+            {
+                previousPosition = new Vector2(-100000, -100000);
+                currentEnemy = 0;
+
+                for (int ef = 0; ef < enemies.Count; ef++)
+                {
+                    Vector2 currentPosition = new Vector2(enemies[currentEnemy][2], enemies[currentEnemy][3]);
+                    if ((previousPosition.Y + columnScaleOverlap) >= currentPosition.Y && (previousPosition.X + columnScaleOverlap) >= currentPosition.X)
+                    {
+                        enemies.Remove(enemies[currentEnemy - 1]);
+                    }
+                    previousPosition = currentPosition;
+                    currentEnemy++;
+                }
+            }
+            //}
             return enemies;
         }
 
@@ -1568,6 +1592,9 @@ namespace Galabingus
             objectEnumsI = new GameObjectTrie<string>();
             effectI = new GameObjectTrie<Effect>();
             trie = null;
+
+            bossEffectIsActive = false;
+            flipSine = false;
 
             cameraStopPositions = null;
         }

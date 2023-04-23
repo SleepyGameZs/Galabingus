@@ -440,16 +440,30 @@ namespace Galabingus
             //Vector2 previousVelocity;
             bool collides = false;
 
-            /*
-            if (!previousCollision &&
+            if (
                 ((PlayerInstance.Position.Y <= 0 || PlayerInstance.Position.X <= 0) ||
                 (PlayerInstance.Position.X + PlayerInstance.Transform.Width * Scale) >= GameObject.Instance.GraphicsDevice.Viewport.Width ||
                 (PlayerInstance.Position.Y + PlayerInstance.Transform.Height * Scale) >= GameObject.Instance.GraphicsDevice.Viewport.Height)
                 )
             {
                 previousVelocity = velocity;
-                acceleration = Vector2.Zero;
-                velocity = Vector2.Zero;
+                if (PlayerInstance.Position.Y <= 0)
+                {
+                    velocity.Y = speed.Y;
+                }
+                else if ((PlayerInstance.Position.Y + PlayerInstance.Transform.Height * Scale) >= GameObject.Instance.GraphicsDevice.Viewport.Height)
+                {
+                    velocity.Y = -speed.Y;
+                }
+                if (PlayerInstance.Position.X <= 0)
+                {
+                    velocity.X = speed.X;
+                }
+                else if ((PlayerInstance.Position.X + PlayerInstance.Transform.Width * Scale) >= GameObject.Instance.GraphicsDevice.Viewport.Width)
+                {
+                    velocity.X = -speed.X;
+                }
+                
                 collides = true;
             }
             else if (previousCollision)
@@ -459,16 +473,15 @@ namespace Galabingus
                 (PlayerInstance.Position.Y + PlayerInstance.Transform.Height * Scale) >= GameObject.Instance.GraphicsDevice.Viewport.Height)
                 ;
             }
-            */
 
             foreach (Collision collision in intercepts)
             {
                 if (collision.other != null && this.Collider.Resolved && ((collision.other as Tile) is Tile))
                 {
-                    previousVelocity = velocity;
-                    acceleration = Vector2.Zero;
-                    velocity = Vector2.Zero;
-                    collides = true;
+                    //previousVelocity = velocity;
+                    //acceleration = Vector2.Zero;
+                    //velocity = Vector2.Zero;
+                    //collides = true;
                 }
             }
 
@@ -640,7 +653,7 @@ namespace Galabingus
                     }
                 }
 
-                if (normPreVelocity != normVelocity && normVelocity != Vector2.Zero && normPreVelocity != Vector2.Zero && previousCollision || !collides)
+                //if (normPreVelocity != normVelocity && normVelocity != Vector2.Zero && normPreVelocity != Vector2.Zero && previousCollision || !collides)
                 {
                     if (!tSet)
                     {
@@ -1133,6 +1146,39 @@ namespace Galabingus
                 SpriteEffects.None,              // Which direction the sprite faces
                 0.0f                             // Layer depth of the player is 0.0
             );
+        }
+
+        public void CreateHealthBar(float health, float max, int x, int y, float xSize, float ySize, Color backColor, Color frontColor)
+        {
+            float healthRatio = health / max;
+            xSize = xSize / max;
+            Texture2D pixelWhite = GameObject.Instance.ContentManager.Load<Texture2D>("white_pixel_strip1");
+
+            GameObject.Instance.Debug += delegate (SpriteBatch spriteBatch)
+            {
+                GameObject.Instance.SpriteBatch.Draw(
+                    pixelWhite,                          // The sprite-sheet for the player
+                    new Vector2(x, y - xSize * 0.7f),                        // The position for the player
+                    new Rectangle(0, 0, 1 * (int)max * (int)xSize, (int)(ySize * 1.3f)),                       // The scale and bounding box for the animation
+                    new Color(backColor, 0.9f),                     // The color for the palyer
+                    0.0f,                            // There cannot be any rotation of the player
+                    Vector2.Zero,                    // Starting render position
+                    1.0f,                      // The scale of the sprite
+                    SpriteEffects.None,              // Which direction the sprite faces
+                    0.0f                             // Layer depth of the player is 0.0
+                );
+                GameObject.Instance.SpriteBatch.Draw(
+                    pixelWhite,                          // The sprite-sheet for the player
+                    new Vector2(x, y),                        // The position for the player
+                    new Rectangle(0, 0, 1 * (int)Math.Clamp((int)Math.Round(health, MidpointRounding.AwayFromZero), 0, max) * (int)xSize, (int)ySize),                       // The scale and bounding box for the animation
+                    new Color(frontColor, 0.9f),                     // The color for the palyer
+                    0.0f,                            // There cannot be any rotation of the player
+                    Vector2.Zero,                    // Starting render position
+                    1.0f,                      // The scale of the sprite
+                    SpriteEffects.None,              // Which direction the sprite faces
+                    0.0f                             // Layer depth of the player is 0.0
+                );
+            };
         }
 
         public void Reset()
