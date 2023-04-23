@@ -1148,6 +1148,14 @@ namespace Galabingus
             );
         }
 
+        public void CreateHealthBar()
+        {
+            GameObject.Instance.Debug += delegate (SpriteBatch spriteBatch)
+            {
+
+            };
+        }
+
         public void Reset()
         {
             playerInstance = null;

@@ -1569,6 +1569,9 @@ namespace Galabingus
             effectI = new GameObjectTrie<Effect>();
             trie = null;
 
+            bossEffectIsActive = false;
+            flipSine = false;
+
             cameraStopPositions = null;
         }
     }
