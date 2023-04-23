@@ -627,7 +627,7 @@ namespace Galabingus
                                     sprite,
                                     new Vector2(0, 0),
                                     transform,
-                                    Color.Blue,
+                                    Color.HotPink,
                                     0.0f,
                                     Vector2.Zero,
                                     this.Scale,
