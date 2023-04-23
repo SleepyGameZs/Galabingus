@@ -277,7 +277,7 @@ namespace Galabingus
             //list of menu levels
             gameLevels = new List<UILevel>();
             currentLevel = 1;
-    }
+        }
 
         #endregion
 
@@ -366,7 +366,7 @@ namespace Galabingus
             
             AddBackground(
                 "HowToPlayMenu_strip1", 0.4f, 
-                new Vector2(width / 2, height / 2), 
+                new Vector2(width / 2, height / 2 - 50), 
                 howToPlayMenu);
 
             button.DisplayMenu = howToPlayMenu;
@@ -437,6 +437,27 @@ namespace Galabingus
             event1, event2, victory1);
 
             button.HoverTexture = cm.Load<Texture2D>("buttonMenu_hover_strip1");
+
+            //add menu back buttons
+            event1 = HideMenu;
+
+            button = AddButton("buttonBack_base_strip1", 0.6f,
+                new Vector2(width / 2 + 30, height / 2 + 350),
+                event1, howToPlayMenu);
+
+            button.HoverTexture = cm.Load<Texture2D>("buttonBack_hover_strip1");
+
+            button = AddButton("buttonBack_base_strip1", 0.6f,
+                new Vector2(width / 2 + 30, height / 2 + 350),
+                event1, optionsMenu);
+
+            button.HoverTexture = cm.Load<Texture2D>("buttonBack_hover_strip1");
+
+            button = AddButton("buttonBack_base_strip1", 0.6f,
+                new Vector2(width / 2 + 30, height / 2 + 350),
+                event1, creditsMenu);
+
+            button.HoverTexture = cm.Load<Texture2D>("buttonBack_hover_strip1");
 
             #endregion
 
@@ -539,8 +560,6 @@ namespace Galabingus
 
                     //if boss health = 0
                     //go to player wins
-                    
-                    
                     if(!EnemyManager.Instance.BossOnScreen && prevBossOnScreen)
                     {
                         gs = GameState.PlayerWins;
