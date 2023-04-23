@@ -80,7 +80,7 @@ namespace Galabingus
         public bool BossOnScreen
         {
             get { return bossOnScreen; }
-            set { bossOnScreen = value }
+            set { bossOnScreen = value; }
         }
 
         #endregion

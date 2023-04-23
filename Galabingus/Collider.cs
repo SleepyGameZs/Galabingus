@@ -488,17 +488,12 @@ namespace Galabingus
                 shiftedScale.Y = resolution / transform.Height;
             }
 
-            if (shiftedScale.X < 0.06f || shiftedScale.Y < 0.06f)
+            if (shiftedScale.X > 0.07f || shiftedScale.Y > 0.07f)
             {
-                shiftedScale.X = 0.06f;
-                shiftedScale.Y = 0.06f;
+                shiftedScale.X = 0.07f;
+                shiftedScale.Y = 0.07f;
             }
 
-            if (shiftedScale.X > 0.09f || shiftedScale.Y > 0.09f)
-            {
-                shiftedScale.X = 0.09f;
-                shiftedScale.Y = 0.09f;
-            }
 
             // Create transform from scale and position
             this.transform = new Rectangle(

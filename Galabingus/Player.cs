@@ -82,6 +82,8 @@ namespace Galabingus
         private Vector2 translation;
         private Text textTest;
         private bool tSet;
+        private float fadeDuration;
+        private double fadeTimeTotal;
 
         public Vector2 Translation
         {
@@ -146,6 +148,7 @@ namespace Galabingus
             {
                 if (!iFrame)
                 {
+                    iFrame = true;
                     PlayerInstance.health = value;
                 }
             }
@@ -333,6 +336,8 @@ namespace Galabingus
             textTest = UIManager.Instance.AddText("Testing", Vector2.Zero, 12, Color.White, UIState.BaseGame);
             iFrame = false;
             tSet = false;
+            fadeDuration = 0.5f;
+            fadeTimeTotal = 0;
         }
 
         /// <summary>
@@ -657,13 +662,14 @@ namespace Galabingus
             {
                 translation = Vector2.Zero;
             }
-            
+
             //System.Diagnostics.Debug.WriteLine(previousCollision);
 
             previousVelocity = velocity;
 
             totalBoostTime += gameTime.ElapsedGameTime.TotalSeconds;
             totalTime += gameTime.ElapsedGameTime.TotalSeconds;
+            fadeTimeTotal += gameTime.ElapsedGameTime.TotalSeconds;
 
             intercepts = PlayerInstance.Collider.UpdateTransform(
                 PlayerInstance.Sprite,                         // Player Sprite
@@ -678,7 +684,7 @@ namespace Galabingus
             );
 
             currentKeyboardState = Keyboard.GetState();
-       
+
             {
                 // Player Finite State Machine
                 switch (playerState)
@@ -955,7 +961,7 @@ namespace Galabingus
                     }
                     ghosts = newGhost;
                 }
-                
+
                 if (!currentKeyboardState.IsKeyDown(Keys.LeftShift))
                 {
                     //boostOpacity = 1f;
@@ -1007,10 +1013,20 @@ namespace Galabingus
                         * (float)Animation.GetElapsedTime(gameTime, Vector2.Zero, new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Width * 0.5f, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.5f), Transform, Scale);
                 }
                 else
-                {   
+                {
                     Camera.Instance.OffSet = new Vector2(Math.Clamp((normVelocity.X), -1f, 1f), Math.Clamp((normVelocity.Y), -0, 0))
                         * (float)Animation.GetElapsedTime(gameTime, Vector2.Zero, new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Width * 0.5f, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.5f), Transform, Scale);
                 }
+            }
+
+            if (fadeTimeTotal >= fadeDuration && iFrame)
+            {
+                fadeTimeTotal -= fadeDuration;
+                iFrame = false;
+            }
+            else if (fadeTimeTotal >= fadeDuration)
+            {
+                fadeTimeTotal -= fadeDuration;
             }
 
             //Debug.WriteLine();
