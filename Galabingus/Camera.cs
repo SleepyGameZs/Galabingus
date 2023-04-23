@@ -128,6 +128,7 @@ namespace Galabingus
 
         public void Start()
         {
+            Player.PlayerInstance.CameraLock = true;
             stop = false;
             cameraLock = false;
             offSet.Y = initalCameraScroll;
@@ -135,6 +136,7 @@ namespace Galabingus
 
         public void Stop()
         {
+            Player.PlayerInstance.CameraLock = true;
             stop = true;
             cameraLock = false;
             offSet.X = 0;
@@ -143,6 +145,7 @@ namespace Galabingus
 
         public void Reverse()
         {
+            Player.PlayerInstance.CameraLock = true;
             offSet.Y = -offSet.Y;
         }
 

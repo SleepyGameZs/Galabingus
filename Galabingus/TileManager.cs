@@ -381,8 +381,9 @@ namespace Galabingus
             {
                 if (Camera.Instance.Position.Y <= GameObject.EndPosition.Y)
                 {
-                    Player.PlayerInstance.CameraLock = false;
+
                     Camera.Instance.Reverse();
+                    Player.PlayerInstance.CameraLock = true;
                     turn = true;
 
                     //backgroundList[1].Position = new Vector2(
