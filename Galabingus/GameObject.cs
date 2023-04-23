@@ -1385,9 +1385,9 @@ namespace Galabingus
         {
             float coordianteXScale = GameObject.Instance.GraphicsDevice.Viewport.Width / width;
             universalScale = coordianteXScale;
-            float coordinateYScale = -EndPosition.Y / height;
-            float startingY = EndPosition.Y;
-            return new Vector2(coordianteXScale * column, coordinateYScale * row + startingY );
+            float coordinateYScale = -EndPosition.Y / height * GameObject.Instance.GraphicsDevice.Viewport.Height / GameObject.Instance.GraphicsDevice.Viewport.Width;
+            float startingY = EndPosition.Y + GameObject.Instance.GraphicsDevice.Viewport.Height;
+            return new Vector2(coordianteXScale * column, coordinateYScale * row + startingY);
         }
 
         public void LoadTileLevelFile(string fileName)
