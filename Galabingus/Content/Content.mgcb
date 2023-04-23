@@ -34,6 +34,12 @@
 /processorParam:TextureFormat=Compressed
 /build:arial_36.spritefont
 
+#begin Background Music.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Background Music.mp3
+
 #begin background.fx
 /importer:EffectImporter
 /processor:EffectProcessor
