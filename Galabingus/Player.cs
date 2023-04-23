@@ -440,16 +440,30 @@ namespace Galabingus
             //Vector2 previousVelocity;
             bool collides = false;
 
-            /*
-            if (!previousCollision &&
+            if (
                 ((PlayerInstance.Position.Y <= 0 || PlayerInstance.Position.X <= 0) ||
                 (PlayerInstance.Position.X + PlayerInstance.Transform.Width * Scale) >= GameObject.Instance.GraphicsDevice.Viewport.Width ||
                 (PlayerInstance.Position.Y + PlayerInstance.Transform.Height * Scale) >= GameObject.Instance.GraphicsDevice.Viewport.Height)
                 )
             {
                 previousVelocity = velocity;
-                acceleration = Vector2.Zero;
-                velocity = Vector2.Zero;
+                if (PlayerInstance.Position.Y <= 0)
+                {
+                    velocity.Y = speed.Y;
+                }
+                else if ((PlayerInstance.Position.Y + PlayerInstance.Transform.Height * Scale) >= GameObject.Instance.GraphicsDevice.Viewport.Height)
+                {
+                    velocity.Y = -speed.Y;
+                }
+                if (PlayerInstance.Position.X <= 0)
+                {
+                    velocity.X = speed.X;
+                }
+                else if ((PlayerInstance.Position.X + PlayerInstance.Transform.Width * Scale) >= GameObject.Instance.GraphicsDevice.Viewport.Width)
+                {
+                    velocity.X = -speed.X;
+                }
+                
                 collides = true;
             }
             else if (previousCollision)
@@ -459,16 +473,15 @@ namespace Galabingus
                 (PlayerInstance.Position.Y + PlayerInstance.Transform.Height * Scale) >= GameObject.Instance.GraphicsDevice.Viewport.Height)
                 ;
             }
-            */
 
             foreach (Collision collision in intercepts)
             {
                 if (collision.other != null && this.Collider.Resolved && ((collision.other as Tile) is Tile))
                 {
-                    previousVelocity = velocity;
-                    acceleration = Vector2.Zero;
-                    velocity = Vector2.Zero;
-                    collides = true;
+                    //previousVelocity = velocity;
+                    //acceleration = Vector2.Zero;
+                    //velocity = Vector2.Zero;
+                    //collides = true;
                 }
             }
 
@@ -640,7 +653,7 @@ namespace Galabingus
                     }
                 }
 
-                if (normPreVelocity != normVelocity && normVelocity != Vector2.Zero && normPreVelocity != Vector2.Zero && previousCollision || !collides)
+                //if (normPreVelocity != normVelocity && normVelocity != Vector2.Zero && normPreVelocity != Vector2.Zero && previousCollision || !collides)
                 {
                     if (!tSet)
                     {
