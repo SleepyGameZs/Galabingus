@@ -33,9 +33,6 @@ namespace Galabingus
         // Bullet Total
         private ushort bulletTotal;
 
-        // Screen data
-        private Vector2 screenSize;
-
         #endregion
 
         #region------------------[ Parameters ]------------------
@@ -52,16 +49,6 @@ namespace Galabingus
                     instance = new BulletManager();
                 }
                 return instance;
-            }
-        }
-
-        /// <summary>
-        /// Used to get screen dimensions for bullets
-        /// </summary>
-        public Vector2 ScreenDimensions
-        {
-            get { 
-                return Instance.screenSize;
             }
         }
 
@@ -87,12 +74,6 @@ namespace Galabingus
 
             content = new List<ushort>();
 
-            // Gets size of screen
-            screenSize = new Vector2(
-                GameObject.Instance.GraphicsDevice.Viewport.Width, // Width of screen
-                GameObject.Instance.GraphicsDevice.Viewport.Height // Height of screen
-                );
-
         }
 
         #endregion
@@ -114,7 +95,7 @@ namespace Galabingus
                                   object creator, 
                                   bool sourceIsBullet)
         {
-            AudioManager.Instance.CallSound("Fire");
+            
 
             // Sets the sprite to use for the bullet for GameObject storage purposes
             ushort sprite;
@@ -122,10 +103,12 @@ namespace Galabingus
             {
                 case BulletType.PlayerNormal:
                     sprite = GameObject.Instance.Content.smallbullet_strip4;
+                    AudioManager.Instance.CallSound("Fire");
                     break;
 
                 case BulletType.EnemyNormal:
                     sprite = GameObject.Instance.Content.enemy_red_bullet_strip4;
+                    AudioManager.Instance.CallSound("Enemy Fire");
                     break;
 
                 case BulletType.BouncingSide:
@@ -134,22 +117,27 @@ namespace Galabingus
 
                 case BulletType.BouncingCenter:
                     sprite = GameObject.Instance.Content.enemy_orange_bullet_90_strip4;
+                    AudioManager.Instance.CallSound("Scatter");
                     break;
 
                 case BulletType.Splitter:
                     sprite = GameObject.Instance.Content.enemy_green_bullet_main_strip4;
+                    AudioManager.Instance.CallSound("Split");
                     break;
 
                 case BulletType.SplitOff:
                     sprite = GameObject.Instance.Content.enemy_green_bullet_split_strip4;
+                    AudioManager.Instance.CallSound("Break");
                     break;
 
                 case BulletType.Wave:
                     sprite = GameObject.Instance.Content.enemy_yellow_bullet_strip3;
+                    AudioManager.Instance.CallSound("Wave");
                     break;
 
                 case BulletType.Seeker:
-                    sprite = GameObject.Instance.Content.enemy_violet_bullet_strip4;
+                    sprite = GameObject.Instance.Content.enemy_purple_bullet_strip4;
+                    AudioManager.Instance.CallSound("Homing");
                     break;
 
                 case BulletType.Explosion:
@@ -161,7 +149,7 @@ namespace Galabingus
                     break;
 
                 case BulletType.Heart:
-                    sprite = GameObject.Instance.Content.heartbullet_strip4;
+                    sprite = GameObject.Instance.Content.heart_bullet_strip4;
                     break;
 
                 default:

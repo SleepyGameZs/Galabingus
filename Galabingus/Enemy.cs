@@ -71,6 +71,9 @@ namespace Galabingus
         private EnemyType bossPhase;
         private int stateTimer;
 
+        // Whether or not this enemy contains health
+        private bool dropHealth;
+
         // Reference to what thing created this enemy (can be null)
         private object creatorReference;
 
@@ -194,6 +197,12 @@ namespace Galabingus
 
         #region ENEMY SPECIFIC PROPERTIES
 
+        public Vector2 Velocity
+        {
+            get { return velocity; }
+            set { velocity = value; }
+        }
+
         /// <summary>
         /// Used to see if this bullet should be destroyed now.
         /// </summary>
@@ -258,6 +267,14 @@ namespace Galabingus
         }
 
         /// <summary>
+        /// Returns the ability this enemy has to figure out what kind of enemy this is
+        /// </summary>
+        public EnemyType Ability
+        {
+            get { return ability; }
+        }
+
+        /// <summary>
         /// Returns the initial Y position of the enemy, for the dictionary
         /// in EnemyManager's keys
         /// </summary>
@@ -281,7 +298,7 @@ namespace Galabingus
         {
             get { 
                 return (this.Position.Y > 0 &&
-                        this.Position.Y < BulletManager.Instance.ScreenDimensions.Y
+                        this.Position.Y < GameObject.Instance.GraphicsDevice.Viewport.Height
                         - this.Transform.Height * this.Scale);
             }
         }
@@ -345,9 +362,6 @@ namespace Galabingus
             // Set base direction
             direction = new Vector2(1, 1);
 
-            // Set velocity to zero at start
-            velocity = Vector2.Zero;
-
             // set randomizer + extra time between next shot
             rng = new Random();
             shotWaitVariance = 9;
@@ -356,10 +370,9 @@ namespace Galabingus
             // Set shot timer with some randomization
             shotTimer = rng.Next(50);
 
-            
-
             // Set if enemy should move
             this.shouldMove = shouldMove;
+            velocity = (this.shouldMove) ? new Vector2(3, 0) : Vector2.Zero;
 
             // Set base position to be stored for dictionary keys
             initialPosition = position;
@@ -369,16 +382,25 @@ namespace Galabingus
             {
                 case EnemyType.Bomb:
                     totalHealth = 1;
+
+                    // Bombs cannot drop health
+                    dropHealth = false;
                     break;
 
                 case EnemyType.Boss:
                     // Set Health
                     totalHealth = 150;
+
+                    // Boss has special health dropping mechanics in Update
+                    dropHealth = true;
                     break;
 
                 default:
                     // Normal health
                     totalHealth = 3;
+
+                    // Does this enemy drop health?
+                    dropHealth = (rng.Next(3) == 1) ? true : false;
                     break;
             }
             currentHealth = totalHealth;
@@ -398,7 +420,7 @@ namespace Galabingus
         {
             // Check if off screen
             bool enemyOnScreen = (this.Position.Y > - this.Transform.Height * this.Scale &&
-                                  this.Position.Y < BulletManager.Instance.ScreenDimensions.Y);
+                                  this.Position.Y < GameObject.Instance.GraphicsDevice.Viewport.Height);
 
             if (ability == EnemyType.Boss)
             { // Position change for the boss, boss will lock to screen once it appears
@@ -418,6 +440,7 @@ namespace Galabingus
                 else
                 { // On screen, set boss effect and no longer moves
                     GameObject.Instance.StartBossEffect();
+                    EnemyManager.Instance.BossOnScreen = true;
                 }
             } 
             else
@@ -504,15 +527,23 @@ namespace Galabingus
                             break;
 
                         case EnemyType.Boss:
-                            // Reverse the camera scroll direction
-                            if (Camera.Instance.Position.Y <= (GameObject.Instance.GraphicsDevice.Viewport.Height * -3))
-                            {
-                                Camera.Instance.Reverse();
-                            }
-
                             // Base data
                             int phaseTime = 0;
                             ushort newSprite = 0;
+
+                            // Health drops every 30 hits dealt to the boss
+                            if (currentHealth % 30 == 0)
+                            {
+                                if (dropHealth == true)
+                                { // Spawns a heart
+                                    BulletSpawning(0, BulletType.Heart, new Vector2(-25, 0), 0);
+                                    dropHealth = false;
+                                }
+                            } 
+                            else
+                            {
+                                dropHealth = true;
+                            }
 
                             // Switch for various attacks
                             switch (bossPhase)
@@ -601,7 +632,7 @@ namespace Galabingus
 
                                 case EnemyType.Seeker:
                                     // Set the new boss sprite
-                                    newSprite = GameObject.Instance.Content.boss_violet_strip4;
+                                    newSprite = GameObject.Instance.Content.boss_purple_strip4;
                                     this.Sprite = GetSpriteFrom(newSprite, enemyNumber);
 
                                     // Shooting
@@ -637,18 +668,21 @@ namespace Galabingus
                     // Movement
                     if (ShouldMove && Player.PlayerInstance.CameraLock)
                     {
-                        this.Position += new Vector2(3 * direction.X, 0);
+                        this.Position += velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
 
                         // Bounce on right side of screen
                         if (this.Position.X + this.Transform.Width * this.Scale >=  // Enemy's right side
-                            EnemyManager.Instance.ScreenDimensions.X)               // Screen's right side
+                            GameObject.Instance.GraphicsDevice.Viewport.Width &&    // Screen's right side
+                            Velocity.X > 0)                                         // Can only occur when facing Right
                         {
+                            this.Position -= velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
                             EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, true);
                         }
 
                         // Bounce on left side of screen
-                        if (this.Position.X <= 0)
+                        if (this.Position.X <= 0 && Velocity.X < 0)
                         {
+                            this.Position -= velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
                             EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, false);
                         }
                     }
@@ -668,6 +702,7 @@ namespace Galabingus
                             BulletSpawning(0, BulletType.BigExplosion, new Vector2(-400, 0), 0);
                             AudioManager.Instance.CallSound("Explosion");
                             GameObject.Instance.StopBossEffect();
+                            EnemyManager.Instance.BossOnScreen = false;
                             break;
 
                         default:
@@ -676,7 +711,7 @@ namespace Galabingus
                             AudioManager.Instance.CallSound("Explosion");
 
                             // Has a chance to spawn hearts
-                            if (rng.Next(3) == 1)
+                            if (dropHealth == true)
                             {
                                 BulletSpawning(0, BulletType.Heart, new Vector2(-25, 0), 0);
                             }
@@ -684,8 +719,9 @@ namespace Galabingus
                     }
                 }
 
-                // Creates currect collider for Enemy
+                // Manage Animation
                 this.Transform = this.Animation.Play(gameTime);
+                this.Animation.AnimationDuration = 0.03f;
 
                 this.Collider.Resolved = true;
 
@@ -727,7 +763,7 @@ namespace Galabingus
                 {
                     if (collision.other != null && !destroy)
                     {
-                        if ((collision.other as Tile) is Tile && Player.PlayerInstance.CameraLock)
+                        if ((collision.other as Tile) is Tile)
                         { // Collided with Tile, see if it is active
 
                             if (((Tile)collision.other).IsActive)
@@ -738,12 +774,14 @@ namespace Galabingus
                                 }
                                 else
                                 { // Normal enemies bounce off tiles
-                                    if (this.Position.X < ((Tile)collision.other).Position.X)
+                                    if (this.Position.X < ((Tile)collision.other).Position.X && Velocity.X > 0)
                                     { // Bounce right
+                                        this.Position -= velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
                                         EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, true);
                                     }
-                                    else
+                                    else if (this.Position.X > ((Tile)collision.other).Position.X && Velocity.X < 0)
                                     { // Bounce left
+                                        this.Position -= velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
                                         EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, false);
                                     }
                                 }
@@ -764,10 +802,6 @@ namespace Galabingus
                         }
                     }
                 }
-
-                // Manage Animation
-                this.Animation.AnimationDuration = 0.03f;
-                this.Transform = this.Animation.Play(gameTime);
 
             } 
             else

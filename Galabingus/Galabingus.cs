@@ -149,8 +149,8 @@ namespace Galabingus
                 //tileManager.CreateObject(GameObject.Instance.Content.grayasteroid_strip1, new Vector2(Player.PlayerInstance.Transform.Width * 2 + 100, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.5f - Player.PlayerInstance.Transform.Height + 100));
 
                 // Sound
-                //AudioManager.Instance.AddSound("Fire", 0.25f, "Bullet Fire", Content);
-                //AudioManager.Instance.AddSound("Explosion", 1f, "Explosion", Content);
+                //AudioManager.Instance.AddSound("Fire", 3f, "Bullet Fire", Content);
+                //AudioManager.Instance.AddSound("Explosion", 0.5f, "Explosion", Content);
             };
 
         }
@@ -219,8 +219,14 @@ namespace Galabingus
             //tileManager.CreateObject(GameObject.Instance.Content.grayasteroid_strip1, new Vector2(Player.PlayerInstance.Transform.Width * 2 + 100, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.5f - Player.PlayerInstance.Transform.Height + 100));
 
             // Sound
-            AudioManager.Instance.AddSound("Fire", 0.25f, "Bullet Fire", Content);
-            AudioManager.Instance.AddSound("Explosion", 1f, "Explosion", Content);
+            AudioManager.Instance.AddSound("Fire", 0.1f, "Bullet Fire", Content);
+            AudioManager.Instance.AddSound("Enemy Fire", 0.75f, "Enemy Fire", Content);
+            AudioManager.Instance.AddSound("Homing", 0.75f, "Homing Shot", Content);
+            AudioManager.Instance.AddSound("Scatter", 0.25f, "Scatter Shot", Content);
+            AudioManager.Instance.AddSound("Split", 0.75f, "Split Shot", Content);
+            AudioManager.Instance.AddSound("Break", 0.1f, "Split Shot Break", Content);
+            AudioManager.Instance.AddSound("Wave", 0.75f, "Wave Shot", Content);
+            AudioManager.Instance.AddSound("Explosion", 0.1f, "Explosion", Content);
         }
 
         protected override void Update(GameTime gameTime)

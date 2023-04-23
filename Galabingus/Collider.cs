@@ -44,6 +44,7 @@ namespace Galabingus
         public Vector2 positionOfCollision; // Point of the collision Default: (-1,-1)
         public Vector2 position;            // Position of which to avoid the collison Default (-1,-1)
         public Vector2 mtv;
+        public Vector2 overlap;
 
         /// <summary>
         ///  Base collision, default
@@ -69,6 +70,7 @@ namespace Galabingus
             this.positionOfCollision = new Vector2(-1, -1);
             this.position = new Vector2(-1, -1);
             this.mtv = new Vector2(-1, -1);
+            this.overlap = new Vector2(-1, -1);
         }
 
         /// <summary>
@@ -83,7 +85,8 @@ namespace Galabingus
             GameObject other,
             Vector2 positionOfCollision,
             Vector2 position,
-            Vector2 mtv
+            Vector2 mtv,
+            Vector2 overlap
         )
         {
             this.self = self;
@@ -91,6 +94,7 @@ namespace Galabingus
             this.positionOfCollision = positionOfCollision;
             this.position = position;
             this.mtv = mtv;
+            this.overlap = overlap;
         }
     }
 
@@ -484,11 +488,12 @@ namespace Galabingus
                 shiftedScale.Y = resolution / transform.Height;
             }
 
-            if (shiftedScale.X > 0.06f || shiftedScale.Y > 0.06f)
+            if (shiftedScale.X > 0.07f || shiftedScale.Y > 0.07f)
             {
-                shiftedScale.X = 0.06f;
-                shiftedScale.Y = 0.06f;
+                shiftedScale.X = 0.07f;
+                shiftedScale.Y = 0.07f;
             }
+
 
             // Create transform from scale and position
             this.transform = new Rectangle(
@@ -522,7 +527,7 @@ namespace Galabingus
                         copyOfTarget,
                         new Vector2(position.X, position.Y),
                         new Rectangle(0, 0, this.transform.Width, this.transform.Height),
-                        Color.Blue,
+                        Color.HotPink,
                         0.0f,
                         Vector2.Zero,
                         new Vector2(1 / shiftedScale.X, 1 / shiftedScale.Y),
@@ -623,7 +628,7 @@ namespace Galabingus
                                     sprite,
                                     new Vector2(0, 0),
                                     transform,
-                                    Color.Blue,
+                                    Color.HotPink,
                                     0.0f,
                                     Vector2.Zero,
                                     this.Scale,
@@ -671,7 +676,8 @@ namespace Galabingus
                                     collidersR[colliderIndex].self,
                                     other[0],
                                     other[1],
-                                    other[2]
+                                    other[2],
+                                    other[3]
                                 ));
                             }
                         }
@@ -806,7 +812,8 @@ namespace Galabingus
                                     intercept.X, // Position to avoid intercept X
                                     intercept.Y  // Position to avoid intercept Y
                                 ),
-                                colldierCurrentMTV
+                                colldierCurrentMTV,
+                                new Vector2(Math.Abs(x2 - x1), Math.Abs(y2 - x1))
                             };
                         }
                     }

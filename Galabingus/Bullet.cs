@@ -85,6 +85,9 @@ namespace Galabingus
         private object creator;
         private Targets target;
 
+        // Bouncing Bullet Collision
+        private bool didBounce;
+
         // Collision layer of the bullet
         private CollisionGroup collisionLayer;
 
@@ -332,7 +335,9 @@ namespace Galabingus
 
             // Set Velocity
             velocity = Vector2.Normalize(direction);
-            
+
+            // Bouncing on Tile collision
+            didBounce = false;
 
             // Set Empty hit objects list
             hitObjects = new List<object>();
@@ -397,8 +402,8 @@ namespace Galabingus
                     break;
 
                 case BulletType.Seeker:
-                    // Violet Enemy: Tracks the player, however it eventually loses focus
-                    GameObject.Instance.Content = GameObject.Instance.Content.enemy_violet_bullet_strip4;
+                    // Purple Enemy: Tracks the player, however it eventually loses focus
+                    GameObject.Instance.Content = GameObject.Instance.Content.enemy_purple_bullet_strip4;
 
                     // Can target: Player
                     target = Targets.Player;
@@ -423,8 +428,8 @@ namespace Galabingus
                     break;
 
                 case BulletType.Heart:
-                    // Violet Enemy: Tracks the player, however it eventually loses focus
-                    GameObject.Instance.Content = GameObject.Instance.Content.heartbullet_strip4;
+                    // Healing Heart: Tracks the player, however it eventually loses focus
+                    GameObject.Instance.Content = GameObject.Instance.Content.heart_bullet_strip4;
 
                     // Can target: Player
                     target = Targets.Player;
@@ -467,15 +472,15 @@ namespace Galabingus
                     currentPosition = SetPosition(gameTime, 3, false);
 
                     // Check for wall collison
-                    bool LeftWallHit = this.Position.X < Sprite.Width;
-                    bool RightWallHit = this.Position.X > BulletManager.Instance.ScreenDimensions.X - 
-                                        this.Transform.Width * this.Scale;
+                    bool LeftWallHit = this.Position.X < Sprite.Width - this.Transform.Width * this.Scale;
+                    bool RightWallHit = this.Position.X > GameObject.Instance.GraphicsDevice.Viewport.Width;
 
                     
                     // Hit left wall
                     if (LeftWallHit)
                     { // Flip bullet
                         velocity.X *= -1;
+                        Position = new Vector2(Position.X + this.Transform.Width * this.Scale, Position.Y);
 
                         // Set the new boss sprite
                         ushort newSprite = GameObject.Instance.Content.enemy_orange_bullet_135_strip4;
@@ -486,6 +491,7 @@ namespace Galabingus
                     if (RightWallHit)
                     { // Flip bullet
                         velocity.X *= -1;
+                        Position = new Vector2(Position.X - this.Transform.Width * this.Scale, Position.Y);
 
                         // Set the new boss sprite
                         ushort newSprite = GameObject.Instance.Content.enemy_orange_bullet_135_strip4;
@@ -624,7 +630,7 @@ namespace Galabingus
                                                              ));
 
                     // Set Current Position
-                    currentPosition = SetPosition(gameTime, 3, false);
+                    currentPosition = SetPosition(gameTime, 4, false);
 
                     break;
 
@@ -640,7 +646,7 @@ namespace Galabingus
 
             // If the bullet is off the screen, destroy it
             bool bulletOffScreen = this.Position.Y < 0 ||
-                                   this.Position.Y > BulletManager.Instance.ScreenDimensions.Y;
+                                   this.Position.Y > GameObject.Instance.GraphicsDevice.Viewport.Height;
 
             if (bulletOffScreen && ability != BulletType.Explosion && ability != BulletType.BigExplosion)
             {
@@ -712,6 +718,39 @@ namespace Galabingus
                             // Run tile effects on active tile
                             switch (ability)
                             {
+                                case BulletType.BouncingSide:
+                                    Vector2 overlapZone = collision.overlap;
+                                    //System.Diagnostics.Debug.WriteLine("eee");
+                                    //System.Diagnostics.Debug.WriteLine(overlapZone.X);
+                                    //System.Diagnostics.Debug.WriteLine(overlapZone.Y);
+                                    if (didBounce == false)
+                                    {
+                                        didBounce = true;
+
+                                        // Pove position over from tile
+                                        if (velocity.X > 1)
+                                        { // Left
+                                            Position = new Vector2(Position.X - this.Transform.Width * this.Scale, Position.Y);
+                                            ushort newSprite = GameObject.Instance.Content.enemy_orange_bullet_135_strip4;
+                                            this.Sprite = GetSpriteFrom(newSprite, bulletNumber);
+                                        }
+                                        else if (velocity.X < 1)
+                                        { // Right
+                                            ushort newSprite = GameObject.Instance.Content.enemy_orange_bullet_135_strip4;
+                                            this.Sprite = GetSpriteFrom(newSprite, bulletNumber);
+                                            //Position = new Vector2(Position.X + this.Transform.Width * this.Scale, Position.Y);
+                                        }
+
+                                        // Flip velocity
+                                        velocity.X *= -1;
+                                    } 
+                                    else
+                                    { // Head on collision, destroy bullet
+                                        destroy = true;
+                                        velocity = Vector2.Zero;
+                                    }
+                                    break;
+
                                 case BulletType.Explosion:
                                     // Not destroyed nor does it affect tiles
                                     break;
@@ -728,6 +767,10 @@ namespace Galabingus
                                     velocity = Vector2.Zero;
                                     break;
                             }
+                        } 
+                        else
+                        {
+                            didBounce = false;
                         }
                     }
 
@@ -746,7 +789,7 @@ namespace Galabingus
                                             break;
 
                                         case BulletType.Wave:
-                                            Player.PlayerInstance.Health = Player.PlayerInstance.Health - 3f;
+                                            Player.PlayerInstance.Health = Player.PlayerInstance.Health - 2f;
                                             break;
 
                                         case BulletType.Heart:

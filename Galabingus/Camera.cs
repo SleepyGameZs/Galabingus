@@ -143,14 +143,14 @@ namespace Galabingus
 
         public void Reverse()
         {
-            offSet.Y = -initalCameraScroll;
+            offSet.Y = -offSet.Y;
         }
 
         public void Update(GameTime gameTime)
         {
             Camera.Instance.position += offSet;
 
-            Camera.Instance.offSet.Y = MathHelper.Lerp(Camera.Instance.offSet.Y, Camera.Instance.offSet.Y*1.2f, 0.1f);
+            //Camera.Instance.offSet.Y = MathHelper.Lerp(Camera.Instance.offSet.Y, Camera.Instance.offSet.Y*1.2f, 0.1f);
 
             if (Camera.Instance.OffSet.Y > 2.5)
             {
@@ -175,6 +175,10 @@ namespace Galabingus
             {
                 Player.PlayerInstance.Health = 0;
             }
+            //Debug.WriteLine(EnemyManager.Instance.EnemiesOnScreen);
+            //Debug.WriteLine(offSet.Y);
+            //Debug.WriteLine(position.Y);
+            //Debug.WriteLine(GameObject.EndPosition.Y);
         }
 
         public void Reset()

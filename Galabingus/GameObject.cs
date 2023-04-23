@@ -100,11 +100,12 @@ namespace Galabingus
         private ushort contentName;
         private CollisionGroup collisionGroup;
         private static List<Vector2> cameraStopPositions;
-        private static float universalScale;
+        private static float universalScaleX;
         private static float redShade;
         private static float timeShadeEffect;
         private static bool flipSine;
         private static bool bossEffectIsActive;
+        private static float universalScaleY;
 
         public struct GameObjectTrie<T>
         {
@@ -553,6 +554,14 @@ namespace Galabingus
             }
         }
 
+        public static Vector2 EndPosition
+        {
+            get
+            {
+                return new Vector2(0, GameObject.Instance.GraphicsDevice.Viewport.Height * -4);
+            }
+        }
+        
         public Texture2D GetSprite(ushort instancePass)
         {
 #nullable disable
@@ -1112,20 +1121,22 @@ namespace Galabingus
             newCollider.Resolved = true;
             newCollider.self = this;
             SetCollider(instanceNumber, newCollider);
+
         }
 
         public float PostScaleRatio()
         {
-            System.Diagnostics.Debug.WriteLine("EEEEAA " + this.GetTransform(instance).Width);
-            System.Diagnostics.Debug.WriteLine("FFFEEEE " + universalScale);
-            return (this.GetTransform(instance).Width > this.GetTransform(instance).Height ? universalScale / this.GetTransform(instance).Width : universalScale / this.GetTransform(instance).Height);
+            //System.Diagnostics.Debug.WriteLine("EEEEAA " + this.GetTransform(instance).Width);
+            //System.Diagnostics.Debug.WriteLine("FFFEEEE " + universalScale);
+            return ((this.GetTransform(instance).Width < this.GetTransform(instance).Height) ? universalScaleX / this.GetTransform(instance).Width * GameObject.Instance.GraphicsDevice.Viewport.Width / GameObject.Instance.GraphicsDevice.Viewport.Height : universalScaleY / this.GetTransform(instance).Height * GameObject.Instance.GraphicsDevice.Viewport.Height / GameObject.Instance.GraphicsDevice.Viewport.Width);
         }
 
         public Vector2 PostScaleRatio(bool isVector2)
         {
             return new Vector2(
-                universalScale / this.GetTransform(instance).Width,
-                universalScale / this.GetTransform(instance).Height
+                universalScaleX / this.GetTransform(instance).Width * GameObject.Instance.GraphicsDevice.Viewport.Width / GameObject.Instance.GraphicsDevice.Viewport.Height,
+                universalScaleY / this.GetTransform(instance).Width * GameObject.Instance.GraphicsDevice.Viewport.Width / GameObject.Instance.GraphicsDevice.Viewport.Height
+            //universalScaleY / this.GetTransform(instance).Height * GameObject.Instance.GraphicsDevice.Viewport.Height / GameObject.Instance.GraphicsDevice.Viewport.Width
             );
         }
 
@@ -1161,6 +1172,8 @@ namespace Galabingus
             flipSine = false;
             cameraStopPositions = new List<Vector2>();
             flipSine = false;
+            universalScaleX = 1;
+            universalScaleY = 1;
             return new GameObject();
         }
 
@@ -1198,6 +1211,21 @@ namespace Galabingus
             return GameObject.Instance.collisionGroups[contentName][instance];
         }
 
+        public Rectangle Transform
+        {
+            get
+            {
+                return GetTransform(instance);
+            }
+        }
+
+        public Vector2 Position
+        {
+            get
+            {
+                return GetPosition(instance);
+            }
+        }
 
         public TypeCode GetTypeCode()
         {
@@ -1360,11 +1388,13 @@ namespace Galabingus
 
         public Vector2 CalculateLevelEditorPositions(int width, int height, int row, int column)
         {
-            float coordianteXScale = GameObject.Instance.GraphicsDevice.Viewport.Width / width;
-            universalScale = coordianteXScale;
-            float coordinateYScale = GameObject.Instance.GraphicsDevice.Viewport.Height / height * 4;
-            float startingY = GameObject.Instance.GraphicsDevice.Viewport.Height * -4;
-            return new Vector2(coordianteXScale * column, coordinateYScale * row + startingY);
+            float coordianteXScale = GameObject.Instance.GraphicsDevice.Viewport.Width / width * GameObject.Instance.GraphicsDevice.Viewport.Width/GameObject.Instance.GraphicsDevice.Viewport.Height;
+            
+            float coordinateYScale = -EndPosition.Y / height * GameObject.Instance.GraphicsDevice.Viewport.Height / GameObject.Instance.GraphicsDevice.Viewport.Width;
+            float startingY = EndPosition.Y;
+            universalScaleX = coordianteXScale;
+            universalScaleY = coordinateYScale;
+            return new Vector2(coordianteXScale * column, coordinateYScale * row + startingY + GameObject.Instance.GraphicsDevice.Viewport.Height);
         }
 
         public void LoadTileLevelFile(string fileName)

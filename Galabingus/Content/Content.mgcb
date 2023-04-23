@@ -124,6 +124,18 @@
 /processorParam:TextureFormat=Color
 /build:Boss/boss_orange_strip4.png
 
+#begin Boss/boss_purple_strip4.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Boss/boss_purple_strip4.png
+
 #begin Boss/boss_red_strip4.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -135,18 +147,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Boss/boss_red_strip4.png
-
-#begin Boss/boss_violet_strip4.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Boss/boss_violet_strip4.png
 
 #begin Boss/boss_yellow_strip4.png
 /importer:TextureImporter
@@ -178,6 +178,18 @@
 /processorParam:Quality=Best
 /build:Bullet Fire.mp3
 
+#begin Bullets/enemy_purple_bullet_strip4.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Bullets/enemy_purple_bullet_strip4.png
+
 #begin Bullets/enemy_red_bullet_strip4.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -189,18 +201,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Bullets/enemy_red_bullet_strip4.png
-
-#begin Bullets/enemy_violet_bullet_strip4.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Bullets/enemy_violet_bullet_strip4.png
 
 #begin Bullets/enemy_yellow_bullet_strip3.png
 /importer:TextureImporter
@@ -237,6 +237,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Bullets/Green/enemy_green_bullet_split_strip4.png
+
+#begin Bullets/heart_bullet_strip4.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Bullets/heart_bullet_strip4.png
 
 #begin Bullets/Laser/laser_bullet_full_strip11.png
 /importer:TextureImporter
@@ -520,6 +532,12 @@
 /processorParam:DebugMode=Auto
 /build:Collider.fx
 
+#begin Enemy Fire.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Enemy Fire.mp3
+
 #begin Enemy/enemy_green_strip4.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -544,6 +562,18 @@
 /processorParam:TextureFormat=Color
 /build:Enemy/enemy_orange_strip4.png
 
+#begin Enemy/enemy_purple_strip4.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Enemy/enemy_purple_strip4.png
+
 #begin Enemy/enemy_red_strip4.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -555,18 +585,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Enemy/enemy_red_strip4.png
-
-#begin Enemy/enemy_violet_strip4.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Enemy/enemy_violet_strip4.png
 
 #begin Enemy/enemy_yellow_strip4.png
 /importer:TextureImporter
@@ -658,17 +676,11 @@
 /processorParam:TextureFormat=Color
 /build:heart_strip1.png
 
-#begin heartbullet_strip4.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:heartbullet_strip4.png
+#begin Homing Shot.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Homing Shot.mp3
 
 #begin menubackground_strip1.png
 /importer:TextureImporter
@@ -718,6 +730,12 @@
 /processorParam:TextureFormat=Color
 /build:Player/player_white_strip4.png
 
+#begin Scatter Shot.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Scatter Shot.mp3
+
 #begin shaders.fx
 /importer:EffectImporter
 /processor:EffectProcessor
@@ -760,6 +778,18 @@
 /processorParam:TextureFormat=Color
 /build:space_only_background_strip1.png
 
+#begin Split Shot Break.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Split Shot Break.mp3
+
+#begin Split Shot.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Split Shot.mp3
+
 #begin tempMenu_strip1.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -783,6 +813,12 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:tile_strip26.png
+
+#begin Wave Shot.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Wave Shot.mp3
 
 #begin white_pixel_strip1.png
 /importer:TextureImporter

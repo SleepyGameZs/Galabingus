@@ -198,7 +198,7 @@ namespace Galabingus
         {
             Tile tile = new Tile(content, tileInstance, 1, true);
             tile.Position = position;
-            tile.ScaleVector = new Vector2(tile.Scale, tile.Scale);
+            //tile.ScaleVector = new Vector2(tile.Scale, tile.Scale);
             tileList.Add(tile);
             tileInstance++;
         }
@@ -211,7 +211,7 @@ namespace Galabingus
         {
             Tile tile = new Tile(content, tileInstance, spriteNumber);
             tile.Position = position;
-            tile.ScaleVector = new Vector2(tile.Scale, tile.Scale);
+            //tile.ScaleVector = new Vector2(til, tile.Scale);
             tileList.Add(tile);
             tileInstance++;
         }
@@ -287,8 +287,66 @@ namespace Galabingus
                         {
                             if (((collision.other as Player) is Player) && collision.self is Tile)
                             {
-                                Player.PlayerInstance.Position += collision.mtv;
-                                Player.PlayerInstance.Collider.Resolved = true;
+                                Rectangle playerHitbox = Player.PlayerInstance.Transform;
+                                Rectangle otherHitbox = tileList[i].Transform;
+                                List<Rectangle> intersecting = new List<Rectangle>();
+
+                                playerHitbox.X = (int)Player.PlayerInstance.Position.X;
+                                playerHitbox.Y = (int)Player.PlayerInstance.Position.Y;
+                                otherHitbox.X = (int)tileList[i].Position.X;
+                                otherHitbox.Y = (int)tileList[i].Position.Y;
+
+
+                                playerHitbox.Width = playerHitbox.Width * (int)Player.PlayerInstance.Scale;
+                                playerHitbox.Height = playerHitbox.Height * (int)Player.PlayerInstance.Scale;
+                                otherHitbox.Width = (int)tileList[i].ScaleVector.X * otherHitbox.Width;
+                                otherHitbox.Height = (int)tileList[i].ScaleVector.Y * otherHitbox.Height;
+
+                                // Check for any collisions
+                                if (playerHitbox.Intersects(otherHitbox))
+                                {
+                                    intersecting.Add(otherHitbox);
+                                }
+
+                                // Adjust player position based on the player intersection
+                                foreach (Rectangle brick in intersecting)
+                                {
+                                    Rectangle collisionBox = Rectangle.Intersect(playerHitbox, brick);
+
+                                    // Y adjustment
+                                    if (collisionBox.Width > collisionBox.Height)
+                                    {
+                                        if (playerHitbox.Y < brick.Y)
+                                        {
+                                            Player.PlayerInstance.Position -= new Vector2(0, collisionBox.Height);
+                                            Player.PlayerInstance.Translation = new Vector2(Player.PlayerInstance.Translation.X, 0);
+                                        }
+                                        else
+                                        {
+                                            Player.PlayerInstance.Position += new Vector2(0, collisionBox.Height);
+                                            Player.PlayerInstance.Translation = new Vector2(Player.PlayerInstance.Translation.X, 0);
+                                        }
+                                    }
+                                    // X adjustment
+                                    else
+                                    {
+                                        if (playerHitbox.X < brick.X)
+                                        {
+                                            Player.PlayerInstance.Position -= new Vector2(collisionBox.Width, 0);
+                                            Player.PlayerInstance.Translation = new Vector2(0, Player.PlayerInstance.Translation.Y);
+                                        }
+                                        else
+                                        {
+                                            Player.PlayerInstance.Position += new Vector2(collisionBox.Width, 0);
+                                            Player.PlayerInstance.Translation = new Vector2(0, Player.PlayerInstance.Translation.Y);
+                                        }
+                                    }
+
+                                    // Update player position
+                                    Player.PlayerInstance.Translation = new Vector2(playerHitbox.X, Player.PlayerInstance.Translation.Y);
+                                    Player.PlayerInstance.Translation = new Vector2(Player.PlayerInstance.Translation.X, playerHitbox.Y);
+                                    Player.PlayerInstance.Collider.Resolved = true;
+                                }
                             }
                         }
                     }
@@ -311,30 +369,25 @@ namespace Galabingus
             {
                 backgroundList[i].UpdateBackground(gameTime);
             }
-
             // Scroll the camrea when the enemies are not on the screeen
             if (EnemyManager.Instance.EnemiesOnScreen == 0)
             {
-                if (counter != 4)
-                {
-                    Camera.Instance.Start();
-                }
-                if (turn == false)
-                {
-                    if (backgroundList[1].Position.Y >= GameObject.Instance.GraphicsDevice.Viewport.Height)
-                    {
-                        if (counter == 3)
-                        {
-                            Player.PlayerInstance.CameraLock = false;
-                            Camera.Instance.Reverse();
-                            turn = true;
-                        }
+                Camera.Instance.Start();
 
-                        counter++;
-                        backgroundList[1].Position = new Vector2(
-                            0, backgroundList[1].Position.Y - GameObject.Instance.GraphicsDevice.Viewport.Height * 4
-                        );
-                    }
+                
+            }
+
+            if (turn == false)
+            {
+                if (Camera.Instance.Position.Y <= GameObject.EndPosition.Y)
+                {
+                    Player.PlayerInstance.CameraLock = false;
+                    Camera.Instance.Reverse();
+                    turn = true;
+
+                    //backgroundList[1].Position = new Vector2(
+                    //0, backgroundList[1].Position.Y - GameObject.Instance.GraphicsDevice.Viewport.Height * 4
+                    //);
                 }
             }
             #endregion
