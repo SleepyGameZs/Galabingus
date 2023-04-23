@@ -582,7 +582,7 @@ namespace Galabingus
 
                 case GameState.GameOver:
 
-                    System.Diagnostics.Debug.WriteLine("hello");
+                    //System.Diagnostics.Debug.WriteLine("hello");
 
                     if (SingleKeyPress(Keys.Enter))
                     {
