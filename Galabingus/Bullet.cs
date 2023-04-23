@@ -308,9 +308,24 @@ namespace Galabingus
             this.Animation.AnimationDuration = 0.03f;
 
             // Set Location Data
-            this.Scale = Player.PlayerInstance.Scale;
-            this.Position = new Vector2(position.X + Transform.Width * Scale / 1.5f,
+            if (ability == BulletType.BigExplosion)
+            {
+                this.Scale = Player.PlayerInstance.Scale * 1.3f;
+                this.Position = new Vector2(position.X + Transform.Width * Scale / 2.5f - 50,
                                         position.Y - Transform.Height * Scale / 2.0f);
+            }
+            else if (ability == BulletType.Explosion)
+            {
+                this.Scale = Player.PlayerInstance.Scale * 1.3f;
+                this.Position = new Vector2(position.X + Transform.Width * Scale / 2.5f,
+                                        position.Y - Transform.Height * Scale / 2.0f);
+            } 
+            else
+            {
+                this.Scale = Player.PlayerInstance.Scale;
+                this.Position = new Vector2(position.X + Transform.Width * Scale / 1.5f,
+                                        position.Y - Transform.Height * Scale / 2.0f);
+            }
 
             #endregion
 
@@ -759,6 +774,10 @@ namespace Galabingus
                                 case BulletType.BigExplosion:
                                     // Destroy the touched tiles
                                     ((Tile)collision.other).IsActive = false;
+                                    break;
+
+                                case BulletType.Heart:
+                                    // Ignorews tiles
                                     break;
 
                                 default:
