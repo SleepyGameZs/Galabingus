@@ -488,10 +488,16 @@ namespace Galabingus
                 shiftedScale.Y = resolution / transform.Height;
             }
 
-            if (shiftedScale.X > 0.06f || shiftedScale.Y > 0.06f)
+            if (shiftedScale.X < 0.06f || shiftedScale.Y < 0.06f)
             {
                 shiftedScale.X = 0.06f;
                 shiftedScale.Y = 0.06f;
+            }
+
+            if (shiftedScale.X > 0.09f || shiftedScale.Y > 0.09f)
+            {
+                shiftedScale.X = 0.09f;
+                shiftedScale.Y = 0.09f;
             }
 
             // Create transform from scale and position
@@ -526,7 +532,7 @@ namespace Galabingus
                         copyOfTarget,
                         new Vector2(position.X, position.Y),
                         new Rectangle(0, 0, this.transform.Width, this.transform.Height),
-                        Color.Blue,
+                        Color.HotPink,
                         0.0f,
                         Vector2.Zero,
                         new Vector2(1 / shiftedScale.X, 1 / shiftedScale.Y),
