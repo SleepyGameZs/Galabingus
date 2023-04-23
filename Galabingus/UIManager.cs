@@ -194,6 +194,8 @@ namespace Galabingus
         bool displayMenu;
         List<UIElement> currentMenu;
 
+        private bool prevBossOnScreen;
+
         #endregion
 
         #region Properties
@@ -302,7 +304,8 @@ namespace Galabingus
             height = gr.GraphicsDevice.Viewport.Height;
 
             fadeValue = 0.00009;
-        }
+            prevBossOnScreen = false;
+    }
 
         #endregion
 
@@ -531,11 +534,12 @@ namespace Galabingus
                     //go to player wins
                     
                     
-                    if(!EnemyManager.Instance.BossOnScreen)
+                    if(!EnemyManager.Instance.BossOnScreen && prevBossOnScreen)
                     {
                         gs = GameState.PlayerWins;
                     }
                     
+                    prevBossOnScreen = EnemyManager.Instance.BossOnScreen;
 
                     //if player health = 0
                     //go to player dead
