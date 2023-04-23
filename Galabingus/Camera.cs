@@ -166,7 +166,7 @@ namespace Galabingus
             }
             if (cameraLock == true)
             {
-                Player.PlayerInstance.CameraLock = true;
+                Player.PlayerInstance.CameraLock = false;
                 Camera.Instance.offSet.Y = Player.PlayerInstance.Velocity == Vector2.Zero ? Vector2.Zero.Y :
                     Player.PlayerInstance.Translation.Y;
                 Player.PlayerInstance.Position -= new Vector2(0, Camera.instance.offSet.Y);
