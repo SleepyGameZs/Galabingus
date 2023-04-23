@@ -1133,11 +1133,12 @@ namespace Galabingus
 
         public Vector2 PostScaleRatio(bool isVector2)
         {
+            float fixedScaler = 1.0f;
             return new Vector2(
                 universalScaleX / this.GetTransform(instance).Width,
                 universalScaleY / this.GetTransform(instance).Height
             //universalScaleY / this.GetTransform(instance).Height * GameObject.Instance.GraphicsDevice.Viewport.Height / GameObject.Instance.GraphicsDevice.Viewport.Width
-            );
+            ) * fixedScaler;
         }
 
         public System.Type GameObjectType
@@ -1388,13 +1389,25 @@ namespace Galabingus
 
         public Vector2 CalculateLevelEditorPositions(float width, float height, float row, float column)
         {
+            float fixedScaler = 1.5f;
+            //width = width / fixedScaler;
+            //height = height / fixedScaler;
+
             float coordianteXScale = GameObject.Instance.GraphicsDevice.Viewport.Width / width;
-            
             float coordinateYScale = (-EndPosition.Y + GameObject.Instance.GraphicsDevice.Viewport.Height) / height;
             float startingY = EndPosition.Y;
-            universalScaleX = coordianteXScale;
-            universalScaleY = coordinateYScale;
-            return new Vector2(coordianteXScale * column, coordinateYScale * row + startingY);
+
+            //coordinateYScale *= fixedScaler;
+            startingY *= fixedScaler;
+            float leftShift = coordianteXScale * width * (1 - fixedScaler) * 0.5f;
+            float topShift = (GameObject.Instance.GraphicsDevice.Viewport.Height / height) * height * (1 - fixedScaler) * 0.5f;
+            universalScaleX = coordianteXScale * fixedScaler;
+            universalScaleY = coordinateYScale * fixedScaler;
+
+            coordianteXScale *= fixedScaler;
+            coordinateYScale *= fixedScaler;
+
+            return new Vector2(coordianteXScale * column + leftShift, coordinateYScale * row + startingY + topShift);
         }
 
         public void LoadTileLevelFile(string fileName)
