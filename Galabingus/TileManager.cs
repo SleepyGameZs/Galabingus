@@ -266,7 +266,7 @@ namespace Galabingus
             #region Object Update
             for (int i = 0; i < tileList.Count; i++)
             {
-                if (tileList[i].IsActive && !Player.PlayerInstance.GodMode)
+                if (tileList[i].IsActive)
                 {
                     tileList[i].Collider.Resolved = true;
                     List<Collision> collisions = tileList[i].Collider.UpdateTransform(
@@ -281,71 +281,74 @@ namespace Galabingus
                         tileList[i].InstanceNumber
                     );
 
-                    foreach (Collision collision in collisions)
+                    if (!Player.PlayerInstance.GodMode)
                     {
-                        if (collision.other != null)
+                        foreach (Collision collision in collisions)
                         {
-                            if (((collision.other as Player) is Player) && collision.self is Tile)
+                            if (collision.other != null)
                             {
-                                Rectangle playerHitbox = Player.PlayerInstance.Transform;
-                                Rectangle otherHitbox = tileList[i].Transform;
-                                List<Rectangle> intersecting = new List<Rectangle>();
-
-                                playerHitbox.X = (int)Player.PlayerInstance.Position.X;
-                                playerHitbox.Y = (int)Player.PlayerInstance.Position.Y;
-                                otherHitbox.X = (int)tileList[i].Position.X;
-                                otherHitbox.Y = (int)tileList[i].Position.Y;
-
-
-                                playerHitbox.Width = playerHitbox.Width * (int)Player.PlayerInstance.Scale;
-                                playerHitbox.Height = playerHitbox.Height * (int)Player.PlayerInstance.Scale;
-                                otherHitbox.Width = (int)tileList[i].ScaleVector.X * otherHitbox.Width;
-                                otherHitbox.Height = (int)tileList[i].ScaleVector.Y * otherHitbox.Height;
-
-                                // Check for any collisions
-                                if (playerHitbox.Intersects(otherHitbox))
+                                if (((collision.other as Player) is Player) && collision.self is Tile)
                                 {
-                                    intersecting.Add(otherHitbox);
-                                }
+                                    Rectangle playerHitbox = Player.PlayerInstance.Transform;
+                                    Rectangle otherHitbox = tileList[i].Transform;
+                                    List<Rectangle> intersecting = new List<Rectangle>();
 
-                                // Adjust player position based on the player intersection
-                                foreach (Rectangle brick in intersecting)
-                                {
-                                    Rectangle collisionBox = Rectangle.Intersect(playerHitbox, brick);
+                                    playerHitbox.X = (int)Player.PlayerInstance.Position.X;
+                                    playerHitbox.Y = (int)Player.PlayerInstance.Position.Y;
+                                    otherHitbox.X = (int)tileList[i].Position.X;
+                                    otherHitbox.Y = (int)tileList[i].Position.Y;
 
-                                    // Y adjustment
-                                    if (collisionBox.Width > collisionBox.Height)
+
+                                    playerHitbox.Width = playerHitbox.Width * (int)Player.PlayerInstance.Scale;
+                                    playerHitbox.Height = playerHitbox.Height * (int)Player.PlayerInstance.Scale;
+                                    otherHitbox.Width = (int)tileList[i].ScaleVector.X * otherHitbox.Width;
+                                    otherHitbox.Height = (int)tileList[i].ScaleVector.Y * otherHitbox.Height;
+
+                                    // Check for any collisions
+                                    if (playerHitbox.Intersects(otherHitbox))
                                     {
-                                        if (playerHitbox.Y < brick.Y)
-                                        {
-                                            Player.PlayerInstance.Position -= new Vector2(0, collisionBox.Height);
-                                            Player.PlayerInstance.Translation = new Vector2(Player.PlayerInstance.Translation.X, 0);
-                                        }
-                                        else
-                                        {
-                                            Player.PlayerInstance.Position += new Vector2(0, collisionBox.Height);
-                                            Player.PlayerInstance.Translation = new Vector2(Player.PlayerInstance.Translation.X, 0);
-                                        }
-                                    }
-                                    // X adjustment
-                                    else
-                                    {
-                                        if (playerHitbox.X < brick.X)
-                                        {
-                                            Player.PlayerInstance.Position -= new Vector2(collisionBox.Width, 0);
-                                            Player.PlayerInstance.Translation = new Vector2(0, Player.PlayerInstance.Translation.Y);
-                                        }
-                                        else
-                                        {
-                                            Player.PlayerInstance.Position += new Vector2(collisionBox.Width, 0);
-                                            Player.PlayerInstance.Translation = new Vector2(0, Player.PlayerInstance.Translation.Y);
-                                        }
+                                        intersecting.Add(otherHitbox);
                                     }
 
-                                    // Update player position
-                                    Player.PlayerInstance.Translation = new Vector2(playerHitbox.X, Player.PlayerInstance.Translation.Y);
-                                    Player.PlayerInstance.Translation = new Vector2(Player.PlayerInstance.Translation.X, playerHitbox.Y);
-                                    Player.PlayerInstance.Collider.Resolved = true;
+                                    // Adjust player position based on the player intersection
+                                    foreach (Rectangle brick in intersecting)
+                                    {
+                                        Rectangle collisionBox = Rectangle.Intersect(playerHitbox, brick);
+
+                                        // Y adjustment
+                                        if (collisionBox.Width > collisionBox.Height)
+                                        {
+                                            if (playerHitbox.Y < brick.Y)
+                                            {
+                                                Player.PlayerInstance.Position -= new Vector2(0, collisionBox.Height);
+                                                Player.PlayerInstance.Translation = new Vector2(Player.PlayerInstance.Translation.X, 0);
+                                            }
+                                            else
+                                            {
+                                                Player.PlayerInstance.Position += new Vector2(0, collisionBox.Height);
+                                                Player.PlayerInstance.Translation = new Vector2(Player.PlayerInstance.Translation.X, 0);
+                                            }
+                                        }
+                                        // X adjustment
+                                        else
+                                        {
+                                            if (playerHitbox.X < brick.X)
+                                            {
+                                                Player.PlayerInstance.Position -= new Vector2(collisionBox.Width, 0);
+                                                Player.PlayerInstance.Translation = new Vector2(0, Player.PlayerInstance.Translation.Y);
+                                            }
+                                            else
+                                            {
+                                                Player.PlayerInstance.Position += new Vector2(collisionBox.Width, 0);
+                                                Player.PlayerInstance.Translation = new Vector2(0, Player.PlayerInstance.Translation.Y);
+                                            }
+                                        }
+
+                                        // Update player position
+                                        Player.PlayerInstance.Translation = new Vector2(playerHitbox.X, Player.PlayerInstance.Translation.Y);
+                                        Player.PlayerInstance.Translation = new Vector2(Player.PlayerInstance.Translation.X, playerHitbox.Y);
+                                        Player.PlayerInstance.Collider.Resolved = true;
+                                    }
                                 }
                             }
                         }
