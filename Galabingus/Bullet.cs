@@ -772,7 +772,7 @@ namespace Galabingus
                                             break;
 
                                         case BulletType.Wave:
-                                            Player.PlayerInstance.Health = Player.PlayerInstance.Health - 3f;
+                                            Player.PlayerInstance.Health = Player.PlayerInstance.Health - 2f;
                                             break;
 
                                         case BulletType.Heart:

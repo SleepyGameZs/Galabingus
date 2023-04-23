@@ -69,7 +69,7 @@ namespace Galabingus_Map_Editor
 
             totalHeight = 36;
 
-            tileSize = 25;
+            tileSize = 20;
 
             totalDensity = pixelDensity;
 
@@ -259,7 +259,7 @@ namespace Galabingus_Map_Editor
                 {
                     PictureBox tileBox = new PictureBox();
                     tileBox.Size = new Size(tileSize, tileSize);
-                    tileBox.Location = new Point(65 + (tileSize * x), 20 + (tileSize * y));
+                    tileBox.Location = new Point(65 + (tileSize * x), 0 + (tileSize * y));
                     tileBox.BackColor = Color.White;
                     tileBox.SizeMode = PictureBoxSizeMode.StretchImage;
                     tileBox.Click += ImageChanger;
