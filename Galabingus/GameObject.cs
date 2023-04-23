@@ -558,7 +558,7 @@ namespace Galabingus
         {
             get
             {
-                return new Vector2(0, GameObject.Instance.GraphicsDevice.Viewport.Height * -4);
+                return new Vector2(0, GameObject.Instance.GraphicsDevice.Viewport.Height * -3);
             }
         }
         

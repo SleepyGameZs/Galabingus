@@ -379,7 +379,7 @@ namespace Galabingus
 
             if (turn == false)
             {
-                if (Camera.Instance.Position.Y <= GameObject.EndPosition.Y)
+                if (Camera.Instance.Position.Y <= (GameObject.EndPosition.Y + GameObject.Instance.GraphicsDevice.Viewport.Height))
                 {
 
                     Camera.Instance.Reverse();
