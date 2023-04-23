@@ -735,9 +735,8 @@ namespace Galabingus
                             {
                                 case BulletType.BouncingSide:
                                     Vector2 overlapZone = collision.overlap;
-                                    //System.Diagnostics.Debug.WriteLine("eee");
-                                    //System.Diagnostics.Debug.WriteLine(overlapZone.X);
-                                    //System.Diagnostics.Debug.WriteLine(overlapZone.Y);
+
+                                    // Will destroy this bullet if it is lodged in a tile
                                     if (didBounce == false)
                                     {
                                         didBounce = true;

@@ -261,7 +261,7 @@ namespace Galabingus
                     Instance.activeEnemies.Add(createdEnemy);
 
                     // Create list if needed
-                    if (shouldMove)
+                    if (shouldMove && ability != EnemyType.Boss)
                     {
                         if (!Instance.enemyRows.ContainsKey((int)position.Y))
                         {
@@ -329,7 +329,7 @@ namespace Galabingus
                     if (Instance.activeEnemies[i].Destroy)
                     {
                         // Remove from Row List
-                        if (Instance.activeEnemies[i].ShouldMove)
+                        if (Instance.activeEnemies[i].ShouldMove && Instance.activeEnemies[i].Ability != EnemyType.Boss)
                         {
                              Instance.enemyRows[(int)(Instance.activeEnemies[i].InitialPosition.Y)].Remove(Instance.activeEnemies[i]);
                         }
