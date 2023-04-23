@@ -188,6 +188,7 @@ namespace Galabingus
         List<UIElement> game1;
         List<UIElement> pause1;
         List<UIElement> gameOver1;
+        List<UIElement> victory1;
 
         //for unique menus
         bool displayMenu;
@@ -319,6 +320,7 @@ namespace Galabingus
             game1 = new List<UIElement>();
             pause1 = new List<UIElement>();
             gameOver1 = new List<UIElement>();
+            victory1 = new List<UIElement>();
 
             //dummy variables
             Button button;
@@ -402,14 +404,31 @@ namespace Galabingus
                 menu1);
 
             //Pause Text
-            AddText("arial_36", "hello there you are now paused",
+            AddText("arial_36", "Pause",
                 new Vector2(width / 2 - 200,
                 height / 2 - 200), Color.White, textEvent1, pause1);
 
             //GameOver Text
-            AddText("arial_36", "LOLLLLL :skull_emoji", 
+            AddText("arial_36", "You Died", 
                 new Vector2(width / 2 - 100,
                 height / 2 - 150), Color.White, textEvent1, gameOver1);
+
+            event1 = ReturnMenu;
+            event2 = HoverTexture;
+
+            //add the return to the menu in the game over
+            button = AddButton("buttonMenu_base_strip1", 0.6f,
+            new Vector2(width / 2 + 30, height / 2 + 150),
+            event1, event2, gameOver1);
+
+            button.HoverTexture = cm.Load<Texture2D>("buttonMenu_hover_strip1");
+
+            //add the return to the menu in victory
+            button = AddButton("buttonMenu_base_strip1", 0.6f,
+            new Vector2(width / 2 + 30, height / 2 + 150),
+            event1, event2, victory1);
+
+            button.HoverTexture = cm.Load<Texture2D>("buttonMenu_hover_strip1");
 
             #endregion
 
@@ -653,6 +672,13 @@ namespace Galabingus
         private void StartGame(object sender)
         {
             gs = GameState.Game;
+        }
+
+        private void ReturnMenu(object sender)
+        {
+            gs = GameState.Menu;
+            reset = true;
+
         }
 
         private void UpMenu(object sender)
