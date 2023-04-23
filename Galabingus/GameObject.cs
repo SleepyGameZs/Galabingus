@@ -1134,8 +1134,8 @@ namespace Galabingus
         public Vector2 PostScaleRatio(bool isVector2)
         {
             return new Vector2(
-                universalScaleX / this.GetTransform(instance).Width * GameObject.Instance.GraphicsDevice.Viewport.Width / GameObject.Instance.GraphicsDevice.Viewport.Height,
-                universalScaleY / this.GetTransform(instance).Width * GameObject.Instance.GraphicsDevice.Viewport.Width / GameObject.Instance.GraphicsDevice.Viewport.Height
+                universalScaleX / this.GetTransform(instance).Width,
+                universalScaleY / this.GetTransform(instance).Height
             //universalScaleY / this.GetTransform(instance).Height * GameObject.Instance.GraphicsDevice.Viewport.Height / GameObject.Instance.GraphicsDevice.Viewport.Width
             );
         }
@@ -1388,13 +1388,13 @@ namespace Galabingus
 
         public Vector2 CalculateLevelEditorPositions(int width, int height, int row, int column)
         {
-            float coordianteXScale = GameObject.Instance.GraphicsDevice.Viewport.Width / width * GameObject.Instance.GraphicsDevice.Viewport.Width/GameObject.Instance.GraphicsDevice.Viewport.Height;
+            float coordianteXScale = GameObject.Instance.GraphicsDevice.Viewport.Width / width;
             
-            float coordinateYScale = -EndPosition.Y / height * GameObject.Instance.GraphicsDevice.Viewport.Height / GameObject.Instance.GraphicsDevice.Viewport.Width;
+            float coordinateYScale = -EndPosition.Y / height;
             float startingY = EndPosition.Y;
             universalScaleX = coordianteXScale;
             universalScaleY = coordinateYScale;
-            return new Vector2(coordianteXScale * column, coordinateYScale * row + startingY + GameObject.Instance.GraphicsDevice.Viewport.Height);
+            return new Vector2(coordianteXScale * column, coordinateYScale * row + startingY + GameObject.Instance.GraphicsDevice.Viewport.Height + coordinateYScale);
         }
 
         public void LoadTileLevelFile(string fileName)
@@ -1568,6 +1568,9 @@ namespace Galabingus
             objectEnumsI = new GameObjectTrie<string>();
             effectI = new GameObjectTrie<Effect>();
             trie = null;
+
+            bossEffectIsActive = false;
+            flipSine = false;
 
             cameraStopPositions = null;
         }
