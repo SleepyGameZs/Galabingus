@@ -87,6 +87,7 @@ namespace Galabingus
 
         // Bouncing Bullet Collision
         private bool didBounce;
+        private bool bounceRight;
 
         // Collision layer of the bullet
         private CollisionGroup collisionLayer;
@@ -353,6 +354,7 @@ namespace Galabingus
 
             // Bouncing on Tile collision
             didBounce = false;
+            bounceRight = true;
 
             // Set Empty hit objects list
             hitObjects = new List<object>();
@@ -497,9 +499,19 @@ namespace Galabingus
                         velocity.X *= -1;
                         Position = new Vector2(Position.X + this.Transform.Width * this.Scale, Position.Y);
 
-                        // Set the new boss sprite
-                        ushort newSprite = GameObject.Instance.Content.enemy_orange_bullet_135_strip4;
-                        this.Sprite = GetSpriteFrom(newSprite, bulletNumber);
+                        // Set the bounce sprite
+                        if (bounceRight)
+                        {
+                            ushort newSprite = GameObject.Instance.Content.enemy_orange_bullet_135_strip4;
+                            this.Sprite = GetSpriteFrom(newSprite, bulletNumber);
+                            bounceRight = false;
+                        } else
+                        {
+                            ushort newSprite = GameObject.Instance.Content.enemy_orange_bullet_45_strip4;
+                            this.Sprite = GetSpriteFrom(newSprite, bulletNumber);
+                            bounceRight = true;
+                        }
+                        
                     }
 
                     // Hit right wall
@@ -508,9 +520,19 @@ namespace Galabingus
                         velocity.X *= -1;
                         Position = new Vector2(Position.X - this.Transform.Width * this.Scale, Position.Y);
 
-                        // Set the new boss sprite
-                        ushort newSprite = GameObject.Instance.Content.enemy_orange_bullet_135_strip4;
-                        this.Sprite = GetSpriteFrom(newSprite, bulletNumber);
+                        // Set the bounce sprite
+                        if (bounceRight)
+                        {
+                            ushort newSprite = GameObject.Instance.Content.enemy_orange_bullet_135_strip4;
+                            this.Sprite = GetSpriteFrom(newSprite, bulletNumber);
+                            bounceRight = false;
+                        }
+                        else
+                        {
+                            ushort newSprite = GameObject.Instance.Content.enemy_orange_bullet_45_strip4;
+                            this.Sprite = GetSpriteFrom(newSprite, bulletNumber);
+                            bounceRight = true;
+                        }
                     }
 
                     break;
@@ -745,14 +767,26 @@ namespace Galabingus
                                         if (velocity.X > 1)
                                         { // Left
                                             Position = new Vector2(Position.X - this.Transform.Width * this.Scale, Position.Y);
-                                            ushort newSprite = GameObject.Instance.Content.enemy_orange_bullet_135_strip4;
-                                            this.Sprite = GetSpriteFrom(newSprite, bulletNumber);
+
                                         }
                                         else if (velocity.X < 1)
                                         { // Right
+                                           
+                                            //Position = new Vector2(Position.X + this.Transform.Width * this.Scale, Position.Y);
+                                        }
+
+                                        // Set the bounce sprite
+                                        if (bounceRight)
+                                        {
                                             ushort newSprite = GameObject.Instance.Content.enemy_orange_bullet_135_strip4;
                                             this.Sprite = GetSpriteFrom(newSprite, bulletNumber);
-                                            //Position = new Vector2(Position.X + this.Transform.Width * this.Scale, Position.Y);
+                                            bounceRight = false;
+                                        }
+                                        else
+                                        {
+                                            ushort newSprite = GameObject.Instance.Content.enemy_orange_bullet_45_strip4;
+                                            this.Sprite = GetSpriteFrom(newSprite, bulletNumber);
+                                            bounceRight = true;
                                         }
 
                                         // Flip velocity
@@ -786,10 +820,6 @@ namespace Galabingus
                                     break;
                             }
                         } 
-                        else
-                        {
-                            didBounce = false;
-                        }
                     }
 
                     // Collision with player / enemies
