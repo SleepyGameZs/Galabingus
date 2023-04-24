@@ -161,7 +161,9 @@ namespace Galabingus
                 if (!iFrame && !godMode)
                 {
                     iFrame = true;
-                    PlayerInstance.health = value;
+                    float healthBefore = PlayerInstance.health;
+                    float healthAfter = value;
+                    PlayerInstance.health = (healthAfter - healthBefore) > 0 ? value : healthBefore + (healthAfter - healthBefore) * 0.5f;
                 }
             }
         }
@@ -361,6 +363,11 @@ namespace Galabingus
         /// </summary>
         public void Update(GameTime gameTime)
         {
+            if (health < 0.5f)
+            {
+                health = 0;
+            }
+
             PlayerInstance.Collider.Resolved = true;
             PlayerInstance.inputBufferTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
             //boostFrameRate = PlayerInstance.inputBufferTime;
@@ -469,6 +476,7 @@ namespace Galabingus
                 }
                 else if ((PlayerInstance.Position.Y + PlayerInstance.Transform.Height * Scale) >= GameObject.Instance.GraphicsDevice.Viewport.Height)
                 {
+                    Player.playerInstance.Health = Player.PlayerInstance.Health - 1;
                     velocity.Y = -speed.Y;
                 }
                 if (PlayerInstance.Position.X <= 0)
@@ -479,7 +487,6 @@ namespace Galabingus
                 {
                     velocity.X = -speed.X;
                 }
-                Player.playerInstance.Health = Player.PlayerInstance.Health - 1;
                 collides = true;
 
                 Position += velocity * 0.5f;

@@ -65,7 +65,7 @@ float4 BossEffect(float4 inColor)
 {
 	if (bossEffect)// && inColor.a == 1)
 	{
-		return float4(inColor.r, inColor.g * redShade * shadeFadeTime * 0.8f, inColor.b * redShade * shadeFadeTime * 0.8f, inColor.a);
+		return lerp(float4(inColor.r, inColor.g * redShade * shadeFadeTime * 0.8f, inColor.b * redShade * shadeFadeTime * 0.8f, inColor.a),inColor, 0.5f);
 	}
 	return float4(inColor.r, inColor.g, inColor.b, inColor.a);
 }
