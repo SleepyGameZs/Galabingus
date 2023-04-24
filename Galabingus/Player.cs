@@ -161,7 +161,9 @@ namespace Galabingus
                 if (!iFrame && !godMode)
                 {
                     iFrame = true;
-                    PlayerInstance.health = value;
+                    float healthBefore = PlayerInstance.health;
+                    float healthAfter = value;
+                    PlayerInstance.health = (healthAfter - healthBefore) > 0 ? value : healthBefore + (healthAfter - healthBefore) * 0.5f;
                 }
             }
         }
@@ -361,7 +363,7 @@ namespace Galabingus
         /// </summary>
         public void Update(GameTime gameTime)
         {
-            if (health < 0)
+            if (health < 0.5f)
             {
                 health = 0;
             }
