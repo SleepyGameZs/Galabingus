@@ -26,20 +26,36 @@ namespace Galabingus
     /// </summary>
     public enum BulletType
     {
+        // PLAYER BULLETS
         PlayerNormal,
+        BigShot,
+        // ENEMY BULLETS
         EnemyNormal,
-        BouncingSide,
         BouncingCenter,
+            BouncingSide,
         Wave,
         Splitter,
-        SplitOff,
-        Seeker,
+            SplitOff,
+        Shatter,
+            ShatterUp,
+            ShatterDown,
+            ShatterSide,
+        // MISC
         Explosion,
         BigExplosion,
         Heart,
+        // BOSS SPECIFIC
+        BossBouncingCenter,
+            BossBouncingSide,
+        BossShatter,
+            BossShatterUp,
+            BossShatterDown,
+            BossShatterSide,
+        // UNUSED CONTENT
         LazerPath,
-        LazerStart,
-        LazerAttack
+            LazerStart,
+            LazerAttack,
+        Seeker
     }
 
     public enum Targets
@@ -370,6 +386,14 @@ namespace Galabingus
                     target = Targets.Enemies;
                     break;
 
+                case BulletType.BigShot:
+                    // Player: Moves forward slower but instakills enemies on hit (isn't destroyed on contact)
+                    GameObject.Instance.Content = GameObject.Instance.Content.player_bigshot_strip4;
+
+                    // Can target: Enemies
+                    target = Targets.Enemies;
+                    break;
+
                 case BulletType.EnemyNormal:
                     // Red Enemy: Same movement as player's bullets, except slower.
                     GameObject.Instance.Content = GameObject.Instance.Content.enemy_red_bullet_strip4;
@@ -419,8 +443,40 @@ namespace Galabingus
                     break;
 
                 case BulletType.Seeker:
-                    // Purple Enemy: Tracks the player, however it eventually loses focus
+                    // [OLD] Purple Enemy: Tracks the player, however it eventually loses focus
                     GameObject.Instance.Content = GameObject.Instance.Content.enemy_purple_bullet_strip4;
+
+                    // Can target: Player
+                    target = Targets.Player;
+                    break;
+
+                case BulletType.Shatter:
+                    // [NEW] Purple Enemy: Moves to halfway point on screen then breaks into 6!
+                    GameObject.Instance.Content = GameObject.Instance.Content.bullet_purple_core_strip4;
+
+                    // Can target: Player
+                    target = Targets.Player;
+                    break;
+
+                case BulletType.ShatterUp:
+                    // [NEW] Purple Enemy: Shattered bullet that goes up at a 60 / 120 degree angle
+                    GameObject.Instance.Content = GameObject.Instance.Content.bullet_purple_60_strip4;
+
+                    // Can target: Player
+                    target = Targets.Player;
+                    break;
+
+                case BulletType.ShatterDown:
+                    // [NEW] Purple Enemy: Shattered bullet that goes down at a 240 / 300 degree angle
+                    GameObject.Instance.Content = GameObject.Instance.Content.bullet_purple_60_strip4;
+
+                    // Can target: Player
+                    target = Targets.Player;
+                    break;
+
+                case BulletType.ShatterSide:
+                    // [NEW] Purple Enemy: Shattered bullet that goes up at a 0 / 180 degree angle
+                    GameObject.Instance.Content = GameObject.Instance.Content.bullet_purple_0_strip4;
 
                     // Can target: Player
                     target = Targets.Player;
@@ -447,6 +503,54 @@ namespace Galabingus
                 case BulletType.Heart:
                     // Healing Heart: Tracks the player, however it eventually loses focus
                     GameObject.Instance.Content = GameObject.Instance.Content.heart_bullet_strip4;
+
+                    // Can target: Player
+                    target = Targets.Player;
+                    break;
+
+                case BulletType.BossBouncingSide:
+                    // Boss Orange Bullet: Same as normal just bigger!
+                    GameObject.Instance.Content = GameObject.Instance.Content.bullet_orange_boss_45_strip4;
+
+                    // Can target: Player
+                    target = Targets.Player;
+                    break;
+
+                case BulletType.BossBouncingCenter:
+                    // Boss Orange Bullet: Same as normal just bigger!
+                    GameObject.Instance.Content = GameObject.Instance.Content.bullet_orange_boss_90_strip4;
+
+                    // Can target: Player
+                    target = Targets.Player;
+                    break;
+
+                case BulletType.BossShatter:
+                    // Boss Purple Bullet: Same as normal just bigger!
+                    GameObject.Instance.Content = GameObject.Instance.Content.bullet_purple_boss_core_strip4;
+
+                    // Can target: Player
+                    target = Targets.Player;
+                    break;
+
+                case BulletType.BossShatterUp:
+                    // Boss Purple Bullet: Same as normal just bigger!
+                    GameObject.Instance.Content = GameObject.Instance.Content.bullet_purple_boss_60_strip4;
+
+                    // Can target: Player
+                    target = Targets.Player;
+                    break;
+
+                case BulletType.BossShatterDown:
+                    // Boss Purple Bullet: Same as normal just bigger!
+                    GameObject.Instance.Content = GameObject.Instance.Content.bullet_purple_boss_60_strip4;
+
+                    // Can target: Player
+                    target = Targets.Player;
+                    break;
+
+                case BulletType.BossShatterSide:
+                    // Boss Purple Bullet: Same as normal just bigger!
+                    GameObject.Instance.Content = GameObject.Instance.Content.bullet_purple_boss_0_strip4;
 
                     // Can target: Player
                     target = Targets.Player;
@@ -480,6 +584,10 @@ namespace Galabingus
                     currentPosition = SetPosition(gameTime, 14, true);
                     break;
 
+                case BulletType.BigShot:
+                    currentPosition = SetPosition(gameTime, 5, true);
+                    break;
+
                 case BulletType.EnemyNormal:
                     currentPosition = SetPosition(gameTime, 6, false);
                     break;
@@ -489,12 +597,11 @@ namespace Galabingus
                     currentPosition = SetPosition(gameTime, 3, false);
 
                     // Check for wall collison
-                    bool LeftWallHit = this.Position.X < Sprite.Width - this.Transform.Width * this.Scale;
-                    bool RightWallHit = this.Position.X > GameObject.Instance.GraphicsDevice.Viewport.Width;
+                    bool leftWallHit = this.Position.X < Sprite.Width - this.Transform.Width * this.Scale;
+                    bool rightWallHit = this.Position.X > GameObject.Instance.GraphicsDevice.Viewport.Width;
 
-                    
                     // Hit left wall
-                    if (LeftWallHit)
+                    if (leftWallHit)
                     { // Flip bullet
                         velocity.X *= -1;
                         Position = new Vector2(Position.X + this.Transform.Width * this.Scale, Position.Y);
@@ -515,7 +622,7 @@ namespace Galabingus
                     }
 
                     // Hit right wall
-                    if (RightWallHit)
+                    if (rightWallHit)
                     { // Flip bullet
                         velocity.X *= -1;
                         Position = new Vector2(Position.X - this.Transform.Width * this.Scale, Position.Y);
@@ -623,6 +730,36 @@ namespace Galabingus
                     currentPosition = SetPosition(gameTime, 5, true);
                     break;
 
+                case BulletType.Shatter:
+                    // Checks if at halfway point, if successful explode into 6
+                    if (Position.Y >= GameObject.Instance.GraphicsDevice.Viewport.Height / 2f)
+                    {
+                        // Get a fixed position to spawn the bullets at
+                        Vector2 fixedPosition = new Vector2(currentPosition.X - 40, currentPosition.Y + 20);
+
+                        // Create Bullets
+                        BulletManager.Instance.CreateBullet(BulletType.ShatterUp, fixedPosition, new Vector2(1, -1), creator, true);
+                        BulletManager.Instance.CreateBullet(BulletType.ShatterUp, fixedPosition, new Vector2(-1, -1), creator, true);
+                        BulletManager.Instance.CreateBullet(BulletType.ShatterDown, fixedPosition, new Vector2(1, 1), creator, true);
+                        BulletManager.Instance.CreateBullet(BulletType.ShatterDown, fixedPosition, new Vector2(-1, 1), creator, true);
+                        BulletManager.Instance.CreateBullet(BulletType.ShatterSide, fixedPosition, new Vector2(1, 0), creator, true);
+                        BulletManager.Instance.CreateBullet(BulletType.ShatterSide, fixedPosition, new Vector2(-1, 0), creator, true);
+
+                        // Tell Bullet Manager to delete this bullet
+                        destroy = true;
+                    }
+
+                    currentPosition = SetPosition(gameTime, 4, true);
+                    break;
+
+                case BulletType.ShatterUp:
+                case BulletType.ShatterDown:
+                case BulletType.ShatterSide:
+
+                    // Movement handling for bullets
+                    currentPosition = SetPosition(gameTime, 4, true);
+                    break;
+
                 case BulletType.Explosion:
                     // Set Current Position
                     this.Position -= Camera.Instance.OffSet;
@@ -669,6 +806,93 @@ namespace Galabingus
                     // Set Current Position
                     currentPosition = SetPosition(gameTime, 4, false);
 
+                    break;
+
+                case BulletType.BossBouncingSide:
+                    // Set Current Position
+                    currentPosition = SetPosition(gameTime, 3, false);
+
+                    // Check for wall collison
+                    bool bossLeftWallHit = this.Position.X < Sprite.Width - this.Transform.Width * this.Scale;
+                    bool bossRightWallHit = this.Position.X > GameObject.Instance.GraphicsDevice.Viewport.Width;
+
+                    // Hit left wall
+                    if (bossLeftWallHit)
+                    { // Flip bullet
+                        velocity.X *= -1;
+                        Position = new Vector2(Position.X + this.Transform.Width * this.Scale, Position.Y);
+
+                        // Set the bounce sprite
+                        if (bounceRight)
+                        {
+                            ushort newSprite = GameObject.Instance.Content.bullet_orange_boss_135_strip4;
+                            this.Sprite = GetSpriteFrom(newSprite, bulletNumber);
+                            bounceRight = false;
+                        }
+                        else
+                        {
+                            ushort newSprite = GameObject.Instance.Content.bullet_orange_boss_45_strip4;
+                            this.Sprite = GetSpriteFrom(newSprite, bulletNumber);
+                            bounceRight = true;
+                        }
+
+                    }
+
+                    // Hit right wall
+                    if (bossRightWallHit)
+                    { // Flip bullet
+                        velocity.X *= -1;
+                        Position = new Vector2(Position.X - this.Transform.Width * this.Scale, Position.Y);
+
+                        // Set the bounce sprite
+                        if (bounceRight)
+                        {
+                            ushort newSprite = GameObject.Instance.Content.bullet_orange_boss_135_strip4;
+                            this.Sprite = GetSpriteFrom(newSprite, bulletNumber);
+                            bounceRight = false;
+                        }
+                        else
+                        {
+                            ushort newSprite = GameObject.Instance.Content.bullet_orange_boss_45_strip4;
+                            this.Sprite = GetSpriteFrom(newSprite, bulletNumber);
+                            bounceRight = true;
+                        }
+                    }
+
+                    break;
+
+                case BulletType.BossBouncingCenter:
+                    currentPosition = SetPosition(gameTime, 3, false);
+                    break;
+
+                case BulletType.BossShatter:
+                    // Checks if at halfway point, if successful explode into 6
+                    if (Position.Y >= GameObject.Instance.GraphicsDevice.Viewport.Height / 2f)
+                    {
+                        // Get a fixed position to spawn the bullets at
+                        Vector2 fixedPosition = new Vector2(currentPosition.X - 40, currentPosition.Y + 20);
+
+                        // Create Bullets
+                        BulletManager.Instance.CreateBullet(BulletType.BossShatterUp, fixedPosition, new Vector2(1, -1), creator, true);
+                        BulletManager.Instance.CreateBullet(BulletType.BossShatterUp, fixedPosition, new Vector2(-1, -1), creator, true);
+                        BulletManager.Instance.CreateBullet(BulletType.BossShatterDown, fixedPosition, new Vector2(1, 1), creator, true);
+                        BulletManager.Instance.CreateBullet(BulletType.BossShatterDown, fixedPosition, new Vector2(-1, 1), creator, true);
+                        BulletManager.Instance.CreateBullet(BulletType.BossShatterSide, fixedPosition, new Vector2(1, 0), creator, true);
+                        BulletManager.Instance.CreateBullet(BulletType.BossShatterSide, fixedPosition, new Vector2(-1, 0), creator, true);
+
+                        // Tell Bullet Manager to delete this bullet
+                        destroy = true;
+                    }
+
+                    currentPosition = SetPosition(gameTime, 4, true);
+                    break;
+
+                case BulletType.BossShatterUp:
+                case BulletType.BossShatterDown:
+                case BulletType.BossShatterSide:
+
+                    // Movement handling for bullets
+                    currentPosition = SetPosition(gameTime, 4, true);
                     break;
 
                 default:
@@ -813,6 +1037,50 @@ namespace Galabingus
                                     // Ignorews tiles
                                     break;
 
+                                case BulletType.BossBouncingSide:
+                                    Vector2 bossoverlapZone = collision.overlap;
+
+                                    // Will destroy this bullet if it is lodged in a tile
+                                    if (didBounce == false)
+                                    {
+                                        didBounce = true;
+
+                                        // Pove position over from tile
+                                        if (velocity.X > 1)
+                                        { // Left
+                                            Position = new Vector2(Position.X - this.Transform.Width * this.Scale, Position.Y);
+
+                                        }
+                                        else if (velocity.X < 1)
+                                        { // Right
+
+                                            //Position = new Vector2(Position.X + this.Transform.Width * this.Scale, Position.Y);
+                                        }
+
+                                        // Set the bounce sprite
+                                        if (bounceRight)
+                                        {
+                                            ushort newSprite = GameObject.Instance.Content.bullet_orange_boss_135_strip4;
+                                            this.Sprite = GetSpriteFrom(newSprite, bulletNumber);
+                                            bounceRight = false;
+                                        }
+                                        else
+                                        {
+                                            ushort newSprite = GameObject.Instance.Content.bullet_orange_boss_45_strip4;
+                                            this.Sprite = GetSpriteFrom(newSprite, bulletNumber);
+                                            bounceRight = true;
+                                        }
+
+                                        // Flip velocity
+                                        velocity.X *= -1;
+                                    }
+                                    else
+                                    { // Head on collision, destroy bullet
+                                        destroy = true;
+                                        velocity = Vector2.Zero;
+                                    }
+                                    break;
+
                                 default:
                                     // Destroy the bullet
                                     destroy = true;
@@ -828,7 +1096,7 @@ namespace Galabingus
                         case Targets.Player:
                             if ((collision.other as Player) is Player)
                             { // Collided object is a player!
-                                if ((Player.PlayerInstance.Health - 0.5) >= 0)
+                                if ((Player.PlayerInstance.Health - 0.5) >= 0 && Player.PlayerInstance.inIFrame == false)
                                 {
                                     switch (ability)
                                     {
@@ -848,28 +1116,46 @@ namespace Galabingus
                                             Player.PlayerInstance.Health = Player.PlayerInstance.Health - 0.5f;
                                             break;
                                     }
-                                }
 
-                                // Destroy the bullet
-                                destroy = true;
-                                velocity = Vector2.Zero;
+                                    // Destroy the bullet
+                                    if (ability == BulletType.Shatter)
+                                    {
+                                        // Create Bullets
+                                        BulletManager.Instance.CreateBullet(BulletType.ShatterUp, currentPosition, new Vector2(1, 0), creator, true);
+                                        BulletManager.Instance.CreateBullet(BulletType.ShatterUp, currentPosition, new Vector2(-1, 0), creator, true);
+                                        BulletManager.Instance.CreateBullet(BulletType.ShatterDown, currentPosition, new Vector2(1, 0), creator, true);
+                                        BulletManager.Instance.CreateBullet(BulletType.ShatterDown, currentPosition, new Vector2(-1, 0), creator, true);
+                                        BulletManager.Instance.CreateBullet(BulletType.ShatterSide, currentPosition, new Vector2(1, 0), creator, true);
+                                        BulletManager.Instance.CreateBullet(BulletType.ShatterSide, currentPosition, new Vector2(-1, 0), creator, true);
+                                    }
+                                    destroy = true;
+                                    velocity = Vector2.Zero;
+                                }
                             }
                             break;
 
                         case Targets.Enemies:
                             if ((collision.other as Enemy) is Enemy)
                             { // Collided object is an Enemy
-                                ((Enemy)collision.other).Health -= 1;
-
-                                // Kill the enemy if its health is below zero
-                                if (((Enemy)collision.other).Health <= 0)
-                                {
+                                
+                                if (ability == BulletType.BigShot && ((Enemy)collision.other).Ability != EnemyType.Boss)
+                                { // The BIGSHOT - just kills enemies on the spot
                                     ((Enemy)collision.other).Destroy = true;
                                 }
+                                else
+                                { // Normal bullet from player
+                                    ((Enemy)collision.other).Health -= 1;
 
-                                // Destroy the bullet
-                                destroy = true;
-                                velocity = Vector2.Zero;
+                                    // Kill the enemy if its health is below zero
+                                    if (((Enemy)collision.other).Health <= 0)
+                                    {
+                                        ((Enemy)collision.other).Destroy = true;
+                                    }
+
+                                    // Destroy the bullet
+                                    destroy = true;
+                                    velocity = Vector2.Zero;
+                                }
                             }
                             break;
 

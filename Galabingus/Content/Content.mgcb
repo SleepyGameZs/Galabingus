@@ -484,6 +484,18 @@
 /processorParam:TextureFormat=Color
 /build:Bullets/Orange/enemy_orange_bullet_flipped_90_strip4.png
 
+#begin Bullets/player_bigshot_strip4.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Bullets/player_bigshot_strip4.png
+
 #begin Bullets/Purple/bullet_purple_0_strip4.png
 /importer:TextureImporter
 /processor:TextureProcessor

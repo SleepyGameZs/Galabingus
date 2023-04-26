@@ -106,6 +106,11 @@ namespace Galabingus
                     AudioManager.Instance.CallSound("Fire");
                     break;
 
+                case BulletType.BigShot:
+                    sprite = GameObject.Instance.Content.player_bigshot_strip4;
+                    // ADD SOUND
+                    break;
+
                 case BulletType.EnemyNormal:
                     sprite = GameObject.Instance.Content.enemy_red_bullet_strip4;
                     AudioManager.Instance.CallSound("Enemy Fire");
@@ -140,6 +145,26 @@ namespace Galabingus
                     AudioManager.Instance.CallSound("Homing");
                     break;
 
+                case BulletType.Shatter:
+                    sprite = GameObject.Instance.Content.bullet_purple_core_strip4;
+                    // ADD SOUND HERE
+                    break;
+
+                case BulletType.ShatterUp:
+                    sprite = GameObject.Instance.Content.bullet_purple_60_strip4;
+                    // ADD SOUND HERE
+                    break;
+
+                case BulletType.ShatterDown:
+                    sprite = GameObject.Instance.Content.bullet_purple_60_strip4;
+                    // ADD SOUND HERE
+                    break;
+
+                case BulletType.ShatterSide:
+                    sprite = GameObject.Instance.Content.bullet_purple_0_strip4;
+                    // ADD SOUND HERE
+                    break;
+
                 case BulletType.Explosion:
                     sprite = GameObject.Instance.Content.bomb_explosion_strip5;
                     break;
@@ -149,7 +174,37 @@ namespace Galabingus
                     break;
 
                 case BulletType.Heart:
-                    sprite = GameObject.Instance.Content.heart_bullet_strip4;
+                    sprite = GameObject.Instance.Content.bullet_heart_strip4;
+                    break;
+
+                case BulletType.BossBouncingSide:
+                    sprite = GameObject.Instance.Content.bullet_orange_boss_45_strip4;
+                    // ADD SOUND HERE
+                    break;
+
+                case BulletType.BossBouncingCenter:
+                    sprite = GameObject.Instance.Content.bullet_orange_boss_90_strip4;
+                    // ADD SOUND HERE
+                    break;
+
+                case BulletType.BossShatter:
+                    sprite = GameObject.Instance.Content.bullet_purple_boss_core_strip4;
+                    // ADD SOUND HERE
+                    break;
+
+                case BulletType.BossShatterUp:
+                    sprite = GameObject.Instance.Content.bullet_purple_boss_60_strip4;
+                    // ADD SOUND HERE
+                    break;
+
+                case BulletType.BossShatterDown:
+                    sprite = GameObject.Instance.Content.bullet_purple_boss_60_strip4;
+                    // ADD SOUND HERE
+                    break;
+
+                case BulletType.BossShatterSide:
+                    sprite = GameObject.Instance.Content.bullet_purple_boss_0_strip4;
+                    // ADD SOUND HERE
                     break;
 
                 default:
