@@ -326,10 +326,6 @@ namespace Galabingus
 
             #region Add stuffs
 
-            //test slider
-            slider = AddSlider("SliderBack_strip1", "SliderKnob_strip1",
-                1f, new Vector2(100, 100), menu);
-
             //Create the play button
             event1 = StartGame;
             event2 = HoverTexture;
@@ -405,7 +401,7 @@ namespace Galabingus
                 new Vector2(width / 2, height / 2), pause);
 
             button = AddButton("buttonOptions_base_strip1", 0.6f,
-            new Vector2(width / 2 + 30, height / 2 + 50),
+            new Vector2(width / 2 + 40, height / 2 + 50),
             event1, event2, pause);
 
             button.HoverTexture = cm.Load<Texture2D>("buttonOptions_hover_strip1");
@@ -413,7 +409,7 @@ namespace Galabingus
             event1 = ReturnMenu;
 
             button = AddButton("quitButton_base_strip1", 2.3f,
-            new Vector2(width / 2 + 30, height / 2 + 150),
+            new Vector2(width / 2 + 40, height / 2 + 150),
             event1, event2, pause);
 
             button.HoverTexture = cm.Load<Texture2D>("quitButton_hover_strip1");
@@ -421,7 +417,7 @@ namespace Galabingus
             event1 = StartGame;
             
             button = AddButton("resumeButton_base_strip1", 2.3f,
-            new Vector2(width / 2 + 30, height / 2 - 50),
+            new Vector2(width / 2 + 35, height / 2 - 50),
             event1, event2, pause);
 
             button.HoverTexture = cm.Load<Texture2D>("resumeButton_hover_strip1");
@@ -1033,6 +1029,12 @@ namespace Galabingus
 
                     text.Update();
                 }
+                else if (element is Slider)
+                {
+                    Slider slider = (Slider)element;
+
+                    slider.Update();
+                }
             }
         }
 
@@ -1064,6 +1066,12 @@ namespace Galabingus
                     Text text = (Text)element;
 
                     text.Draw(sb);
+                }
+                else if (element is Slider)
+                {
+                    Slider slider = (Slider)element;
+
+                    slider.Draw(sb);
                 }
             }
 

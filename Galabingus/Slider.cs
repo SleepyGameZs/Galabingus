@@ -51,8 +51,8 @@ namespace Galabingus
             //creates its position rectangle
             knotchPosition =
                 new Rectangle(
-                    ((int)uiPosition.X) - (length / 2),
-                    ((int)uiPosition.Y) - (width / 2),
+                    uiPosition.X,
+                    uiPosition.Y,
                     length,
                     width
                 );
@@ -67,10 +67,12 @@ namespace Galabingus
         {
             currentMS = Mouse.GetState();
 
-            if (knotchPosition.Contains(currentMS.Position))
+            if (knotchPosition.Contains(prevMS.Position) && prevMS.LeftButton == ButtonState.Pressed)
             {
-                if(currentMS.Position.X != knotchPosition.X)
+                if(currentMS.Position.X != prevMS.Position.X && currentMS.LeftButton == ButtonState.Pressed)
                 {
+                    knotchPosition.X = knotchPosition.X + (currentMS.Position.X - prevMS.Position.X);
+
                     if (knotchPosition.X <= uiPosition.X)
                     {
                         knotchPosition.X = uiPosition.X;
@@ -78,13 +80,12 @@ namespace Galabingus
                     }
                     else if (knotchPosition.X + unitLength >= uiPosition.X + uiTexture.Width / scale)
                     {
-                        knotchPosition.X = uiPosition.X - (int)unitLength;
+                        knotchPosition.X = (uiPosition.X + (int)(uiTexture.Width / scale)) - (int)unitLength;
                         returnPercentage = 1;
                     }
                     else
                     {
                         returnPercentage = (currentMS.Position.X - prevMS.Position.X) / unitLength;
-                        knotchPosition.X = currentMS.Position.X;
                     }
 
                     if (OnSlide != null)
