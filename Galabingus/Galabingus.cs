@@ -67,6 +67,8 @@ namespace Galabingus
         private delegate void ResetGameStates();
         private static ResetGameStates ResetState;
 
+        private Song backgroundMusic;
+
         public Galabingus()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -227,10 +229,10 @@ namespace Galabingus
             AudioManager.Instance.AddSound("Break", 0.1f, "Split Shot Break", Content);
             AudioManager.Instance.AddSound("Wave", 0.75f, "Wave Shot", Content);
             AudioManager.Instance.AddSound("Explosion", 0.1f, "Explosion", Content);
-            Song backgroundMuisc = Content.Load<Song>("Background Music");
+            backgroundMusic = Content.Load<Song>("Background Music");
             MediaPlayer.Volume = 0.5f;
             MediaPlayer.IsRepeating = true;
-            MediaPlayer.Play(backgroundMuisc);
+            
         }
 
         protected override void Update(GameTime gameTime)

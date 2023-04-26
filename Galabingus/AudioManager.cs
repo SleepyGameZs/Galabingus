@@ -27,15 +27,22 @@ namespace Galabingus
         }
 
         private List<Sound> sounds;
+        private SongCollection songCollection;
+
+        public SongCollection SongCollection
+        {
+            get { return songCollection; }
+        }
 
         public AudioManager()
         {
             sounds = new List<Sound>();
         }
 
-        public void AddSound(string name, float volume, string path, ContentManager content)
+
+        public void AddMusic(Song song)
         {
-            sounds.Add(new Sound(name, volume, path, content));
+            songCollection.Add(song);
         }
 
         public void CallSound(string name)
@@ -49,6 +56,18 @@ namespace Galabingus
                 }
             }
         }
+
+        private void CallMusic(string name)
+        {
+            for(int i = 0;i < songCollection.Count; i++) 
+            {
+                if (songCollection[i].Name == name && MediaPlayer.State != MediaState.Playing)
+                {
+                    MediaPlayer.Play(songCollection[i]);
+                }
+            }
+        }
+        
 
         private void RunSound(float voulume, SoundEffect sound, SoundEffectInstance instance)
         {
