@@ -121,7 +121,6 @@ namespace Galabingus
                 // Create a player
                 player = new Player(new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Height * 0.01375f, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.01375f), content.player_strip4);
                 player.Position = new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Width * 0.5f - Player.PlayerInstance.Transform.Width, GameObject.Instance.GraphicsDevice.Viewport.Height - Player.PlayerInstance.Transform.Height * 10);
-                player.Health = 5;
 
                 // Create Bullet Manager
                 mng_bullet = BulletManager.Instance;

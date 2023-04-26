@@ -163,7 +163,11 @@ namespace Galabingus
                     iFrame = true;
                     float healthBefore = PlayerInstance.health;
                     float healthAfter = value;
-                    PlayerInstance.health = (healthAfter - healthBefore) > 0 ? value : healthBefore + (healthAfter - healthBefore) * 0.5f;
+                    PlayerInstance.health = (healthAfter - healthBefore) > healthBefore ? 0.20f + healthBefore : healthBefore + (healthAfter - healthBefore) * 0.80f;
+                    if (health > 4.5f)
+                    {
+                        health = 5;
+                    }
                 }
             }
         }
@@ -352,10 +356,11 @@ namespace Galabingus
             tSet = false;
             godMode = false;
             holdShoot = false;
-            fadeDuration = 0.5f;
+            fadeDuration = 0.25f;
             fadeTimeTotal = 0;
             totalShootTime = 0;
             shootDuration = 0.2f;
+            health = 5;
         }
 
         /// <summary>
@@ -366,6 +371,10 @@ namespace Galabingus
             if (health < 0.5f)
             {
                 health = 0;
+            }
+            if (health > 5)
+            {
+                health = 5;
             }
 
             PlayerInstance.Collider.Resolved = true;

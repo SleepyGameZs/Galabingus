@@ -149,7 +149,7 @@ namespace Galabingus
                     break;
 
                 case BulletType.Heart:
-                    sprite = GameObject.Instance.Content.heart_bullet_strip4;
+                    sprite = GameObject.Instance.Content.bullet_heart_strip4;
                     break;
 
                 default:
