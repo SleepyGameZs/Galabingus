@@ -27,9 +27,11 @@ namespace Galabingus
         Bouncing,
         Wave,
         Splitter,
-        Seeker,
+        Shatter,
         Bomb,
-        Boss
+        Boss,
+        // REMOVED CONTENT
+        Seeker
     }
 
     internal class Enemy : GameObject
@@ -402,6 +404,10 @@ namespace Galabingus
                     colorHealth = Color.Purple;
                     break;
 
+                case EnemyType.Shatter:
+                    colorHealth = Color.Purple;
+                    break;
+
                 case EnemyType.Bomb:
                     colorHealth = Color.LightGray;
                     break;
@@ -585,6 +591,16 @@ namespace Galabingus
                                            0);
                             break;
 
+                        case EnemyType.Shatter:
+                            // Shoots
+                            BulletSpawning(190,
+                                           BulletType.Shatter,
+                                           ((Direction.Y == 1) ?    // CHECK DIRECTION
+                                               new Vector2(-20, 0) :    // DOWN
+                                               new Vector2(-25, -80)),  // UP, 
+                                           0);
+                            break;
+
                         case EnemyType.Boss:
                             // Base data
                             int phaseTime = 0;
@@ -637,9 +653,9 @@ namespace Galabingus
                                         BulletSpawning(0,
                                            new BulletType[]
                                            {
-                                           BulletType.BouncingSide,
-                                           BulletType.BouncingCenter,
-                                           BulletType.BouncingSide
+                                           BulletType.BossBouncingSide,
+                                           BulletType.BossBouncingCenter,
+                                           BulletType.BossBouncingSide
                                            },
                                            new Vector2[]
                                            {
@@ -689,7 +705,7 @@ namespace Galabingus
                                     phaseTime = 380;
                                     break;
 
-                                case EnemyType.Seeker:
+                                case EnemyType.Shatter:
                                     // Set the new boss sprite
                                     newSprite = GameObject.Instance.Content.boss_purple_strip4;
                                     this.Sprite = GetSpriteFrom(newSprite, enemyNumber);
@@ -698,7 +714,7 @@ namespace Galabingus
 
                                     if (stateTimer % 80 == 0 && stateTimer >= 100)
                                     {
-                                        BulletSpawning(0, BulletType.Seeker, new Vector2(-20, 0), 0);
+                                        BulletSpawning(0, BulletType.BossShatter, new Vector2(-20, 0), 0);
                                     }
 
                                     // Time till next phase

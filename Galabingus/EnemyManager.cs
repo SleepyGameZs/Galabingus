@@ -185,6 +185,11 @@ namespace Galabingus
                     break;
 
                 case EnemyType.Seeker:
+                    // OLD VERSION, replaced with Shatter after playtest
+                    sprite = GameObject.Instance.Content.enemy_purple_strip4;
+                    break;
+
+                case EnemyType.Shatter:
                     sprite = GameObject.Instance.Content.enemy_purple_strip4;
                     break;
 

@@ -89,6 +89,14 @@ namespace Galabingus
         private double totalShootTime;
         private float shootDuration;
 
+        public bool inIFrame
+        {
+            get
+            {
+                return iFrame;
+            }
+        }
+
         public Vector2 Translation
         {
             get
@@ -340,7 +348,7 @@ namespace Galabingus
             PlayerInstance.previousCollision = false;
             PlayerInstance.shot = false;
             PlayerInstance.boost = false;
-            PlayerInstance.boostSpeed = 1.625f;
+            PlayerInstance.boostSpeed = 2.125f;
             PlayerInstance.boostFrameRate = 0.002479166648f;
             PlayerInstance.boostOpacity = 1;
             PlayerInstance.boostSpawnGhost = Vector2.Zero;
@@ -359,7 +367,7 @@ namespace Galabingus
             fadeDuration = 0.25f;
             fadeTimeTotal = 0;
             totalShootTime = 0;
-            shootDuration = 0.2f;
+            shootDuration = 0.1f;
             health = 5;
         }
 
@@ -691,7 +699,16 @@ namespace Galabingus
                 {
                     if (!tSet)
                     {
-                        translation = (velocity == Vector2.Zero ? velocity : Vector2.Normalize(velocity) * (float)Animation.EllapsedTime * ((boost) ? boostSpeed : 1) * speed * translationAjdustedRatio);
+                        if (boost)
+                        {
+                            translation = (velocity == Vector2.Zero ? velocity : Vector2.Normalize(velocity) * (float)Animation.EllapsedTime * speed * translationAjdustedRatio);
+                            translation.X = MathHelper.Lerp(translation.X, translation.X * boostSpeed, 0.5f);
+                            translation.Y = MathHelper.Lerp(translation.Y, translation.Y * boostSpeed, 0.5f);
+                        }
+                        else
+                        {
+                            translation = (velocity == Vector2.Zero ? velocity : Vector2.Normalize(velocity) * (float)Animation.EllapsedTime * speed * translationAjdustedRatio);
+                        }
                     }
                     else
                     {
@@ -967,16 +984,16 @@ namespace Galabingus
             }
 
             // When space is pressed trigger shoot
-            if (currentKeyboardState.IsKeyUp(Keys.Space) && previousKeyboardState.IsKeyDown(Keys.Space))
+            if (currentKeyboardState.IsKeyUp(Keys.Space) && previousKeyboardState.IsKeyDown(Keys.Space) && !(totalShootTime <= shootDuration * 0.3f))
             {
-                totalShootTime = shootDuration;
+                totalShootTime = 0;
             }
 
             if (previousKeyboardState.IsKeyDown(Keys.Space))
             {
                 holdShoot = true;
             }
-            if (holdShoot && (godMode || (totalShootTime >= shootDuration)))
+            if (holdShoot && (godMode || !(totalShootTime >= shootDuration*0.5f)))
             {
                 Shoot();
             }
