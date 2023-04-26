@@ -629,13 +629,24 @@ namespace Galabingus
                                     this.Sprite = GetSpriteFrom(newSprite, enemyNumber);
 
                                     // Shooting
-                                    bool normalRange = (stateTimer >= 100 && stateTimer < 200) ||
-                                                       (stateTimer >= 250 && stateTimer < 350) ||
-                                                       (stateTimer >= 400 && stateTimer < 500);
+                                    bool normalRange = (stateTimer >= 100 && stateTimer < 180) ||
+                                                       (stateTimer >= 210 && stateTimer < 290) ||
+                                                       (stateTimer >= 320 && stateTimer < 410);
 
                                     if (stateTimer % 10 == 0 && normalRange)
                                     {
-                                        BulletSpawning(0, BulletType.EnemyNormal, new Vector2(-30, 0), 0);
+                                        BulletSpawning(0, BulletType.EnemyNormal, new Vector2(-30 + velocity.X, 0), 0);
+                                    }
+
+                                    // Horizontal Velocity to use
+                                    // Horizontal Velocity to use
+                                    if (velocity.X > 0)
+                                    {
+                                        velocity.X = 7f;
+                                    }
+                                    else
+                                    {
+                                        velocity.X = -7f;
                                     }
 
                                     // Time till next phase
@@ -648,7 +659,7 @@ namespace Galabingus
                                     this.Sprite = GetSpriteFrom(newSprite, enemyNumber);
 
                                     // Shooting Bouncy shots
-                                    if (stateTimer % 70 == 0 && stateTimer >= 70)
+                                    if (stateTimer % 60 == 0 && stateTimer >= 70)
                                     {
                                         BulletSpawning(0,
                                            new BulletType[]
@@ -659,12 +670,23 @@ namespace Galabingus
                                            },
                                            new Vector2[]
                                            {
-                                           new Vector2(-19, 0),
-                                           new Vector2(-19, 0),
-                                           new Vector2(-29, 0)
+                                           new Vector2(-39 + velocity.X, -20),
+                                           new Vector2(-34 + velocity.X, -20),
+                                           new Vector2(-49 + velocity.X, -20)
                                            },
                                            new int[] { -1, 0, 1 }
                                            );
+                                    }
+
+                                    // Horizontal Velocity to use
+                                    // Horizontal Velocity to use
+                                    if (velocity.X > 0)
+                                    {
+                                        velocity.X = 5.5f;
+                                    }
+                                    else
+                                    {
+                                        velocity.X = -5.5f;
                                     }
 
                                     // Time till next phase
@@ -677,9 +699,20 @@ namespace Galabingus
                                     this.Sprite = GetSpriteFrom(newSprite, enemyNumber);
 
                                     // Shooting
-                                    if (stateTimer % 80 == 0 && stateTimer >= 100)
+                                    if (stateTimer % 40 == 0 && stateTimer >= 100)
                                     {
-                                        BulletSpawning(0, BulletType.Wave, new Vector2(-135, 0), 0);
+                                        BulletSpawning(0, BulletType.Wave, new Vector2(-145 + velocity.X, 0), 0);
+                                    }
+
+                                    // Horizontal Velocity to use
+                                    // Horizontal Velocity to use
+                                    if (velocity.X > 0)
+                                    {
+                                        velocity.X = 7f;
+                                    }
+                                    else
+                                    {
+                                        velocity.X = -7f;
                                     }
 
                                     // Time till next phase
@@ -698,7 +731,18 @@ namespace Galabingus
 
                                     if (stateTimer % 30 == 0 && splitterRange)
                                     {
-                                        BulletSpawning(0, BulletType.Splitter, new Vector2(-47, 0), 0);
+                                        BulletSpawning(0, BulletType.Splitter, new Vector2(-47 + velocity.X, 0), 0);
+                                    }
+
+                                    // Horizontal Velocity to use
+                                    // Horizontal Velocity to use
+                                    if (velocity.X > 0)
+                                    {
+                                        velocity.X = 5.5f;
+                                    }
+                                    else
+                                    {
+                                        velocity.X = -5.5f;
                                     }
 
                                     // Time till next phase
@@ -714,7 +758,17 @@ namespace Galabingus
 
                                     if (stateTimer % 80 == 0 && stateTimer >= 100)
                                     {
-                                        BulletSpawning(0, BulletType.BossShatter, new Vector2(-20, 0), 0);
+                                        BulletSpawning(0, BulletType.BossShatter, new Vector2(-20 + velocity.X, 0), 0);
+                                    }
+
+                                    // Horizontal Velocity to use
+                                    if (velocity.X > 0)
+                                    {
+                                        velocity.X = 7f;
+                                    } 
+                                    else
+                                    {
+                                        velocity.X = -7f;
                                     }
 
                                     // Time till next phase
@@ -745,31 +799,37 @@ namespace Galabingus
                     {
                         this.Position += velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
 
-                        // Collide with walls
-                        if (this.Position.X + this.Transform.Width * this.Scale >=  // Enemy's right side
+                        // Collisions
+                        if (ability == EnemyType.Boss)
+                        { // Goes beyond borders slightly to allow for shots to hit edge
+                          // Collide with walls
+                            if (this.Position.X + (this.Transform.Width * this.Scale / 2) >=  // Enemy's right side
                             GameObject.Instance.GraphicsDevice.Viewport.Width &&    // Screen's right side
                             Velocity.X > 0)                                         // Can only occur when facing Right
-                        { // Bounce on right side of screen
-                            this.Position -= velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 120;
-                            if (ability == EnemyType.Boss)
-                            {
+                            { // Bounce on right side of screen
+                                this.Position -= velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 120;
+                                Velocity = new Vector2(Velocity.X * -1 * (float)Animation.EllapsedTime, Velocity.Y);
+
+                            }
+                            else if (this.Position.X <= this.Transform.Width * this.Scale / -2 && Velocity.X < 0)
+                            { // Bounce on left side of screen
+                                this.Position -= velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
                                 Velocity = new Vector2(Velocity.X * -1 * (float)Animation.EllapsedTime, Velocity.Y);
                             }
-                            else
-                            {
+                        } 
+                        else
+                        { // Bounces at normal borders
+                          // Collide with walls
+                            if (this.Position.X + this.Transform.Width * this.Scale >=  // Enemy's right side
+                            GameObject.Instance.GraphicsDevice.Viewport.Width &&    // Screen's right side
+                            Velocity.X > 0)                                         // Can only occur when facing Right
+                            { // Bounce on right side of screen
+                                this.Position -= velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 120;
                                 EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, true);
                             }
-                            
-                        } 
-                        else if (this.Position.X <= 0 && Velocity.X < 0)
-                        { // Bounce on left side of screen
-                            this.Position -= velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
-                            if (ability == EnemyType.Boss)
-                            {
-                                Velocity = new Vector2(Velocity.X * -1 * (float)Animation.EllapsedTime, Velocity.Y);
-                            }
-                            else
-                            {
+                            else if (this.Position.X <= 0 && Velocity.X < 0)
+                            { // Bounce on left side of screen
+                                this.Position -= velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
                                 EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, false);
                             }
                         }
