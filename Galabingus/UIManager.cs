@@ -405,6 +405,7 @@ namespace Galabingus
             event1, event2, pause);
 
             button.HoverTexture = cm.Load<Texture2D>("buttonOptions_hover_strip1");
+            button.DisplayMenu = optionsMenu;
 
             event1 = ReturnMenu;
 
