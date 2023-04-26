@@ -12,7 +12,6 @@ using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Diagnostics;
 using System.Xml.Linq;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace Galabingus
 {
@@ -401,6 +400,31 @@ namespace Galabingus
             AddText("arial_36", "Pause",
                 new Vector2(width / 2 - 200,
                 height / 2 - 200), Color.White, textEvent1, pause);
+
+            AddBackground("pauseMenu_strip1", 2f,
+                new Vector2(width / 2, height / 2), pause);
+
+            button = AddButton("buttonOptions_base_strip1", 0.6f,
+            new Vector2(width / 2 + 30, height / 2 + 50),
+            event1, event2, pause);
+
+            button.HoverTexture = cm.Load<Texture2D>("buttonOptions_hover_strip1");
+
+            event1 = ReturnMenu;
+
+            button = AddButton("quitButton_base_strip1", 2.3f,
+            new Vector2(width / 2 + 30, height / 2 + 150),
+            event1, event2, pause);
+
+            button.HoverTexture = cm.Load<Texture2D>("quitButton_hover_strip1");
+
+            event1 = StartGame;
+            
+            button = AddButton("resumeButton_base_strip1", 2.3f,
+            new Vector2(width / 2 + 30, height / 2 - 50),
+            event1, event2, pause);
+
+            button.HoverTexture = cm.Load<Texture2D>("resumeButton_hover_strip1");
 
             //GameOver
             AddBackground("deathTitle_strip1", 1f,
