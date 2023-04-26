@@ -1137,14 +1137,13 @@ namespace Galabingus
                         case Targets.Enemies:
                             if ((collision.other as Enemy) is Enemy)
                             { // Collided object is an Enemy
-                                
                                 if (ability == BulletType.BigShot && ((Enemy)collision.other).Ability != EnemyType.Boss)
                                 { // The BIGSHOT - just kills enemies on the spot
                                     ((Enemy)collision.other).Destroy = true;
                                 }
                                 else
                                 { // Normal bullet from player
-                                    ((Enemy)collision.other).Health -= 1;
+                                    ((Enemy)collision.other).Health -= 5;
 
                                     // Kill the enemy if its health is below zero
                                     if (((Enemy)collision.other).Health <= 0)

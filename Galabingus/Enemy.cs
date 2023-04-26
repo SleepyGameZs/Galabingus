@@ -641,7 +641,6 @@ namespace Galabingus
                                         }
 
                                         // Horizontal Velocity to use
-                                        // Horizontal Velocity to use
                                         if (velocity.X > 0)
                                         {
                                             velocity.X = 7f;
@@ -652,7 +651,7 @@ namespace Galabingus
                                         }
 
                                         // Time till next phase
-                                        phaseTime = 500;
+                                        phaseTime = 410;
                                         break;
 
                                     case EnemyType.Bouncing:
@@ -681,7 +680,6 @@ namespace Galabingus
                                         }
 
                                         // Horizontal Velocity to use
-                                        // Horizontal Velocity to use
                                         if (velocity.X > 0)
                                         {
                                             velocity.X = 5.5f;
@@ -701,12 +699,11 @@ namespace Galabingus
                                         this.Sprite = GetSpriteFrom(newSprite, enemyNumber);
 
                                         // Shooting
-                                        if (stateTimer % 40 == 0 && stateTimer >= 100)
+                                        if (stateTimer % 40 == 0 && stateTimer >= 80)
                                         {
                                             BulletSpawning(0, BulletType.Wave, new Vector2(-145 + velocity.X, 0), 0);
                                         }
 
-                                        // Horizontal Velocity to use
                                         // Horizontal Velocity to use
                                         if (velocity.X > 0)
                                         {
@@ -727,16 +724,15 @@ namespace Galabingus
                                         this.Sprite = GetSpriteFrom(newSprite, enemyNumber);
 
                                         // Shooting
-                                        bool splitterRange = (stateTimer >= 100 && stateTimer <= 160) ||
-                                                             (stateTimer >= 210 && stateTimer <= 270) ||
-                                                             (stateTimer >= 320 && stateTimer < 380);
+                                        bool splitterRange = (stateTimer >= 80 && stateTimer < 140) ||
+                                                             (stateTimer >= 180 && stateTimer < 240) ||
+                                                             (stateTimer >= 280 && stateTimer < 340);
 
-                                        if (stateTimer % 30 == 0 && splitterRange)
+                                        if (stateTimer % 20 == 0 && splitterRange)
                                         {
                                             BulletSpawning(0, BulletType.Splitter, new Vector2(-47 + velocity.X, 0), 0);
                                         }
 
-                                        // Horizontal Velocity to use
                                         // Horizontal Velocity to use
                                         if (velocity.X > 0)
                                         {
@@ -757,7 +753,6 @@ namespace Galabingus
                                         this.Sprite = GetSpriteFrom(newSprite, enemyNumber);
 
                                         // Shooting
-
                                         if (stateTimer % 80 == 0 && stateTimer >= 100)
                                         {
                                             BulletSpawning(0, BulletType.BossShatter, new Vector2(-20 + velocity.X, 0), 0);
@@ -776,7 +771,6 @@ namespace Galabingus
                                         // Time till next phase
                                         phaseTime = 500;
                                         break;
-
                                 }
 
                                 // Change to make use of game time
