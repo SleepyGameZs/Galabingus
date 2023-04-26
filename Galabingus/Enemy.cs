@@ -653,9 +653,9 @@ namespace Galabingus
                                         BulletSpawning(0,
                                            new BulletType[]
                                            {
-                                           BulletType.BouncingSide,
-                                           BulletType.BouncingCenter,
-                                           BulletType.BouncingSide
+                                           BulletType.BossBouncingSide,
+                                           BulletType.BossBouncingCenter,
+                                           BulletType.BossBouncingSide
                                            },
                                            new Vector2[]
                                            {
@@ -705,7 +705,7 @@ namespace Galabingus
                                     phaseTime = 380;
                                     break;
 
-                                case EnemyType.Seeker:
+                                case EnemyType.Shatter:
                                     // Set the new boss sprite
                                     newSprite = GameObject.Instance.Content.boss_purple_strip4;
                                     this.Sprite = GetSpriteFrom(newSprite, enemyNumber);
@@ -714,7 +714,7 @@ namespace Galabingus
 
                                     if (stateTimer % 80 == 0 && stateTimer >= 100)
                                     {
-                                        BulletSpawning(0, BulletType.Seeker, new Vector2(-20, 0), 0);
+                                        BulletSpawning(0, BulletType.BossShatter, new Vector2(-20, 0), 0);
                                     }
 
                                     // Time till next phase
