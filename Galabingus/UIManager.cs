@@ -97,6 +97,7 @@ namespace Galabingus
 
         //keyboard control state
         private bool keyboardIsActive;
+        private bool keyboardTakeOver;
 
         //selected button identifier
         private float selectedButton;
@@ -209,13 +210,24 @@ namespace Galabingus
         }
 
         /// <summary>
-        ///  The keyboard is in control?
+        ///  The keyboard code running?
         /// </summary>
         public bool KeyboardTakeOver
         {
             get
             {
                 return keyboardIsActive;
+            }
+        }
+
+        /// <summary>
+        ///  The keyboard is in control?
+        /// </summary>
+        public bool IsKeyboardActive
+        {
+            get
+            {
+                return keyboardTakeOver;
             }
         }
 
@@ -504,15 +516,20 @@ namespace Galabingus
             // Arrow keys trigger keyboard take over
             if (SingleKeyPress(Keys.Down) || SingleKeyPress(Keys.Up) && !keyboardIsActive)
             {
+                keyboardTakeOver = true;
                 keyboardIsActive = true;
 
                 ResetButtons();
             }
             else if (currentMS != previousMS)
             {
+                keyboardTakeOver = false;
                 keyboardIsActive = false;
-
                 ResetButtons();
+            }
+            else
+            {
+                keyboardIsActive = false;
             }
 
 
@@ -1110,7 +1127,7 @@ namespace Galabingus
                 {
                     if (element is Button)
                     {
-                        if (SingleKeyPress(Keys.Down) && element.UIPosition.Y > selectedButton)
+                        if (Keyboard.GetState().IsKeyDown(Keys.Down) && element.UIPosition.Y > selectedButton)
                         {
                             if (Math.Abs(selectedButton - element.UIPosition.Y) < Math.Abs(selectedButton - closeButton))
                             {
@@ -1118,7 +1135,7 @@ namespace Galabingus
                             }
                             switchedButton = true;
                         }
-                        if (SingleKeyPress(Keys.Up) && element.UIPosition.Y < selectedButton)
+                        if (Keyboard.GetState().IsKeyDown(Keys.Up) && element.UIPosition.Y < selectedButton)
                         {
                             if (Math.Abs(selectedButton - element.UIPosition.Y) < Math.Abs(selectedButton - closeButton))
                             {
