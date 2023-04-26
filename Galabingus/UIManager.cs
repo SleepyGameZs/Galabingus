@@ -327,6 +327,10 @@ namespace Galabingus
 
             #region Add stuffs
 
+            //test slider
+            slider = AddSlider("SliderBack_strip1", "SliderKnob_strip1",
+                1f, new Vector2(100, 100), menu);
+
             //Create the play button
             event1 = StartGame;
             event2 = HoverTexture;
@@ -335,8 +339,6 @@ namespace Galabingus
             button = AddButton("buttonPlay_base_strip1", 0.6f,
             new Vector2(width / 2 + 30, height / 2),
             event1, event2, menu);
-
-
 
             button.HoverTexture = cm.Load<Texture2D>("buttonPlay_hover_strip1");
             button.UITexture = button.HoverTexture;
@@ -400,10 +402,10 @@ namespace Galabingus
                 new Vector2(width / 2 - 200,
                 height / 2 - 200), Color.White, textEvent1, pause);
 
-            //GameOver Text
-            AddText("arial_36", "Game Over",
-                new Vector2(width / 2 - 100,
-                height / 2 - 150), Color.White, textEvent1, gameOver);
+            //GameOver
+            AddBackground("deathTitle_strip1", 1f,
+                new Vector2(width / 2, height / 4),
+                gameOver);
 
             event1 = ReturnMenu;
             event2 = HoverTexture;
@@ -415,10 +417,10 @@ namespace Galabingus
 
             button.HoverTexture = cm.Load<Texture2D>("buttonMenu_hover_strip1");
 
-            //GameOver Text
-            AddText("arial_36", "Victory!",
-                new Vector2(width / 2 - 100,
-                height / 2 - 150), Color.White, textEvent1, victory);
+            //Victory
+            AddBackground("victoryTitle_strip1", 1f,
+                new Vector2(width / 2, height / 4),
+                victory);
 
 
             //add the return to the menu in victory

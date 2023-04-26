@@ -766,6 +766,18 @@
 /processorParam:DebugMode=Auto
 /build:Collider.fx
 
+#begin deathTitle_strip1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:deathTitle_strip1.png
+
 #begin Enemy Fire.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
@@ -988,6 +1000,30 @@
 /processorParam:DebugMode=Auto
 /build:shaders.fx
 
+#begin SliderBack_strip1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:SliderBack_strip1.png
+
+#begin SliderKnob_strip1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:SliderKnob_strip1.png
+
 #begin space_nebula_b2_strip1.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -1059,6 +1095,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:tile_strip26.png
+
+#begin victoryTitle_strip1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:victoryTitle_strip1.png
 
 #begin Wave Shot.mp3
 /importer:Mp3Importer
