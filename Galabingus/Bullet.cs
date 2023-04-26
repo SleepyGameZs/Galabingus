@@ -1138,7 +1138,7 @@ namespace Galabingus
                             if ((collision.other as Enemy) is Enemy)
                             { // Collided object is an Enemy
                                 
-                                if (ability == BulletType.BigShot)
+                                if (ability == BulletType.BigShot && ((Enemy)collision.other).Ability != EnemyType.Boss)
                                 { // The BIGSHOT - just kills enemies on the spot
                                     ((Enemy)collision.other).Destroy = true;
                                 }
