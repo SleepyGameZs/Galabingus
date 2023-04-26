@@ -88,6 +88,9 @@ namespace Galabingus
         private bool holdShoot;
         private double totalShootTime;
         private float shootDuration;
+        private bool bigShot;
+        private float bigShotDuration;
+        private double bigShotTotalTime;
 
         public bool inIFrame
         {
@@ -369,6 +372,9 @@ namespace Galabingus
             totalShootTime = 0;
             shootDuration = 0.1f;
             health = 5;
+            bigShot = false;
+            bigShotDuration = 1.5f;
+            bigShotTotalTime = 0;
         }
 
         /// <summary>
@@ -735,6 +741,7 @@ namespace Galabingus
             totalBoostTime += gameTime.ElapsedGameTime.TotalSeconds;
             totalTime += gameTime.ElapsedGameTime.TotalSeconds;
             fadeTimeTotal += gameTime.ElapsedGameTime.TotalSeconds;
+            bigShotTotalTime += gameTime.ElapsedGameTime.TotalSeconds;
 
             intercepts = PlayerInstance.Collider.UpdateTransform(
                 PlayerInstance.Sprite,                         // Player Sprite
@@ -959,7 +966,6 @@ namespace Galabingus
                                     acceleration.Y = acceleration.Y / 10f;
                                 }
                                 yPause = false;
-
                             }
                         }
 
@@ -978,28 +984,65 @@ namespace Galabingus
                 //shot = false;
             }
 
-            if (previousKeyboardState.IsKeyDown(Keys.G) && currentKeyboardState.IsKeyUp(Keys.G))
+            if (bigShot && (bigShotTotalTime >= bigShotDuration))
             {
-                godMode = !godMode;
+                BigShot();
             }
 
-            // When space is pressed trigger shoot
-            if (currentKeyboardState.IsKeyUp(Keys.Space) && previousKeyboardState.IsKeyDown(Keys.Space) && !(totalShootTime <= shootDuration * 0.3f))
+            if (!bigShot || godMode)
             {
-                totalShootTime = 0;
+                if (previousKeyboardState.IsKeyDown(Keys.G) && currentKeyboardState.IsKeyUp(Keys.G))
+                {
+                    godMode = !godMode;
+                }
+
+                // When space is pressed trigger shoot
+                if ((currentKeyboardState.IsKeyUp(Keys.Space) && previousKeyboardState.IsKeyDown(Keys.Space)))
+                {
+                    Shoot();
+                }
+
+                if (previousKeyboardState.IsKeyDown(Keys.Space))
+                {
+                    holdShoot = true;
+                }
+                if (holdShoot && godMode)
+                {
+                    Shoot();
+                }
+                if (currentKeyboardState.IsKeyUp(Keys.Space))
+                {
+                    holdShoot = false;
+                }
+
+                /*
+                if (currentKeyboardState.IsKeyUp(Keys.Space) && previousKeyboardState.IsKeyDown(Keys.Space) && !(totalShootTime <= shootDuration * 0.3f))
+                {
+                    totalShootTime = 0;
+                }
+
+                if (previousKeyboardState.IsKeyDown(Keys.Space))
+                {
+                    holdShoot = true;
+                }
+                if ( (currentKeyboardState.IsKeyUp(Keys.Space) && previousKeyboardState.IsKeyDown(Keys.Space)) || holdShoot && (godMode || !(totalShootTime >= shootDuration * 0.5f)))
+                {
+                    Shoot();
+                }
+                if (currentKeyboardState.IsKeyUp(Keys.Space))
+                {
+                    holdShoot = false;
+                }
+                */
             }
 
-            if (previousKeyboardState.IsKeyDown(Keys.Space))
+            if (previousKeyboardState.IsKeyDown(Keys.Space) && currentKeyboardState.IsKeyDown(Keys.Space) && (bigShotTotalTime >= bigShotDuration))
             {
-                holdShoot = true;
+                bigShot = true;
             }
-            if (holdShoot && (godMode || !(totalShootTime >= shootDuration*0.5f)))
+            else if (currentKeyboardState.IsKeyUp(Keys.Space))
             {
-                Shoot();
-            }
-            if (currentKeyboardState.IsKeyUp(Keys.Space))
-            {
-                holdShoot = false;
+                bigShot = false;
             }
 
             /*
@@ -1117,7 +1160,23 @@ namespace Galabingus
                 //holdShoot = false;
                 totalShootTime -= shootDuration;
             }
+
+            if (bigShotTotalTime >= bigShotDuration)
+            {
+                //holdShoot = false;
+                bigShotTotalTime -= bigShotDuration;
+            }
+
             //Debug.WriteLine();
+        }
+
+        /// <summary>
+        ///  Triggered when the
+        ///  Player holds the shoot button
+        /// </summary>
+        public void BigShot()
+        {
+            BulletManager.Instance.CreateBullet(BulletType.BigShot, Position, new Vector2(0, -1), this, false);
         }
 
         /// <summary>
