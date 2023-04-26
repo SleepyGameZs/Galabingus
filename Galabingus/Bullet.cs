@@ -33,13 +33,18 @@ namespace Galabingus
         Wave,
         Splitter,
         SplitOff,
-        Seeker,
+        Shatter,
+        ShatterUp,
+        ShatterDown,
+        ShatterSide,
         Explosion,
         BigExplosion,
         Heart,
+        // UNUSED CONTENT
         LazerPath,
         LazerStart,
-        LazerAttack
+        LazerAttack,
+        Seeker
     }
 
     public enum Targets
@@ -419,8 +424,40 @@ namespace Galabingus
                     break;
 
                 case BulletType.Seeker:
-                    // Purple Enemy: Tracks the player, however it eventually loses focus
+                    // [OLD] Purple Enemy: Tracks the player, however it eventually loses focus
                     GameObject.Instance.Content = GameObject.Instance.Content.enemy_purple_bullet_strip4;
+
+                    // Can target: Player
+                    target = Targets.Player;
+                    break;
+
+                case BulletType.Shatter:
+                    // [NEW] Purple Enemy: Moves to halfway point on screen then breaks into 6!
+                    GameObject.Instance.Content = GameObject.Instance.Content.bullet_purple_core_strip4;
+
+                    // Can target: Player
+                    target = Targets.Player;
+                    break;
+
+                case BulletType.ShatterUp:
+                    // [NEW] Purple Enemy: Shattered bullet that goes up at a 60 / 120 degree angle
+                    GameObject.Instance.Content = GameObject.Instance.Content.bullet_purple_60_strip4;
+
+                    // Can target: Player
+                    target = Targets.Player;
+                    break;
+
+                case BulletType.ShatterDown:
+                    // [NEW] Purple Enemy: Shattered bullet that goes down at a 240 / 300 degree angle
+                    GameObject.Instance.Content = GameObject.Instance.Content.bullet_purple_60_strip4;
+
+                    // Can target: Player
+                    target = Targets.Player;
+                    break;
+
+                case BulletType.ShatterSide:
+                    // [NEW] Purple Enemy: Shattered bullet that goes up at a 0 / 180 degree angle
+                    GameObject.Instance.Content = GameObject.Instance.Content.bullet_purple_0_strip4;
 
                     // Can target: Player
                     target = Targets.Player;
@@ -621,6 +658,36 @@ namespace Galabingus
 
                     // Set Current Position
                     currentPosition = SetPosition(gameTime, 5, true);
+                    break;
+
+                case BulletType.Shatter:
+                    // Checks if at halfway point, if successful explode into 6
+                    if (Position.Y >= GameObject.Instance.GraphicsDevice.Viewport.Height / 2f)
+                    {
+                        // Get a fixed position to spawn the bullets at
+                        Vector2 fixedPosition = new Vector2(currentPosition.X - 40, currentPosition.Y + 20);
+
+                        // Create Bullets
+                        BulletManager.Instance.CreateBullet(BulletType.ShatterUp, fixedPosition, new Vector2(1, -1), creator, true);
+                        BulletManager.Instance.CreateBullet(BulletType.ShatterUp, fixedPosition, new Vector2(-1, -1), creator, true);
+                        BulletManager.Instance.CreateBullet(BulletType.ShatterDown, fixedPosition, new Vector2(1, 1), creator, true);
+                        BulletManager.Instance.CreateBullet(BulletType.ShatterDown, fixedPosition, new Vector2(-1, 1), creator, true);
+                        BulletManager.Instance.CreateBullet(BulletType.ShatterSide, fixedPosition, new Vector2(1, 0), creator, true);
+                        BulletManager.Instance.CreateBullet(BulletType.ShatterSide, fixedPosition, new Vector2(-1, 0), creator, true);
+
+                        // Tell Bullet Manager to delete this bullet
+                        destroy = true;
+                    }
+
+                    currentPosition = SetPosition(gameTime, 4, true);
+                    break;
+
+                case BulletType.ShatterUp:
+                case BulletType.ShatterDown:
+                case BulletType.ShatterSide:
+
+                    // Movement handling for bullets
+                    currentPosition = SetPosition(gameTime, 4, true);
                     break;
 
                 case BulletType.Explosion:
@@ -851,6 +918,16 @@ namespace Galabingus
                                 }
 
                                 // Destroy the bullet
+                                if (ability == BulletType.Shatter)
+                                {
+                                    // Create Bullets
+                                    BulletManager.Instance.CreateBullet(BulletType.ShatterUp, currentPosition, new Vector2(1, 0), creator, true);
+                                    BulletManager.Instance.CreateBullet(BulletType.ShatterUp, currentPosition, new Vector2(-1, 0), creator, true);
+                                    BulletManager.Instance.CreateBullet(BulletType.ShatterDown, currentPosition, new Vector2(1, 0), creator, true);
+                                    BulletManager.Instance.CreateBullet(BulletType.ShatterDown, currentPosition, new Vector2(-1, 0), creator, true);
+                                    BulletManager.Instance.CreateBullet(BulletType.ShatterSide, currentPosition, new Vector2(1, 0), creator, true);
+                                    BulletManager.Instance.CreateBullet(BulletType.ShatterSide, currentPosition, new Vector2(-1, 0), creator, true);
+                                }
                                 destroy = true;
                                 velocity = Vector2.Zero;
                             }

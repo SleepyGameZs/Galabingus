@@ -140,6 +140,26 @@ namespace Galabingus
                     AudioManager.Instance.CallSound("Homing");
                     break;
 
+                case BulletType.Shatter:
+                    sprite = GameObject.Instance.Content.bullet_purple_core_strip4;
+                    // ADD SOUND HERE
+                    break;
+
+                case BulletType.ShatterUp:
+                    sprite = GameObject.Instance.Content.bullet_purple_60_strip4;
+                    // ADD SOUND HERE
+                    break;
+
+                case BulletType.ShatterDown:
+                    sprite = GameObject.Instance.Content.bullet_purple_60_strip4;
+                    // ADD SOUND HERE
+                    break;
+
+                case BulletType.ShatterSide:
+                    sprite = GameObject.Instance.Content.bullet_purple_0_strip4;
+                    // ADD SOUND HERE
+                    break;
+
                 case BulletType.Explosion:
                     sprite = GameObject.Instance.Content.bomb_explosion_strip5;
                     break;

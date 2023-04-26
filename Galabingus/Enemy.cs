@@ -27,9 +27,11 @@ namespace Galabingus
         Bouncing,
         Wave,
         Splitter,
-        Seeker,
+        Shatter,
         Bomb,
-        Boss
+        Boss,
+        // REMOVED CONTENT
+        Seeker
     }
 
     internal class Enemy : GameObject
@@ -402,6 +404,10 @@ namespace Galabingus
                     colorHealth = Color.Purple;
                     break;
 
+                case EnemyType.Shatter:
+                    colorHealth = Color.Purple;
+                    break;
+
                 case EnemyType.Bomb:
                     colorHealth = Color.LightGray;
                     break;
@@ -579,6 +585,16 @@ namespace Galabingus
                             // Shoots
                             BulletSpawning(170, 
                                            BulletType.Seeker,
+                                           ((Direction.Y == 1) ?    // CHECK DIRECTION
+                                               new Vector2(-20, 0) :    // DOWN
+                                               new Vector2(-25, -80)),  // UP, 
+                                           0);
+                            break;
+
+                        case EnemyType.Shatter:
+                            // Shoots
+                            BulletSpawning(190,
+                                           BulletType.Shatter,
                                            ((Direction.Y == 1) ?    // CHECK DIRECTION
                                                new Vector2(-20, 0) :    // DOWN
                                                new Vector2(-25, -80)),  // UP, 
