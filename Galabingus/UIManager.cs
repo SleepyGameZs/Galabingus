@@ -228,6 +228,10 @@ namespace Galabingus
             {
                 return selectedButton;
             }
+            set
+            {
+                selectedButton = value;
+            }
         }
 
         #endregion
@@ -425,19 +429,19 @@ namespace Galabingus
 
             button = AddButton("buttonBack_base_strip1", 0.6f,
                 new Vector2(width / 2 + 30, height / 2 + 350),
-                event1, howToPlayMenu);
+                event1, event2, howToPlayMenu);
 
             button.HoverTexture = cm.Load<Texture2D>("buttonBack_hover_strip1");
 
             button = AddButton("buttonBack_base_strip1", 0.6f,
                 new Vector2(width / 2 + 30, height / 2 + 350),
-                event1, optionsMenu);
+                event1, event2, optionsMenu);
 
             button.HoverTexture = cm.Load<Texture2D>("buttonBack_hover_strip1");
 
             button = AddButton("buttonBack_base_strip1", 0.6f,
                 new Vector2(width / 2 + 30, height / 2 + 350),
-                event1, creditsMenu);
+                event1, event2, creditsMenu);
 
             button.HoverTexture = cm.Load<Texture2D>("buttonBack_hover_strip1");
 
@@ -483,10 +487,7 @@ namespace Galabingus
 
                 ResetButtons();
             }
-            else
-            {
-                keyboardIsActive = false;
-            }
+
 
             //if the back key is pressed and the current level isn't the base one
             if (!(currentMenu.Count <= 1))
@@ -1056,7 +1057,7 @@ namespace Galabingus
                 {
                     if (element is Button)
                     {
-                        if (currentKBS.IsKeyDown(Keys.Down) && element.UIPosition.Y > selectedButton)
+                        if (SingleKeyPress(Keys.Down) && element.UIPosition.Y > selectedButton)
                         {
                             if (Math.Abs(selectedButton - element.UIPosition.Y) < Math.Abs(selectedButton - closeButton))
                             {
@@ -1064,13 +1065,13 @@ namespace Galabingus
                             }
                             switchedButton = true;
                         }
-                        if (currentKBS.IsKeyDown(Keys.Up) && element.UIPosition.Y < selectedButton)
+                        if (SingleKeyPress(Keys.Up) && element.UIPosition.Y < selectedButton)
                         {
-                            switchedButton = true;
                             if (Math.Abs(selectedButton - element.UIPosition.Y) < Math.Abs(selectedButton - closeButton))
                             {
                                 closeButton = element.UIPosition.Y;
                             }
+                            switchedButton = true;
                         }
 
                     }

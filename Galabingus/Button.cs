@@ -96,8 +96,11 @@ namespace Galabingus
         {
             currentMS = Mouse.GetState();
 
-            if (uiPosition.Contains(currentMS.Position) && !KeyboardTakeOver())
+            if (uiPosition.Contains(currentMS.Position) && !UIManager.Instance.KeyboardTakeOver)
             {
+
+                UIManager.Instance.ButtonSelection = uiPosition.Y;
+
                 if (currentMS.LeftButton == ButtonState.Pressed)
                 {
                     if (OnClick != null)
@@ -117,7 +120,7 @@ namespace Galabingus
             }
             else
             {
-                if (UIPosition.Y == UIManager.Instance.ButtonSelection && Keyboard.GetState().IsKeyDown(Keys.Enter))
+                if (uiPosition.Y == UIManager.Instance.ButtonSelection && UIManager.Instance.SingleKeyPress(Keys.Enter))
                 {
                     if (OnClick != null)
                         OnClick(this);
