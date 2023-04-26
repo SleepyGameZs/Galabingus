@@ -12,6 +12,7 @@ using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Diagnostics;
 using System.Xml.Linq;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace Galabingus
 {
@@ -311,6 +312,7 @@ namespace Galabingus
             Button button;
             Background background;
             Texture2D texture;
+            Slider slider;
 
             //different menus
             List<UIElement> howToPlayMenu = new List<UIElement>();
@@ -333,6 +335,8 @@ namespace Galabingus
             button = AddButton("buttonPlay_base_strip1", 0.6f,
             new Vector2(width / 2 + 30, height / 2),
             event1, event2, menu);
+
+
 
             button.HoverTexture = cm.Load<Texture2D>("buttonPlay_hover_strip1");
             button.UITexture = button.HoverTexture;
@@ -954,6 +958,20 @@ namespace Galabingus
             }
 
             return textList;
+        }
+
+        public Slider AddSlider(string back, string knotch, float scale, Vector2 position, List<UIElement> listToAdd)
+        {
+            //create the menus texture
+            Texture2D backTexture = cm.Load<Texture2D>(back);
+            Texture2D knotchTexture = cm.Load<Texture2D>(knotch);
+
+            //create the button
+            Slider slider = new Slider(backTexture, knotchTexture, position, scale);
+
+            listToAdd.Add(slider);
+
+            return slider;
         }
 
         #endregion
