@@ -1269,11 +1269,10 @@ namespace Galabingus
                 0.0f                             // Layer depth of the player is 0.0
             );
 
-
             GameObject.Instance.SpriteBatch.Draw(
-                fullHeartSprite,                          // The sprite-sheet for the player
-                largeHealthCondition ? new Vector2(-1, -20) + Position : new Vector2(-1, 20 + PlayerInstance.Transform.Height * Scale) + Position,                        // The position for the player
-                new Rectangle(0, 0, halfHeartSprite.Width * (int)Math.Clamp(Math.Floor(playerInstance.Health),0,5), halfHeartSprite.Height),                       // The scale and bounding box for the animation
+                halfHeartSprite,                          // The sprite-sheet for the player
+                largeHealthCondition ? new Vector2(-1, -20 ) + Position : new Vector2(-1, 20 + PlayerInstance.Transform.Height * Scale) + Position,                        // The position for the player
+                new Rectangle(0, 0, halfHeartSprite.Width * (int)Math.Clamp((int)Math.Round(playerInstance.Health, MidpointRounding.AwayFromZero),0,5), halfHeartSprite.Height),                       // The scale and bounding box for the animation
                 new Color(Color.White, 0.9f),                     // The color for the palyer
                 0.0f,                            // There cannot be any rotation of the player
                 Vector2.Zero,                    // Starting render position
@@ -1283,9 +1282,9 @@ namespace Galabingus
             );
 
             GameObject.Instance.SpriteBatch.Draw(
-                halfHeartSprite,                          // The sprite-sheet for the player
-                largeHealthCondition ? new Vector2(-1, -20 ) + Position : new Vector2(-1, 20 + PlayerInstance.Transform.Height * Scale) + Position,                        // The position for the player
-                new Rectangle(0, 0, halfHeartSprite.Width * (int)Math.Clamp((int)Math.Round(playerInstance.Health, MidpointRounding.AwayFromZero),0,5), halfHeartSprite.Height),                       // The scale and bounding box for the animation
+                fullHeartSprite,                          // The sprite-sheet for the player
+                largeHealthCondition ? new Vector2(-1, -20) + Position : new Vector2(-1, 20 + PlayerInstance.Transform.Height * Scale) + Position,                        // The position for the player
+                new Rectangle(0, 0, halfHeartSprite.Width * (int)Math.Clamp(Math.Floor(playerInstance.Health), 0, 5), halfHeartSprite.Height),                       // The scale and bounding box for the animation
                 new Color(Color.White, 0.9f),                     // The color for the palyer
                 0.0f,                            // There cannot be any rotation of the player
                 Vector2.Zero,                    // Starting render position
