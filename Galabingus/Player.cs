@@ -91,6 +91,7 @@ namespace Galabingus
         private bool bigShot;
         private float bigShotDuration;
         private double bigShotTotalTime;
+        private bool realeaseHold;
 
         public bool inIFrame
         {
@@ -358,9 +359,9 @@ namespace Galabingus
             PlayerInstance.shiftBoost = false;
             PlayerInstance.ghosts = new List<Ghost>();
             this.thisGameObject = this;
-            PlayerInstance.fullHeartSprite = GameObject.Instance.ContentManager.Load<Texture2D>("heart_full_strip1");
-            PlayerInstance.halfHeartSprite = GameObject.Instance.ContentManager.Load<Texture2D>("heart_half_strip1");
-            PlayerInstance.heartSprite = GameObject.Instance.ContentManager.Load<Texture2D>("heart_strip1");
+            PlayerInstance.fullHeartSprite = GameObject.Instance.ContentManager.Load<Texture2D>("Player/player_heart_full_strip1");
+            PlayerInstance.halfHeartSprite = GameObject.Instance.ContentManager.Load<Texture2D>("Player/player_heart_half_strip1");
+            PlayerInstance.heartSprite = GameObject.Instance.ContentManager.Load<Texture2D>("Player/player_heart_empty_strip1");
             PlayerInstance.cameraLock = true;
             textTest = UIManager.Instance.AddText("Testing", Vector2.Zero, 12, Color.White, UIState.BaseGame);
             iFrame = false;
@@ -373,8 +374,9 @@ namespace Galabingus
             shootDuration = 0.1f;
             health = 5;
             bigShot = false;
-            bigShotDuration = 1.5f;
+            bigShotDuration = 0.3f;
             bigShotTotalTime = 0;
+            realeaseHold = false;
         }
 
         /// <summary>
@@ -986,11 +988,18 @@ namespace Galabingus
 
             if (bigShot && (bigShotTotalTime >= bigShotDuration))
             {
+                realeaseHold = true;
+            }
+
+            if (realeaseHold && currentKeyboardState.IsKeyUp(Keys.Space))
+            {
+                realeaseHold = false;
                 BigShot();
             }
 
             if (!bigShot || godMode)
             {
+                realeaseHold = false;
                 if (previousKeyboardState.IsKeyDown(Keys.G) && currentKeyboardState.IsKeyUp(Keys.G))
                 {
                     godMode = !godMode;
@@ -1034,6 +1043,10 @@ namespace Galabingus
                     holdShoot = false;
                 }
                 */
+            }
+            else if (previousKeyboardState.IsKeyUp(Keys.Space) && currentKeyboardState.IsKeyDown(Keys.Space) && !realeaseHold && !(bigShotTotalTime >= bigShotDuration))
+            {
+                Shoot();
             }
 
             if (previousKeyboardState.IsKeyDown(Keys.Space) && currentKeyboardState.IsKeyDown(Keys.Space) && (bigShotTotalTime >= bigShotDuration))
@@ -1251,7 +1264,7 @@ namespace Galabingus
                 new Color(Color.Gray,1.0f),                     // The color for the palyer
                 0.0f,                            // There cannot be any rotation of the player
                 Vector2.Zero,                    // Starting render position
-                0.4f,                      // The scale of the sprite
+                0.6f,                      // The scale of the sprite
                 SpriteEffects.None,              // Which direction the sprite faces
                 0.0f                             // Layer depth of the player is 0.0
             );
@@ -1264,7 +1277,7 @@ namespace Galabingus
                 new Color(Color.White, 0.9f),                     // The color for the palyer
                 0.0f,                            // There cannot be any rotation of the player
                 Vector2.Zero,                    // Starting render position
-                0.4f,                      // The scale of the sprite
+                0.6f,                      // The scale of the sprite
                 SpriteEffects.None,              // Which direction the sprite faces
                 0.0f                             // Layer depth of the player is 0.0
             );
@@ -1276,7 +1289,7 @@ namespace Galabingus
                 new Color(Color.White, 0.9f),                     // The color for the palyer
                 0.0f,                            // There cannot be any rotation of the player
                 Vector2.Zero,                    // Starting render position
-                0.4f,                      // The scale of the sprite
+                0.6f,                      // The scale of the sprite
                 SpriteEffects.None,              // Which direction the sprite faces
                 0.0f                             // Layer depth of the player is 0.0
             );
