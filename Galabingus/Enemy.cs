@@ -447,7 +447,7 @@ namespace Galabingus
 
                 case EnemyType.Boss:
                     // Set Health
-                    totalHealth = 100;
+                    totalHealth = 175;
 
                     // Boss has special health dropping mechanics in Update
                     dropHealth = true;
