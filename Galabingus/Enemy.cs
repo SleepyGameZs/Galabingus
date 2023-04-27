@@ -449,6 +449,7 @@ namespace Galabingus
                     // Set Health
                     totalHealth = 175;
 
+
                     // Boss has special health dropping mechanics in Update
                     dropHealth = true;
                     break;
