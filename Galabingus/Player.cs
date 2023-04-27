@@ -175,7 +175,7 @@ namespace Galabingus
                     iFrame = true;
                     float healthBefore = PlayerInstance.health;
                     float healthAfter = value;
-                    PlayerInstance.health = (healthAfter - healthBefore) > healthBefore ? 0.20f + healthBefore : healthBefore + (healthAfter - healthBefore) * 0.80f;
+                    PlayerInstance.health = (healthAfter - healthBefore) > healthBefore ? 0.20f + healthBefore : healthBefore + (healthAfter - healthBefore) * 0.60f;
                     if (health > 4.5f)
                     {
                         health = 5;
