@@ -813,14 +813,15 @@ namespace Galabingus
                     currentPosition = SetPosition(gameTime, 3, false);
 
                     // Check for wall collison
-                    bool bossLeftWallHit = this.Position.X < Sprite.Width - this.Transform.Width * this.Scale;
-                    bool bossRightWallHit = this.Position.X > GameObject.Instance.GraphicsDevice.Viewport.Width;
+                    bool bossLeftWallHit = this.Position.X < 0;
+                    bool bossRightWallHit = this.Position.X > GameObject.Instance.GraphicsDevice.Viewport.Width -
+                                                              this.Transform.Width * this.Scale;
 
                     // Hit left wall
                     if (bossLeftWallHit)
                     { // Flip bullet
                         velocity.X *= -1;
-                        Position = new Vector2(Position.X + this.Transform.Width * this.Scale, Position.Y);
+                        Position = new Vector2(Position.X, Position.Y);
 
                         // Set the bounce sprite
                         if (bounceRight)
