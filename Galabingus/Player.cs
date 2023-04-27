@@ -176,7 +176,7 @@ namespace Galabingus
                     float healthBefore = PlayerInstance.health;
                     float healthAfter = value;
                     PlayerInstance.health = (healthAfter - healthBefore) > healthBefore ? 0.20f + healthBefore : healthBefore + (healthAfter - healthBefore) * 0.60f;
-                    if (health > 4.5f)
+                    if (health > 4.5f && ((healthAfter - healthBefore) > healthBefore))
                     {
                         health = 5;
                     }
@@ -1261,7 +1261,7 @@ namespace Galabingus
                 heartSprite,                          // The sprite-sheet for the player
                 largeHealthCondition ? new Vector2(-1, -20) + Position : new Vector2(-1, 20 + PlayerInstance.Transform.Height * Scale) + Position,                        // The position for the player
                 new Rectangle(0,0,halfHeartSprite.Width * 5, halfHeartSprite.Height),                       // The scale and bounding box for the animation
-                new Color(Color.Gray,1.0f),                     // The color for the palyer
+                new Color(Color.Gray,0.9f),                     // The color for the palyer
                 0.0f,                            // There cannot be any rotation of the player
                 Vector2.Zero,                    // Starting render position
                 0.6f,                      // The scale of the sprite
