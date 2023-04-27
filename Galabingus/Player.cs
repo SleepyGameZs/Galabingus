@@ -176,7 +176,7 @@ namespace Galabingus
                     float healthBefore = PlayerInstance.health;
                     float healthAfter = value;
                     PlayerInstance.health = (healthAfter - healthBefore) > healthBefore ? 0.20f + healthBefore : healthBefore + (healthAfter - healthBefore) * 0.60f;
-                    if (health > 4.5f)
+                    if (health > 4.5f && ((healthAfter - healthBefore) > healthBefore))
                     {
                         health = 5;
                     }
