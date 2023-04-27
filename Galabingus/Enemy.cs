@@ -948,7 +948,7 @@ namespace Galabingus
                             } 
                             else
                             { // Add enemy IFrames then make player take damage on collision
-                                Player.PlayerInstance.Health = Player.PlayerInstance.Health - 0.5f;
+                                Player.PlayerInstance.Health = Player.PlayerInstance.Health - 1f;
                             }
                         }
                     }
@@ -963,9 +963,6 @@ namespace Galabingus
 
                 this.Collider.Unload();
             }
-
-            
-
         }
 
         #region Bullet Creation Methods

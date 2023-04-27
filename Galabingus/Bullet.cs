@@ -585,7 +585,7 @@ namespace Galabingus
                     break;
 
                 case BulletType.BigShot:
-                    currentPosition = SetPosition(gameTime, 5, true);
+                    currentPosition = SetPosition(gameTime, 14, true);
                     break;
 
                 case BulletType.EnemyNormal:
@@ -1101,11 +1101,11 @@ namespace Galabingus
                                     switch (ability)
                                     {
                                         case BulletType.EnemyNormal:
-                                            Player.PlayerInstance.Health = Player.PlayerInstance.Health - 1f;
+                                            Player.PlayerInstance.Health = Player.PlayerInstance.Health - 0.5f;
                                             break;
 
                                         case BulletType.Wave:
-                                            Player.PlayerInstance.Health = Player.PlayerInstance.Health - 2f;
+                                            Player.PlayerInstance.Health = Player.PlayerInstance.Health - 1.5f;
                                             break;
 
                                         case BulletType.Heart:
@@ -1137,13 +1137,31 @@ namespace Galabingus
                         case Targets.Enemies:
                             if ((collision.other as Enemy) is Enemy)
                             { // Collided object is an Enemy
-                                if (ability == BulletType.BigShot && ((Enemy)collision.other).Ability != EnemyType.Boss)
+                                if (ability == BulletType.BigShot)
                                 { // The BIGSHOT - just kills enemies on the spot
-                                    ((Enemy)collision.other).Destroy = true;
+                                    if (((Enemy)collision.other).Ability != EnemyType.Boss)
+                                    {
+                                        ((Enemy)collision.other).Destroy = true;
+                                    }
+                                    else
+                                    {
+                                        ((Enemy)collision.other).Health -= 5;
+
+                                        // Kill the enemy if its health is below zero
+                                        if (((Enemy)collision.other).Health <= 0)
+                                        {
+                                            ((Enemy)collision.other).Destroy = true;
+                                        }
+
+                                        // Destroy the bullet
+                                        destroy = true;
+                                        velocity = Vector2.Zero;
+                                    }
+                                    
                                 }
                                 else
                                 { // Normal bullet from player
-                                    ((Enemy)collision.other).Health -= 5;
+                                    ((Enemy)collision.other).Health -= 1;
 
                                     // Kill the enemy if its health is below zero
                                     if (((Enemy)collision.other).Health <= 0)
@@ -1186,7 +1204,7 @@ namespace Galabingus
                                     switch (ability)
                                     {
                                         case BulletType.BigExplosion:
-                                            ((Enemy)collision.other).Health -= 2;
+                                            ((Enemy)collision.other).Health -= 3;
                                             break;
 
                                         default:
