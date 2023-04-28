@@ -107,6 +107,7 @@ namespace Galabingus
         private static bool bossEffectIsActive;
         private static float universalScaleY;
         private static float clockTime;
+        private bool enableCollisionDebug;
 
         public struct GameObjectMaterialNode
         {
@@ -1263,6 +1264,7 @@ namespace Galabingus
             universalScaleX = 1;
             universalScaleY = 1;
             clockTime = 0;
+            enableCollisionDebug = false;
             return new GameObject();
         }
 
@@ -1454,6 +1456,18 @@ namespace Galabingus
         public List<Vector2> GetCameraStopPositions()
         {
             return GameObject.cameraStopPositions;
+        }
+
+        public bool EnableCollisionDebug
+        {
+            get
+            {
+                return enableCollisionDebug;
+            }
+            set
+            {
+                enableCollisionDebug = value;
+            }
         }
 
         public static float ClockTime

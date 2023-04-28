@@ -120,6 +120,7 @@ namespace Galabingus
         private SpriteEffects? spriteEffects;
         public RenderTarget2D targetSprite;
         public Texture2D copyOfTarget;
+        public bool enableDebug;
 
         /// <summary>
         ///  Colider that is empty
@@ -689,6 +690,16 @@ namespace Galabingus
 
             // No collision
             return result;
+        }
+
+        public static void EnableCollisionDebug()
+        {
+            GameObject.Instance.EnableCollisionDebug = true;
+        }
+
+        public static void DisableCollisionDebug()
+        {
+            GameObject.Instance.EnableCollisionDebug = false;
         }
 
         /// <summary>

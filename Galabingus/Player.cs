@@ -1390,6 +1390,16 @@ namespace Galabingus
             };
         }
 
+        public static void EnableGodMode()
+        {
+            Player.PlayerInstance.godMode = true;
+        }
+
+        public static void DisableGodMode()
+        {
+            Player.PlayerInstance.godMode = false;
+        }
+
         public void Reset()
         {
             playerInstance = null;
