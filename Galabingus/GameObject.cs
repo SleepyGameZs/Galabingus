@@ -106,6 +106,93 @@ namespace Galabingus
         private static bool flipSine;
         private static bool bossEffectIsActive;
         private static float universalScaleY;
+        private static float clockTime;
+
+        public struct GameObjectMaterialNode
+        {
+            private Effect effect;
+            private Action<int> prePass;
+            private Action<int> info;
+            private Action<int> reset;
+
+            public Effect Effect
+            {
+                get
+                {
+                    return effect;
+                }
+            }
+
+            public GameObjectMaterialNode(Effect shader, Action<int> setup, Action<int> properties, Action<int> reset)
+            {
+                prePass = setup;
+                effect = shader;
+                info = properties;
+                this.reset = reset;
+            }
+
+            public void Setup()
+            {
+                prePass(0);
+            }
+
+            public void Activate()
+            {
+                info(0);
+            }
+
+            public void Reset()
+            {
+                reset(0);
+            }
+        }
+
+        public struct GameObjectMaterial
+        {
+            private List<GameObjectMaterialNode> shaderBuffer;
+            private bool skipUniversalPass;
+
+            public GameObjectMaterial()
+            {
+                shaderBuffer = new List<GameObjectMaterialNode>();
+                skipUniversalPass = false;
+            }
+
+            public void SkipUniversalPass()
+            {
+                skipUniversalPass = true;
+            }
+
+            public void EnableUniversalPass()
+            {
+                skipUniversalPass = false;
+            }
+
+            public void AddMaterialNode(GameObjectMaterialNode effect)
+            { 
+                shaderBuffer.Add(effect);
+            }
+
+            public void Draw(Action<byte> draw)
+            {
+                foreach (GameObjectMaterialNode shader in shaderBuffer)
+                {
+                    shader.Setup();
+                    if (!skipUniversalPass)
+                    {
+                        draw(0);
+                    }
+                    GameObject.Instance.SpriteBatch.End();
+                    shader.Activate();
+                    GameObject.Instance.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, effect: shader.Effect);
+                    draw(0);
+                    GameObject.Instance.SpriteBatch.End();
+                    shader.Reset();
+                    GameObject.Instance.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, effect: GameObject.Instance.UniversalShader);
+                    skipUniversalPass = false;
+                }
+            }
+        }
 
         public struct GameObjectTrie<T>
         {
@@ -1175,6 +1262,7 @@ namespace Galabingus
             flipSine = false;
             universalScaleX = 1;
             universalScaleY = 1;
+            clockTime = 0;
             return new GameObject();
         }
 
@@ -1343,6 +1431,11 @@ namespace Galabingus
 
         public void DebugDraw(SpriteBatch spriteBatch)
         {
+            clockTime += 0.025f;
+            if (clockTime >= 1)
+            {
+                clockTime = 0;
+            }
             if (Debug != null)
             {
                 Debug(spriteBatch);
@@ -1361,6 +1454,18 @@ namespace Galabingus
         public List<Vector2> GetCameraStopPositions()
         {
             return GameObject.cameraStopPositions;
+        }
+
+        public static float ClockTime
+        {
+            get
+            {
+                return clockTime;
+            }
+            set
+            {
+                clockTime = value;
+            }
         }
 
         public void CameraStopRemoveAt(int index)
@@ -1590,6 +1695,7 @@ namespace Galabingus
 
         public void Reset()
         {
+            clockTime = 0;
             allGameObjects = null;
             animations = null;
             colliders = null;

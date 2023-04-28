@@ -199,8 +199,6 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 		}
 	}
 
-
-
 	halation.r = halation.r * 0.75;
 	halation.g = halation.g * 0.75;
 	halation.b = halation.b * 0.75;
@@ -209,12 +207,22 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 
 	if (lerpPixels.a == 0 && lerpPixels.b == 0 && lerpPixels.r == 0 && lerpPixels.g == 0)
 	{
-		halationLerp = lerp(halation, lerpPixels, 0.75) * 1.5;
+		//halationLerp = lerp(halation, lerpPixels, 0.75) * 1.5;
+		halationLerp = lerpPixels;
 	}
 	else
 	{
 		halationLerp = lerpPixels;
 	}
+	
+	if (halationLerp.r > 0.1 && halationLerp.b > 0.5 && halationLerp.g > 0.5 && halationLerp.r < 0.5f)
+	{
+		halationLerp.r = 0.00001f;
+		halationLerp.g = 0.00001f;
+		halationLerp.b = 0.00001f;
+		halationLerp.a = 0.00001f;
+	}
+
 
 	halationLerp.a = lerpPixels.a;
 
