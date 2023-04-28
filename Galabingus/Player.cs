@@ -83,6 +83,7 @@ namespace Galabingus
         private Text textTest;
         private bool tSet;
         private float fadeDuration;
+        private bool triggeredIFrame;
         private double fadeTimeTotal;
         private bool godMode;
         private bool holdShoot;
@@ -92,6 +93,10 @@ namespace Galabingus
         private float bigShotDuration;
         private double bigShotTotalTime;
         private bool realeaseHold;
+        private GameObjectMaterial material;
+        private GameObjectMaterialNode universalNode;
+        private GameObjectMaterialNode hitEffectNode;
+        private Color drawColor;
 
         public bool inIFrame
         {
@@ -148,10 +153,6 @@ namespace Galabingus
             {
                 return playerInstance;
             }
-            set
-            {
-                playerInstance = value;
-            }
         }
 
         public ushort ContentName
@@ -172,14 +173,25 @@ namespace Galabingus
             {
                 if (!iFrame && !godMode)
                 {
-                    iFrame = true;
                     float healthBefore = PlayerInstance.health;
                     float healthAfter = value;
-                    PlayerInstance.health = (healthAfter - healthBefore) > healthBefore ? 0.20f + healthBefore : healthBefore + (healthAfter - healthBefore) * 0.60f;
-                    if (health > 4.5f && ((healthAfter - healthBefore) > healthBefore))
+                    //PlayerInstance.health = (healthAfter - healthBefore) > healthBefore ? 0.20f + healthBefore : healthBefore + (healthAfter - healthBefore) * 0.60f;
+
+                    if ((healthAfter - healthBefore) < 0)
+                    {
+                        iFrame = true;
+                        if (!triggeredIFrame)
+                        {
+                            triggeredIFrame = true;
+                        }
+                    }
+                    /*
+                    if (health > 4.5f && ((healthAfter - healthBefore) >= healthBefore))
                     {
                         health = 5;
                     }
+                    */
+                    PlayerInstance.health = value;
                 }
             }
         }
@@ -325,9 +337,9 @@ namespace Galabingus
         public Player(Vector2 speed, ushort contentName) :
             base(contentName, 0, CollisionGroup.Player)
         {
-            if (PlayerInstance == null)
+            if (playerInstance == null)
             {
-                PlayerInstance = this;
+                playerInstance = this;
             }
             PlayerInstance.contentName = contentName;
             PlayerInstance.Position = Vector2.Zero;
@@ -368,7 +380,7 @@ namespace Galabingus
             tSet = false;
             godMode = false;
             holdShoot = false;
-            fadeDuration = 0.25f;
+            fadeDuration = 0.7f;
             fadeTimeTotal = 0;
             totalShootTime = 0;
             shootDuration = 0.1f;
@@ -377,6 +389,38 @@ namespace Galabingus
             bigShotDuration = 0.3f;
             bigShotTotalTime = 0;
             realeaseHold = false;
+            triggeredIFrame = false;
+            drawColor = Color.White;
+
+            universalNode = new GameObjectMaterialNode(GameObject.Instance.UniversalShader,
+
+                setup =>
+                {
+                    if (Player.PlayerInstance.inIFrame)
+                    {
+                        Player.PlayerInstance.material.SkipUniversalPass();
+                    }
+                },
+
+                properties => {
+                    if (Player.PlayerInstance.inIFrame)
+                    {
+                        drawColor = new Color(0.8f, 0.8f, 1.0f, (float)GameObject.ClockTime);
+                        GameObject.Instance.UniversalShader.Parameters["fade"].SetValue(0.7f);
+                    }
+                    else
+                    {
+                        drawColor = Color.White;
+                    }
+                },
+
+                reset =>
+                {
+                    GameObject.Instance.UniversalShader.Parameters["fade"].SetValue(0f);
+                }
+            );
+            material = new GameObjectMaterial();
+            material.AddMaterialNode(universalNode);
         }
 
         /// <summary>
@@ -392,9 +436,11 @@ namespace Galabingus
             {
                 health = 5;
             }
+            triggeredIFrame = false;
 
             PlayerInstance.Collider.Resolved = true;
             PlayerInstance.inputBufferTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            bigShotDuration = (float)gameTime.ElapsedGameTime.TotalSeconds * 10.0f;
             //boostFrameRate = PlayerInstance.inputBufferTime;
             Vector2 translationAjdustedRatio = translationRatio;
             float bufferTime = inputBufferTime;
@@ -986,6 +1032,8 @@ namespace Galabingus
                 //shot = false;
             }
 
+            bool bigShooting = false;
+
             if (bigShot && (bigShotTotalTime >= bigShotDuration))
             {
                 realeaseHold = true;
@@ -994,6 +1042,7 @@ namespace Galabingus
             if (realeaseHold && currentKeyboardState.IsKeyUp(Keys.Space))
             {
                 realeaseHold = false;
+                bigShooting = true;
                 BigShot();
             }
 
@@ -1044,9 +1093,12 @@ namespace Galabingus
                 }
                 */
             }
-            else if (previousKeyboardState.IsKeyUp(Keys.Space) && currentKeyboardState.IsKeyDown(Keys.Space) && !realeaseHold && !(bigShotTotalTime >= bigShotDuration))
+            else if (previousKeyboardState.IsKeyDown(Keys.Space) && currentKeyboardState.IsKeyUp(Keys.Space) && !realeaseHold && !(bigShotTotalTime >= bigShotDuration) || previousKeyboardState.IsKeyUp(Keys.Space) && currentKeyboardState.IsKeyDown(Keys.Space))
             {
-                Shoot();
+                if (!bigShooting)
+                {
+                    Shoot();
+                }
             }
 
             if (previousKeyboardState.IsKeyDown(Keys.Space) && currentKeyboardState.IsKeyDown(Keys.Space) && (bigShotTotalTime >= bigShotDuration))
@@ -1206,91 +1258,102 @@ namespace Galabingus
         /// </summary>
         public void Draw()
         {
-            ///textTest;
-            textTest.UIText = "Player";
-            textTest.UITextPosition = Position + new Vector2(textTest.UIText.Length * 3  * 0.5f, PlayerInstance.Transform.Height * Scale + 1);
-            if (Player.PlayerInstance.Health > 0)
+            material.Draw(draw =>
             {
-                if (boost) //&& totalBoostTime >= boostFrameRate)
+                if (health > 0)
                 {
-                    foreach (Ghost ghost in ghosts)
-                    {
-                        Color halfOColor = ghost.ghostColor;//new Color(ghost.ghostColor * 0.825f, 0.825f);
-                        if (halfOColor.B <= 7)
-                        {
-                            halfOColor = Color.Transparent;
-                        }
-                        GameObject.Instance.SpriteBatch.Draw(
-                            WhiteSprite,                     // The sprite-sheet for the player
-                            ghost.Position,    // The position for the player
-                            Transform,                       // The scale and bounding box for the animation
-                            halfOColor,                     // The color for the palyer
-                            0.0f,                            // There cannot be any rotation of the player
-                            Vector2.Zero,                    // Starting render position
-                            PlayerInstance.Scale,                      // The scale of the sprite
-                            SpriteEffects.None,              // Which direction the sprite faces
-                            0.0f                             // Layer depth of the player is 0.0
-                        );
-                    }
+                    textTest.UIText = "Player";
+                    textTest.UITextPosition = Position + new Vector2(textTest.UIText.Length * 3 * 0.5f, PlayerInstance.Transform.Height * Scale + 1);
+                }
+                else
+                {
+                    textTest.UITextPosition = new Vector2(-100, -100);
+                    textTest.UIText = "";
                 }
 
+                if (Player.PlayerInstance.Health > 0)
+                {
+                    if (boost) //&& totalBoostTime >= boostFrameRate)
+                    {
+                        foreach (Ghost ghost in ghosts)
+                        {
+                            Color halfOColor = ghost.ghostColor;//new Color(ghost.ghostColor * 0.825f, 0.825f);
+                            if (halfOColor.B <= 5)
+                            {
+                                halfOColor = Color.Transparent;
+                            }
+                            GameObject.Instance.SpriteBatch.Draw(
+                                WhiteSprite,                     // The sprite-sheet for the player
+                                ghost.Position,    // The position for the player
+                                Transform,                       // The scale and bounding box for the animation
+                                halfOColor,                     // The color for the palyer
+                                0.0f,                            // There cannot be any rotation of the player
+                                Vector2.Zero,                    // Starting render position
+                                PlayerInstance.Scale,                      // The scale of the sprite
+                                SpriteEffects.None,              // Which direction the sprite faces
+                                0.0f                             // Layer depth of the player is 0.0
+                            );
+                        }
+                    }
+
+
+                    GameObject.Instance.SpriteBatch.Draw(
+                        Sprite,                          // The sprite-sheet for the player
+                        Position,                        // The position for the player
+                        Transform,                       // The scale and bounding box for the animation
+                        drawColor,                     // The color for the palyer
+                        0.0f,                            // There cannot be any rotation of the player
+                        Vector2.Zero,                    // Starting render position
+                        PlayerInstance.Scale,                      // The scale of the sprite
+                        SpriteEffects.None,              // Which direction the sprite faces
+                        0.0f                             // Layer depth of the player is 0.0
+                    );
+
+                }
+                else if (godMode)
+                {
+                    Collider.Resolved = false;
+                    UIManager.Instance.GS = GameState.PlayerDead;
+                }
+
+                bool largeHealthCondition = (new Vector2(-1, 20 + PlayerInstance.Transform.Height * Scale) + Position).Y + halfHeartSprite.Height * 0.5f > GameObject.Instance.GraphicsDevice.Viewport.Height;
 
                 GameObject.Instance.SpriteBatch.Draw(
-                    Sprite,                          // The sprite-sheet for the player
-                    Position,                        // The position for the player
-                    Transform,                       // The scale and bounding box for the animation
-                    Color.White,                     // The color for the palyer
+                    heartSprite,                          // The sprite-sheet for the player
+                    largeHealthCondition ? new Vector2(-1, -20) + Position : new Vector2(-1, 20 + PlayerInstance.Transform.Height * Scale) + Position,                        // The position for the player
+                    new Rectangle(0, 0, halfHeartSprite.Width * 5, halfHeartSprite.Height),                       // The scale and bounding box for the animation
+                    new Color(Color.Gray, 0.9f),                     // The color for the palyer
                     0.0f,                            // There cannot be any rotation of the player
                     Vector2.Zero,                    // Starting render position
-                    PlayerInstance.Scale,                      // The scale of the sprite
+                    0.6f,                      // The scale of the sprite
                     SpriteEffects.None,              // Which direction the sprite faces
                     0.0f                             // Layer depth of the player is 0.0
                 );
 
+                GameObject.Instance.SpriteBatch.Draw(
+                    halfHeartSprite,                          // The sprite-sheet for the player
+                    largeHealthCondition ? new Vector2(-1, -20) + Position : new Vector2(-1, 20 + PlayerInstance.Transform.Height * Scale) + Position,                        // The position for the player
+                    new Rectangle(0, 0, halfHeartSprite.Width * (int)Math.Clamp((int)Math.Round(playerInstance.Health, MidpointRounding.AwayFromZero), 0, 5), halfHeartSprite.Height),                       // The scale and bounding box for the animation
+                    new Color(Color.White, 0.9f),                     // The color for the palyer
+                    0.0f,                            // There cannot be any rotation of the player
+                    Vector2.Zero,                    // Starting render position
+                    0.6f,                      // The scale of the sprite
+                    SpriteEffects.None,              // Which direction the sprite faces
+                    0.0f                             // Layer depth of the player is 0.0
+                );
+
+                GameObject.Instance.SpriteBatch.Draw(
+                    fullHeartSprite,                          // The sprite-sheet for the player
+                    largeHealthCondition ? new Vector2(-1, -20) + Position : new Vector2(-1, 20 + PlayerInstance.Transform.Height * Scale) + Position,                        // The position for the player
+                    new Rectangle(0, 0, halfHeartSprite.Width * (int)Math.Clamp(Math.Floor(playerInstance.Health), 0, 5), halfHeartSprite.Height),                       // The scale and bounding box for the animation
+                    new Color(Color.White, 0.9f),                     // The color for the palyer
+                    0.0f,                            // There cannot be any rotation of the player
+                    Vector2.Zero,                    // Starting render position
+                    0.6f,                      // The scale of the sprite
+                    SpriteEffects.None,              // Which direction the sprite faces
+                    0.0f                             // Layer depth of the player is 0.0
+                );
             }
-            else if (godMode)
-            {
-                Collider.Resolved = false;
-                UIManager.Instance.GS = GameState.PlayerDead;
-                //UIManager.Instance.GS = GameState.Pause;
-            }
-
-            bool largeHealthCondition = (new Vector2(-1, 20 + PlayerInstance.Transform.Height * Scale) + Position).Y + halfHeartSprite.Height * 0.5f > GameObject.Instance.GraphicsDevice.Viewport.Height;
-
-            GameObject.Instance.SpriteBatch.Draw(
-                heartSprite,                          // The sprite-sheet for the player
-                largeHealthCondition ? new Vector2(-1, -20) + Position : new Vector2(-1, 20 + PlayerInstance.Transform.Height * Scale) + Position,                        // The position for the player
-                new Rectangle(0,0,halfHeartSprite.Width * 5, halfHeartSprite.Height),                       // The scale and bounding box for the animation
-                new Color(Color.Gray,1.0f),                     // The color for the palyer
-                0.0f,                            // There cannot be any rotation of the player
-                Vector2.Zero,                    // Starting render position
-                0.6f,                      // The scale of the sprite
-                SpriteEffects.None,              // Which direction the sprite faces
-                0.0f                             // Layer depth of the player is 0.0
-            );
-
-            GameObject.Instance.SpriteBatch.Draw(
-                halfHeartSprite,                          // The sprite-sheet for the player
-                largeHealthCondition ? new Vector2(-1, -20 ) + Position : new Vector2(-1, 20 + PlayerInstance.Transform.Height * Scale) + Position,                        // The position for the player
-                new Rectangle(0, 0, halfHeartSprite.Width * (int)Math.Clamp((int)Math.Round(playerInstance.Health, MidpointRounding.AwayFromZero),0,5), halfHeartSprite.Height),                       // The scale and bounding box for the animation
-                new Color(Color.White, 0.9f),                     // The color for the palyer
-                0.0f,                            // There cannot be any rotation of the player
-                Vector2.Zero,                    // Starting render position
-                0.6f,                      // The scale of the sprite
-                SpriteEffects.None,              // Which direction the sprite faces
-                0.0f                             // Layer depth of the player is 0.0
-            );
-
-            GameObject.Instance.SpriteBatch.Draw(
-                fullHeartSprite,                          // The sprite-sheet for the player
-                largeHealthCondition ? new Vector2(-1, -20) + Position : new Vector2(-1, 20 + PlayerInstance.Transform.Height * Scale) + Position,                        // The position for the player
-                new Rectangle(0, 0, halfHeartSprite.Width * (int)Math.Clamp(Math.Floor(playerInstance.Health), 0, 5), halfHeartSprite.Height),                       // The scale and bounding box for the animation
-                new Color(Color.White, 0.9f),                     // The color for the palyer
-                0.0f,                            // There cannot be any rotation of the player
-                Vector2.Zero,                    // Starting render position
-                0.6f,                      // The scale of the sprite
-                SpriteEffects.None,              // Which direction the sprite faces
-                0.0f                             // Layer depth of the player is 0.0
             );
         }
 
