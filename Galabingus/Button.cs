@@ -99,7 +99,7 @@ namespace Galabingus
             if (uiPosition.Contains(currentMS.Position) && !UIManager.Instance.KeyboardTakeOver)
             {
 
-                UIManager.Instance.ButtonSelection = uiPosition.Y;
+                //UIManager.Instance.ButtonSelection = uiPosition.Y;
 
                 if (currentMS.LeftButton == ButtonState.Pressed)
                 {
@@ -109,7 +109,7 @@ namespace Galabingus
                 }
                 else
                 {
-                    if (OnHover != null)
+                    if (OnHover != null && !UIManager.Instance.IsKeyboardActive)
                         OnHover(this);
                 }
             }
@@ -120,15 +120,15 @@ namespace Galabingus
             }
             else
             {
-                if (uiPosition.Y == UIManager.Instance.ButtonSelection && UIManager.Instance.SingleKeyPress(Keys.Enter))
+                if (uiPosition.Y == UIManager.Instance.ButtonSelection && Keyboard.GetState().IsKeyDown(Keys.Enter))
                 {
                     if (OnClick != null)
                         OnClick(this);
                 }
 
-                if(uiTexture != baseTexture && UIPosition.Y != UIManager.Instance.ButtonSelection)
+                if (uiTexture != baseTexture && UIPosition.Y != UIManager.Instance.ButtonSelection)
                     uiTexture = baseTexture;
-                else if(clearColor != Color.White)
+                else if (clearColor != Color.White)
                     clearColor = Color.White;
 
                 if (OnRelease != null)
