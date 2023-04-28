@@ -447,7 +447,8 @@ namespace Galabingus
 
                 case EnemyType.Boss:
                     // Set Health
-                    totalHealth = 100;
+                    totalHealth = 175;
+
 
                     // Boss has special health dropping mechanics in Update
                     dropHealth = true;
@@ -602,140 +603,191 @@ namespace Galabingus
                             break;
 
                         case EnemyType.Boss:
-                            // Base data
-                            int phaseTime = 0;
-                            ushort newSprite = 0;
-
-                            // Health drops every 30 hits dealt to the boss
-                            if (currentHealth % 30 == 0)
+                            if (this.Position.Y > 0 && this.Position.Y < GameObject.Instance.GraphicsDevice.Viewport.Height)
                             {
-                                if (dropHealth == true)
-                                { // Spawns a heart
-                                    BulletSpawning(0, BulletType.Heart, new Vector2(-25, 0), 0);
-                                    dropHealth = false;
-                                }
-                            } 
-                            else
-                            {
-                                dropHealth = true;
-                            }
+                                // Base data
+                                int phaseTime = 0;
+                                ushort newSprite = 0;
 
-                            // Switch for various attacks
-                            switch (bossPhase)
-                            {
-                                case EnemyType.Normal:
-                                    // Set the new boss sprite
-                                    newSprite = GameObject.Instance.Content.boss_red_strip4;
-                                    this.Sprite = GetSpriteFrom(newSprite, enemyNumber);
-
-                                    // Shooting
-                                    bool normalRange = (stateTimer >= 100 && stateTimer < 200) ||
-                                                       (stateTimer >= 250 && stateTimer < 350) ||
-                                                       (stateTimer >= 400 && stateTimer < 500);
-
-                                    if (stateTimer % 10 == 0 && normalRange)
-                                    {
-                                        BulletSpawning(0, BulletType.EnemyNormal, new Vector2(-30, 0), 0);
+                                // Health drops every 30 hits dealt to the boss
+                                if (currentHealth % 30 == 0)
+                                {
+                                    if (dropHealth == true)
+                                    { // Spawns a heart
+                                        BulletSpawning(0, BulletType.Heart, new Vector2(-70, 0), 0);
+                                        dropHealth = false;
                                     }
+                                }
+                                else
+                                {
+                                    dropHealth = true;
+                                }
 
-                                    // Time till next phase
-                                    phaseTime = 500;
-                                    break;
+                                // Switch for various attacks
+                                switch (bossPhase)
+                                {
+                                    case EnemyType.Normal:
+                                        // Set the new boss sprite
+                                        newSprite = GameObject.Instance.Content.boss_red_strip4;
+                                        this.Sprite = GetSpriteFrom(newSprite, enemyNumber);
 
-                                case EnemyType.Bouncing:
-                                    // Set the new boss sprite
-                                    newSprite = GameObject.Instance.Content.boss_orange_strip4;
-                                    this.Sprite = GetSpriteFrom(newSprite, enemyNumber);
+                                        // Shooting
+                                        bool normalRange = (stateTimer >= 100 && stateTimer < 180) ||
+                                                           (stateTimer >= 210 && stateTimer < 290) ||
+                                                           (stateTimer >= 320 && stateTimer < 410);
 
-                                    // Shooting Bouncy shots
-                                    if (stateTimer % 70 == 0 && stateTimer >= 70)
-                                    {
-                                        BulletSpawning(0,
-                                           new BulletType[]
-                                           {
+                                        if (stateTimer % 10 == 0 && normalRange)
+                                        {
+                                            BulletSpawning(0, BulletType.EnemyNormal, new Vector2(-30 + velocity.X, 0), 0);
+                                        }
+
+                                        // Horizontal Velocity to use
+                                        if (velocity.X > 0)
+                                        {
+                                            velocity.X = 7f;
+                                        }
+                                        else
+                                        {
+                                            velocity.X = -7f;
+                                        }
+
+                                        // Time till next phase
+                                        phaseTime = 410;
+                                        break;
+
+                                    case EnemyType.Bouncing:
+                                        // Set the new boss sprite
+                                        newSprite = GameObject.Instance.Content.boss_orange_strip4;
+                                        this.Sprite = GetSpriteFrom(newSprite, enemyNumber);
+
+                                        // Shooting Bouncy shots
+                                        if (stateTimer % 60 == 0 && stateTimer >= 70)
+                                        {
+                                            BulletSpawning(0,
+                                               new BulletType[]
+                                               {
                                            BulletType.BossBouncingSide,
                                            BulletType.BossBouncingCenter,
                                            BulletType.BossBouncingSide
-                                           },
-                                           new Vector2[]
-                                           {
-                                           new Vector2(-19, 0),
-                                           new Vector2(-19, 0),
-                                           new Vector2(-29, 0)
-                                           },
-                                           new int[] { -1, 0, 1 }
-                                           );
-                                    }
+                                               },
+                                               new Vector2[]
+                                               {
+                                           new Vector2(-39 + velocity.X, -20),
+                                           new Vector2(-34 + velocity.X, -20),
+                                           new Vector2(-49 + velocity.X, -20)
+                                               },
+                                               new int[] { -1, 0, 1 }
+                                               );
+                                        }
 
-                                    // Time till next phase
-                                    phaseTime = 420;
-                                    break;
+                                        // Horizontal Velocity to use
+                                        if (velocity.X > 0)
+                                        {
+                                            velocity.X = 5.5f;
+                                        }
+                                        else
+                                        {
+                                            velocity.X = -5.5f;
+                                        }
 
-                                case EnemyType.Wave:
-                                    // Set the new boss sprite
-                                    newSprite = GameObject.Instance.Content.boss_yellow_strip4;
-                                    this.Sprite = GetSpriteFrom(newSprite, enemyNumber);
+                                        // Time till next phase
+                                        phaseTime = 420;
+                                        break;
 
-                                    // Shooting
-                                    if (stateTimer % 80 == 0 && stateTimer >= 100)
-                                    {
-                                        BulletSpawning(0, BulletType.Wave, new Vector2(-135, 0), 0);
-                                    }
+                                    case EnemyType.Wave:
+                                        // Set the new boss sprite
+                                        newSprite = GameObject.Instance.Content.boss_yellow_strip4;
+                                        this.Sprite = GetSpriteFrom(newSprite, enemyNumber);
 
-                                    // Time till next phase
-                                    phaseTime = 500;
-                                    break;
+                                        // Shooting
+                                        if (stateTimer % 40 == 0 && stateTimer >= 80)
+                                        {
+                                            BulletSpawning(0, BulletType.Wave, new Vector2(-145 + velocity.X, 0), 0);
+                                        }
 
-                                case EnemyType.Splitter:
-                                    // Set the new boss sprite
-                                    newSprite = GameObject.Instance.Content.boss_green_strip4;
-                                    this.Sprite = GetSpriteFrom(newSprite, enemyNumber);
+                                        // Horizontal Velocity to use
+                                        if (velocity.X > 0)
+                                        {
+                                            velocity.X = 7f;
+                                        }
+                                        else
+                                        {
+                                            velocity.X = -7f;
+                                        }
 
-                                    // Shooting
-                                    bool splitterRange = (stateTimer >= 100 && stateTimer <= 160) ||
-                                                         (stateTimer >= 210 && stateTimer <= 270) ||
-                                                         (stateTimer >= 320 && stateTimer < 380);
+                                        // Time till next phase
+                                        phaseTime = 500;
+                                        break;
 
-                                    if (stateTimer % 30 == 0 && splitterRange)
-                                    {
-                                        BulletSpawning(0, BulletType.Splitter, new Vector2(-47, 0), 0);
-                                    }
+                                    case EnemyType.Splitter:
+                                        // Set the new boss sprite
+                                        newSprite = GameObject.Instance.Content.boss_green_strip4;
+                                        this.Sprite = GetSpriteFrom(newSprite, enemyNumber);
 
-                                    // Time till next phase
-                                    phaseTime = 380;
-                                    break;
+                                        // Shooting
+                                        bool splitterRange = (stateTimer >= 80 && stateTimer < 140) ||
+                                                             (stateTimer >= 180 && stateTimer < 240) ||
+                                                             (stateTimer >= 280 && stateTimer < 340);
 
-                                case EnemyType.Shatter:
-                                    // Set the new boss sprite
-                                    newSprite = GameObject.Instance.Content.boss_purple_strip4;
-                                    this.Sprite = GetSpriteFrom(newSprite, enemyNumber);
+                                        if (stateTimer % 20 == 0 && splitterRange)
+                                        {
+                                            BulletSpawning(0, BulletType.Splitter, new Vector2(-47 + velocity.X, 0), 0);
+                                        }
 
-                                    // Shooting
+                                        // Horizontal Velocity to use
+                                        if (velocity.X > 0)
+                                        {
+                                            velocity.X = 5.5f;
+                                        }
+                                        else
+                                        {
+                                            velocity.X = -5.5f;
+                                        }
 
-                                    if (stateTimer % 80 == 0 && stateTimer >= 100)
-                                    {
-                                        BulletSpawning(0, BulletType.BossShatter, new Vector2(-20, 0), 0);
-                                    }
+                                        // Time till next phase
+                                        phaseTime = 380;
+                                        break;
 
-                                    // Time till next phase
-                                    phaseTime = 500;
-                                    break;
+                                    case EnemyType.Shatter:
+                                        // Set the new boss sprite
+                                        newSprite = GameObject.Instance.Content.boss_purple_strip4;
+                                        this.Sprite = GetSpriteFrom(newSprite, enemyNumber);
 
-                            }
+                                        // Shooting
+                                        if (stateTimer % 80 == 0 && stateTimer >= 100)
+                                        {
+                                            BulletSpawning(0, BulletType.BossShatter, new Vector2(-20 + velocity.X, 0), 0);
+                                        }
 
-                            // Change to make use of game time
-                            if (stateTimer >= phaseTime)
-                            {
-                                bossPhase++;
-                                stateTimer = 0;
-                                if (bossPhase == EnemyType.Bomb)
-                                {
-                                    bossPhase = EnemyType.Normal;
+                                        // Horizontal Velocity to use
+                                        if (velocity.X > 0)
+                                        {
+                                            velocity.X = 7f;
+                                        }
+                                        else
+                                        {
+                                            velocity.X = -7f;
+                                        }
+
+                                        // Time till next phase
+                                        phaseTime = 500;
+                                        break;
                                 }
-                            }
 
-                            // Increment state timer 
-                            stateTimer++;
+                                // Change to make use of game time
+                                if (stateTimer >= phaseTime)
+                                {
+                                    bossPhase++;
+                                    stateTimer = 0;
+                                    if (bossPhase == EnemyType.Bomb)
+                                    {
+                                        bossPhase = EnemyType.Normal;
+                                    }
+                                }
+
+                                // Increment state timer 
+                                stateTimer++;
+                            }
                             break;
                     }
                     shotTimer++;
@@ -743,33 +795,45 @@ namespace Galabingus
                     // Movement
                     if (ShouldMove)
                     {
-                        this.Position += velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
+                        // Collisions
+                        if (ability == EnemyType.Boss)
+                        { // Goes beyond borders slightly to allow for shots to hit edge
+                            if (this.Position.Y > 0 && this.Position.Y < GameObject.Instance.GraphicsDevice.Viewport.Height)
+                            {
+                                this.Position += velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
 
-                        // Collide with walls
-                        if (this.Position.X + this.Transform.Width * this.Scale >=  // Enemy's right side
-                            GameObject.Instance.GraphicsDevice.Viewport.Width &&    // Screen's right side
-                            Velocity.X > 0)                                         // Can only occur when facing Right
-                        { // Bounce on right side of screen
-                            this.Position -= velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 120;
-                            if (ability == EnemyType.Boss)
-                            {
-                                Velocity = new Vector2(Velocity.X * -1 * (float)Animation.EllapsedTime, Velocity.Y);
+                                // Collide with walls
+                                if (this.Position.X + (this.Transform.Width * this.Scale / 2) >=  // Enemy's right side
+                                    GameObject.Instance.GraphicsDevice.Viewport.Width &&    // Screen's right side
+                                    Velocity.X > 0)                                         // Can only occur when facing Right
+                                { // Bounce on right side of screen
+                                    this.Position -= velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 120;
+                                    Velocity = new Vector2(Velocity.X * -1 * (float)Animation.EllapsedTime, Velocity.Y);
+
+                                }
+                                else if (this.Position.X <= this.Transform.Width * this.Scale / -2 && Velocity.X < 0)
+                                { // Bounce on left side of screen
+                                    this.Position -= velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
+                                    Velocity = new Vector2(Velocity.X * -1 * (float)Animation.EllapsedTime, Velocity.Y);
+                                }
                             }
-                            else
-                            {
+                        } 
+                        else
+                        { // Bounces at normal borders
+
+                            this.Position += velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
+
+                            // Collide with walls
+                            if (this.Position.X + this.Transform.Width * this.Scale >=  // Enemy's right side
+                                GameObject.Instance.GraphicsDevice.Viewport.Width &&    // Screen's right side
+                                Velocity.X > 0)                                         // Can only occur when facing Right
+                            { // Bounce on right side of screen
+                                this.Position -= velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 120;
                                 EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, true);
                             }
-                            
-                        } 
-                        else if (this.Position.X <= 0 && Velocity.X < 0)
-                        { // Bounce on left side of screen
-                            this.Position -= velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
-                            if (ability == EnemyType.Boss)
-                            {
-                                Velocity = new Vector2(Velocity.X * -1 * (float)Animation.EllapsedTime, Velocity.Y);
-                            }
-                            else
-                            {
+                            else if (this.Position.X <= 0 && Velocity.X < 0)
+                            { // Bounce on left side of screen
+                                this.Position -= velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
                                 EnemyManager.Instance.FlipEnemies((int)initialPosition.Y, false);
                             }
                         }
@@ -801,7 +865,7 @@ namespace Galabingus
                             // Has a chance to spawn hearts
                             if (dropHealth == true)
                             {
-                                BulletSpawning(0, BulletType.Heart, new Vector2(-25, 0), 0);
+                                BulletSpawning(0, BulletType.Heart, new Vector2(-70, 0), 0);
                             }
                             break;
                     }
@@ -885,7 +949,7 @@ namespace Galabingus
                             } 
                             else
                             { // Add enemy IFrames then make player take damage on collision
-                                Player.PlayerInstance.Health = Player.PlayerInstance.Health - 0.5f;
+                                Player.PlayerInstance.Health = Player.PlayerInstance.Health - 1f;
                             }
                         }
                     }
@@ -900,9 +964,6 @@ namespace Galabingus
 
                 this.Collider.Unload();
             }
-
-            
-
         }
 
         #region Bullet Creation Methods

@@ -88,6 +88,10 @@ namespace Galabingus
         private bool holdShoot;
         private double totalShootTime;
         private float shootDuration;
+        private bool bigShot;
+        private float bigShotDuration;
+        private double bigShotTotalTime;
+        private bool realeaseHold;
 
         public bool inIFrame
         {
@@ -171,8 +175,8 @@ namespace Galabingus
                     iFrame = true;
                     float healthBefore = PlayerInstance.health;
                     float healthAfter = value;
-                    PlayerInstance.health = (healthAfter - healthBefore) > healthBefore ? 0.20f + healthBefore : healthBefore + (healthAfter - healthBefore) * 0.80f;
-                    if (health > 4.5f)
+                    PlayerInstance.health = (healthAfter - healthBefore) > healthBefore ? 0.20f + healthBefore : healthBefore + (healthAfter - healthBefore) * 0.60f;
+                    if (health > 4.5f && ((healthAfter - healthBefore) > healthBefore))
                     {
                         health = 5;
                     }
@@ -355,9 +359,9 @@ namespace Galabingus
             PlayerInstance.shiftBoost = false;
             PlayerInstance.ghosts = new List<Ghost>();
             this.thisGameObject = this;
-            PlayerInstance.fullHeartSprite = GameObject.Instance.ContentManager.Load<Texture2D>("heart_full_strip1");
-            PlayerInstance.halfHeartSprite = GameObject.Instance.ContentManager.Load<Texture2D>("heart_half_strip1");
-            PlayerInstance.heartSprite = GameObject.Instance.ContentManager.Load<Texture2D>("heart_strip1");
+            PlayerInstance.fullHeartSprite = GameObject.Instance.ContentManager.Load<Texture2D>("Player/player_heart_full_strip1");
+            PlayerInstance.halfHeartSprite = GameObject.Instance.ContentManager.Load<Texture2D>("Player/player_heart_half_strip1");
+            PlayerInstance.heartSprite = GameObject.Instance.ContentManager.Load<Texture2D>("Player/player_heart_empty_strip1");
             PlayerInstance.cameraLock = true;
             textTest = UIManager.Instance.AddText("Testing", Vector2.Zero, 12, Color.White, UIState.BaseGame);
             iFrame = false;
@@ -369,6 +373,10 @@ namespace Galabingus
             totalShootTime = 0;
             shootDuration = 0.1f;
             health = 5;
+            bigShot = false;
+            bigShotDuration = 0.3f;
+            bigShotTotalTime = 0;
+            realeaseHold = false;
         }
 
         /// <summary>
@@ -735,6 +743,7 @@ namespace Galabingus
             totalBoostTime += gameTime.ElapsedGameTime.TotalSeconds;
             totalTime += gameTime.ElapsedGameTime.TotalSeconds;
             fadeTimeTotal += gameTime.ElapsedGameTime.TotalSeconds;
+            bigShotTotalTime += gameTime.ElapsedGameTime.TotalSeconds;
 
             intercepts = PlayerInstance.Collider.UpdateTransform(
                 PlayerInstance.Sprite,                         // Player Sprite
@@ -959,7 +968,6 @@ namespace Galabingus
                                     acceleration.Y = acceleration.Y / 10f;
                                 }
                                 yPause = false;
-
                             }
                         }
 
@@ -978,28 +986,76 @@ namespace Galabingus
                 //shot = false;
             }
 
-            if (previousKeyboardState.IsKeyDown(Keys.G) && currentKeyboardState.IsKeyUp(Keys.G))
+            if (bigShot && (bigShotTotalTime >= bigShotDuration))
             {
-                godMode = !godMode;
+                realeaseHold = true;
             }
 
-            // When space is pressed trigger shoot
-            if (currentKeyboardState.IsKeyUp(Keys.Space) && previousKeyboardState.IsKeyDown(Keys.Space) && !(totalShootTime <= shootDuration * 0.3f))
+            if (realeaseHold && currentKeyboardState.IsKeyUp(Keys.Space))
             {
-                totalShootTime = 0;
+                realeaseHold = false;
+                BigShot();
             }
 
-            if (previousKeyboardState.IsKeyDown(Keys.Space))
+            if (!bigShot || godMode)
             {
-                holdShoot = true;
+                realeaseHold = false;
+                if (previousKeyboardState.IsKeyDown(Keys.G) && currentKeyboardState.IsKeyUp(Keys.G))
+                {
+                    godMode = !godMode;
+                }
+
+                // When space is pressed trigger shoot
+                if ((currentKeyboardState.IsKeyUp(Keys.Space) && previousKeyboardState.IsKeyDown(Keys.Space)))
+                {
+                    Shoot();
+                }
+
+                if (previousKeyboardState.IsKeyDown(Keys.Space))
+                {
+                    holdShoot = true;
+                }
+                if (holdShoot && godMode)
+                {
+                    Shoot();
+                }
+                if (currentKeyboardState.IsKeyUp(Keys.Space))
+                {
+                    holdShoot = false;
+                }
+
+                /*
+                if (currentKeyboardState.IsKeyUp(Keys.Space) && previousKeyboardState.IsKeyDown(Keys.Space) && !(totalShootTime <= shootDuration * 0.3f))
+                {
+                    totalShootTime = 0;
+                }
+
+                if (previousKeyboardState.IsKeyDown(Keys.Space))
+                {
+                    holdShoot = true;
+                }
+                if ( (currentKeyboardState.IsKeyUp(Keys.Space) && previousKeyboardState.IsKeyDown(Keys.Space)) || holdShoot && (godMode || !(totalShootTime >= shootDuration * 0.5f)))
+                {
+                    Shoot();
+                }
+                if (currentKeyboardState.IsKeyUp(Keys.Space))
+                {
+                    holdShoot = false;
+                }
+                */
             }
-            if (holdShoot && (godMode || !(totalShootTime >= shootDuration*0.5f)))
+            else if (previousKeyboardState.IsKeyUp(Keys.Space) && currentKeyboardState.IsKeyDown(Keys.Space) && !realeaseHold && !(bigShotTotalTime >= bigShotDuration))
             {
                 Shoot();
             }
-            if (currentKeyboardState.IsKeyUp(Keys.Space))
+
+            if (previousKeyboardState.IsKeyDown(Keys.Space) && currentKeyboardState.IsKeyDown(Keys.Space) && (bigShotTotalTime >= bigShotDuration))
             {
-                holdShoot = false;
+                bigShot = true;
+            }
+            else if (currentKeyboardState.IsKeyUp(Keys.Space))
+            {
+                bigShot = false;
             }
 
             /*
@@ -1117,7 +1173,23 @@ namespace Galabingus
                 //holdShoot = false;
                 totalShootTime -= shootDuration;
             }
+
+            if (bigShotTotalTime >= bigShotDuration)
+            {
+                //holdShoot = false;
+                bigShotTotalTime -= bigShotDuration;
+            }
+
             //Debug.WriteLine();
+        }
+
+        /// <summary>
+        ///  Triggered when the
+        ///  Player holds the shoot button
+        /// </summary>
+        public void BigShot()
+        {
+            BulletManager.Instance.CreateBullet(BulletType.BigShot, Position, new Vector2(0, -1), this, false);
         }
 
         /// <summary>
@@ -1192,20 +1264,7 @@ namespace Galabingus
                 new Color(Color.Gray,1.0f),                     // The color for the palyer
                 0.0f,                            // There cannot be any rotation of the player
                 Vector2.Zero,                    // Starting render position
-                0.4f,                      // The scale of the sprite
-                SpriteEffects.None,              // Which direction the sprite faces
-                0.0f                             // Layer depth of the player is 0.0
-            );
-
-
-            GameObject.Instance.SpriteBatch.Draw(
-                fullHeartSprite,                          // The sprite-sheet for the player
-                largeHealthCondition ? new Vector2(-1, -20) + Position : new Vector2(-1, 20 + PlayerInstance.Transform.Height * Scale) + Position,                        // The position for the player
-                new Rectangle(0, 0, halfHeartSprite.Width * (int)Math.Clamp(Math.Floor(playerInstance.Health),0,5), halfHeartSprite.Height),                       // The scale and bounding box for the animation
-                new Color(Color.White, 0.9f),                     // The color for the palyer
-                0.0f,                            // There cannot be any rotation of the player
-                Vector2.Zero,                    // Starting render position
-                0.4f,                      // The scale of the sprite
+                0.6f,                      // The scale of the sprite
                 SpriteEffects.None,              // Which direction the sprite faces
                 0.0f                             // Layer depth of the player is 0.0
             );
@@ -1217,7 +1276,19 @@ namespace Galabingus
                 new Color(Color.White, 0.9f),                     // The color for the palyer
                 0.0f,                            // There cannot be any rotation of the player
                 Vector2.Zero,                    // Starting render position
-                0.4f,                      // The scale of the sprite
+                0.6f,                      // The scale of the sprite
+                SpriteEffects.None,              // Which direction the sprite faces
+                0.0f                             // Layer depth of the player is 0.0
+            );
+
+            GameObject.Instance.SpriteBatch.Draw(
+                fullHeartSprite,                          // The sprite-sheet for the player
+                largeHealthCondition ? new Vector2(-1, -20) + Position : new Vector2(-1, 20 + PlayerInstance.Transform.Height * Scale) + Position,                        // The position for the player
+                new Rectangle(0, 0, halfHeartSprite.Width * (int)Math.Clamp(Math.Floor(playerInstance.Health), 0, 5), halfHeartSprite.Height),                       // The scale and bounding box for the animation
+                new Color(Color.White, 0.9f),                     // The color for the palyer
+                0.0f,                            // There cannot be any rotation of the player
+                Vector2.Zero,                    // Starting render position
+                0.6f,                      // The scale of the sprite
                 SpriteEffects.None,              // Which direction the sprite faces
                 0.0f                             // Layer depth of the player is 0.0
             );

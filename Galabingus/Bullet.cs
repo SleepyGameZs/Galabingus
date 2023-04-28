@@ -585,7 +585,7 @@ namespace Galabingus
                     break;
 
                 case BulletType.BigShot:
-                    currentPosition = SetPosition(gameTime, 5, true);
+                    currentPosition = SetPosition(gameTime, 14, true);
                     break;
 
                 case BulletType.EnemyNormal:
@@ -813,14 +813,15 @@ namespace Galabingus
                     currentPosition = SetPosition(gameTime, 3, false);
 
                     // Check for wall collison
-                    bool bossLeftWallHit = this.Position.X < Sprite.Width - this.Transform.Width * this.Scale;
-                    bool bossRightWallHit = this.Position.X > GameObject.Instance.GraphicsDevice.Viewport.Width;
+                    bool bossLeftWallHit = this.Position.X < 0;
+                    bool bossRightWallHit = this.Position.X > GameObject.Instance.GraphicsDevice.Viewport.Width -
+                                                              this.Transform.Width * this.Scale;
 
                     // Hit left wall
                     if (bossLeftWallHit)
                     { // Flip bullet
                         velocity.X *= -1;
-                        Position = new Vector2(Position.X + this.Transform.Width * this.Scale, Position.Y);
+                        Position = new Vector2(Position.X, Position.Y);
 
                         // Set the bounce sprite
                         if (bounceRight)
@@ -1101,11 +1102,11 @@ namespace Galabingus
                                     switch (ability)
                                     {
                                         case BulletType.EnemyNormal:
-                                            Player.PlayerInstance.Health = Player.PlayerInstance.Health - 1f;
+                                            Player.PlayerInstance.Health = Player.PlayerInstance.Health - 0.5f;
                                             break;
 
                                         case BulletType.Wave:
-                                            Player.PlayerInstance.Health = Player.PlayerInstance.Health - 2f;
+                                            Player.PlayerInstance.Health = Player.PlayerInstance.Health - 1.5f;
                                             break;
 
                                         case BulletType.Heart:
@@ -1137,10 +1138,27 @@ namespace Galabingus
                         case Targets.Enemies:
                             if ((collision.other as Enemy) is Enemy)
                             { // Collided object is an Enemy
-                                
                                 if (ability == BulletType.BigShot)
                                 { // The BIGSHOT - just kills enemies on the spot
-                                    ((Enemy)collision.other).Destroy = true;
+                                    if (((Enemy)collision.other).Ability != EnemyType.Boss)
+                                    {
+                                        ((Enemy)collision.other).Destroy = true;
+                                    }
+                                    else
+                                    {
+                                        ((Enemy)collision.other).Health -= 5;
+
+                                        // Kill the enemy if its health is below zero
+                                        if (((Enemy)collision.other).Health <= 0)
+                                        {
+                                            ((Enemy)collision.other).Destroy = true;
+                                        }
+
+                                        // Destroy the bullet
+                                        destroy = true;
+                                        velocity = Vector2.Zero;
+                                    }
+                                    
                                 }
                                 else
                                 { // Normal bullet from player
@@ -1187,7 +1205,7 @@ namespace Galabingus
                                     switch (ability)
                                     {
                                         case BulletType.BigExplosion:
-                                            ((Enemy)collision.other).Health -= 2;
+                                            ((Enemy)collision.other).Health -= 3;
                                             break;
 
                                         default:
