@@ -151,10 +151,15 @@ namespace Galabingus
         bool currentActive;
         bool previousActive;
 
+        float masterVolume;
+
         #endregion
 
         #region Properties
 
+        /// <summary>
+        /// returns and sets a bool which says if the game is being reset
+        /// </summary>
         public bool IsReset
         {
             get
@@ -201,15 +206,6 @@ namespace Galabingus
         }
 
         /// <summary>
-        /// return and set the UIControlState
-        /// </summary>
-        public UIControlState CS
-        {
-            get { return cs; }
-            set { cs = value; }
-        }
-
-        /// <summary>
         ///  The keyboard code running?
         /// </summary>
         public bool KeyboardTakeOver
@@ -243,6 +239,17 @@ namespace Galabingus
             set
             {
                 selectedButton = value;
+            }
+        }
+
+        /// <summary>
+        /// returns a float between 0 and 1 to represent the current volume chosen
+        /// </summary>
+        public float MasterVolume
+        {
+            get
+            {
+                return masterVolume;
             }
         }
 
@@ -687,7 +694,7 @@ namespace Galabingus
         }
 
         #endregion
-
+                 
         #region Draw
 
         /// <summary>
