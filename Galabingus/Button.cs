@@ -77,63 +77,26 @@ namespace Galabingus
 
         #region Methods
 
-        /// <summary>
-        ///  Determines if the button is selected by keyboard.
-        /// </summary>
-        private bool KeyboardTakeOver()
-        {
-            if (UIManager.Instance.KeyboardTakeOver && UIPosition.Y == UIManager.Instance.ButtonSelection)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
         public override void Update()
         {
-            currentMS = Mouse.GetState();
-
-            if (uiPosition.Contains(currentMS.Position) && !UIManager.Instance.KeyboardTakeOver)
+            if (uiPosition.Y == UIManager.Instance.ButtonSelection && UIManager.Instance.SingleKeyPress(Keys.Enter))
             {
-
-                //UIManager.Instance.ButtonSelection = uiPosition.Y;
-
-                if (currentMS.LeftButton == ButtonState.Pressed)
-                {
-                    if (OnClick != null)
-                        OnClick(this);
-
-                }
-                else
-                {
-                    if (OnHover != null && !UIManager.Instance.IsKeyboardActive)
-                        OnHover(this);
-                }
-            }
-            else if (KeyboardTakeOver())
-            {
-                if (OnHover != null)
-                    OnHover(this);
+                if (OnClick != null)
+                    OnClick(this);
             }
             else
             {
-                if (uiPosition.Y == UIManager.Instance.ButtonSelection && Keyboard.GetState().IsKeyDown(Keys.Enter))
-                {
-                    if (OnClick != null)
-                        OnClick(this);
-                }
-
-                if (uiTexture != baseTexture && UIPosition.Y != UIManager.Instance.ButtonSelection)
-                    uiTexture = baseTexture;
-                else if (clearColor != Color.White)
-                    clearColor = Color.White;
-
-                if (OnRelease != null)
-                    OnRelease(this);
+                if(OnHover != null) 
+                    OnHover(this);
             }
+
+            if (uiTexture != baseTexture && UIPosition.Y != UIManager.Instance.ButtonSelection)
+                uiTexture = baseTexture;
+            else if (clearColor != Color.White)
+                clearColor = Color.White;
+
+            if (OnRelease != null)
+                OnRelease(this);
 
             prevMS = currentMS;
         }
