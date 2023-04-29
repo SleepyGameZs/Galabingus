@@ -153,7 +153,7 @@ namespace Galabingus
 
         float masterVolume;
 
-        const int changeState = 180;
+        const int changeState = 80;
         int timedPassed;
 
         #endregion
@@ -307,7 +307,6 @@ namespace Galabingus
             width = gr.GraphicsDevice.Viewport.Width;
             height = gr.GraphicsDevice.Viewport.Height;
 
-            fadeValue = 0.00009;
             prevBossOnScreen = false;
             menuState = 0;
         }
@@ -1133,7 +1132,7 @@ namespace Galabingus
             {
                 if (element is Button)
                 {
-                    if (SingleKeyPress(Keys.Down) && element.UIPosition.Y > selectedButton)
+                    if ((SingleKeyPress(Keys.Down) || SingleKeyPress(Keys.S)) && element.UIPosition.Y > selectedButton)
                     {
                         if (Math.Abs(selectedButton - element.UIPosition.Y) < Math.Abs(selectedButton - closeButton))
                         {
@@ -1141,7 +1140,7 @@ namespace Galabingus
                         }
                         switchedButton = true;
                     }
-                    if (SingleKeyPress(Keys.Up) && element.UIPosition.Y < selectedButton)
+                    if ((SingleKeyPress(Keys.Up) || SingleKeyPress(Keys.W)) && element.UIPosition.Y < selectedButton)
                     {
                         if (Math.Abs(selectedButton - element.UIPosition.Y) < Math.Abs(selectedButton - closeButton))
                         {
