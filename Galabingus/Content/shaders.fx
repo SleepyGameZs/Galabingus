@@ -104,6 +104,12 @@ float4 FadeOut(float4 inColor)
 
 float4 MainPS(VertexShaderOutput input) : COLOR
 {
+	float2 pixelResolution = float2(720, 720);
+	float2 pixelTextureCoords = input.TextureCoordinates.xy;
+	pixelTextureCoords = floor(pixelTextureCoords * pixelResolution) / pixelResolution;
+	pixelTextureCoords = input.TextureCoordinates.xy;
+
+
 	float weights[11];
 	float2 offsets[11];
 
@@ -131,7 +137,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 	for (int i = 0; i < 11; i++)
 	{
 		float2 offset = float2(offsets[i].x, 0) * texelSize;
-		float4 texColor = tex2D(SpriteTextureSampler, input.TextureCoordinates + offset);
+		float4 texColor = tex2D(SpriteTextureSampler, pixelTextureCoords + offset);
 		halation += weights[i] * texColor;
 	}
 
@@ -139,7 +145,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 	for (int i = 0; i < 11; i++)
 	{
 		float2 offset = float2(0, offsets[i].x) * texelSize;
-		float4 texColor = tex2D(SpriteTextureSampler, input.TextureCoordinates + offset);
+		float4 texColor = tex2D(SpriteTextureSampler, pixelTextureCoords + offset);
 		halation += weights[i] * texColor;
 	}
 
@@ -151,11 +157,11 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 
 
 	const float gamma = 0.41f;//1.26795f;
-	float4 color = tex2D(SpriteTextureSampler, input.TextureCoordinates);
-	float4 colorBefore = tex2D(SpriteTextureSampler, input.TextureCoordinates);
+	float4 color = tex2D(SpriteTextureSampler, pixelTextureCoords);
+	float4 colorBefore = tex2D(SpriteTextureSampler, pixelTextureCoords);
 	float4 correctedColor = exp(log(colorBefore / input.Color * (1.5f)) *  (1 / gamma) ) * input.Color;
-	float4 colorTrue = tex2D(SpriteTextureSampler, input.TextureCoordinates) * input.Color;
-	float4 colorP = tex2D(SpriteTextureSampler, input.TextureCoordinates) * input.Color;
+	float4 colorTrue = tex2D(SpriteTextureSampler, pixelTextureCoords) * input.Color;
+	float4 colorP = tex2D(SpriteTextureSampler, pixelTextureCoords) * input.Color;
 	float3 colorA = color.rgb;
 	float3 colorB = input.Color.rgb;
 	float3 color2 = lerp(colorA, colorB, 0.973);
