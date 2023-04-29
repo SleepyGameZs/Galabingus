@@ -153,6 +153,9 @@ namespace Galabingus
 
         float masterVolume;
 
+        const int changeState = 180;
+        int timedPassed;
+
         #endregion
 
         #region Properties
@@ -609,6 +612,7 @@ namespace Galabingus
                     if (!EnemyManager.Instance.BossOnScreen && prevBossOnScreen)
                     {
                         gs = GameState.PlayerWins;
+                        timedPassed = 0;
                     }
 
                     prevBossOnScreen = EnemyManager.Instance.BossOnScreen;
@@ -618,6 +622,7 @@ namespace Galabingus
                     if (Player.PlayerInstance.Health == 0)
                     {
                         gs = GameState.PlayerDead;
+                        timedPassed = 0;
                     }
 
 
@@ -625,7 +630,9 @@ namespace Galabingus
 
                 case GameState.PlayerDead:
 
-                    if (GameObject.Fade < fadeValue)
+                    timedPassed++;
+
+                    if (timedPassed > changeState)
                     {
                         gs = GameState.GameOver;
 
@@ -645,8 +652,9 @@ namespace Galabingus
 
                 case GameState.PlayerWins:
 
+                    timedPassed++;
 
-                    if (GameObject.Fade < fadeValue)
+                    if (timedPassed > changeState)
                     {
                         gs = GameState.Victory;
 
