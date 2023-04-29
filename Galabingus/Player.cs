@@ -392,6 +392,8 @@ namespace Galabingus
             triggeredIFrame = false;
             drawColor = Color.White;
 
+            //float previousFade = 0;
+
             universalNode = new GameObjectMaterialNode(GameObject.Instance.UniversalShader,
 
                 setup =>
@@ -405,8 +407,9 @@ namespace Galabingus
                 properties => {
                     if (Player.PlayerInstance.inIFrame)
                     {
-                        drawColor = new Color(0.8f, 0.8f, 1.0f, (float)GameObject.ClockTime);
-                        GameObject.Instance.UniversalShader.Parameters["fade"].SetValue(0.7f);
+                        //previousFade = GameObject.Instance.UniversalShader.Parameters["fade"].GetValueSingle();
+                        drawColor = new Color(0.2f, 0.2f, 0.3f, (float)GameObject.ClockTime);
+                        //GameObject.Instance.UniversalShader.Parameters["fade"].SetValue(0.7f);
                     }
                     else
                     {
@@ -416,7 +419,7 @@ namespace Galabingus
 
                 reset =>
                 {
-                    GameObject.Instance.UniversalShader.Parameters["fade"].SetValue(0f);
+                    //GameObject.Instance.UniversalShader.Parameters["fade"].SetValue(previousFade);
                 }
             );
             material = new GameObjectMaterial();
