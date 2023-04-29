@@ -79,7 +79,7 @@ namespace Galabingus
 
         public override void Update()
         {
-            if (uiPosition.Y == UIManager.Instance.ButtonSelection && UIManager.Instance.SingleKeyPress(Keys.Enter))
+            if (uiPosition.Y == UIManager.Instance.ButtonSelection && (UIManager.Instance.SingleKeyPress(Keys.Enter) || UIManager.Instance.SingleKeyPress(Keys.Space)))
             {
                 if (OnClick != null)
                     OnClick(this);
