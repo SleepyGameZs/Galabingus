@@ -358,10 +358,6 @@ namespace Galabingus
             event1, event2, menu);
 
             button.HoverTexture = cm.Load<Texture2D>("buttonPlay_hover_strip1");
-            button.UITexture = button.HoverTexture;
-
-            // Change button selection:
-            selectedButton = button.UIPosition.Y;
 
             //Create the other buttons
             event1 = DisplayMenu;
@@ -505,8 +501,8 @@ namespace Galabingus
             gameStates.Add(GameState.GameOver, gameOver);
             gameStates.Add(GameState.Victory, victory);
 
-            currentMenu.Push(menu);
-
+            currentMenu.Push(gameStates[gs]);
+            selectedButton = 10000;
         }
 
         #endregion
@@ -523,25 +519,6 @@ namespace Galabingus
             currentMS = Mouse.GetState();
             currentActive = keyboardIsActive;
 
-            // Arrow keys trigger keyboard take over
-            if (SingleKeyPress(Keys.Down) || SingleKeyPress(Keys.Up) && !keyboardIsActive)
-            {
-                keyboardTakeOver = true;
-                keyboardIsActive = true;
-
-                ResetButtons();
-            }
-            else if (currentMS != previousMS)
-            {
-                keyboardTakeOver = false;
-                keyboardIsActive = false;
-                ResetButtons();
-            }
-            else
-            {
-                keyboardIsActive = false;
-            }
-
 
             //if the back key is pressed and the current level isn't the base one
             if (!(currentMenu.Count <= 1))
@@ -555,22 +532,24 @@ namespace Galabingus
             switch (menuState)
             {
                 case 1:
+
+                    ResetButtons();
                     currentMenu.Pop();
+                    
                     break;
                 case 2:
+
+                    ResetButtons();
                     currentMenu.Push(menuToDisplay);
-                        break;
+                    
+                    break;
                 default:
                     break;
             }
 
-            // Use the keyboard to take control of selections
-            if (keyboardIsActive)
-            {
-                KeyboardSelection(currentMenu.Peek());
-            }
-
             menuState = 0;
+
+            KeyboardSelection(currentMenu.Peek());
 
             UpdateObjects(currentMenu.Peek());
 
@@ -1133,53 +1112,55 @@ namespace Galabingus
 
         public void KeyboardSelection(List<UIElement> current)
         {
-            if (keyboardIsActive)
+            if (selectedButton == 10000)
             {
-                bool switchedButton = false;
-                float closeButton = 10000000;
-
                 foreach (UIElement element in current)
                 {
                     if (element is Button)
                     {
-                        if (Keyboard.GetState().IsKeyDown(Keys.Down) && element.UIPosition.Y > selectedButton)
+                        if (selectedButton > element.UIPosition.Y)
                         {
-                            if (Math.Abs(selectedButton - element.UIPosition.Y) < Math.Abs(selectedButton - closeButton))
-                            {
-                                closeButton = element.UIPosition.Y;
-                            }
-                            switchedButton = true;
+                            selectedButton = element.UIPosition.Y;
                         }
-                        if (Keyboard.GetState().IsKeyDown(Keys.Up) && element.UIPosition.Y < selectedButton)
-                        {
-                            if (Math.Abs(selectedButton - element.UIPosition.Y) < Math.Abs(selectedButton - closeButton))
-                            {
-                                closeButton = element.UIPosition.Y;
-                            }
-                            switchedButton = true;
-                        }
-
                     }
                 }
-                if (switchedButton)
+            }
+            
+            bool switchedButton = false;
+            float closeButton = 10000000;
+
+            foreach (UIElement element in current)
+            {
+                if (element is Button)
                 {
-                    selectedButton = closeButton;
+                    if (SingleKeyPress(Keys.Down) && element.UIPosition.Y > selectedButton)
+                    {
+                        if (Math.Abs(selectedButton - element.UIPosition.Y) < Math.Abs(selectedButton - closeButton))
+                        {
+                            closeButton = element.UIPosition.Y;
+                        }
+                        switchedButton = true;
+                    }
+                    if (SingleKeyPress(Keys.Up) && element.UIPosition.Y < selectedButton)
+                    {
+                        if (Math.Abs(selectedButton - element.UIPosition.Y) < Math.Abs(selectedButton - closeButton))
+                        {
+                            closeButton = element.UIPosition.Y;
+                        }
+                        switchedButton = true;
+                    }
+
                 }
-                
+            }
+            if (switchedButton)
+            {
+                selectedButton = closeButton;
             }
         }
 
         public void ResetButtons()
         {
-            foreach(UIElement element in currentMenu.Peek())
-            {
-                if (element is Button)
-                {
-                    Button button = (Button)element;
-
-                    button.UITexture = button.BaseTexture;
-                }
-            }
+            selectedButton = 10000;
         }
            
 
