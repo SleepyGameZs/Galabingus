@@ -1022,7 +1022,7 @@ namespace Galabingus
                             previousPreviousKeyboardStateY = previousKeyboardStateY;
                         }
 
-                        if (previousKeyboardState.IsKeyDown(Keys.LeftShift))
+                        if (previousKeyboardState.IsKeyDown(Keys.LeftShift) || previousKeyboardState.IsKeyDown(Keys.RightShift))
                         {
                             boost = true;
                         }
@@ -1153,7 +1153,7 @@ namespace Galabingus
                     ghosts = newGhost;
                 }
 
-                if (!currentKeyboardState.IsKeyDown(Keys.LeftShift))
+                if (currentKeyboardState.IsKeyUp(Keys.LeftShift) && currentKeyboardState.IsKeyUp(Keys.RightShift))
                 {
                     //boostOpacity = 1f;
                     boost = false;
