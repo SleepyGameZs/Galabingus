@@ -1306,7 +1306,7 @@ namespace Galabingus
                         GameObject.Instance.SpriteBatch.Draw(
                             outline,                          // The sprite-sheet for the player
                             Position - new Vector2(4*Scale,4*Scale),                        // The position for the player
-                            new Rectangle(Transform.X / Sprite.Width, 0, (int)(outline.Width / 4), (int)(outline.Height)),                       // The scale and bounding box for the animation
+                            new Rectangle(Transform.X / Sprite.Width * outline.Width + Transform.X / Sprite.Width, 0, (int)(outline.Width / 4), (int)(outline.Height)),                       // The scale and bounding box for the animation
                             new Color(Color.LightBlue,0.05f),                     // The color for the palyer
                             0.0f,                            // There cannot be any rotation of the player
                             Vector2.Zero,                    // Starting render position
