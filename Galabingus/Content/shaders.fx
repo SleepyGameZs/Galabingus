@@ -104,11 +104,7 @@ float4 FadeOut(float4 inColor)
 
 float4 MainPS(VertexShaderOutput input) : COLOR
 {
-	float2 pixelResolution = float2(720, 720);
 	float2 pixelTextureCoords = input.TextureCoordinates.xy;
-	pixelTextureCoords = floor(pixelTextureCoords * pixelResolution) / pixelResolution;
-	pixelTextureCoords = input.TextureCoordinates.xy;
-
 
 	float weights[11];
 	float2 offsets[11];
