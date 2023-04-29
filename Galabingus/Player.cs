@@ -443,7 +443,7 @@ namespace Galabingus
 
             PlayerInstance.Collider.Resolved = true;
             PlayerInstance.inputBufferTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            bigShotDuration = (float)gameTime.ElapsedGameTime.TotalSeconds * 10.0f;
+            bigShotDuration = (float)gameTime.ElapsedGameTime.TotalSeconds * 15.0f;
             //boostFrameRate = PlayerInstance.inputBufferTime;
             Vector2 translationAjdustedRatio = translationRatio;
             float bufferTime = inputBufferTime;
@@ -1299,7 +1299,22 @@ namespace Galabingus
                         }
                     }
 
+                    Texture2D outline = GameObject.Instance.ContentManager.Load<Texture2D>("Player/player_outline_strip4");
 
+                    if (realeaseHold)
+                    {
+                        GameObject.Instance.SpriteBatch.Draw(
+                            outline,                          // The sprite-sheet for the player
+                            Position - new Vector2(4*Scale,4*Scale),                        // The position for the player
+                            new Rectangle(Transform.X / Sprite.Width * outline.Width + Transform.X / Sprite.Width, 0, (int)(outline.Width / 4), (int)(outline.Height)),                       // The scale and bounding box for the animation
+                            new Color(Color.LightBlue,0.05f),                     // The color for the palyer
+                            0.0f,                            // There cannot be any rotation of the player
+                            Vector2.Zero,                    // Starting render position
+                            PlayerInstance.Scale,                      // The scale of the sprite
+                            SpriteEffects.None,              // Which direction the sprite faces
+                            0.0f                             // Layer depth of the player is 0.0
+                        );
+                    }
                     GameObject.Instance.SpriteBatch.Draw(
                         Sprite,                          // The sprite-sheet for the player
                         Position,                        // The position for the player
@@ -1311,7 +1326,6 @@ namespace Galabingus
                         SpriteEffects.None,              // Which direction the sprite faces
                         0.0f                             // Layer depth of the player is 0.0
                     );
-
                 }
                 else if (godMode)
                 {
