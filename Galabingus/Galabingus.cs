@@ -333,7 +333,7 @@ namespace Galabingus
                     _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap);
                 }
 
-                if (!(userInterface.GS == GameState.Menu) && !(userInterface.GS == GameState.GameOver) && !(userInterface.GS == GameState.Victory))
+                if (!(userInterface.GS == GameState.Menu))
                 {
                     if (TileManager.Instance.CurrentSpriteNumber == 0)
                     {
@@ -341,14 +341,17 @@ namespace Galabingus
                         tileManager.Draw();
                     }
 
-                    // Draws enemies
-                    mng_enemy.Draw();
+                    if (!(userInterface.GS == GameState.GameOver) && !(userInterface.GS == GameState.Victory))
+                    {
+                        // Draws enemies
+                        mng_enemy.Draw();
 
-                    // Draw the player
-                    player.Draw();
+                        // Draw the player
+                        player.Draw();
 
-                    // Draws bullets
-                    mng_bullet.Draw();
+                        // Draws bullets
+                        mng_bullet.Draw();
+                    }
 
                     if (TileManager.Instance.CurrentSpriteNumber == 1)
                     {

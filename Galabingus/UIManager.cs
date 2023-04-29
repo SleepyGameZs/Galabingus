@@ -156,7 +156,6 @@ namespace Galabingus
         const int changeState = 180;
         int timedPassed;
 
-
         #endregion
 
         #region Properties
