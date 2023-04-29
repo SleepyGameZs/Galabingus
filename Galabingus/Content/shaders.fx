@@ -104,6 +104,8 @@ float4 FadeOut(float4 inColor)
 
 float4 MainPS(VertexShaderOutput input) : COLOR
 {
+	float2 pixelTextureCoords = input.TextureCoordinates.xy;
+
 	float weights[11];
 	float2 offsets[11];
 
@@ -131,7 +133,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 	for (int i = 0; i < 11; i++)
 	{
 		float2 offset = float2(offsets[i].x, 0) * texelSize;
-		float4 texColor = tex2D(SpriteTextureSampler, input.TextureCoordinates + offset);
+		float4 texColor = tex2D(SpriteTextureSampler, pixelTextureCoords + offset);
 		halation += weights[i] * texColor;
 	}
 
@@ -139,7 +141,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 	for (int i = 0; i < 11; i++)
 	{
 		float2 offset = float2(0, offsets[i].x) * texelSize;
-		float4 texColor = tex2D(SpriteTextureSampler, input.TextureCoordinates + offset);
+		float4 texColor = tex2D(SpriteTextureSampler, pixelTextureCoords + offset);
 		halation += weights[i] * texColor;
 	}
 
@@ -151,11 +153,11 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 
 
 	const float gamma = 0.41f;//1.26795f;
-	float4 color = tex2D(SpriteTextureSampler, input.TextureCoordinates);
-	float4 colorBefore = tex2D(SpriteTextureSampler, input.TextureCoordinates);
+	float4 color = tex2D(SpriteTextureSampler, pixelTextureCoords);
+	float4 colorBefore = tex2D(SpriteTextureSampler, pixelTextureCoords);
 	float4 correctedColor = exp(log(colorBefore / input.Color * (1.5f)) *  (1 / gamma) ) * input.Color;
-	float4 colorTrue = tex2D(SpriteTextureSampler, input.TextureCoordinates) * input.Color;
-	float4 colorP = tex2D(SpriteTextureSampler, input.TextureCoordinates) * input.Color;
+	float4 colorTrue = tex2D(SpriteTextureSampler, pixelTextureCoords) * input.Color;
+	float4 colorP = tex2D(SpriteTextureSampler, pixelTextureCoords) * input.Color;
 	float3 colorA = color.rgb;
 	float3 colorB = input.Color.rgb;
 	float3 color2 = lerp(colorA, colorB, 0.973);
@@ -199,8 +201,6 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 		}
 	}
 
-
-
 	halation.r = halation.r * 0.75;
 	halation.g = halation.g * 0.75;
 	halation.b = halation.b * 0.75;
@@ -209,12 +209,22 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 
 	if (lerpPixels.a == 0 && lerpPixels.b == 0 && lerpPixels.r == 0 && lerpPixels.g == 0)
 	{
-		halationLerp = lerp(halation, lerpPixels, 0.75) * 1.5;
+		//halationLerp = lerp(halation, lerpPixels, 0.75) * 1.5;
+		halationLerp = lerpPixels;
 	}
 	else
 	{
 		halationLerp = lerpPixels;
 	}
+	
+	if (halationLerp.r > 0.1 && halationLerp.b > 0.5 && halationLerp.g > 0.5 && halationLerp.r < 0.5f)
+	{
+		halationLerp.r = 0.00001f;
+		halationLerp.g = 0.00001f;
+		halationLerp.b = 0.00001f;
+		halationLerp.a = 0.00001f;
+	}
+
 
 	halationLerp.a = lerpPixels.a;
 

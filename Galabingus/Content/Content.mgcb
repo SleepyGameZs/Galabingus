@@ -1042,6 +1042,18 @@
 /processorParam:TextureFormat=Color
 /build:Player/player_heart_half_strip1.png
 
+#begin Player/player_outline_strip4.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Player/player_outline_strip4.png
+
 #begin Player/player_strip4.png
 /importer:TextureImporter
 /processor:TextureProcessor

@@ -172,7 +172,7 @@ namespace Galabingus
             
             background.Transform = new Rectangle(0, 0, background.Sprite.Width, background.Sprite.Height);
           
-            background.Scale = GameObject.Instance.GraphicsDevice.Viewport.Height / background.Sprite.Width / (Player.PlayerInstance.Scale * 0.975f);
+            background.Scale = GameObject.Instance.GraphicsDevice.Viewport.Height / background.Sprite.Width / (Player.PlayerInstance.Scale * 0.575f);
             background.ScaleVector = new Vector2(background.Scale, background.Scale);
             background.Position = new Vector2(-GameObject.Instance.GraphicsDevice.Viewport.Width * 2, -GameObject.Instance.GraphicsDevice.Viewport.Height * 5f);
             background.Position -= new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Width, 0);
