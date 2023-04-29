@@ -12,6 +12,7 @@ using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Diagnostics;
 using System.Xml.Linq;
+using Microsoft.Xna.Framework.Media;
 
 namespace Galabingus
 {
@@ -578,6 +579,8 @@ namespace Galabingus
                     if (SingleKeyPress(Keys.Tab))
                     {
                         gs = GameState.Pause;
+                        MediaPlayer.Pause();
+                        AudioManager.Instance.CallSound("Pause");
                     }
 
                     //if boss health = 0
@@ -615,6 +618,7 @@ namespace Galabingus
                     if (SingleKeyPress(Keys.Tab))
                     {
                         gs = GameState.Game;
+                        MediaPlayer.Resume();
                     }
 
                     break;
@@ -711,6 +715,7 @@ namespace Galabingus
         private void StartGame(object sender)
         {
             gs = GameState.Game;
+            AudioManager.Instance.CallMusic("Background Music");
         }
 
         private void ReturnMenu(object sender)

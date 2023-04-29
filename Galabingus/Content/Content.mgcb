@@ -874,6 +874,12 @@
 /processorParam:TextureFormat=Color
 /build:galabingusLogo_strip1.png
 
+#begin Game Over.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Game Over.mp3
+
 #begin grayasteroid_strip1-export.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -976,6 +982,12 @@
 /processorParam:TextureFormat=Color
 /build:newBackground_strip1.png
 
+#begin Pause.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Pause.mp3
+
 #begin pauseMenu_strip1.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -987,6 +999,12 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:pauseMenu_strip1.png
+
+#begin Player Hit.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Player Hit.mp3
 
 #begin Player/player_heart_empty_strip1.png
 /importer:TextureImporter
@@ -1047,6 +1065,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Player/player_white_strip4.png
+
+#begin Purple Break.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Purple Break.mp3
+
+#begin Purple Scatter Shot1.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Purple Scatter Shot1.mp3
 
 #begin quitButton_base_strip1.png
 /importer:TextureImporter

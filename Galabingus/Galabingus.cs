@@ -228,8 +228,16 @@ namespace Galabingus
             AudioManager.Instance.AddSound("Split", 0.75f, "Split Shot", Content);
             AudioManager.Instance.AddSound("Break", 0.1f, "Split Shot Break", Content);
             AudioManager.Instance.AddSound("Wave", 0.75f, "Wave Shot", Content);
+            AudioManager.Instance.AddSound("Purple Split", 1f, "Purple Scatter Shot1", Content);
+            AudioManager.Instance.AddSound("Purple Break", 1f, "Purple Break", Content);
             AudioManager.Instance.AddSound("Explosion", 0.1f, "Explosion", Content);
+
+            AudioManager.Instance.AddSound("Hit", 1f, "Player Hit", Content);
+
+            AudioManager.Instance.AddSound("Pause", 1f, "Pause", Content);
+
             backgroundMusic = Content.Load<Song>("Background Music");
+            AudioManager.Instance.SongCollection.Add(backgroundMusic);
             MediaPlayer.Volume = 0.5f;
             MediaPlayer.IsRepeating = true;
             

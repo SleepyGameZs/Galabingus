@@ -27,9 +27,9 @@ namespace Galabingus
         }
 
         private List<Sound> sounds;
-        private SongCollection songCollection;
+        private List<Song> songCollection;
 
-        public SongCollection SongCollection
+        public List<Song> SongCollection
         {
             get { return songCollection; }
         }
@@ -37,12 +37,13 @@ namespace Galabingus
         public AudioManager()
         {
             sounds = new List<Sound>();
+            songCollection = new List<Song>();
         }
 
 
-        public void AddMusic(Song song)
+        public void AddSound(string name, float volume, string path, ContentManager content)
         {
-            songCollection.Add(song);
+            sounds.Add(new Sound(name, volume, path, content));
         }
 
         public void CallSound(string name)
@@ -57,7 +58,7 @@ namespace Galabingus
             }
         }
 
-        private void CallMusic(string name)
+        public void CallMusic(string name)
         {
             for(int i = 0;i < songCollection.Count; i++) 
             {

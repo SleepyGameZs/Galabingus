@@ -180,6 +180,7 @@ namespace Galabingus
                     {
                         health = 5;
                     }
+                    AudioManager.Instance.CallSound("Hit");
                 }
             }
         }
