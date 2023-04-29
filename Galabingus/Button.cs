@@ -97,8 +97,6 @@ namespace Galabingus
 
             if (OnRelease != null)
                 OnRelease(this);
-
-            prevMS = currentMS;
         }
 
         public override void Draw(SpriteBatch sb)

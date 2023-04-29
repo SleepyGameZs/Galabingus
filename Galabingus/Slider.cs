@@ -29,7 +29,15 @@ namespace Galabingus
         float scale;
         float unitLength;
         float returnPercentage;
-        
+
+        #endregion
+
+        #region Properties
+
+        public float ReturnPercentage
+        {
+            get { return returnPercentage; }
+        }
 
         #endregion
 

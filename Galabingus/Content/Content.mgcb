@@ -976,6 +976,18 @@
 /processorParam:TextureFormat=Color
 /build:newBackground_strip1.png
 
+#begin OptionsMenu_strip1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:OptionsMenu_strip1.png
+
 #begin pauseMenu_strip1.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -1215,6 +1227,30 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:tile_strip26.png
+
+#begin ToggleOff_strip1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:ToggleOff_strip1.png
+
+#begin ToggleOn_strip1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:ToggleOn_strip1.png
 
 #begin victoryTitle_strip1.png
 /importer:TextureImporter
