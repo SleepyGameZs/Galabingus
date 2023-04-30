@@ -1428,6 +1428,15 @@ namespace Galabingus
         }
 
         /// <summary>
+        ///  Deletes the player text
+        /// </summary>
+        public static void RemovePlayerText()
+        {
+            Player.PlayerInstance.textTest.UITextPosition = new Vector2(-100, -100);
+            Player.PlayerInstance.textTest.UIText = "";
+        }
+
+        /// <summary>
         ///  Resets the player instacne
         /// </summary>
         public new void Reset()
