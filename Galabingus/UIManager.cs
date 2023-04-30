@@ -1081,6 +1081,8 @@ namespace Galabingus
 
             listToAdd.Add(slider);
 
+            slider.SetSliderStart();
+
             return slider;
         }
 

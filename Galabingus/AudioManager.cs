@@ -77,7 +77,7 @@ namespace Galabingus
             {
                 if (songCollection[i].Name == name && MediaPlayer.State != MediaState.Playing)
                 {
-                    //MediaPlayer.Volume = UIManager.Instance.MasterVolume;
+                    MediaPlayer.Volume = UIManager.Instance.MasterVolume;
                     MediaPlayer.Play(songCollection[i]);
                 }
             }

@@ -70,7 +70,7 @@ namespace Galabingus
             //creates its position rectangle
             knotchPosition =
                 new Rectangle(
-                    uiPosition.X,
+                    (uiPosition.Width / 2) + uiPosition.X - (int)(unitLength / 2),
                     uiPosition.Y,
                     length,
                     width
@@ -81,6 +81,8 @@ namespace Galabingus
 
             backBase = new Vector2(uiPosition.Width, uiPosition.Height);
             backHover = new Vector2(uiPosition.Width * 1.1f, uiPosition.Height * 1.1f);
+
+            returnPercentage = (knotchPosition.X - uiPosition.X) / (uiPosition.Width - unitLength);
 
             hover = false;
 
@@ -171,6 +173,12 @@ namespace Galabingus
                 knotchTexture,
                 knotchPosition,
                 clearColor);
+        }
+
+        public void SetSliderStart()
+        {
+            if (OnSlide != null)
+                OnSlide(this);
         }
 
         #endregion
