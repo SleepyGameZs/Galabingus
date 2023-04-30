@@ -276,41 +276,56 @@ namespace Galabingus
         public void Draw()
         {
             GameObject.Instance.SpriteBatch.Draw(
-                this.Sprite,                           // The sprite-sheet for the player
-                this.Position,                         // The position for the player
-                this.Transform,                        // The scale and bounding box for the animation
-                Color.White,                           // The color for the palyer
-                0.0f,                                  // There cannot be any rotation of the player
-                Vector2.Zero,                          // Starting render position
-                this.ScaleVector,                      // The scale of the sprite
-                SpriteEffects.None,                    // Which direction the sprite faces
-                0.0f                                   // Layer depth of the player is 0.0
+                this.Sprite,                           // The sprite-sheet for the tile
+                this.Position,                         // The position for the tile
+                this.Transform,                        // The scale and bounding box for the tile
+                Color.White,                           // The color for the tile
+                0.0f,                                  // No rotation
+                Vector2.Zero,                          // Draw from the top left
+                this.ScaleVector,                      // The scale of the tile
+                SpriteEffects.None,                    // No effects
+                0.0f                                   // No depth
             );
         }
 
+        /// <summary>
+        ///  Draws the tile xTimes on horizontally and yTimes vertically
+        /// </summary>
+        /// <param name="xTimes">Number of times to draw the tile horizontally</param>
+        /// <param name="yTimes">Number of times to draw the tile vertically</param>
         public void Draw(float xTimes, float yTimes)
         {
+            // Stop the current draw call,
+            // Start a new one with the background shader
             GameObject.Instance.SpriteBatch.End();
             Effect.Parameters["bossEffect"].SetValue(GameObject.Instance.IsBossEffectActive);
             Effect.Parameters["bossShade"].SetValue(GameObject.Instance.TimeShade);
             GameObject.Instance.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, effect: Effect);
 
+            // Draw the tile
             GameObject.Instance.SpriteBatch.Draw(
-                this.Sprite,                      
+                // Sprite sheet of the tile
+                this.Sprite,
+                // Position to daw the tile
                 this.Position,                 
                 new Rectangle(
-                    this.Transform.X, 
+                    this.Transform.X,
                     this.Transform.Y, 
+                    // Repeate the image xTimes horizontally and yTimes vertically by streatching the draw rectangle
                     (int)Math.Round(this.Transform.Width * xTimes, MidpointRounding.AwayFromZero), 
                     (int)Math.Round(this.Transform.Height * yTimes, MidpointRounding.AwayFromZero)
                 ),                     
+                // Draw with a base color of white
                 Color.White,                 
-                0.0f,                        
-                Vector2.Zero,           
-                this.ScaleVector,
-                SpriteEffects.None, 
-                0.0f
+                0.0f,                   // No rotation                        
+                Vector2.Zero,           // Draw from the top left  
+                this.ScaleVector,       // Scale of the tile
+                SpriteEffects.None,     // No effects
+                0.0f                    // No depth                     
             );
+
+            // End the draw call for the backgound
+            // begin the draw call with the Universal Shader
             GameObject.Instance.SpriteBatch.End();
             GameObject.Instance.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, effect: GameObject.Instance.UniversalShader);
         }
