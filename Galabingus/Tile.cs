@@ -8,26 +8,23 @@ namespace Galabingus
 {
     internal class Tile : GameObject
     {
-        // -------------------------------------------------
-        // Fields
-        // -------------------------------------------------
+        #region Fields
 
+        // Game object identifiers for asset and instance
         private ushort contentName;
         private ushort instanceNumber;
-        private ushort spriteNumber;
+
+        // Size of the tile
         private Vector2 scale;
+
+        // If the tile is active
         private bool isActive;
 
+        #endregion
         // -------------------------------------------------
         // Properties
         // -------------------------------------------------
 
-
-
-        public ushort SpriteNumber
-        {
-            get { return spriteNumber;  }
-        }
 
         public ushort InstanceNumber
         {
@@ -190,7 +187,6 @@ namespace Galabingus
             this.instanceNumber = instanceNumber;
             this.Transform = this.Animation.GetFrame(sprite);
             this.ScaleVector = PostScaleRatio(true);
-            this.spriteNumber = sprite;
             isActive = true;
         }
 
@@ -209,7 +205,6 @@ namespace Galabingus
             this.instanceNumber = instanceNumber;
             this.Transform = this.Animation.GetFrame(0);
             this.ScaleVector = PostScaleRatio(true);
-            this.spriteNumber = sprite;
             isActive = true;
         }
 
