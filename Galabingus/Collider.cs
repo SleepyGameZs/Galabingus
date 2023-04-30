@@ -9,7 +9,7 @@ using System.Xml.Linq;
 using Microsoft.Xna.Framework.Input;
 
 // Matthew Rodriguez
-// 2023, 3, 13
+// 2023, 4, 30
 // Collision
 // Empty - Collision that is empty
 // positionOfCollision - Point of the collision
@@ -142,6 +142,9 @@ namespace Galabingus
             }
         }
 
+        /// <summary>
+        ///  Scale of the collider
+        /// </summary>
         public Vector2 Scale
         {
             get
@@ -255,6 +258,7 @@ namespace Galabingus
             ushort instanceNumber
         )
         {
+            // Use defaults then run teh update overload
             SpriteEffects effect = SpriteEffects.None;
             Texture2D sprite = self.GetSprite(instanceNumber);
             Vector2 position = self.GetPosition(instanceNumber);
@@ -262,7 +266,6 @@ namespace Galabingus
             float scale = self.GetScale(instanceNumber);
             GraphicsDevice graphicsDevice = GameObject.Instance.GraphicsDevice;
             SpriteBatch spriteBatch = GameObject.Instance.SpriteBatch;
-
             return UpdateTransform(
                 sprite,
                 position,
@@ -301,7 +304,6 @@ namespace Galabingus
         )
         {
             this.self = self;
-            // Set the transform
             this.transform = transform;
             this.position = position;
             this.layer = layer;
@@ -309,47 +311,6 @@ namespace Galabingus
             pixels = null;
             pixelCheck = null;
             Scale = new Vector2(scale, scale);
-
-            if (graphicsDevice == null || graphicsDevice.IsDisposed || graphicsDevice.GraphicsDeviceStatus != GraphicsDeviceStatus.Normal)
-            {
-                // The graphics device is not ready, so don't try to render anything.
-                return;
-            }
-
-            /*
-
-            // Render the effects and scale
-            targetSprite = new RenderTarget2D(
-                graphicsDevice,
-                (int)Math.Round((transform.Width * scale), MidpointRounding.AwayFromZero) <= 0 ? 1 : (int)Math.Round((transform.Width * scale), MidpointRounding.AwayFromZero),
-                (int)Math.Round((transform.Height * scale), MidpointRounding.AwayFromZero) <= 0 ? 1 : (int)Math.Round((transform.Height * scale), MidpointRounding.AwayFromZero)
-            );
-            clearColor = Color.Transparent;
-            graphicsDevice.SetRenderTarget(targetSprite);
-            graphicsDevice.Clear(clearColor);
-            spriteBatch.Begin(SpriteSortMode.Texture, BlendState.NonPremultiplied, SamplerState.PointClamp);
-            spriteBatch.Draw(
-                sprite,
-                Vector2.Zero,
-                transform,
-                Color.Red,
-                0.0f,
-                Vector2.Zero,
-                scale,
-                effect,
-                1.0f
-            );
-            spriteBatch.End();
-            graphicsDevice.SetRenderTarget(null);
-
-            copyOfTarget = new Texture2D(graphicsDevice, this.transform.Width, this.transform.Height);
-
-            // Scale the transform
-            // Load pixel data to CPU memory
-            this.spriteEffects = null;
-            Load(targetSprite);
-
-            */
         }
 
         /// <summary>
@@ -455,7 +416,21 @@ namespace Galabingus
             );
         }
 
-
+        /// <summary>
+        ///  Renders the upates for the collider and 
+        ///  produces a list of collisions for this collider
+        /// </summary>
+        /// <param name="sprite">Sprite for the colllider</param>
+        /// <param name="position">Position of the collider</param>
+        /// <param name="transform">Transform of the colldier</param>
+        /// <param name="graphicsDevice">Any: GraphicsDevice</param>
+        /// <param name="spriteBatch">Any: SpriteBatch</param>
+        /// <param name="direction">Dirction is always 0</param>
+        /// <param name="scale">Scale of the render</param>
+        /// <param name="effect">Any Sprite Effects</param>
+        /// <param name="layer">Collision layer</param>
+        /// <param name="instanceNumber">Instance number</param>
+        /// <returns></returns>
         public List<Collision> UpdateTransform(
             Texture2D sprite,
             Vector2 position,
@@ -477,7 +452,8 @@ namespace Galabingus
             Scale = scale;
             Vector2 shiftedScale = Vector2.Zero;
             float resolution = 5.0f;
-            
+
+            // Down resolution calculation
             if (transform.Width >= transform.Height)
             {
                 shiftedScale.X = resolution / transform.Width;
@@ -488,13 +464,13 @@ namespace Galabingus
                 shiftedScale.X = resolution / transform.Height;
                 shiftedScale.Y = resolution / transform.Height;
             }
-
             if (shiftedScale.X > 0.07f || shiftedScale.Y > 0.07f)
             {
                 shiftedScale.X = 0.07f;
                 shiftedScale.Y = 0.07f;
             }
 
+            // Hradcode a fixed scale
             shiftedScale.X = 0.06f;
             shiftedScale.Y = 0.06f;
 
@@ -540,35 +516,21 @@ namespace Galabingus
                 };
             }
 
-            //Debug.WriteLine(shiftedScale);
-
+            // Apply the new Scale to the transformt o pass to pixel intercepts
             float fixedMinimumScale = 0.2f;
             float adjustedScaleX = fixedMinimumScale;
             float adjustedScaleY = fixedMinimumScale;
-
-            /*
-            if (shiftedScale.X < adjustedScaleX)
-            {
-                adjustedScaleX = shiftedScale.X;
-            }
-
-            if (shiftedScale.Y < adjustedScaleY)
-            {
-                adjustedScaleY = shiftedScale.Y;
-            }
-            */
             adjustedScaleX = shiftedScale.X;
             adjustedScaleY = shiftedScale.Y;
-
             this.transform = new Rectangle(
                 (int)(Math.Round((position.X * adjustedScaleX), MidpointRounding.AwayFromZero)),
                 (int)(Math.Round((position.Y * adjustedScaleY), MidpointRounding.AwayFromZero)),
                 (int)Math.Round((transform.Width * (Scale.X) * shiftedScale.X), MidpointRounding.AwayFromZero),
                 (int)Math.Round((transform.Height * (Scale.Y) * shiftedScale.Y), MidpointRounding.AwayFromZero)
             );
-
             this.Scale = new Vector2(Scale.X * adjustedScaleX, Scale.Y * adjustedScaleY);
 
+            // Get Collisions and also Render an Update if it is needed
             List<Collision> result = new List<Collision>();
             ushort layer4 = GameObject.Instance.ColliderLayer4Instance(instanceNumber);
             unsafe
@@ -638,22 +600,18 @@ namespace Galabingus
                                     effect,
                                     1.0f
                                 );
-
                                 spriteBatch.End();
                                 graphicsDevice.SetRenderTarget(null);
                                 this.colliderNextMTV = Vector2.Zero;
                                 this.colldierCurrentMTV = Vector2.Zero;
-
                                 spriteEffects = effect;
 
                                 // Update the transform with the new scale and sprite
                                 Load(targetSprite);
-
                                 if (pixels != null && copyOfTarget != null)
                                 {
                                     copyOfTarget.SetData(pixels);
                                 }
-
                                 GameObject.Instance.HoldCollider = false;
                             }
                         }
@@ -692,11 +650,17 @@ namespace Galabingus
             return result;
         }
 
+        /// <summary>
+        ///  Enables the collision visual
+        /// </summary>
         public static void EnableCollisionDebug()
         {
             GameObject.Instance.EnableCollisionDebug = true;
         }
 
+        /// <summary>
+        ///  Disables the collision visual
+        /// </summary>
         public static void DisableCollisionDebug()
         {
             GameObject.Instance.EnableCollisionDebug = false;
@@ -735,42 +699,6 @@ namespace Galabingus
             int x2 = Math.Min(this.transform.X + (int)(this.transform.Width), other.transform.X + (int)(other.transform.Width));
             int y1 = Math.Max(this.transform.Y, other.transform.Y);
             int y2 = Math.Min(this.transform.Y + (int)(this.transform.Height), other.transform.Y + (int)(other.transform.Height));
-            // x1 = x1 - (x2 - x1);
-            // y1 = y1 - (y2 - y1);
-
-            if (Keyboard.GetState().IsKeyDown(Keys.C))
-            {
-                Rectangle intercpetion = new Rectangle(0, 0, x2 - x1, y2 - y1);
-                Rectangle hitBox = new Rectangle(0, 0, transform.Width, transform.Height);
-
-                Texture2D pixelWhite = GameObject.Instance.ContentManager.Load<Texture2D>("white_pixel_strip1");
-                GameObject.Instance.Debug += delegate (SpriteBatch spriteBatch)
-                {
-                    spriteBatch.Draw(
-                        pixelWhite,
-                        new Vector2(transform.X, transform.Y),
-                        hitBox,
-                        new Color(Color.DarkBlue, 0.001f),
-                        0, Vector2.Zero,
-                        new Vector2(1, 1),
-                        SpriteEffects.None,
-                        0
-                    );
-                    /*
-                    spriteBatch.Draw(
-                        pixelWhite,
-                        new Vector2(x1, y1),
-                        intercpetion,
-                        new Color(Color.Red, 0.1f),
-                        0, Vector2.Zero,
-                        new Vector2(1, 1),
-                        SpriteEffects.None,
-                        0
-                    );
-                    */
-                    
-                };
-            }
 
             // For each single pixel in the intersecting rectangle
             for (int y = y2 - 1; y >= y1; --y)
@@ -798,16 +726,12 @@ namespace Galabingus
                             Vector2 intercept;
                             Vector2 mtv = MTV(this, x2, y2, y1, x1, interceptPosition.Y, interceptPosition.X);
                             Vector2 otherMTV = MTV(other, x2, y2, y1, x1, interceptPosition.Y, interceptPosition.X);
-
                             intercept = new Vector2(position.X + mtv.X, position.Y + mtv.Y);
-
                             if (this.colliderNextMTV == Vector2.Zero)
                             {
                                 this.colliderNextMTV = otherMTV;
                             }
-
                             colldierCurrentMTV = colliderNextMTV;
-                            
                             if (
                                 Math.Abs(otherMTV.X) < Math.Abs(colldierCurrentMTV.Y) && otherMTV.X != 0 && colldierCurrentMTV.Y != 0 ||
                                 Math.Abs(otherMTV.Y) < Math.Abs(colldierCurrentMTV.X) && otherMTV.Y != 0 && colldierCurrentMTV.X != 0 ||
@@ -933,15 +857,13 @@ namespace Galabingus
             }
             */
 
-            //if (mtv == Vector2.Zero)
+            // Return a mtv of proper scale
+            if (mtv == Vector2.Zero)
             {
                 return Vector2.Zero;
             }
-
-            mtv = (Vector2.Normalize(mtv) * Player.PlayerInstance.Speed) * Scale;
-
+            mtv = (Vector2.Normalize(mtv) * Player.PlayerInstance.Speed);
             return mtv;
-            //return CalculateMTV(this.transform, other.transform);
         }
     }
 }
