@@ -8,8 +8,13 @@ using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
-// Creator: Zane Smith
-// Purpose: A manager system for all bullets in the game, whether owned by the player or enemies.
+// BULLET MANAGER - By Zane Smith
+/* Bullets are used by the player and enemies, and are the core of how 
+ * the game actually functions. Their data is set here, with a special note
+ * that if they would be created during the bullet's update run their data will
+ * instead be stored, allowing their creation to be done once the entire update
+ * is finished. This allows all new bullets to have their first update run at the
+ * same time.*/
 
 namespace Galabingus
 {
@@ -57,23 +62,21 @@ namespace Galabingus
         #region------------------[ Constructor ]------------------
 
         /// <summary>
-        /// Constructor used to generate the bullet manager 
-        /// singleton (accessed via property)
+        /// The primary constructor,it loads in the base data for the lists and dictionaries, then
+        /// everything from the files is loaded in the Initialize method
         /// </summary>
-        private BulletManager()
+        private BulletManager ()
         {
+            // True bullet storage data
             activeBullets = new List<Bullet>();
+            content = new List<ushort>();
+            bulletTotal = 0;
 
             // Storage data for when a bullet spawns a bullet
             storeAbilityBullets = new List<BulletType>(); 
             storePositionBullets = new List<Vector2>();
             storeDirectionBullets = new List<Vector2>();
             storeCreatorBullets = new List<object>();
-
-            bulletTotal = 0;
-
-            content = new List<ushort>();
-
         }
 
         #endregion
@@ -81,21 +84,28 @@ namespace Galabingus
         #region------------------[ Methods ]------------------
 
         /// <summary>
-        /// Method to create a bullet, and have it hooked up to the bullet manager.
+        /// Method for creating a bullet, it takes in data and organizes it into a completed bullet which
+        /// is placed in the level. If the bullet would be created during the bulet manager's update loop,
+        /// it is instead stored separately until the loop ends.
         /// </summary>
         /// <param name="ability">The ability the bullet should have</param>
         /// <param name="position">The position to create the bullet at</param>
-        /// <param name="angle">The angle the bullet should have</param>
-        /// <param name="direction">The direction (left or right) for the bullet</param>
-        /// <param name="creator">Reference to the creator of the bullet</param>
-        /// <param name="sourceIsBulet">If the thing spawning the bullet is itself a bullet</param>
+        /// <param name="direction">The direction (horizontal and vertical) for the bullet</param>
+        /// <param name="creator">Contains a reference to the object that created this
+        ///                       bullet. This will determine what types of things the
+        ///                       bullet can hit (can be null).</param>
+        /// <param name="sourceIsBulet">Was this bullet created during the bullet manager's update /
+        ///                             by another bullet. If true the bullet to be created will have
+        ///                             its data stored separately so that it can be properly
+        ///                             introduced into the bullet list afterwards</param>
         public void CreateBullet (BulletType ability, 
                                   Vector2 position,
                                   Vector2 direction, 
                                   object creator, 
                                   bool sourceIsBullet)
         {
-            
+
+            #region STEP 1: Link Data to GameObject
 
             // Sets the sprite to use for the bullet for GameObject storage purposes
             ushort sprite;
@@ -234,6 +244,10 @@ namespace Galabingus
                 }
             }
 
+            #endregion
+
+            #region STEP 2: Bullet Storage Handling
+
             bool isReplacing = false;
             ushort setNumber = (ushort)Math.Max(0, (Instance.activeBullets.Count - 1));
 
@@ -247,18 +261,29 @@ namespace Galabingus
                 }
             }
 
+            #endregion
+
+            #region STEP 3: Generate Bullet Proper
+
+            // Stages of checking:
+            // 1: Checks to see if this bullet was created during the bullet update loop.
+            //    If it was, its data is stored, rather than having them be placed.
+            // 2: Bullet should be created here
+            //   A: The bullet is added onto the end of the main list
+            //   B: The bullet fills a previously used slot in the main list
+
             // Add bullet itself to list
             if (sourceIsBullet)
-            {
+            { // Was created by an bullet, store the data
                 Instance.storeAbilityBullets.Add(ability);
                 Instance.storePositionBullets.Add(position);
                 Instance.storeDirectionBullets.Add(direction);
                 Instance.storeCreatorBullets.Add(creator);
             } 
             else
-            {
+            { // Add bullet itself to list
                 if (isReplacing == false)
-                {
+                { // The bullet is added onto the end of the main list
                     Instance.activeBullets.Add(new Bullet(ability,      // Ability of the bullet to shoot
                                                          position,      // Position to spawn the bullet
                                                          direction,     // Direction of the bullet
@@ -272,7 +297,7 @@ namespace Galabingus
                     bulletTotal++;
                 } 
                 else
-                {
+                { // The bullet fills a previously used slot in the main list
                     Instance.activeBullets[setNumber] =
                                               new Bullet(ability,       // Ability of the bullet to shoot
                                                          position,      // Position to spawn the bullet
@@ -283,13 +308,17 @@ namespace Galabingus
                                                          );
                 }
             }
+
+            #endregion
         }
+
+        #region Normal Monogame methods
 
         /// <summary>
         /// Runs the updates of all individual bullets, and checks to see 
         /// if they are set to be despawned
         /// </summary>
-        /// <param name="gameTime">The total game time variable</param>
+        /// <param name="gameTime">Used to get the correct pace</param>
         public void Update(GameTime gameTime)
         {
             for (int i = 0; i < Instance.activeBullets.Count; i++)
@@ -330,7 +359,7 @@ namespace Galabingus
 
         /// <summary>
         /// Draws all existing bullets stored by the manger, and makes checks for
-        /// the angle and direction to do rotation.
+        /// the directions to do rotation.
         /// </summary>
         public void Draw()
         {
@@ -338,6 +367,7 @@ namespace Galabingus
             {
                 if (bullet != null)
                 {
+                    // Flip the visual sprite if needed
                     SpriteEffects flipping = SpriteEffects.None;
 
                     if (bullet.Direction.X == -1)
@@ -365,6 +395,11 @@ namespace Galabingus
             }
         }
 
+        #endregion
+
+        /// <summary>
+        /// Resets the bullet manager
+        /// </summary>
         public void Reset()
         {
             instance = null;
