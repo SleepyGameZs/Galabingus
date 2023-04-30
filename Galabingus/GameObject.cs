@@ -12,7 +12,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 // Matthew Rodriguez
-// 2023, 3, 13
+// 2023, 4, 30
 // GameObject
 // Provides essentails for all game objects
 //
@@ -28,27 +28,9 @@ using Microsoft.Xna.Framework.Graphics;
 // you MUST re-implement every used property using the content setter like so:
 // GameObject.Instance.Content = GameObject.Instance.Content.YOURCONTENTNAME
 // then use the property as normal
-//
-// GameObject.Instance - All of the instances of GameObject
-// GameObject.Instance.Index - The current GameObject
-// GameObject.Instance.Content - Dynamic required for creating content on the fly
-// GameObject.Instance.GraphicsDevice - a GraphicsDevice
-// GameObject.Instance.SpriteBatch - a SpriteBatch
-// GameObject.Instance[Animation.Empty] - animation array of the current Instance
-// GameObject.Instance[Collider.Empty] - collider array of the current Instance
-// GameObject.Instance[Vector2.Zero] - position array of the current Instance
-// GameObject.Instance[Rectangle.Empty] - transform array of the current Instance
-// GameObject.Instance[i, Rectangle.Empty] - transform at i of the current Instance
-// GameObject.Instance[i, Vector2.Zero] - position at i of the current Instance
-// GameObject.Instance[i, Animation.Empty] - animation at i of the current Instance
-// GameObject.Instance[i, Collider.Empty] - collider at i of the current Instance
-// GameObject.Sprite - sprite of the current Instance
-// GameObject.Scale - scale of the sprite of the current Instance
-// GameObject.Colliders - All instances collider arrays <!> Warning <!>
 
 namespace Galabingus
 {
-
     public delegate void OnDebug(SpriteBatch spriteBatch);
 
     /// <summary>
@@ -59,7 +41,6 @@ namespace Galabingus
     internal class GameObject : DynamicObject, IConvertible
     {
         public event OnDebug Debug;
-
         private const byte animationConst = 0;
         private const byte colliderConst = 1;
         private const byte transformConst = 2;
@@ -109,6 +90,9 @@ namespace Galabingus
         private static float clockTime;
         private bool enableCollisionDebug;
 
+        /// <summary>
+        ///  Matiral Node has the instructions to preform on a matiral
+        /// </summary>
         public struct GameObjectMaterialNode
         {
             private Effect effect;
@@ -116,6 +100,9 @@ namespace Galabingus
             private Action<int> info;
             private Action<int> reset;
 
+            /// <summary>
+            ///  The shader to run on the activation pass
+            /// </summary>
             public Effect Effect
             {
                 get
@@ -124,6 +111,16 @@ namespace Galabingus
                 }
             }
 
+            /// <summary>
+            ///  Defines a Matiral Node with three stages:
+            ///   - Setup, pre activatoin of the node
+            ///   - Activate activates the node,
+            ///   - Reset resets things the way they were before activate ran
+            /// </summary>
+            /// <param name="shader">Shader to run</param>
+            /// <param name="setup">Setup for the shader</param>
+            /// <param name="properties">Any aditional actions to run on activation</param>
+            /// <param name="reset">Reset everything</param>
             public GameObjectMaterialNode(Effect shader, Action<int> setup, Action<int> properties, Action<int> reset)
             {
                 prePass = setup;
@@ -132,48 +129,78 @@ namespace Galabingus
                 this.reset = reset;
             }
 
+            /// <summary>
+            ///  Setup for this Node
+            /// </summary>
             public void Setup()
             {
                 prePass(0);
             }
-
+            
+            /// <summary>
+            ///  Activates this Node
+            /// </summary>
             public void Activate()
             {
                 info(0);
             }
 
+            /// <summary>
+            ///  Reset pass, 
+            ///  make everyhing the way it was before you ran activeate
+            /// </summary>
             public void Reset()
             {
                 reset(0);
             }
         }
 
+        /// <summary>
+        ///  Material here allows for mutli view of shaders
+        /// </summary>
         public struct GameObjectMaterial
         {
             private List<GameObjectMaterialNode> shaderBuffer;
             private bool skipUniversalPass;
 
+            /// <summary>
+            ///  Creates a GameObjectMatiral
+            /// </summary>
             public GameObjectMaterial()
             {
                 shaderBuffer = new List<GameObjectMaterialNode>();
                 skipUniversalPass = false;
             }
 
+            /// <summary>
+            ///  Skips the universal shader
+            /// </summary>
             public void SkipUniversalPass()
             {
                 skipUniversalPass = true;
             }
 
+            /// <summary>
+            ///  Enables the universal shader
+            /// </summary>
             public void EnableUniversalPass()
             {
                 skipUniversalPass = false;
             }
 
+            /// <summary>
+            ///  Adds a material node to the shaderBuffer to be drawn
+            /// </summary>
+            /// <param name="effect"></param>
             public void AddMaterialNode(GameObjectMaterialNode effect)
             { 
                 shaderBuffer.Add(effect);
             }
 
+            /// <summary>
+            ///  Draws the material at differnt stages per shader
+            /// </summary>
+            /// <param name="draw">All of the draw code</param>
             public void Draw(Action<byte> draw)
             {
                 foreach (GameObjectMaterialNode shader in shaderBuffer)
@@ -195,8 +222,19 @@ namespace Galabingus
             }
         }
 
+        /// <summary>
+        ///  Game Object Instance System,
+        ///  Uses the Trie datastruture for splitting content per instance
+        /// </summary>
+        /// <typeparam name="T">Type of content</typeparam>
         public struct GameObjectTrie<T>
         {
+            /// <summary>
+            ///  Retrives the data for the instance pass and tpye of content
+            /// </summary>
+            /// <param name="layer1Find">tpye of content</param>
+            /// <param name="layer3Pass">instance pass</param>
+            /// <returns>Data</returns>
             public object GetPass(ushort layer1Find, ushort layer3Pass)
             {
                 switch (layer1Find)
@@ -222,6 +260,12 @@ namespace Galabingus
                 }
             }
 
+            /// <summary>
+            ///  Determines the storage and sets the data
+            /// </summary>
+            /// <param name="layer1Pass">Type of content</param>
+            /// <param name="layer3Pass">Instance number</param>
+            /// <param name="value">Value to set</param>
             public void SetPass(ushort layer1Pass, ushort layer3Pass, object value)
             {
                 switch (layer1Pass)
@@ -256,6 +300,13 @@ namespace Galabingus
                 }
             }
 
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="layer1Find"></param>
+            /// <param name="layer3Find"></param>
+            /// <param name="data"></param>
+            /// <returns></returns>
             #nullable disable
             public static T Get(ushort layer1Find, ushort layer3Find, List<T> data)
             {
@@ -281,10 +332,16 @@ namespace Galabingus
                         data.Add(default(T));
                     }
                 }
-
                 return data[Trie[layer1Find][GameObject.Instance.Index][layer3Find]];
             }
 
+            /// <summary>
+            ///  Adds info into the trie for the type of content
+            /// </summary>
+            /// <param name="layer1Find">Type of content</param>
+            /// <param name="data">storage</param>
+            /// <param name="value">Value to add</param>
+            /// <returns>Index of addition</returns>
             public static ushort Add(ushort layer1Find, List<T> data, T value)
             {
                 if (layer1Find >= Trie.Count)
@@ -307,6 +364,13 @@ namespace Galabingus
                 return layer3Find;
             }
 
+            /// <summary>
+            ///  Sets the value in the trie 
+            /// </summary>
+            /// <param name="layer1Find">Type of content</param>
+            /// <param name="layer3Find">Instance number</param>
+            /// <param name="data">storage</param>
+            /// <param name="value">Value to set</param>
             public static void Set(ushort layer1Find, ushort layer3Find, List<T> data, T value)
             {
                 if (layer1Find >= Trie.Count)
@@ -331,10 +395,15 @@ namespace Galabingus
                         data.Add(value);
                     }
                 }
-
                 data[Trie[layer1Find][GameObject.Instance.Index][layer3Find]] = value;
             }
 
+            /// <summary>
+            ///  Retrive the List of Data for the specific type of layer1 content
+            /// </summary>
+            /// <param name="layer1Find">type of content</param>
+            /// <param name="data">The data as an List</param>
+            /// <returns>List of data</returns>
             public static List<T> GetArray(ushort layer1Find, List<T> data)
             {
                 if (layer1Find >= Trie.Count)
@@ -351,7 +420,6 @@ namespace Galabingus
                         Trie[layer1Find].Add(new List<ushort>());
                     }
                 }
-
                 List<T> result = new List<T>();
                 foreach (int index in Trie[layer1Find][GameObject.Instance.Index])
                 {
@@ -361,6 +429,12 @@ namespace Galabingus
                 return result;
             }
 
+            /// <summary>
+            ///  Returns the entore fourth layer
+            /// </summary>
+            /// <param name="layer1Find">Type of content</param>
+            /// <param name="data">Storage</param>
+            /// <returns></returns>
             public static List<ushort> GetLayer4(ushort layer1Find, List<T> data)
             {
                 if (layer1Find >= Trie.Count)
@@ -377,17 +451,22 @@ namespace Galabingus
                         Trie[layer1Find].Add(new List<ushort>());
                     }
                 }
-
                 List<ushort> result = new List<ushort>();
                 foreach (ushort index in Trie[layer1Find][GameObject.Instance.Index])
                 {
                     result.Add(index);
                 }
-
                 return result;
             }
             #nullable enable
 
+            /// <summary>
+            ///  Returns the fourth layer instance number of the Trie that contains all of the instances of this type of data
+            /// </summary>
+            /// <param name="layer1Find">The type of info</param>
+            /// <param name="layer3Find">The which instance</param>
+            /// <param name="data">storage</param>
+            /// <returns>Layer 4</returns>
             public static ushort GetLayer4Instance(ushort layer1Find, ushort layer3Find, List<T> data)
             {
                 if (layer1Find >= Trie.Count)
@@ -404,12 +483,14 @@ namespace Galabingus
                         Trie[layer1Find].Add(new List<ushort>());
                     }
                 }
-
                 return Trie[layer1Find][GameObject.Instance.Index][layer3Find];
             }
             #nullable enable
         }
 
+        /// <summary>
+        ///  The Instance number for this Game Object
+        /// </summary>
         public ushort InstanceID
         {
             get
@@ -438,54 +519,20 @@ namespace Galabingus
             }
         }
 
+        /// <summary>
+        ///  Returns the Instance
+        /// </summary>
+        /// <typeparam name="T">Type of GameObject to determine</typeparam>
+        /// <returns>Instance</returns>
         public GameObject GetInstance<T>()
         {
-            //Debug.WriteLine(CollisionGroupIGet(index,instance));
-            //if (this is T)
-            //{
-            //    return (T)Convert.ChangeType(this, typeof(T));
-            //}
-            //else
-            //{
-
-            if (typeof(T) == typeof(Player))
-            {
-                if (CollisionGroup.Player == CollisionGroupIGet(GameObject.Instance.Index, GameObject.Instance.instance))
-                {
-                    // return ToPlayer();
-                }
-                else
-                {
-                    return GameObject.Instance;
-                }
-            }
-            if (typeof(T) == typeof(Tile))
-            {
-                if (CollisionGroup.Tile == CollisionGroupIGet(GameObject.Instance.Index, GameObject.Instance.instance))
-                {
-                    //return ToTile();
-                }
-                else
-                {
-                    return GameObject.Instance;
-                }
-            }
-            if (typeof(T) == typeof(Bullet))
-            {
-                if (CollisionGroup.Bullet == CollisionGroupIGet(GameObject.Instance.Index, GameObject.Instance.instance))
-                {
-                    //return ToBullet();
-                }
-                else
-                {
-                    return GameObject.Instance;
-                }
-            }
-
+            // Magically determine the type by accesing the instance
             return GameObject.Instance;
-            //}
         }
 
+        /// <summary>
+        ///  Trie instance
+        /// </summary>
         private static List<List<List<ushort>>> Trie
         {
             get
@@ -502,6 +549,9 @@ namespace Galabingus
             }
         }
 
+        /// <summary>
+        ///  Internal Sprites storage
+        /// </summary>
         private static List<Texture2D> SpritesI
         {
             get
@@ -518,6 +568,9 @@ namespace Galabingus
             }
         }
 
+        /// <summary>
+        ///  Internal Scaler storage
+        /// </summary>
         private static List<float> ScalesI
         {
             get
@@ -534,6 +587,9 @@ namespace Galabingus
             }
         }
 
+        /// <summary>
+        ///  Internal Enums storage
+        /// </summary>
         private static List<string> ObjectEnumsI
         {
             get
@@ -550,6 +606,9 @@ namespace Galabingus
             }
         }
 
+        /// <summary>
+        ///  internal Animation storage
+        /// </summary>
         private static List<Animation> AnimationsI
         {
             get
@@ -566,6 +625,9 @@ namespace Galabingus
             }
         }
 
+        /// <summary>
+        ///  Inernal Colliders storage
+        /// </summary>
         private static List<Collider> CollidersI
         {
             get
@@ -582,6 +644,9 @@ namespace Galabingus
             }
         }
 
+        /// <summary>
+        ///  Internal Transforms storage
+        /// </summary>
         private static List<Rectangle> TransformsI
         {
             get
@@ -598,6 +663,9 @@ namespace Galabingus
             }
         }
 
+        /// <summary>
+        /// Internal Positions storage
+        /// </summary>
         private static List<Vector2> PositionsI
         {
             get
@@ -614,6 +682,9 @@ namespace Galabingus
             }
         }
 
+        /// <summary>
+        ///  Internal Effects storage
+        /// </summary>
         private static List<Effect> EffectI
         {
             get
@@ -630,6 +701,9 @@ namespace Galabingus
             }
         }
 
+        /// <summary>
+        ///  Shader that applies to everything
+        /// </summary>
         public Effect UniversalShader
         {
             get
@@ -642,6 +716,9 @@ namespace Galabingus
             }
         }
 
+        /// <summary>
+        ///  Top Position of the level
+        /// </summary>
         public static Vector2 EndPosition
         {
             get
@@ -650,6 +727,11 @@ namespace Galabingus
             }
         }
         
+        /// <summary>
+        ///  Retrives the sprite for the instance
+        /// </summary>
+        /// <param name="instancePass">instance number</param>
+        /// <returns>Sprite Texture2D</returns>
         public Texture2D GetSprite(ushort instancePass)
         {
             #nullable disable
@@ -660,6 +742,11 @@ namespace Galabingus
             #nullable enable
         }
 
+        /// <summary>
+        ///  Retrives the scale for the instance
+        /// </summary>
+        /// <param name="instancePass">instance number</param>
+        /// <returns>Scale float</returns>
         public float GetScale(ushort instancePass)
         {
             #nullable disable
@@ -670,6 +757,11 @@ namespace Galabingus
             #nullable enable
         }
 
+        /// <summary>
+        ///  Retrives the object enum for the instance
+        /// </summary>
+        /// <param name="instancePass">instance number</param>
+        /// <returns>Enum string</returns>
         public string GetObjectEnum(ushort instancePass)
         {
             #nullable disable
@@ -680,6 +772,11 @@ namespace Galabingus
             #nullable enable
         }
 
+        /// <summary>
+        ///  Retrives the animation for the instance
+        /// </summary>
+        /// <param name="instancePass">instance number</param>
+        /// <returns>Animation</returns>
         public Animation GetAnimation(ushort instancePass)
         {
             #nullable disable
@@ -690,6 +787,11 @@ namespace Galabingus
             #nullable enable
         }
 
+        /// <summary>
+        ///  Retrives the collider for the instance
+        /// </summary>
+        /// <param name="instancePass">instance number</param>
+        /// <returns>Collider</returns>
         public Collider GetCollider(ushort instancePass)
         {
             #nullable disable
@@ -700,6 +802,11 @@ namespace Galabingus
             #nullable enable
         }
 
+        /// <summary>
+        ///  Retrives the Transform for the isntance
+        /// </summary>
+        /// <param name="instancePass">instance number</param>
+        /// <returns>Transform Rectangle</returns>
         public Rectangle GetTransform(ushort instancePass)
         {
             #nullable disable
@@ -710,6 +817,11 @@ namespace Galabingus
             #nullable enable
         }
 
+        /// <summary>
+        ///  Retrives the Position for the instance
+        /// </summary>
+        /// <param name="instancePass">instance number</param>
+        /// <returns>Position Vector2</returns>
         public Vector2 GetPosition(ushort instancePass)
         {
             #nullable disable
@@ -720,6 +832,11 @@ namespace Galabingus
             #nullable enable
         }
 
+        /// <summary>
+        ///  Retrives the Effect for the instance
+        /// </summary>
+        /// <param name="instancePass">instance number</param>
+        /// <returns>Effect</returns>
         public Effect GetEffect(ushort instancePass)
         {
             #nullable disable
@@ -730,6 +847,11 @@ namespace Galabingus
             #nullable enable
         }
 
+        /// <summary>
+        ///  Set the sprite for the instasnce
+        /// </summary>
+        /// <param name="instancePass">instance number</param>
+        /// <param name="value">Texure2D sprite</param>
         public void SetSprite(ushort instancePass, object value)
         {
             #nullable disable
@@ -740,6 +862,11 @@ namespace Galabingus
             #nullable enable
         }
 
+        /// <summary>
+        ///  Set the scale for the instance
+        /// </summary>
+        /// <param name="instancePass">instance number</param>
+        /// <param name="value">float scale</param>
         public void SetScale(ushort instancePass, object value)
         {
             #nullable disable
@@ -750,6 +877,11 @@ namespace Galabingus
             #nullable enable
         }
 
+        /// <summary>
+        ///  Set the game object enum for the instance
+        /// </summary>
+        /// <param name="instancePass">instance number</param>
+        /// <param name="value">string enum</param>
         public void SetObjectEnum(ushort instancePass, object value)
         {
             #nullable disable
@@ -760,6 +892,11 @@ namespace Galabingus
             #nullable enable
         }
 
+        /// <summary>
+        ///  Set the animation for the instance
+        /// </summary>
+        /// <param name="instancePass">instance number</param>
+        /// <param name="value">Animation</param>
         public void SetAnimation(ushort instancePass, object value)
         {
             #nullable disable
