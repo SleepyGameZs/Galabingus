@@ -23,6 +23,7 @@ namespace Galabingus
         #region Fields
 
         bool enabled;
+        bool hover;
 
         Texture2D enabledTexture;
         Texture2D disabledTexture;
@@ -64,10 +65,25 @@ namespace Galabingus
                 }
 
             }
+            else if (uiPosition.Y == UIManager.Instance.ButtonSelection)
+            {
+                if (!hover)
+                {
+                    uiPosition.Width = (int)(uiPosition.Width * 1.1);
+                    uiPosition.Height = (int)(uiPosition.Height * 1.1);
+
+                    hover = true;
+                }
+            }
             else
             {
-                uiPosition.Width = (int)(uiPosition.Width * 1.2);
-                uiPosition.Height = (int)(uiPosition.Height * 1.2);
+                if(hover)
+                {
+                    uiPosition.Width = (int)(uiPosition.Width / 1.1);
+                    uiPosition.Height = (int)(uiPosition.Height / 1.1);
+
+                    hover = false;
+                }
             }
         }
 

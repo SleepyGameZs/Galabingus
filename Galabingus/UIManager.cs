@@ -432,16 +432,16 @@ namespace Galabingus
                 optionsMenu);
 
             AddSlider("SliderBack_strip1", "SliderKnob_strip1", 0.9f,
-                new Vector2(width / 2 + 95, height / 2 - 195),
+                new Vector2(width / 2 + 80, height / 2 - 195),
                 AdjustVolume, optionsMenu);
 
 
-            AddToggle("ToggleOn_strip1", "ToggleOff_strip1", 0.4f,
-                new Vector2(width / 2 + 100, height / 2 - 100),
+            AddToggle("ToggleOn_strip1", "ToggleOff_strip1", 0.9f,
+                new Vector2(width / 2 + 150, height / 2 - 70),
                 EnableGodMode, DisableGodMode, optionsMenu);
 
-            AddToggle("ToggleOn_strip1", "ToggleOff_strip1", 0.4f,
-                new Vector2(width / 2 + 100, height / 2 + 100),
+            AddToggle("ToggleOn_strip1", "ToggleOff_strip1", 0.9f,
+                new Vector2(width / 2 + 150, height / 2 + 30),
                 EnableColliders, DisableColliders, optionsMenu);
 
             //GameOver
@@ -1185,7 +1185,7 @@ namespace Galabingus
             {
                 foreach (UIElement element in current)
                 {
-                    if (element is Button)
+                    if (element is Button || element is Toggle || element is Slider)
                     {
                         if (selectedButton > element.UIPosition.Y)
                         {
@@ -1200,7 +1200,7 @@ namespace Galabingus
 
             foreach (UIElement element in current)
             {
-                if (element is Button)
+                if (element is Button || element is Toggle || element is Slider)
                 {
                     if ((SingleKeyPress(Keys.Down) || SingleKeyPress(Keys.S)) && element.UIPosition.Y > selectedButton)
                     {
@@ -1219,6 +1219,7 @@ namespace Galabingus
                         switchedButton = true;
                     }
                 }
+
             }
             if (switchedButton)
             {

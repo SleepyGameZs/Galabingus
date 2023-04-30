@@ -30,6 +30,10 @@ namespace Galabingus
         float unitLength;
         float returnPercentage;
 
+        int difference;
+
+        bool hover;
+
         #endregion
 
         #region Properties
@@ -54,7 +58,8 @@ namespace Galabingus
             int length = (int)(knotchTexture.Width / scale);
             int width = (int)(knotchTexture.Height / scale);
 
-            unitLength = length;
+            unitLength = (float)(length * 1.1);
+            difference = (int)(uiPosition.X * 1.1 - uiPosition.X);
 
             //creates its position rectangle
             knotchPosition =
@@ -65,6 +70,8 @@ namespace Galabingus
                     width
                 );
 
+            hover = false;
+
         }
 
         #endregion
@@ -73,36 +80,72 @@ namespace Galabingus
 
         public override void Update()
         {
-            currentMS = Mouse.GetState();
 
-            if (knotchPosition.Contains(prevMS.Position) && prevMS.LeftButton == ButtonState.Pressed)
+            if (uiPosition.Y == UIManager.Instance.ButtonSelection && (UIManager.Instance.SingleKeyPress(Keys.D) || UIManager.Instance.SingleKeyPress(Keys.Right)))
             {
-                if(currentMS.Position.X != prevMS.Position.X && currentMS.LeftButton == ButtonState.Pressed)
+                knotchPosition.X = knotchPosition.X + 20;
+
+                if (knotchPosition.X + unitLength >= uiPosition.X + (uiTexture.Width / scale) * 1.1)
                 {
-                    knotchPosition.X = knotchPosition.X + (currentMS.Position.X - prevMS.Position.X);
-
-                    if (knotchPosition.X <= uiPosition.X)
-                    {
-                        knotchPosition.X = uiPosition.X;
-                        returnPercentage = 0;
-                    }
-                    else if (knotchPosition.X + unitLength >= uiPosition.X + uiTexture.Width / scale)
-                    {
-                        knotchPosition.X = (uiPosition.X + (int)(uiTexture.Width / scale)) - (int)unitLength;
-                        returnPercentage = 1;
-                    }
-                    else
-                    {
-                        returnPercentage = (currentMS.Position.X - prevMS.Position.X) / unitLength;
-                    }
-
-                    if (OnSlide != null)
-                        OnSlide(this);
-
+                    knotchPosition.X = (int)(uiPosition.X + ((int)(uiTexture.Width / scale)) * 1.1) - (int)unitLength;
+                    returnPercentage = 1;
                 }
+                else
+                {
+                    returnPercentage = (currentMS.Position.X - prevMS.Position.X) / unitLength;
+                }
+
+                if (OnSlide != null)
+                    OnSlide(this);
+            }
+            else if (uiPosition.Y == UIManager.Instance.ButtonSelection && (UIManager.Instance.SingleKeyPress(Keys.A) || UIManager.Instance.SingleKeyPress(Keys.Left)))
+            {
+                knotchPosition.X = knotchPosition.X - 20;
+
+                if (knotchPosition.X <= uiPosition.X)
+                {
+                    knotchPosition.X = uiPosition.X;
+                    returnPercentage = 0;
+                }
+                else
+                {
+                    returnPercentage = knotchPosition.X - uiPosition.X / (uiPosition.Width - unitLength);
+                }
+
+                if (OnSlide != null)
+                    OnSlide(this);
             }
 
-            prevMS = Mouse.GetState();
+            else if(uiPosition.Y == UIManager.Instance.ButtonSelection)
+            {
+                if(!hover)
+                {
+                    knotchPosition.Width = (int)(knotchPosition.Width * 1.1);
+                    knotchPosition.Height = (int)(knotchPosition.Height * 1.1);
+
+                    uiPosition.Width = (int)(uiPosition.Width * 1.1);
+                    uiPosition.Height = (int)(uiPosition.Height * 1.1);
+
+                    knotchPosition.X = knotchPosition.X + (int)((unitLength / 1.1) * returnPercentage);
+
+                    hover = true;
+                }
+            }
+            else
+            {
+                if (hover)
+                {
+                    knotchPosition.Width = (int)(knotchPosition.Width / 1.1);
+                    knotchPosition.Height = (int)(knotchPosition.Height / 1.1);
+
+                    uiPosition.Width = (int)(uiPosition.Width / 1.1);
+                    uiPosition.Height = (int)(uiPosition.Height / 1.1);
+
+                    knotchPosition.X = knotchPosition.X - (int)((difference / 1.1) * returnPercentage);
+
+                    hover = false;
+                }
+            }
         }
 
         public override void Draw(SpriteBatch sb)
