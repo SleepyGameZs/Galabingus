@@ -709,11 +709,9 @@ namespace Galabingus
                     int xIndex1 = (int)((x - this.transform.X));
                     int yIndex1 = (int)((y - this.transform.Y));
                     int index1 = xIndex1 + yIndex1 * this.transform.Width;
-
                     int xIndex2 = (int)((x - other.transform.X));
                     int yIndex2 = (int)((y - other.transform.Y));
                     int index2 = xIndex2 + yIndex2 * other.transform.Width;
-
                     if (index1 >= 0 && index1 < this.pixels.Length && index2 >= 0 && index2 < other.pixels.Length)
                     {
                         Color a1 = this.pixels[index1];
@@ -764,98 +762,27 @@ namespace Galabingus
         /// <summary>
         ///  Calculates the Minimum Translation Vector of the other collider
         /// </summary>
-        /// <param name="other"></param>
-        /// <param name="x2"></param>
-        /// <param name="y2"></param>
-        /// <param name="y1"></param>
-        /// <param name="x1"></param>
-        /// <param name="y"></param>
-        /// <param name="x"></param>
-        /// <returns></returns>
+        /// <param name="other">Other collider</param>
+        /// <param name="x2">Intercept x2</param>
+        /// <param name="y2">Intercept y2</param>
+        /// <param name="y1">Intercept y1</param>
+        /// <param name="x1">Intercept x1</param>
+        /// <param name="y">Intercept y</param>
+        /// <param name="x">Intercept x</param>
+        /// <returns>Minimum translation vector</returns>
         private Vector2 MTV(Collider other, int x2, int y2, int y1, int x1, float y, float x)
         {
-
             Vector2 mtv = new Vector2();
             Vector2 overlap = new Vector2((float)Math.Sqrt((x2 - x1) * (x2 - x1)), (float)Math.Sqrt((y2 - y1) * (y2 - y1)));
-
             float ocx = other.position.X + other.Transform.Width / 2.0f;
             float ocy = other.position.Y + other.Transform.Height / 2.0f;
-
             bool xComparison = ((other.position.X + other.transform.Width * 0.5f) > (this.position.X + this.transform.Width * 0.5f));
             bool yComparison = ((other.position.Y + other.transform.Height * 0.5f) > (this.position.Y + this.transform.Height * 0.5f));
             bool xDiff = ((other.position.X + other.transform.Width * 0.5f) > (this.position.X + this.transform.Width * 0.5f));
             bool yDiff = ((other.position.Y + other.transform.Height * 0.5f) > (this.position.Y + this.transform.Height * 0.5f));
-
             mtv.X = ocx - x;
             mtv.Y = ocy - y;
-
             float preMTVY = mtv.Y;
-
-            /*
-            if (xComparison && !yComparison)
-            {
-                mtv.X = Math.Abs(mtv.X);
-                mtv.Y = 0;
-                // X +
-                //Debug.WriteLine("A");
-            }
-            else if (!xComparison && yComparison)
-            {
-                // Y and Y +
-                mtv.X = 0;
-                mtv.Y = Math.Abs(mtv.Y);
-                //Debug.WriteLine("B");
-            }
-            else if (!xComparison && !yComparison)
-            {
-                mtv.X = -Math.Abs(mtv.X);
-                mtv.Y = -Math.Abs(mtv.Y);
-                //Debug.WriteLine("C");
-            }
-            else if (!xComparison && !yComparison)
-            {
-                //Debug.WriteLine("D");
-            }
-            else
-            {
-                // Y and Y -
-
-                //Debug.WriteLine("D");
-                if (Math.Abs(overlap.Y) > Math.Abs(overlap.X))
-                {
-                    mtv.X = -Math.Abs(mtv.X);
-                    mtv.Y = 0;
-                }
-                else if (!yComparison)
-                {
-                    mtv.X = 0;
-                    mtv.Y = -Math.Abs(mtv.Y);
-                }
-            }
-            */
-
-
-            /*
-            if (xComparison)
-            {
-                mtv.X = Math.Abs(mtv.X);
-            }
-
-            if (yComparison)
-            {
-                mtv.Y = Math.Abs(mtv.Y);
-            }
-
-            if (!xComparison)
-            {
-                mtv.X = -Math.Abs(mtv.X);
-            }
-
-            if (!yComparison)
-            {
-                mtv.Y = -Math.Abs(mtv.Y);
-            }
-            */
 
             // Return a mtv of proper scale
             if (mtv == Vector2.Zero)
