@@ -522,7 +522,7 @@ namespace Galabingus
                 return new List<Collision>();
             }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.C) && copyOfTarget != null)
+            if (Keyboard.GetState().IsKeyDown(Keys.C) && copyOfTarget != null || copyOfTarget != null && GameObject.Instance.EnableCollisionDebug)
             {
                 GameObject.Instance.Debug += delegate (SpriteBatch spriteBatch)
                 {

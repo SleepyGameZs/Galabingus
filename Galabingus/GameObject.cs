@@ -256,7 +256,7 @@ namespace Galabingus
                 }
             }
 
-#nullable disable
+            #nullable disable
             public static T Get(ushort layer1Find, ushort layer3Find, List<T> data)
             {
                 if (layer1Find >= Trie.Count)
@@ -386,7 +386,7 @@ namespace Galabingus
 
                 return result;
             }
-#nullable enable
+            #nullable enable
 
             public static ushort GetLayer4Instance(ushort layer1Find, ushort layer3Find, List<T> data)
             {
@@ -407,7 +407,7 @@ namespace Galabingus
 
                 return Trie[layer1Find][GameObject.Instance.Index][layer3Find];
             }
-#nullable enable
+            #nullable enable
         }
 
         public ushort InstanceID
@@ -652,164 +652,187 @@ namespace Galabingus
         
         public Texture2D GetSprite(ushort instancePass)
         {
-#nullable disable
+            #nullable disable
             unsafe
             {
                 return (spritesI).GetPass(spritesConst, instancePass) as Texture2D;
             }
-#nullable enable
+            #nullable enable
         }
 
         public float GetScale(ushort instancePass)
         {
-#nullable disable
+            #nullable disable
             unsafe
             {
                 return (float)(scalesI).GetPass(scalesConst, instancePass);
             }
-#nullable enable
+            #nullable enable
         }
 
         public string GetObjectEnum(ushort instancePass)
         {
-#nullable disable
+            #nullable disable
             unsafe
             {
                 return (objectEnumsI).GetPass(objectEnumsConst, instancePass) as string;
             }
-#nullable enable
+            #nullable enable
         }
 
         public Animation GetAnimation(ushort instancePass)
         {
-#nullable disable
+            #nullable disable
             unsafe
             {
                 return (animationsI).GetPass(animationConst, instancePass) as Animation;
             }
-#nullable enable
+            #nullable enable
         }
 
         public Collider GetCollider(ushort instancePass)
         {
-#nullable disable
+            #nullable disable
             unsafe
             {
                 return (collidersI).GetPass(colliderConst, instancePass) as Collider;
             }
-#nullable enable
+            #nullable enable
         }
 
         public Rectangle GetTransform(ushort instancePass)
         {
-#nullable disable
+            #nullable disable
             unsafe
             {
                 return (Rectangle)(transformsI).GetPass(transformConst, instancePass);
             }
-#nullable enable
+            #nullable enable
         }
 
         public Vector2 GetPosition(ushort instancePass)
         {
-#nullable disable
+            #nullable disable
             unsafe
             {
                 return (Vector2)(positionsI).GetPass(positionConst, instancePass);
             }
-#nullable enable
+            #nullable enable
         }
 
         public Effect GetEffect(ushort instancePass)
         {
-#nullable disable
+            #nullable disable
             unsafe
             {
                 return (Effect)(effectI).GetPass(effectConst, instancePass);
             }
-#nullable enable
+            #nullable enable
         }
 
         public void SetSprite(ushort instancePass, object value)
         {
-#nullable disable
+            #nullable disable
             unsafe
             {
                 (spritesI).SetPass(spritesConst, instancePass, value);
             }
-#nullable enable
+            #nullable enable
         }
 
         public void SetScale(ushort instancePass, object value)
         {
-#nullable disable
+            #nullable disable
             unsafe
             {
                 (scalesI).SetPass(scalesConst, instancePass, value);
             }
-#nullable enable
+            #nullable enable
         }
 
         public void SetObjectEnum(ushort instancePass, object value)
         {
-#nullable disable
+            #nullable disable
             unsafe
             {
                 (objectEnumsI).SetPass(objectEnumsConst, instancePass, value);
             }
-#nullable enable
+            #nullable enable
         }
 
         public void SetAnimation(ushort instancePass, object value)
         {
-#nullable disable
+            #nullable disable
             unsafe
             {
                 (animationsI).SetPass(animationConst, instancePass, value);
             }
-#nullable enable
+            #nullable enable
         }
 
+        /// <summary>
+        ///  Set the collider for the instance
+        /// </summary>
+        /// <param name="instancePass">Instance number</param>
+        /// <param name="value">Collider</param>
         public void SetCollider(ushort instancePass, object value)
         {
-#nullable disable
+            #nullable disable
             unsafe
             {
                 (collidersI).SetPass(colliderConst, instancePass, value);
             }
-#nullable enable
+            #nullable enable
         }
 
+        /// <summary>
+        ///  Sets the transform for the instance
+        /// </summary>
+        /// <param name="instancePass">Instance number</param>
+        /// <param name="value">Transform Rectangle</param>
         public void SetTransform(ushort instancePass, object value)
         {
-#nullable disable
+            #nullable disable
             unsafe
             {
                 (transformsI).SetPass(transformConst, instancePass, value);
             }
-#nullable enable
+            #nullable enable
         }
 
+        /// <summary>
+        ///  Sets as a refrence the Position of the instance
+        /// </summary>
+        /// <param name="instancePass">Instance number</param>
+        /// <param name="value">Position Vector2</param>
         public void SetPosition(ushort instancePass, object value)
         {
-#nullable disable
+            #nullable disable
             unsafe
             {
                 (positionsI).SetPass(positionConst, instancePass, value);
             }
-#nullable enable
+            #nullable enable
         }
 
+        /// <summary>
+        ///  Sets as a referne the Effect
+        /// </summary>
+        /// <param name="instancePass">Instance number</param>
+        /// <param name="value">Effect</param>
         public void SetEffect(ushort instancePass, object value)
         {
-#nullable disable
+            #nullable disable
             unsafe
             {
                 (effectI).SetPass(effectConst, instancePass, value);
             }
-#nullable enable
+            #nullable enable
         }
 
+        /// <summary>
+        ///  Red amount
+        /// </summary>
         public static float RedShade
         {
             get
@@ -822,6 +845,9 @@ namespace Galabingus
             }
         }
 
+        /// <summary>
+        ///  The shade sine wave
+        /// </summary>
         public static float ShadeTime
         {
             get
@@ -834,22 +860,38 @@ namespace Galabingus
             }
         }
 
-
+        /// <summary>
+        ///  The Actual storage of colliders
+        /// </summary>
+        /// <returns></returns>
         public ref List<Collider> ColliderCollisions()
         {
             return ref colliders;
         }
 
+        /// <summary>
+        ///  Retrives all of the colliders trie
+        /// </summary>
+        /// <returns>All of the colliders</returns>
         public List<ushort> ColliderLayer4()
         {
             return GameObjectTrie<Collider>.GetLayer4(colliderConst, colliders);
         }
 
+        /// <summary>
+        ///  Retrives the foruth layer index for the instance in the trie
+        /// </summary>
+        /// <param name="instanceNumber">Instance of the collider</param>
+        /// <returns></returns>
         public ushort ColliderLayer4Instance(ushort instanceNumber)
         {
             return GameObjectTrie<Collider>.GetLayer4Instance(colliderConst, instanceNumber, colliders);
         }
 
+        /// <summary>
+        ///  Deletes all of the data for the given instance
+        /// </summary>
+        /// <param name="instanceNumber"></param>
         public void Delete(ushort instanceNumber)
         {
             (spritesI).SetPass(spritesConst, instanceNumber, default(Texture2D));
@@ -862,46 +904,83 @@ namespace Galabingus
             (effectI).SetPass(effectConst, instanceNumber, default(Effect));
         }
 
+        /// <summary>
+        ///  Delets the collider for the given instance
+        /// </summary>
+        /// <param name="instanceNumber"></param>
         public void DeleteCollider(ushort instanceNumber)
         {
             (collidersI).SetPass(colliderConst, instanceNumber, default(Collider));
         }
 
+        /// <summary>
+        ///  Delets the sprite for the given instance
+        /// </summary>
+        /// <param name="instanceNumber"></param>
         public void DeleteSprite(ushort instanceNumber)
         {
             (spritesI).SetPass(spritesConst, instanceNumber, default(Texture2D));
         }
 
+        /// <summary>
+        ///  Delets the scale for the given instance
+        /// </summary>
+        /// <param name="instanceNumber"></param>
         public void DeleteScale(ushort instanceNumber)
         {
             (scalesI).SetPass(scalesConst, instanceNumber, default(float));
         }
 
+        /// <summary>
+        ///  Deletes the enum for the given instance
+        /// </summary>
+        /// <param name="instanceNumber"></param>
         public void DeleteEnum(ushort instanceNumber)
         {
             (objectEnumsI).SetPass(objectEnumsConst, instanceNumber, default(string));
         }
 
+        /// <summary>
+        ///  Deletes the Animation for the given instance
+        /// </summary>
+        /// <param name="instanceNumber"></param>
         public void DeleteAnimation(ushort instanceNumber)
         {
             (animationsI).SetPass(animationConst, instanceNumber, default(Animation));
         }
 
+        /// <summary>
+        ///  Delets the transform for the given instance
+        /// </summary>
+        /// <param name="instanceNumber"></param>
         public void DeleteTransform(ushort instanceNumber)
         {
             (transformsI).SetPass(transformConst, instanceNumber, default(Rectangle));
         }
 
+        /// <summary>
+        ///  Deletes the position for the given instance
+        /// </summary>
+        /// <param name="instanceNumber"></param>
         public void DeletePosition(ushort instanceNumber)
         {
             (positionsI).SetPass(positionConst, instanceNumber, default(Vector2));
         }
 
+        /// <summary>
+        ///  Delets the effect for the given instance
+        /// </summary>
+        /// <param name="instanceNumber"></param>
         public void DeleteEffect(ushort instanceNumber)
         {
             (effectI).SetPass(effectConst, instanceNumber, default(Effect));
         }
 
+        /// <summary>
+        ///  Content name of the Game Object
+        ///  Matches the dynamic for the Content
+        ///  Ex: GameObject.Content.example_content
+        /// </summary>
         public ushort ContentName
         {
             get
@@ -963,6 +1042,9 @@ namespace Galabingus
             }
         }
 
+        /// <summary>
+        ///  Fade of the the universal shader
+        /// </summary>
         public static float Fade
         {
             get
@@ -975,6 +1057,9 @@ namespace Galabingus
             }
         }
 
+        /// <summary>
+        ///  If the collider should wait on update
+        /// </summary>
         public bool HoldCollider
         {
             get
@@ -987,7 +1072,9 @@ namespace Galabingus
             }
         }
 
-
+        /// <summary>
+        ///  Number of positions sotred
+        /// </summary>
         public ushort PositionLength
         {
             get
@@ -996,6 +1083,9 @@ namespace Galabingus
             }
         }
 
+        /// <summary>
+        ///  Determinate for if the boss effect is active or not
+        /// </summary>
         public bool IsBossEffectActive
         {
             get
@@ -1004,6 +1094,9 @@ namespace Galabingus
             }
         }
 
+        /// <summary>
+        ///  The Shade value for the boss effect
+        /// </summary>
         public float TimeShade
         {
             get
@@ -1012,22 +1105,31 @@ namespace Galabingus
             }
         }
 
+        /// <summary>
+        ///  Starts the boss effect
+        /// </summary>
         public void StartBossEffect()
         {
             bossEffectIsActive = true;
         }
 
+        /// <summary>
+        ///  Stops the boss effect
+        /// </summary>
         public void StopBossEffect()
         {
             bossEffectIsActive = false;
         }
 
-
+        /// <summary>
+        ///  Playes the red flashing effect
+        ///  adjusts the timeShadeEffect to be a sine wave
+        /// </summary>
         public void PlayBossEffect()
         {
+            // Create a sine wave by constatnly adding and subtractive values to 0 - 1 
             if (timeShadeEffect >= 1)
             {
-
                 flipSine = !flipSine;
                 timeShadeEffect -= 0.01f;
             }
@@ -1047,8 +1149,6 @@ namespace Galabingus
                     timeShadeEffect += 0.01f;
                 }
             }
-
-            //System.Diagnostics.Debug.WriteLine(timeShadeEffect);
         }
 
 
@@ -1080,13 +1180,12 @@ namespace Galabingus
                 {
                     this.index = index;
                     result = index;
-                    //GameObject.Instance.Content = index;
                     return exist;
                 }
                 index++;
             }
 
-            // When teh property does not exist create it
+            // When the property does not exist create it
             if (!exist)
             {
                 exist = true;
@@ -1095,10 +1194,15 @@ namespace Galabingus
             }
             this.index = index;
             result = index;
-            //GameObject.Instance.Content = index;
             return exist;
         }
 
+        /// <summary>
+        ///  Retrives the sprite from the given content name and instance number
+        /// </summary>
+        /// <param name="contentName">Content name of the sprite</param>
+        /// <param name="instanceNumber">Instance number of the sprite</param>
+        /// <returns></returns>
         public Texture2D GetSpriteFrom(ushort contentName, ushort instanceNumber)
         {
             GameObject.Instance.Content = contentName;
@@ -1111,10 +1215,14 @@ namespace Galabingus
             files[0] = files[0].Replace("\\", "/");
             files[0] = files[0].Substring(1);
             files[0] = files[0].Substring(0, files[0].LastIndexOf('.'));
-
             return GameObject.Instance.contentManager.Load<Texture2D>(files[0]);
         }
 
+        /// <summary>
+        ///  Loads a Spirte via its content name and instance number
+        /// </summary>
+        /// <param name="contentName">Content name of the sprite</param>
+        /// <param name="instanceNumber">Instance number of the sprite</param>
         public void LoadSprite(ushort contentName, ushort instanceNumber)
         {
             GameObject.Instance.Content = contentName;
@@ -1127,10 +1235,12 @@ namespace Galabingus
             files[0] = files[0].Replace("\\", "/");
             files[0] = files[0].Substring(1);
             files[0] = files[0].Substring(0, files[0].LastIndexOf('.'));
-
             SetSprite(instanceNumber, GameObject.Instance.contentManager.Load<Texture2D>(files[0]));
         }
 
+        /// <summary>
+        ///  Just creates the Game Object to reference
+        /// </summary>
         private GameObject()
         {
             // Does nothing, just is used to create a singleton instance
@@ -1150,8 +1260,9 @@ namespace Galabingus
             CollisionGroup collisionGroup
         )
         {
+            // Foce no overlap on the first instance number
+            // Determine the collision group
             GameObject.Instance.Content = contentName;
-
             if (GetScale(instanceNumber) != 0)
             {
                 instanceNumber = (ushort)(PositionLength);
@@ -1160,9 +1271,7 @@ namespace Galabingus
                     instanceNumber = 1;
                 }
             }
-
             GameObject.Instance.InstanceID = instanceNumber;
-
             switch (collisionGroup)
             {
                 case CollisionGroup.Player:
@@ -1179,11 +1288,9 @@ namespace Galabingus
                     break;
             }
             this.contentName = contentName;
-            //this.index = (ushort)(contentName + instanceNumber);
-
+            // Determine collision group and set the collision group
             CollisionGroupISet(contentName, instanceNumber, collisionGroup);
             this.collisionGroup = collisionGroup;
-            //instance = instanceNumber;
             string path = GameObject.ObjectEnumsI[contentName];
             string start = "../../../Content";
             string[] files = Directory.GetFiles(start, path + ".*", SearchOption.AllDirectories);
@@ -1192,6 +1299,8 @@ namespace Galabingus
             files[0] = files[0].Substring(1);
             files[0] = files[0].Substring(0, files[0].LastIndexOf('.'));
             ushort strip = ushort.Parse(path.Split("strip")[1]);
+
+            // Creates the animaiton, position, transform, scale and sprite
             SetSprite(instanceNumber, GameObject.Instance.contentManager.Load<Texture2D>(files[0]));
             SetScale(instanceNumber, 1.0f);
             SetAnimation(instanceNumber, new Animation(GetSprite(instanceNumber).Width, GetSprite(instanceNumber).Height, strip));
@@ -1204,6 +1313,8 @@ namespace Galabingus
                     GetSprite(instanceNumber).Height                   // Height of the sprite
                 )
             );
+
+            // Create Collider
             Collider newCollider = new Collider(GetSprite(instanceNumber), GetPosition(instanceNumber), GetTransform(instanceNumber), SpriteEffects.None, GetScale(instanceNumber), GraphicsDevice, SpriteBatch, (ushort)collisionGroup, this);
             newCollider.Layer = contentName;
             newCollider.Resolved = true;
@@ -1212,23 +1323,32 @@ namespace Galabingus
 
         }
 
+        /// <summary>
+        ///  Scale to the grid size
+        /// </summary>
+        /// <returns>Scale</returns>
         public float PostScaleRatio()
         {
-            //System.Diagnostics.Debug.WriteLine("EEEEAA " + this.GetTransform(instance).Width);
-            //System.Diagnostics.Debug.WriteLine("FFFEEEE " + universalScale);
             return ((this.GetTransform(instance).Width < this.GetTransform(instance).Height) ? universalScaleX / this.GetTransform(instance).Width * GameObject.Instance.GraphicsDevice.Viewport.Width / GameObject.Instance.GraphicsDevice.Viewport.Height : universalScaleY / this.GetTransform(instance).Height * GameObject.Instance.GraphicsDevice.Viewport.Height / GameObject.Instance.GraphicsDevice.Viewport.Width);
         }
 
+        /// <summary>
+        ///  Scale to the grid size
+        /// </summary>
+        /// <param name="isVector2">Determinate for a Vector2</param>
+        /// <returns>Scale</returns>
         public Vector2 PostScaleRatio(bool isVector2)
         {
             float fixedScaler = 1.0f;
             return new Vector2(
                 universalScaleX / this.GetTransform(instance).Width,
                 universalScaleY / this.GetTransform(instance).Height
-            //universalScaleY / this.GetTransform(instance).Height * GameObject.Instance.GraphicsDevice.Viewport.Height / GameObject.Instance.GraphicsDevice.Viewport.Width
             ) * fixedScaler;
         }
 
+        /// <summary>
+        ///  Type of the Game Object
+        /// </summary>
         public System.Type GameObjectType
         {
             get
@@ -1236,7 +1356,6 @@ namespace Galabingus
                 return typeOfObject;
             }
         }
-
 
         /// <summary>
         ///  Initalizes the instance with 
@@ -1246,7 +1365,7 @@ namespace Galabingus
         /// <param name="contentManager">Any: ContentManager</param>
         /// <param name="graphicsDevice">Any: GraphicsDevice</param>
         /// <param name="spriteBatch">Any: SpriteBatch</param>
-        /// <returns></returns>
+        /// <returns>Game Object Instance as a dynamic</returns>
         public dynamic Initialize(ContentManager contentManager, GraphicsDevice graphicsDevice, SpriteBatch spriteBatch, Effect effect)
         {
             this.universalShader = effect;
@@ -1257,7 +1376,6 @@ namespace Galabingus
             GameObject.Instance.holdCollider = false;
             redShade = 1;
             timeShadeEffect = 1;
-            //shade = false;
             flipSine = false;
             cameraStopPositions = new List<Vector2>();
             flipSine = false;
@@ -1268,8 +1386,16 @@ namespace Galabingus
             return new GameObject();
         }
 
+        /// <summary>
+        ///  Retrives the collision group for the specified content and instance
+        /// </summary>
+        /// <param name="contentName">Content dynamic</param>
+        /// <param name="instance">Instance number</param>
+        /// <returns>Collision group of the GameObject</returns>
         private CollisionGroup CollisionGroupIGet(ushort contentName, ushort instance)
         {
+            // Navigates the trie to the matching content name and instance number
+            // Retricves the collision group from the trie
             if (GameObject.Instance.collisionGroups == null)
             {
                 GameObject.Instance.collisionGroups = new List<List<CollisionGroup>>();
@@ -1285,8 +1411,16 @@ namespace Galabingus
             return GameObject.Instance.collisionGroups[contentName][instance];
         }
 
+        /// <summary>
+        ///  Sets the collision group for the specified content and instance
+        /// </summary>
+        /// <param name="contentName">Content dynamic</param>
+        /// <param name="instance">Instance number</param>
+        /// <returns>Collision group of the GameObject</returns>
         private CollisionGroup CollisionGroupISet(ushort contentName, ushort instance, CollisionGroup value)
         {
+            // Navigates the trie to the matching content name and instance number
+            // Adds the collision group to the trie
             if (GameObject.Instance.collisionGroups == null)
             {
                 GameObject.Instance.collisionGroups = new List<List<CollisionGroup>>();
@@ -1302,6 +1436,9 @@ namespace Galabingus
             return GameObject.Instance.collisionGroups[contentName][instance];
         }
 
+        /// <summary>
+        ///  The Rectangle to draw the Game Object
+        /// </summary>
         public Rectangle Transform
         {
             get
@@ -1310,6 +1447,9 @@ namespace Galabingus
             }
         }
 
+        /// <summary>
+        ///  Position of the Game Object
+        /// </summary>
         public Vector2 Position
         {
             get
@@ -1318,71 +1458,93 @@ namespace Galabingus
             }
         }
 
+        // Ignore all of these IConvertable requires these,
+        // this is to foce functionality to be handled on GameObject
+        // GameObject does not use these
+        #region NotImplemented
         public TypeCode GetTypeCode()
         {
             throw new NotImplementedException();
         }
-
         public bool ToBoolean(IFormatProvider? provider)
         {
             throw new NotImplementedException();
         }
-
         public byte ToByte(IFormatProvider? provider)
         {
             throw new NotImplementedException();
         }
-
         public char ToChar(IFormatProvider? provider)
         {
             throw new NotImplementedException();
         }
-
         public DateTime ToDateTime(IFormatProvider? provider)
         {
             throw new NotImplementedException();
         }
-
         public decimal ToDecimal(IFormatProvider? provider)
         {
             throw new NotImplementedException();
         }
-
         public double ToDouble(IFormatProvider? provider)
         {
             throw new NotImplementedException();
         }
-
         public short ToInt16(IFormatProvider? provider)
         {
             throw new NotImplementedException();
         }
-
         public int ToInt32(IFormatProvider? provider)
         {
             throw new NotImplementedException();
         }
-
         public long ToInt64(IFormatProvider? provider)
         {
             throw new NotImplementedException();
         }
-
         public sbyte ToSByte(IFormatProvider? provider)
         {
             throw new NotImplementedException();
         }
-
         public float ToSingle(IFormatProvider? provider)
         {
             throw new NotImplementedException();
         }
-
         public string ToString(IFormatProvider? provider)
         {
             throw new NotImplementedException();
         }
+        public ushort ToUInt16(IFormatProvider? provider)
+        {
+            throw new NotImplementedException();
+        }
+        public uint ToUInt32(IFormatProvider? provider)
+        {
+            throw new NotImplementedException();
+        }
+        public ulong ToUInt64(IFormatProvider? provider)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
 
+        // Force IConvertable to accept these as GameObject
+        #region Forced Convert to Parent GameObject Instance
+        public object ToPlayer()
+        {
+            return GameObject.Instance;
+        }
+        public object ToBullet()
+        {
+            return GameObject.Instance;
+        }
+        public object ToTile()
+        {
+            return GameObject.Instance;
+        }
+        #endregion
+
+        // Determine Which GmaeObject to convert to otherwise default to not implemented
         public object ToType(System.Type conversionType, IFormatProvider? provider)
         {
             if (conversionType == typeof(Player))
@@ -1398,46 +1560,24 @@ namespace Galabingus
                 return ToBullet();
             }
             return default(object);
-            //throw new NotImplementedException();
         }
 
-        public ushort ToUInt16(IFormatProvider? provider)
-        {
-            throw new NotImplementedException();
-        }
-
-        public uint ToUInt32(IFormatProvider? provider)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ulong ToUInt64(IFormatProvider? provider)
-        {
-            throw new NotImplementedException();
-        }
-
-        public object ToPlayer()
-        {
-            return GameObject.Instance;
-        }
-
-        public object ToBullet()
-        {
-            return GameObject.Instance;
-        }
-
-        public object ToTile()
-        {
-            return GameObject.Instance;
-        }
-
+        /// <summary>
+        ///  Draws all submitted to the 
+        /// </summary>
+        /// <param name="spriteBatch"></param>
         public void DebugDraw(SpriteBatch spriteBatch)
         {
+            // increment clock time
             clockTime += 0.025f;
+
+            // Reset clock time
             if (clockTime >= 1)
             {
                 clockTime = 0;
             }
+
+            // Draw all debug
             if (Debug != null)
             {
                 Debug(spriteBatch);
@@ -1445,6 +1585,9 @@ namespace Galabingus
             }
         }
 
+        /// <summary>
+        ///  Galabingus Content Manger
+        /// </summary>
         public ContentManager ContentManager
         {
             get
@@ -1453,11 +1596,18 @@ namespace Galabingus
             }
         }
 
+        /// <summary>
+        ///  Every position for the camera to stop at
+        /// </summary>
+        /// <returns>Position for the camera to stop at</returns>
         public List<Vector2> GetCameraStopPositions()
         {
             return GameObject.cameraStopPositions;
         }
 
+        /// <summary>
+        ///  Determinate for collision debug
+        /// </summary>
         public bool EnableCollisionDebug
         {
             get
@@ -1470,6 +1620,9 @@ namespace Galabingus
             }
         }
 
+        /// <summary>
+        ///  Timer that counts 0 - 1 at a fixed rate (not v-synced)
+        /// </summary>
         public static float ClockTime
         {
             get
@@ -1482,11 +1635,18 @@ namespace Galabingus
             }
         }
 
+        /// <summary>
+        ///  Converts and removes an index of a camera stop
+        /// </summary>
+        /// <param name="index"></param>
         public void CameraStopRemoveAt(int index)
         {
+            // Split info around and remove the camera stop
             List<Vector2> preI = new List<Vector2>();
             List<Vector2> postI = new List<Vector2>();
             List<Vector2> result = new List<Vector2>();
+
+            // Conjoin the split info left and right side around the stop 
             for (int i = 0; i < index; i++)
             {
                 preI.Add(GameObject.cameraStopPositions[i]);
@@ -1506,45 +1666,55 @@ namespace Galabingus
             GameObject.cameraStopPositions = result;
         }
 
+        /// <summary>
+        ///  Converts level editor rows and columns to Game Coordinates
+        /// </summary>
+        /// <param name="width">Width (number of tiles)</param>
+        /// <param name="height">Height (number of tiles)</param>
+        /// <param name="row">Which tile Row is it</param>
+        /// <param name="column">Which tile Column is it</param>
+        /// <returns>Coordinate of the tile</returns>
         public Vector2 CalculateLevelEditorPositions(float width, float height, float row, float column)
         {
+            // Calculate the screen ratios to width and height
             float fixedScaler = 1.5f;
-            //width = width / fixedScaler;
-            //height = height / fixedScaler;
-
             float coordianteXScale = GameObject.Instance.GraphicsDevice.Viewport.Width / width;
             float coordinateYScale = (-EndPosition.Y + GameObject.Instance.GraphicsDevice.Viewport.Height) / height;
             float startingY = EndPosition.Y;
-
-            //coordinateYScale *= fixedScaler;
             startingY *= fixedScaler;
+
+            // Center shift based on the aditoinal scalar (fixedScalar)
+            // Also scale the coordinates to match this
             float leftShift = coordianteXScale * width * (1 - fixedScaler) * 0.5f;
             float topShift = (GameObject.Instance.GraphicsDevice.Viewport.Height / height) * height * (1 - fixedScaler) * 0.5f;
             universalScaleX = coordianteXScale * fixedScaler;
             universalScaleY = coordinateYScale * fixedScaler;
-
             coordianteXScale *= fixedScaler;
             coordinateYScale *= fixedScaler;
 
+            // Resulting Coodinate
             return new Vector2(coordianteXScale * column + leftShift, coordinateYScale * row + startingY + topShift);
         }
 
+        /// <summary>
+        ///  Places tiles from a Tile .Level file
+        ///  Tiles are in the range of 10 - 35
+        /// </summary>
+        /// <param name="fileName">Tiles level file</param>
         public void LoadTileLevelFile(string fileName)
         {
+            // Read the level file
             StreamReader reader = new StreamReader("../../../" + fileName);
-
             int lineNumber = 0;
             int width = 0;
             int height = 0;
             int xInput = 0;
             int yInput = 0;
             int boxIdentifier = 0;
-
             string? data;
             while ((data = reader.ReadLine()) != null)
             {
-                //Debug.WriteLine(data);
-
+                // Read in the tile level setup info
                 if (lineNumber < 5)
                 {
                     switch (lineNumber)
@@ -1570,21 +1740,16 @@ namespace Galabingus
                 }
                 else
                 {
+                    // Read in the level row
                     string[] column = data.Split('|');
-
-                    //System.Diagnostics.Debug.WriteLine(height);
-
                     foreach (string num in column)
                     {
                         Vector2 assetPosition = CalculateLevelEditorPositions(width, height, yInput, xInput);
-
                         if (int.Parse(num) != -1 && int.Parse(num) > 9)
                         {
-                            //System.Diagnostics.Debug.WriteLine(assetPosition);
-                            //TileManager.Instance.CreateObject(GameObject.Instance.Content.smallbullet_strip4, Vector2.Zero);
+                            // Place the tile
                             TileManager.Instance.CreateObject(GameObject.Instance.Content.tile_strip26, assetPosition, (ushort)(int.Parse(num) - 10));
                         }
-
                         xInput++;
                         boxIdentifier++;
                     }
@@ -1593,21 +1758,22 @@ namespace Galabingus
                 }
                 lineNumber++;
             }
-
+            // Close the file
             reader.Close();
         }
 
-        public void TriggerBossEffect()
-        {
-
-        }
-
-
+        /// <summary>
+        ///  Reads in a .Level file and places enemies
+        ///  Enemies are in the range of 0 - 6
+        ///  In addition camera stops are number 9
+        /// </summary>
+        /// <param name="fileName">Galabingus Level file for enemies and level stop</param>
+        /// <returns>Enmies list to work with the Enemy Manager</returns>
         public List<int[]> LoadEnemyLeveFile(string fileName)
         {
+            // Read a level file
             List<int[]> enemies = new List<int[]>();
             StreamReader reader = new StreamReader("../../../" + fileName);
-
             int lineNumber = 0;
             int width = 0;
             int height = 0;
@@ -1618,11 +1784,11 @@ namespace Galabingus
             string? data = "";
             do
             {
-                //Debug.WriteLine(data);
                 if (ready)
                 {
                     if (lineNumber < 5)
                     {
+                        // Read in the level defining properites that are not external tool specific
                         switch (lineNumber)
                         {
                             case 0:
@@ -1646,22 +1812,20 @@ namespace Galabingus
                     }
                     else
                     {
+                        // Read in the level row
                         string[] column = data.Split('|');
-                        //System.Diagnostics.Debug.WriteLine(data);
                         foreach (string num in column)
                         {
+                            // Match the data to hardcoded level to Game Object data
                             Vector2 assetPosition = CalculateLevelEditorPositions(width, height, yInput, xInput);
-                            //System.Diagnostics.Debug.WriteLine(assetPosition);
                             if (int.Parse(num) != -1 && int.Parse(num) < 7)
                             {
                                 enemies.Add(new int[] { 1, int.Parse(num), (int)assetPosition.X, (int)assetPosition.Y, 1 });
                             }
-
                             if (int.Parse(num) == 9)
                             {
                                 cameraStopPositions.Add(assetPosition);
                             }
-
                             xInput++;
                             boxIdentifier++;
                         }
@@ -1674,42 +1838,17 @@ namespace Galabingus
             }
             while ((data = reader.ReadLine()) != null);
 
+            // Close the file and return the enemies loaded
             reader.Close();
-
-            float columnScaleOverlap = GameObject.Instance.GraphicsDevice.Viewport.Width / width * 1.5f;
-            float rowScaleOverlap = -EndPosition.Y / height * 1.0f;
-            Vector2 previousPosition = new Vector2(-100000, -100000);
-            int currentEnemy = 0;
-
-            //for (int e = 0; e < enemies.Count; e++)
-            //{
-
-            /*
-            for (int ei = 0; ei < enemies.Count; ei++)
-            {
-                previousPosition = new Vector2(-100000, -100000);
-                currentEnemy = 0;
-
-                for (int ef = 0; ef < enemies.Count; ef++)
-                {
-                    Vector2 currentPosition = new Vector2(enemies[currentEnemy][2], enemies[currentEnemy][3]);
-                    if ((previousPosition.Y + columnScaleOverlap) >= currentPosition.Y && (previousPosition.X + columnScaleOverlap) >= currentPosition.X)
-                    {
-                        enemies.Remove(enemies[currentEnemy - 1]);
-                    }
-                    previousPosition = currentPosition;
-                    currentEnemy++;
-                }
-            }
-            */
-
-            //}
             return enemies;
         }
 
+        /// <summary>
+        ///  Resets the GameObject Instance
+        /// </summary>
         public void Reset()
         {
-            clockTime = 0;
+            // Reset GameObject Data Storage
             allGameObjects = null;
             animations = null;
             colliders = null;
@@ -1720,6 +1859,7 @@ namespace Galabingus
             objectEnums = null;
             effects = null;
 
+            // Reset Information Access Tries
             animationsI = new GameObjectTrie<Animation>();
             collidersI = new GameObjectTrie<Collider>();
             transformsI = new GameObjectTrie<Rectangle>();
@@ -1730,10 +1870,11 @@ namespace Galabingus
             effectI = new GameObjectTrie<Effect>();
             trie = null;
 
+            // Reset static feilds
             bossEffectIsActive = false;
             flipSine = false;
-
             cameraStopPositions = null;
+            clockTime = 0;
         }
     }
 }
