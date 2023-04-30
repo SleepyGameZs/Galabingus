@@ -16,8 +16,7 @@ using System.Security.Cryptography;
  * Bullets will fly out on the screen with certain set gimmicks (most often tied to enemies), and
  * collide with various things, resulting in them taking damage. Bullets can also be used as a
  * way of creating 'effects' such as additional animations for things that may not involve damaging
- * anything. Bullets currently store a Creator value, which is not in use, however it will become
- * relevant when the Boss is added in. */
+ * anything.*/
 
 namespace Galabingus
 {
@@ -58,6 +57,9 @@ namespace Galabingus
         Seeker
     }
 
+    /// <summary>
+    /// All possible targets that bullets can have when hitting things
+    /// </summary>
     public enum Targets
     {
         Player,
@@ -66,8 +68,6 @@ namespace Galabingus
         Tiles,
         None
     }
-
-    // Zane Smith
 
     internal class Bullet : GameObject
     {
@@ -191,6 +191,11 @@ namespace Galabingus
             }
         }
 
+        /// <summary>
+        /// Accesses dynamic singleton GameObject class, using ushort contentName to find
+        /// specific type of thing to access, an bulletNumber as the index inside that list of bullets
+        /// This allows one to access this bullet's animation data to change what is currently visible.
+        /// </summary>
         public Animation Animation
         {
             get
@@ -296,18 +301,17 @@ namespace Galabingus
         /// <param name="creator">Reference to the object who created the bullet</param>
         /// <param name="contentName">Name to use for GameObject storage</param>
         /// <param name="bulletNumber">Number to give bullet in GameObject list</param>
-        public Bullet (
-            BulletType ability,
-            Vector2 position,
-            Vector2 direction,
-            object creator,
-            ushort contentName,
-            ushort bulletNumber
-        ) : base(contentName, 
-            bulletNumber, 
-                (creator is Player) ? 
-                CollisionGroup.FromPlayer : 
-                CollisionGroup.Bullet)
+        public Bullet (BulletType ability,
+                       Vector2 position,
+                       Vector2 direction,
+                       object creator,
+                       ushort contentName,
+                       ushort bulletNumber) 
+                       : base(contentName, 
+                              bulletNumber, 
+                              (creator is Player) 
+                                  ? CollisionGroup.FromPlayer 
+                                  : CollisionGroup.Bullet)
         {
             
             #region GAME OBJECT DATA
@@ -570,6 +574,14 @@ namespace Galabingus
 
         #region-------------------[ Methods ]-------------------
 
+        /// <summary>
+        /// The bullet's update runs in the following order:
+        /// 1: Abilities for specific bullets activate.
+        /// 2: The bullet checks to see if it is off screen.
+        /// 3: The bullet runs its collision handling 
+        ///    (see separate method)
+        /// </summary>
+        /// <param name="gameTime">Used to get the correct pace</param>
         public void Update(GameTime gameTime)
         {
             // Get old position
@@ -921,7 +933,10 @@ namespace Galabingus
 
         /// <summary>
         /// Handles all Collider related matters, from its establishment
-        /// to what should be done in the case of various kinds of collisions
+        /// to what should be done in the case of various kinds of collisions.
+        /// Note that each bullet has its own collision mechanics, with some having
+        /// unique interactions beyond just dealing damage, or being destroyed upon
+        /// contact with tiles.
         /// </summary>
         private void ColliderHandling()
         {
@@ -946,6 +961,7 @@ namespace Galabingus
                 flipping = flipping | SpriteEffects.FlipVertically;
             }
 
+            // Generates a list of all current collisions (may include nulls)
             List<Collision> intercepts = this.Collider.UpdateTransform(
                 this.Sprite,                            // Bullet Sprite itself
                 this.Position,                          // Position
@@ -964,11 +980,13 @@ namespace Galabingus
 
             #endregion
 
-            #region Check for Collisions
+            #region Handle various collisions
 
             // Checks what kind of things can be collided with
             foreach (Collision collision in intercepts)
             {
+                // Rule out null collision, and make sure nothing
+                // runs if this bullet should be destroyed
                 if (collision.other != null && !destroy)
                 {
                     // Tile specific collision
@@ -1232,12 +1250,13 @@ namespace Galabingus
         }
 
         /// <summary>
-        /// Handles changing the player's position normally, then returns the player's current position
+        /// Changes the position of the bullet based upon given data relative to the ability.
         /// </summary>
         /// <param name="gameTime">Game Time Data</param>
         /// <returns></returns>
         private Vector2 SetPosition(GameTime gameTime, int abilitySpeed, bool ignoreCamera)
         {
+            // Multiplier which allows the speed of all bullets to be altered as needed
             int multiplier = 2;
 
             // Sets position

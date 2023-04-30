@@ -9,26 +9,27 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 // ENEMY CLASS - By Zane Smith
-/* The Enemy Class manages all spawned enemies, most of which are placed at the 
- * start of the game, via file loading. Enemies have various types which in turn
- * link in with the bullets they can shoot. Some special enemies have added abilities,
- * such as exploding when killed, damaging everything around them! Enemies may also be
- * set to be placed in rows or remain still, with moving enemies in the same row turning
- * as a group, rather than constantly bouncing off eachother. */
+/* Enemies have various abilities (both while alive and on death), which are run here.
+ * certain enemies will move back and forth, and enemies also have their collision handling
+ * done here for tiles and the player. Enemies also have several methods they used for spawing
+ * in bullets.*/
 
 namespace Galabingus
 {
     /// <summary>
-    /// Enumeration for all available normal enemy types
+    /// Enumeration for all available enemy object types.
     /// </summary>
     public enum EnemyType
     {
+        // ATTACKING ENEMIES
         Normal,
         Bouncing,
         Wave,
         Splitter,
         Shatter,
+        // DESTROYABLE OBJECTS
         Bomb,
+        // BOSS CONTENT
         Boss,
         // REMOVED CONTENT
         Seeker
@@ -37,6 +38,7 @@ namespace Galabingus
     internal class Enemy : GameObject
     {
         #region-------------------[ Fields ]-------------------
+
         // Is this enemy ready to be destroyed?
         private bool destroy;
 
@@ -88,8 +90,8 @@ namespace Galabingus
 
         /// <summary>
         /// Accesses dynamic singleton GameObject class, using ushort contentName to find
-        /// specific type of thing to access, an bulletNumber as the index inside that list of bullets
-        /// This allows one to access this bullet's stored position value
+        /// specific type of thing to access, an bulletNumber as the index inside that list of enemies
+        /// This allows one to access this enemies's stored position value
         /// </summary>
         public Vector2 Position
         {
@@ -107,8 +109,8 @@ namespace Galabingus
 
         /// <summary>
         /// Accesses dynamic singleton GameObject class, using ushort contentName to find
-        /// specific type of thing to access, an bulletNumber as the index inside that list of bullets
-        /// This allows one to access this bullet's stored sprite for this bullet
+        /// specific type of thing to access, an bulletNumber as the index inside that list of enemies
+        /// This allows one to access this enemies's stored sprite for this bullet
         /// </summary>
         public Texture2D Sprite
         {
@@ -126,8 +128,8 @@ namespace Galabingus
 
         /// <summary>
         /// Accesses dynamic singleton GameObject class, using ushort contentName to find
-        /// specific type of thing to access, an bulletNumber as the index inside that list of bullets
-        /// This allows one to access this bullet's transform off total spritesheet (most likely
+        /// specific type of thing to access, an bulletNumber as the index inside that list of enemies
+        /// This allows one to access this enemies's transform off total spritesheet (most likely
         /// relates to which frame of the animation is to be shown)
         /// </summary>
         public Rectangle Transform
@@ -146,8 +148,8 @@ namespace Galabingus
 
         /// <summary>
         /// Accesses dynamic singleton GameObject class, using ushort contentName to find
-        /// specific type of thing to access, an bulletNumber as the index inside that list of bullets
-        /// This allows one to access this bullet's sprite scale, so that it can be easily resized
+        /// specific type of thing to access, an bulletNumber as the index inside that list of enemies
+        /// This allows one to access this enemies's sprite scale, so that it can be easily resized
         /// </summary>
         public float Scale
         {
@@ -163,6 +165,11 @@ namespace Galabingus
             }
         }
 
+        /// <summary>
+        /// Accesses dynamic singleton GameObject class, using ushort contentName to find
+        /// specific type of thing to access, an bulletNumber as the index inside that list of enemies
+        /// This allows one to access this enemies's animation data to change what is currently visible.
+        /// </summary>
         public Animation Animation
         {
             get
@@ -179,8 +186,8 @@ namespace Galabingus
 
         /// <summary>
         /// Accesses dynamic singleton GameObject class, using ushort contentName to find
-        /// specific type of thing to access, an bulletNumber as the index inside that list of bullets
-        /// This allows one to access this bullet's stored collider for collision checking
+        /// specific type of thing to access, an bulletNumber as the index inside that list of enemies
+        /// This allows one to access this enemies's stored collider for collision checking
         /// </summary>
         public Collider Collider
         {
@@ -200,6 +207,9 @@ namespace Galabingus
 
         #region ENEMY SPECIFIC PROPERTIES
 
+        /// <summary>
+        /// Used to access the current velocity value of this enemy
+        /// </summary>
         public Vector2 Velocity
         {
             get { return velocity; }
@@ -220,14 +230,8 @@ namespace Galabingus
         /// </summary>
         public int Health
         {
-            get
-            {
-                return currentHealth;
-            }
-            set
-            {
-                currentHealth = value;
-            }
+            get { return currentHealth; }
+            set { currentHealth = value; }
         }
 
         /// <summary>
@@ -252,10 +256,7 @@ namespace Galabingus
         /// </summary>
         public object Creator
         {
-            get
-            {
-                return creatorReference;
-            }
+            get { return creatorReference; }
         }
 
         /// <summary>
@@ -263,10 +264,7 @@ namespace Galabingus
         /// </summary>
         public bool ShouldMove
         {
-            get
-            {
-                return shouldMove;
-            }
+            get { return shouldMove; }
         }
 
         /// <summary>
@@ -295,7 +293,9 @@ namespace Galabingus
         }
 
         /// <summary>
-        /// Returns if the enemy is on screen
+        /// Returns if the enemy is on screen or not based on their Y position.
+        /// Accounts for the length of the enemy itself in check if they are slightly
+        /// on the screen from the top.
         /// </summary>
         public bool OnScreen
         {
@@ -313,26 +313,31 @@ namespace Galabingus
         #region-------------------[ Constructor ]-------------------
 
         /// <summary>
-        /// Spawns an enemy with given stats
+        /// Spawns an enemy with a set list of stats
         /// </summary>
         /// <param name="ability">The ability of the enemy</param>
         /// <param name="position">The position of the enemy</param>
-        /// <param name="creator">The thing that created this enemy (may be null)</param>
+        /// <param name="creator">The object that created this enemy (may be null)</param>
+        /// <param name="shouldMove">Name to use for GameObject storage</param>
         /// <param name="contentName">Name to use for GameObject storage</param>
         /// <param name="enemyNumber">Number to give bullet in GameObject list</param>
-        public Enemy (
-            EnemyType ability,
-            Vector2 position,
-            object creator,
-            bool shouldMove,
-            ushort contentName,
-            ushort enemyNumber
-        ) : base(contentName, 
-            enemyNumber, 
-            CollisionGroup.Enemy)
+        public Enemy (EnemyType ability,
+                      Vector2 position,
+                      object creator,
+                      bool shouldMove,
+                      ushort contentName,
+                      ushort enemyNumber) 
+                      // GAME OBJECT
+                      : base(contentName, 
+                             enemyNumber, 
+                             CollisionGroup.Enemy)
         {
-           
-            #region GAME OBJECT DATA
+
+            #region GAME OBJECT DATA (and enemy ability)
+
+            // NOTE: Enemy Ability is set here since it is relevant for positioning
+            //       the enemy correctly given its attached sprite, which is stored
+            //       by the GameObject.
 
             // Set to GameObject
             this.thisGameObject = this;
@@ -352,7 +357,7 @@ namespace Galabingus
             // Set type of enemy for its abilities
             this.ability = ability;
 
-            // Set Position
+            // Set Position (contains cases for enemies with unique needs
             switch (this.ability)
             {
                 case EnemyType.Bomb:
@@ -476,8 +481,20 @@ namespace Galabingus
 
         #region-------------------[ Methods ]-------------------
 
+        /// <summary>
+        /// Performs a wide variety of functions:
+        /// 1: checks if the enemy is on screen, and moves it as needed
+        /// 2: Runs abilities specific to the enemy
+        ///    A: Shooting
+        ///    B: Boss ability swapping (if this is a boss)
+        /// 3: Moves the enemy if it is supposed to move
+        /// 4: Checks for collisions and handles them accordingly
+        /// </summary>
+        /// <param name="gameTime">Used to get the correct pace</param>
         public void Update (GameTime gameTime)
         {
+            #region On screen checks and screen scroll movement
+
             // Check if off screen
             bool enemyOnScreen = (this.Position.Y > - this.Transform.Height * this.Scale &&
                                   this.Position.Y < GameObject.Instance.GraphicsDevice.Viewport.Height);
@@ -514,9 +531,15 @@ namespace Galabingus
                     this.Position = new Vector2(this.Position.X, this.Position.Y - Player.PlayerInstance.Translation.Y);
                 }
             }
-            
+
+            #endregion
+
+            #region Enemy abilities (living and on death) + animation & collision
+
+            // Only does these while on the screen
             if (enemyOnScreen)
-            { // Only does these while on the screen
+            { 
+                // If this enemy is alive currently
                 if (!destroy)
                 { // Actions while Enemy is alive
                     // Draw the healthbar
@@ -525,10 +548,12 @@ namespace Galabingus
                                                           this.Transform.Width * this.Scale, this.Transform.Height * this.Scale * 0.1f,
                                                           Color.Black, colorHealth);
 
+                    // Enemy specific abilities handled here
                     switch (this.ability)
                     {
+                        // Shoots a basic fast bullet
                         case EnemyType.Normal:
-                            // Shooting (3 Bullets)
+                            // Shoots
                             BulletSpawning(130, 
                                            BulletType.EnemyNormal, 
                                            ((Direction.Y == 1) ?    // CHECK DIRECTION
@@ -537,8 +562,9 @@ namespace Galabingus
                                            0);
                             break;
 
+                        // Shoots 3 bullets that bounce off walls and the edge of the screen
                         case EnemyType.Bouncing:
-                            // Shooting (3 Bullets)
+                            // Shoots (3 Bullets)
                             BulletSpawning(150,
                                            new BulletType[]
                                            {
@@ -561,7 +587,9 @@ namespace Galabingus
                                            new int[] { -1, 0, 1 }
                                            );
                             break;
-
+                        
+                        // Bullets split into two horizontally moving smaller bullets when lined up
+                        // with the player's position.
                         case EnemyType.Splitter:
                             // Shoots
                             BulletSpawning(150, 
@@ -572,6 +600,8 @@ namespace Galabingus
                                            0);
                             break;
 
+                        // Shoots a massive yellow wave which can destroy tiles and deals extra damage
+                        // to the player on hit
                         case EnemyType.Wave:
                             // Shoots
                             BulletSpawning(160, 
@@ -582,6 +612,7 @@ namespace Galabingus
                                            0);
                             break;
 
+                        // REMOVED - Shoots a small bullet that homes slightly towards the player.
                         case EnemyType.Seeker:
                             // Shoots
                             BulletSpawning(170, 
@@ -592,6 +623,8 @@ namespace Galabingus
                                            0);
                             break;
 
+                        // Replaced the Seeker, it flies forwards and at the halfway point on the
+                        // screen it explodes into 6 bullets which fly out in a hexagon pattern
                         case EnemyType.Shatter:
                             // Shoots
                             BulletSpawning(190,
@@ -602,6 +635,9 @@ namespace Galabingus
                                            0);
                             break;
 
+                        // The boss has phases which it loops through, using all other
+                        // bullet types from the basic enemies, and changing its color
+                        // to indicate which it is currently using
                         case EnemyType.Boss:
                             if (this.Position.Y > 0 && this.Position.Y < GameObject.Instance.GraphicsDevice.Viewport.Height)
                             {
@@ -795,11 +831,12 @@ namespace Galabingus
                     // Movement
                     if (ShouldMove)
                     {
-                        // Collisions
+                        // Horizontal movement
                         if (ability == EnemyType.Boss)
                         { // Goes beyond borders slightly to allow for shots to hit edge
                             if (this.Position.Y > 0 && this.Position.Y < GameObject.Instance.GraphicsDevice.Viewport.Height)
-                            {
+                            { 
+                                // Applies the change in position horizontally (vertical here will be overwritten later)
                                 this.Position += velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
 
                                 // Collide with walls
@@ -809,7 +846,6 @@ namespace Galabingus
                                 { // Bounce on right side of screen
                                     this.Position -= velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 120;
                                     Velocity = new Vector2(Velocity.X * -1 * (float)Animation.EllapsedTime, Velocity.Y);
-
                                 }
                                 else if (this.Position.X <= this.Transform.Width * this.Scale / -2 && Velocity.X < 0)
                                 { // Bounce on left side of screen
@@ -821,6 +857,7 @@ namespace Galabingus
                         else
                         { // Bounces at normal borders
 
+                            // Applies the change in position horizontally (vertical here will be overwritten later)
                             this.Position += velocity * (float)gameTime.ElapsedGameTime.TotalSeconds * 60;
 
                             // Collide with walls
@@ -843,12 +880,15 @@ namespace Galabingus
                 { // On kill effects
                     switch (this.ability)
                     {
+                        // The bomb creates a huge explosion on death.
                         case EnemyType.Bomb:
                             // Creates an explosion
                             BulletSpawning(0, BulletType.BigExplosion, new Vector2(-400, 0), 0);
                             AudioManager.Instance.CallSound("Explosion");
                             break;
 
+                        // The boss uses the same explosion as the bomb, and ends its unique effects
+                        // on the screen.
                         case EnemyType.Boss:
                             // Creates an explosion
                             BulletSpawning(0, BulletType.BigExplosion, new Vector2(-400, 0), 0);
@@ -857,6 +897,7 @@ namespace Galabingus
                             EnemyManager.Instance.BossOnScreen = false;
                             break;
 
+                        // All enemies explode on death, dealing a bit of damage
                         default:
                             // Creates an explosion
                             BulletSpawning(0, BulletType.Explosion, new Vector2(-230, 0), 0);
@@ -874,6 +915,8 @@ namespace Galabingus
                 // Manage Animation
                 this.Transform = this.Animation.Play(gameTime);
                 this.Animation.AnimationDuration = 0.03f;
+
+                #region Collision Handling + Enemy Direction
 
                 this.Collider.Resolved = true;
 
@@ -893,7 +936,7 @@ namespace Galabingus
                     enemyNumber                             // Enemy Number (tied to Manager)
                 );
 
-                // Get camera's movement direction
+                // Get camera's movement direction, and adjusts the direction of this enemy
                 float cameraScrollY = Camera.Instance.OffSet.Y;
                 if (!Player.PlayerInstance.CameraLock && Player.PlayerInstance.CameraLock)
                 {
@@ -913,6 +956,7 @@ namespace Galabingus
                 // Checks what kind of things can be collided with
                 foreach (Collision collision in intercepts)
                 {
+                    // Won't allow collisions if this enemy is suppsed to be destroyed
                     if (collision.other != null && !destroy)
                     {
                         if ((collision.other as Tile) is Tile)
@@ -955,6 +999,8 @@ namespace Galabingus
                     }
                 }
 
+                #endregion
+
             } 
             else
             {
@@ -964,6 +1010,8 @@ namespace Galabingus
 
                 this.Collider.Unload();
             }
+
+            #endregion
         }
 
         #region Bullet Creation Methods

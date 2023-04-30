@@ -9,11 +9,19 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-// Zane Smith
+// ENEMY MANAGER - By Zane Smith
+/* The Enemy Manager is what holds the data on all enemies in the game, as well 
+ * as what creates / destroys them as needed. In addition to these roles, it also
+ * contains the methods for enemy update and draw, plus the data for how enemies
+ * are stored in rows that move in unison horizontally back and forth across the
+ * screen. Notice: When enemies are created during the update loop, adding them mid
+ * loop causes issues, since enemies could be slotted into a position earlier in the
+ * loop and not get their update. To make sure everything is even, enemies made mid
+ * loop instead have their data stored separately and are placed once the entire
+ * update loop has finished. */
 
 namespace Galabingus
 {
-
     public sealed class EnemyManager
     {
         #region-------------------[ Fields ]-------------------
@@ -32,6 +40,8 @@ namespace Galabingus
         private List<ushort> content;
 
         // Enemy Created Enemy Storage
+        // Needed when an enemy during the Update loop would create another enemy,
+        // its data is stored here to be actualized once the loop ends
         private List<EnemyType> storeAbilityEnemies;
         private List<Vector2> storePositionEnemies;
         private List<object> storeCreatorEnemies;
@@ -50,7 +60,7 @@ namespace Galabingus
         #region-------------------[ Properties ]-------------------
 
         /// <summary>
-        /// Reference to the Bullet Manager (use BMConstructor method to make a new bullet manager)
+        /// Reference to the Enemy Manager (use Enemy Manager Constructor method to make a new enemy manager)
         /// </summary>
         public static EnemyManager Instance
         {
@@ -69,14 +79,11 @@ namespace Galabingus
         /// </summary>
         public ushort EnemiesOnScreen
         {
-            get
-            {
-                return enemiesOnScreen;
-            }
+            get { return enemiesOnScreen; }
         }
 
         /// <summary>
-        /// Is the boss currently on the screen?
+        /// Returns if the boss is on screen currently
         /// </summary>
         public bool BossOnScreen
         {
@@ -84,6 +91,9 @@ namespace Galabingus
             set { bossOnScreen = value; }
         }
 
+        /// <summary>
+        /// Returns the current health of the boss enemy.
+        /// </summary>
         public int BossHealth
         {
             get { return boss.Health; }
@@ -94,19 +104,20 @@ namespace Galabingus
         #region-------------------[ Constructor ]-------------------
 
         /// <summary>
-        /// 'fake' constructor, since data is loaded into the singleton from Initialize
+        /// The primary constructor,it loads in the base data for the lists and dictionaries, then
+        /// everything from the files is loaded in the Initialize method
         /// </summary>
         private EnemyManager()
         {
-            // Fake constructor, real data stuff done below in Initialize
-
+            // True enemy storage data
             activeEnemies = new List<Enemy>();
             content = new List<ushort>();
-
-            enemyRows = new Dictionary<int, List<Enemy>>();
-
             enemyTotal = 0;
 
+            // Row storage data
+            enemyRows = new Dictionary<int, List<Enemy>>();
+
+            // Enemy creates enemy data storage
             storeAbilityEnemies = new List<EnemyType>();
             storePositionEnemies = new List<Vector2>();
             storeCreatorEnemies = new List<object>();
@@ -127,11 +138,14 @@ namespace Galabingus
         ///                                of EnemyType Enum
         ///                         [2] -> X Position
         ///                         [3] -> Y Position
+        ///                         [4] -> Should this enemy move (unsupported by level editor)
         ///                         </param>
         public EnemyManager Initialize(List<int[]> enemyData)
         {
+
             EnemyType tempAbility = EnemyType.Normal;
 
+            // Loop through all enemies from the level file, placing them into the game.
             for (int i = 0; i < enemyData.Count; i++)
             {
 
@@ -161,11 +175,31 @@ namespace Galabingus
             return instance;
         }
 
+        /// <summary>
+        /// Method for creating an enemy, it takes in data and organizes it into a completed enemy which
+        /// is placed in the level. If the enemy would be created during the enemy manager's update loop,
+        /// it is instead stored separately until the loop ends.
+        /// </summary>
+        /// <param name="ability">What kind of enemy this is</param>
+        /// <param name="position">Where this enemy will be placed in the level</param>
+        /// <param name="creator">Contains a reference to the object that created this
+        ///                       enemy. If it was made by the level editor creator
+        ///                       is null.</param>
+        /// <param name="shouldMove">Whether or not this enemy moves back and forth 
+        ///                          horizontally</param>
+        /// <param name="isSourceEnemy">Was this enemy created during the enemy manager's update /
+        ///                             by another enemy. If true the enemy to be created will have
+        ///                             its data stored separately so that it can be properly
+        ///                             introduced into the enemy list afterwards</param>
         public void CreateEnemy (EnemyType ability, Vector2 position, object creator, bool shouldMove, bool isSourceEnemy) 
         {
+
+            #region STEP 1: Link Data to GameObject
+
             // account for if creator is null
             ushort sprite = GameObject.Instance.Content.tile_strip26;
 
+            // Sets the correct sprite to use when creating this enemy type
             switch (ability)
             {
                 case EnemyType.Normal:
@@ -227,23 +261,40 @@ namespace Galabingus
                 }
             }
 
+            #endregion
+
+            #region STEP 2: Enemy Storage Handling
+
+            // Manages enemy placement into the enemy list. If there is a free slot in the list,
+            // this new enemy will be put there to improve storage space.
             bool isReplacing = false;
             ushort setNumber = (ushort)Math.Max(0, (Instance.activeEnemies.Count - 1));
 
+            // Loops through the list looking for empty slots
             for (int i = 0; i < Instance.activeEnemies.Count; i++)
             {
                 if (Instance.activeEnemies[i] == null)
-                {
+                { // Empty slot was found, prep to fill it
                     setNumber = (ushort)(i);
                     isReplacing = true;
                     break;
                 }
             }
 
+            #endregion
+
+            #region STEP 3: Generate Enemy Proper
+
             // Reference for the current enemy
             Enemy createdEnemy = null;
 
-            // Add bullet itself to list
+            // Stages of checking:
+            // 1: Checks to see if this enemy was created during the enemy update loop.
+            //    If it was, its data is stored, rather than having them be placed.
+            // 2: Enemy should be created here
+            //   A: The enemy is added onto the end of the main list
+            //   B: The enemy fills a previously used slot in the main list
+
             if (isSourceEnemy)
             { // Was created by an enemy, store the data
                 Instance.storeAbilityEnemies.Add(ability);
@@ -254,18 +305,20 @@ namespace Galabingus
             else
             { // Add enemy itself to list
                 if (isReplacing == false)
-                {
+                { // The enemy is added onto the end of the main list
+                    // Actually create the enemy using given data
                     createdEnemy = new Enemy(ability,    // Ability of the Enemy spawned
-                                               position,   // Position of Enemy
-                                               creator,    // What created this enemy
-                                               shouldMove, // Should enemy move back and forth
-                                               sprite,     // Sprite for Enemy
-                                               enemyTotal  // Total enemies
-                                               );
+                                             position,   // Position of Enemy
+                                             creator,    // What created this enemy
+                                             shouldMove, // Should enemy move back and forth
+                                             sprite,     // Sprite for Enemy
+                                             enemyTotal  // Total enemies
+                                             );
 
+                    // Add the enemy to the main list at the end
                     Instance.activeEnemies.Add(createdEnemy);
 
-                    // Create list if needed
+                    // horizontal movement handling - NOTE: the boss will never be included here
                     if (shouldMove && ability != EnemyType.Boss)
                     {
                         if (!Instance.enemyRows.ContainsKey((int)position.Y))
@@ -277,69 +330,69 @@ namespace Galabingus
                         Instance.enemyRows[(int)position.Y].Add(createdEnemy);
                     }
 
-                    // Check if this enemy is the boss
-                    if (createdEnemy.Ability == EnemyType.Boss)
-                    {
-                        boss = Instance.activeEnemies[setNumber];
-                    }
-
-                    // Increment total
+                    // Increment total enemies
                     enemyTotal++;
                 }
                 else
-                {
+                { // The enemy fills a previously used slot in the main list
+                    // Actually create the enemy using given data
                     createdEnemy = new Enemy(ability,    // Ability of the Enemy spawned
-                                                                  position,   // Position of Enemy
-                                                                  creator,    // What created this enemy
-                                                                  shouldMove, // Should enemy move back and forth
-                                                                  sprite,     // Sprite for Enemy
-                                                                  enemyTotal  // Total enemies
-                                                                  );
+                                             position,   // Position of Enemy
+                                             creator,    // What created this enemy
+                                             shouldMove, // Should enemy move back and forth
+                                             sprite,     // Sprite for Enemy
+                                             enemyTotal  // Total enemies
+                                             );
 
+                    // Slots the enemy into an open slot found earlier in the main list
                     Instance.activeEnemies[setNumber] = createdEnemy;
+                }
 
-                    // Check if this enemy is the boss
-                    if (createdEnemy.Ability == EnemyType.Boss)
-                    {
-                        boss = Instance.activeEnemies[setNumber];
-                    }
+                // Check if this enemy is the boss
+                if (createdEnemy.Ability == EnemyType.Boss)
+                { // Is the boss, set it to be stored for various checks
+                    boss = Instance.activeEnemies[setNumber];
                 }
             }
+
+            #endregion
         }
+
+        #region Normal Monogame methods
 
         /// <summary>
         /// Runs the update methods for all active enemies, and manages deletion
         /// </summary>
-        /// <param name="gameTime"></param>
+        /// <param name="gameTime">Used to get the correct pace</param>
         public void Update (GameTime gameTime)
         {
-            // Resets enemies on screen value.
+            // Resets enemies on screen value back to zero for update check
             enemiesOnScreen = 0;
 
-            // Run enemy updates
+            // Run the Update method for all stored enemies
             for (int i = 0; i < Instance.activeEnemies.Count; i++)
-            {
+            { // Checks if the enemy slot is null
                 if (Instance.activeEnemies[i] != null)
-                { // Checks if the enemy slot is null
-                    // Runs the bullet's update.
+                { 
+                    // Runs the enemy's update.
                     Instance.activeEnemies[i].Update(gameTime);
 
-                    // Get total active enemies on screen
+                    // Adds this enemy to the on screen int if it is actually on the screen
                     if (Instance.activeEnemies[i].OnScreen)
                     {
                         enemiesOnScreen++;
                     }
 
-                    // Checks if enemy is set to be destroyed.
+                    // Checks if enemy is set to be destroyed
                     if (Instance.activeEnemies[i].Destroy)
                     {
-                        // Remove from Row List
+                        // Remove from Row List (for enemies that move horizontally only)
                         if (Instance.activeEnemies[i].ShouldMove && Instance.activeEnemies[i].Ability != EnemyType.Boss)
                         {
                              Instance.enemyRows[(int)(Instance.activeEnemies[i].InitialPosition.Y)].Remove(Instance.activeEnemies[i]);
                         }
 
-                        // Remove from primary list
+                        // Remove from main list and GameObject
                         Instance.activeEnemies[i].Collider.Unload();
                         Instance.activeEnemies[i].Delete((ushort)i);
                         Instance.activeEnemies[i] = null;
@@ -347,7 +400,7 @@ namespace Galabingus
                 }
             }
 
-            // Slot in stored bullets created by other bullets into main list
+            // Slot in stored enemies created by other enemies mid update into main list
             for (int i = 0; i < Instance.storeAbilityEnemies.Count; i++)
             {// Create all the stored enemies
                 Instance.CreateEnemy(Instance.storeAbilityEnemies[i],    // Ability of the Enemy spawned
@@ -358,7 +411,7 @@ namespace Galabingus
                                      );
             }
 
-            // Clear all storage lists
+            // Clear all stored enemy data built up during this update run
             Instance.storeAbilityEnemies.Clear();
             Instance.storePositionEnemies.Clear();
             Instance.storeCreatorEnemies.Clear();
@@ -366,35 +419,45 @@ namespace Galabingus
         }
 
         /// <summary>
-        /// Draws all active enemies
+        /// Draws all currently active enemies to the screen
         /// </summary>
         public void Draw ()
         {
             foreach (Enemy enemy in Instance.activeEnemies)
             {
+                // ignores slots which are currently null from the main list
                 if (enemy != null)
                 {
+                    // Checks if this enemy should be drawn up or down
                     SpriteEffects flipper = (enemy.Direction.Y < 0) ? SpriteEffects.None: SpriteEffects.FlipVertically;
 
+                    // Draws the enemy proper
                     GameObject.Instance.SpriteBatch.Draw(
-                        enemy.Sprite,                   // The sprite-sheet for the player
-                        enemy.Position,                 // The position for the player
-                        enemy.Transform,                // The scale and bounding box for the animation
-                        Color.White,                    // The color for the palyer (RED IS TEMP UNTIL WE GET ENEMY SPRITES IN)
-                        0.0f,                           // There cannot be any rotation of the player
-                        Vector2.Zero,                   // Starting render position
-                        enemy.Scale,                    // The scale of the sprite
-                        flipper,                        // Which direction the sprite faces
-                        0.0f                            // Layer depth of the player is 0.0
+                        enemy.Sprite,       // The sprite-sheet for the player
+                        enemy.Position,     // The position for the player
+                        enemy.Transform,    // The scale and bounding box for the animation
+                        Color.White,        // The color for the palyer (RED IS TEMP UNTIL WE GET ENEMY SPRITES IN)
+                        0.0f,               // There cannot be any rotation of the player
+                        Vector2.Zero,       // Starting render position
+                        enemy.Scale,        // The scale of the sprite
+                        flipper,            // Which direction the sprite faces
+                        0.0f                // Layer depth of the player is 0.0
                     );
                 }
             }
         }
 
+        #endregion
+
+        #region Movement Row Handling
+
         /// <summary>
-        /// Flips all enemies in given row
+        /// Flips all enemies' horizontal velocity in a given row
         /// </summary>
-        /// <param name="positionY">The key for the row to flip</param>
+        /// <param name="positionY">The initial Y position of the enemy when placed, it is used as
+        ///                         a key to access the list of all enemies which are meant to move
+        ///                         in that specific row</param>
+        /// <param name="collideOnRight">Whether this collision was on the right side or the left</param>
         public void FlipEnemies(int positionY, bool collideOnRight)
         {
             if (Instance.enemyRows.ContainsKey(positionY))
@@ -418,7 +481,7 @@ namespace Galabingus
         /// <param name="selfY">The initial y position of the enemy to check from
         ///                     for the row (acts as the key for dictionary)</param>
         /// <param name="otherEnemyNumber">The enemy to check if in row</param>
-        /// <returns></returns>
+        /// <returns>True if the enemy is in the same row as the other enemy given</returns>
         public bool InSameRow(int selfY, ushort otherEnemyNumber)
         {
             if (Instance.enemyRows.ContainsKey(selfY))
@@ -426,21 +489,26 @@ namespace Galabingus
                 foreach (Enemy enemy in Instance.enemyRows[selfY])
                 {
                     if (enemy.EnemyNumber == otherEnemyNumber)
-                    {
-                        //System.Diagnostics.Debug.WriteLine("eee");
+                    { // Enemy was found to match up correctly
                         return true;
                     }
                 }
             }
 
+            // No matches were found
             return false;
         }
 
+        #endregion
 
-        public void Reset()
+        /// <summary>
+        /// Resets the enemy manager
+        /// </summary>
+        public void Reset ()
         {
             instance = null;
         }
+
         #endregion
 
     }

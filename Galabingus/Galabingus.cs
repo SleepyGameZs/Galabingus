@@ -67,6 +67,8 @@ namespace Galabingus
         private delegate void ResetGameStates();
         private static ResetGameStates ResetState;
 
+        private Song backgroundMusic;
+
         public Galabingus()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -218,19 +220,40 @@ namespace Galabingus
             //tileManager.CreateBackground();
             //tileManager.CreateObject(GameObject.Instance.Content.grayasteroid_strip1, new Vector2(Player.PlayerInstance.Transform.Width * 2 + 100, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.5f - Player.PlayerInstance.Transform.Height + 100));
 
-            // Sound
+            #region Sound Loading
+            #region Bullets
             AudioManager.Instance.AddSound("Fire", 0.1f, "Bullet Fire", Content);
+            AudioManager.Instance.AddSound("Big Shot", 0.25f, "Big Shot", Content);
             AudioManager.Instance.AddSound("Enemy Fire", 0.75f, "Enemy Fire", Content);
             AudioManager.Instance.AddSound("Homing", 0.75f, "Homing Shot", Content);
             AudioManager.Instance.AddSound("Scatter", 0.25f, "Scatter Shot", Content);
             AudioManager.Instance.AddSound("Split", 0.75f, "Split Shot", Content);
             AudioManager.Instance.AddSound("Break", 0.1f, "Split Shot Break", Content);
             AudioManager.Instance.AddSound("Wave", 0.75f, "Wave Shot", Content);
+            AudioManager.Instance.AddSound("Purple Scatter", 1f, "Purple Scatter Shot1", Content);
+            AudioManager.Instance.AddSound("Purple Break", 0.25f, "Purple Break", Content);
             AudioManager.Instance.AddSound("Explosion", 0.1f, "Explosion", Content);
-            Song backgroundMuisc = Content.Load<Song>("Background Music");
+            #endregion
+
+            #region Player Sounds
+            AudioManager.Instance.AddSound("Charge", 1f, "Charge", Content);
+            AudioManager.Instance.AddSound("Hit", 1f, "Player Hit", Content);
+            #endregion
+
+            #region Menu Sounds
+            AudioManager.Instance.AddSound("Menu Select", 0.25f, "Menu Select", Content);
+            AudioManager.Instance.AddSound("Menu Confirm", 0.75f, "Menu Confirm", Content);
+            AudioManager.Instance.AddSound("Victory", 1f, "Victory", Content);
+            AudioManager.Instance.AddSound("Game Over", 1f, "Game Over", Content);
+            #endregion
+
+            #region Music
+            backgroundMusic = Content.Load<Song>("Background Music");
+            AudioManager.Instance.SongCollection.Add(backgroundMusic);
             MediaPlayer.Volume = 0.5f;
             MediaPlayer.IsRepeating = true;
-            MediaPlayer.Play(backgroundMuisc);
+            #endregion
+            #endregion
         }
 
         protected override void Update(GameTime gameTime)

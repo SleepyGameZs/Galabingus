@@ -25,6 +25,7 @@
     <None Remove="Content\grayasteroid_strip1.png" />
     <None Remove="Content\playButton_base_strip1.png" />
     <None Remove="Content\playButton_hover_strip1.png" />
+    <None Remove="Content\Purple Scatter Shot2.mp3" />
     <None Remove="Icon.ico" />
     <None Remove="Icon.bmp" />
   </ItemGroup>
