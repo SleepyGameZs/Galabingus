@@ -136,7 +136,6 @@ namespace Galabingus
 
                 // Create Tile Manager
                 tileManager = TileManager.Instance;
-                tileManager.CreateTile(1);
 
                 GameObject.Instance.LoadTileLevelFile("GalabingusLevel.level");
                 //tileManager.CreateObject(GameObject.Instance.Content.tile_strip26, Vector2.Zero, 25);
@@ -206,7 +205,6 @@ namespace Galabingus
 
             // Create Tile Manager
             tileManager = TileManager.Instance;
-            tileManager.CreateTile(1);
 
             GameObject.Instance.LoadTileLevelFile("GalabingusLevel.level");
             //tileManager.CreateObject(GameObject.Instance.Content.tile_strip26, Vector2.Zero, 25);

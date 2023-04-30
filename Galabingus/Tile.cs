@@ -4,12 +4,12 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Diagnostics;
 
+/* Tiles act as barriers for bullets and the players, blocking
+ * the player's movement and destroing specific types of bullets.
+ * Tiles scroll with the camera and make up both the level and the background */
+
 namespace Galabingus
 {
-    /* Tiles act as barriers for bullets and the players, blocking
-     * the player's movement and destroing specific types of bullets.
-     * Tiles scroll with the camera and make up both the level and the background */
-
     internal class Tile : GameObject
     {
         #region Fields

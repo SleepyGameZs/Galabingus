@@ -8,12 +8,12 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
+/* The camera class scrolls the objects on screen when in motion.
+ * Causing motion by scrolling the background and player.
+ * Pushing F5 causes the camera to lock and allow for free roaming around the level. */
+
 namespace Galabingus
 {
-    /* The camera class scrolls the objects on screen when in motion.
-     * Causing motion by scrolling the background and player.
-     * Pushing F5 causes the camera to lock and allow for free roaming around the level. */
-
     internal class Camera
     {
         #region Fields
