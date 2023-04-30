@@ -10,8 +10,8 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-// Sound Class
-/* Creates sound objects using imported sound files Monogame's SoundEffect Class
+/* Sound Class
+ * Creates sound objects using imported sound files Monogame's SoundEffect Class
  * Sounds have a volume that can changed and can be player ontop of one another */ 
   
 namespace Galabingus

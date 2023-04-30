@@ -10,6 +10,11 @@ using Microsoft.Xna.Framework.Media;
 
 namespace Galabingus
 {
+    /* The audio manager holds all the game's sound and music, handeling
+     * the importation of sound files and the creation of corresponding
+     * sound objects. The manager Adjusts the volume of audio by the volume 
+     * slider in options and handels the pausing of sound */
+
     public sealed class AudioManager
     {
         #region Fields
