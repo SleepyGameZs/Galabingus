@@ -108,7 +108,7 @@ namespace Galabingus
 
                 case BulletType.BigShot:
                     sprite = GameObject.Instance.Content.player_bigshot_strip4;
-                    // ADD SOUND
+                    AudioManager.Instance.CallSound("Big Shot");
                     break;
 
                 case BulletType.EnemyNormal:

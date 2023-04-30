@@ -52,7 +52,20 @@ namespace Galabingus
             {
                 if (sounds[i].Name == name)
                 {
+                    //sounds[i].Volume = sounds[i].Volume * UIManager.Instance.MasterVolume;
                     sounds[i].CreateInstance();
+                    RunSound(sounds[i].Volume, sounds[i].SoundEffect, sounds[i].AudioInstance);
+                }
+            }
+        }
+
+        public void CallSoundOnce(string name)
+        {
+            for (int i = 0; i < sounds.Count; i++)
+            {
+                if (sounds[i].Name == name)
+                {
+                    //sounds[i].Volume = sounds[i].Volume * UIManager.Instance.MasterVolume;
                     RunSound(sounds[i].Volume, sounds[i].SoundEffect, sounds[i].AudioInstance);
                 }
             }
@@ -64,11 +77,22 @@ namespace Galabingus
             {
                 if (songCollection[i].Name == name && MediaPlayer.State != MediaState.Playing)
                 {
+                    //MediaPlayer.Volume = UIManager.Instance.MasterVolume;
                     MediaPlayer.Play(songCollection[i]);
                 }
             }
         }
-        
+
+        public void StopSound(string name)
+        {
+            for (int i = 0; i < sounds.Count; i++)
+            {
+                if (sounds[i].Name == name)
+                {
+                    sounds[i].AudioInstance.Stop();
+                }
+            }
+        }
 
         private void RunSound(float voulume, SoundEffect sound, SoundEffectInstance instance)
         {

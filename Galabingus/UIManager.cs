@@ -594,6 +594,8 @@ namespace Galabingus
                     {
                         gs = GameState.PlayerWins;
                         timedPassed = 0;
+                        MediaPlayer.Stop();
+                        AudioManager.Instance.CallSound("Victory");
                     }
 
                     prevBossOnScreen = EnemyManager.Instance.BossOnScreen;
@@ -604,6 +606,8 @@ namespace Galabingus
                     {
                         gs = GameState.PlayerDead;
                         timedPassed = 0;
+                        MediaPlayer.Stop();
+                        AudioManager.Instance.CallSound("Game Over");
                     }
 
 
@@ -1142,6 +1146,7 @@ namespace Galabingus
                         if (Math.Abs(selectedButton - element.UIPosition.Y) < Math.Abs(selectedButton - closeButton))
                         {
                             closeButton = element.UIPosition.Y;
+                            AudioManager.Instance.CallSound("Menu Select");
                         }
                         switchedButton = true;
                     }
@@ -1150,6 +1155,7 @@ namespace Galabingus
                         if (Math.Abs(selectedButton - element.UIPosition.Y) < Math.Abs(selectedButton - closeButton))
                         {
                             closeButton = element.UIPosition.Y;
+                            AudioManager.Instance.CallSound("Menu Select");
                         }
                         switchedButton = true;
                     }

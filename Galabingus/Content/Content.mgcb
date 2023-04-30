@@ -58,6 +58,12 @@
 /processorParam:TextureFormat=Color
 /build:background1_strip1.png
 
+#begin Big Shot.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Big Shot.mp3
+
 #begin Bomb/big_explode_strip5.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -772,6 +778,12 @@
 /processorParam:TextureFormat=Color
 /build:buttonPlay_hover_strip1.png
 
+#begin Charge.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Charge.mp3
+
 #begin Collider.fx
 /importer:EffectImporter
 /processor:EffectProcessor
@@ -957,6 +969,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:HowToPlayMenu_strip1.png
+
+#begin Menu Confirm.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Menu Confirm.mp3
+
+#begin Menu Select.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Menu Select.mp3
 
 #begin menubackground_strip1.png
 /importer:TextureImporter
@@ -1245,6 +1269,12 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:tile_strip26.png
+
+#begin Victory.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Victory.mp3
 
 #begin victoryTitle_strip1.png
 /importer:TextureImporter
