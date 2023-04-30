@@ -18,15 +18,10 @@ namespace Galabingus
 
         public event EventDelegate OnClick;
         public event EventDelegate OnHover;
-        public event EventDelegate OnRelease;
 
         #endregion
 
         #region Fields
-
-        //the current mouseState
-        private MouseState currentMS;
-        private MouseState prevMS;
 
         //a second texture for hover
         private Texture2D baseTexture;
@@ -39,18 +34,18 @@ namespace Galabingus
 
         #region Properties
 
-        public Texture2D BaseTexture
-        {
-            get { return baseTexture; }
-            set { baseTexture = value; }
-        }
-
+        /// <summary>
+        /// gets and sets the hover texture of the button
+        /// </summary>
         public Texture2D HoverTexture
         {
             get { return hoverTexture; }
             set { hoverTexture = value; }
         }
 
+        /// <summary>
+        /// gets and sets the menu to be displayed when the button is clicked
+        /// </summary>
         public List<UIElement> DisplayMenu
         {
             get { return displayMenu; }
@@ -77,29 +72,37 @@ namespace Galabingus
 
         #region Methods
 
+        /// <summary>
+        /// updates the button
+        /// </summary>
         public override void Update()
         {
+            //determine if a button has been clicked
             if (uiPosition.Y == UIManager.Instance.ButtonSelection && (UIManager.Instance.SingleKeyPress(Keys.Enter) || UIManager.Instance.SingleKeyPress(Keys.Space)))
             {
+                //plays the sound effect
                 AudioManager.Instance.CallSound("Menu Confirm");
+
+                //runs its on click event
                 if (OnClick != null)
                     OnClick(this);
             }
             else
             {
+                //runs its on hover event
                 if(OnHover != null) 
                     OnHover(this);
             }
 
+            //if the button isn't selected return it to its normal texture
             if (uiTexture != baseTexture && UIPosition.Y != UIManager.Instance.ButtonSelection)
                 uiTexture = baseTexture;
-            else if (clearColor != Color.White)
-                clearColor = Color.White;
-
-            if (OnRelease != null)
-                OnRelease(this);
         }
 
+        /// <summary>
+        /// draws the button
+        /// </summary>
+        /// <param name="sb"></param>
         public override void Draw(SpriteBatch sb)
         {
             sb.Draw(
