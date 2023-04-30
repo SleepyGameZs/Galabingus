@@ -7,7 +7,7 @@ using System.Diagnostics;
 using static System.Formats.Asn1.AsnWriter;
 
 // Matthew Rodriguez
-// 2023, 3, 13
+// 2023, 4, 30
 // Player
 // PlayerStates - Player translations states
 // Position - position of the player
@@ -38,6 +38,10 @@ namespace Galabingus
     /// </summary>
     internal class Player : GameObject
     {
+        /// <summary>
+        ///  The trail is made of these
+        ///  Color defining and position relation to the orignal sprite
+        /// </summary>
         private struct Ghost
         {
             public Vector2 Position;
@@ -45,24 +49,25 @@ namespace Galabingus
             public Color ghostColor;
         }
 
+        // Feilds
         private static Player playerInstance = null;
         private KeyboardState previousPreviousKeyboardStateX;
         private KeyboardState previousPreviousKeyboardStateY;
         private KeyboardState previousKeyboardState;
         private KeyboardState previousKeyboardStateX;
-        private KeyboardState previousKeyboardStateY; // Previous KeyboardState (only updates every interval of input buffer time)
-        private KeyboardState currentKeyboardState;  // Current KeyboardState (always current keyboard state)
-        private Vector2 previousVelocity;            // Holds the previous direction and magnitude of velocity
-        private Vector2 velocity;                    // Holds the current direction and magnitude of velocity
-        private Vector2 speed;                       // Scalar quantity for velocity 
-        private Vector2 acceleration;                // Accleration applied to velocity
-        private Vector2 translationRatio;            // Ratio between height and width of the screen
-        private PlayerStates playerState;            // Player translation state
-        private Keys deAccFrom;                      // What key was last released
-        private double totalTime;                    // total ellapsed time
-        private float delayBufferTime;               // half the actual input buffer time
-        private float inputBufferTime;               // input response time
-        private ushort contentName;                  // the content index
+        private KeyboardState previousKeyboardStateY;
+        private KeyboardState currentKeyboardState; 
+        private Vector2 previousVelocity;         
+        private Vector2 velocity;                 
+        private Vector2 speed;                   
+        private Vector2 acceleration;              
+        private Vector2 translationRatio;          
+        private PlayerStates playerState;          
+        private Keys deAccFrom;                   
+        private double totalTime;                   
+        private float delayBufferTime;             
+        private float inputBufferTime;              
+        private ushort contentName;                 
         private float boostFrameRate;
         private float health;
         private bool previousCollision;
@@ -98,6 +103,9 @@ namespace Galabingus
         private GameObjectMaterialNode hitEffectNode;
         private Color drawColor;
 
+        /// <summary>
+        ///  Whether or not the player is in a iFrame
+        /// </summary>
         public bool inIFrame
         {
             get
@@ -106,6 +114,9 @@ namespace Galabingus
             }
         }
 
+        /// <summary>
+        ///  Actual translation applied to the player
+        /// </summary>
         public Vector2 Translation
         {
             get
@@ -119,6 +130,9 @@ namespace Galabingus
             }
         }
 
+        /// <summary>
+        ///  Don't die and Don't touch tiles 
+        /// </summary>
         public bool GodMode
         {
             get
@@ -127,6 +141,9 @@ namespace Galabingus
             }
         }
 
+        /// <summary>
+        ///  Speed of the player
+        /// </summary>
         public Vector2 Speed
         {
             get
@@ -135,6 +152,9 @@ namespace Galabingus
             }
         }
 
+        /// <summary>
+        ///  If the camera is lcoked
+        /// </summary>
         public bool CameraLock
         {
             get
@@ -147,6 +167,9 @@ namespace Galabingus
             }
         }
 
+        /// <summary>
+        ///  Player Instance
+        /// </summary>
         public static Player PlayerInstance
         {
             get
@@ -155,7 +178,10 @@ namespace Galabingus
             }
         }
 
-        public ushort ContentName
+        /// <summary>
+        ///  Content dynamic identifer for the player
+        /// </summary>
+        public new ushort ContentName
         {
             get
             {
@@ -163,6 +189,9 @@ namespace Galabingus
             }
         }
 
+        /// <summary>
+        ///  Health of the player
+        /// </summary>
         public float Health
         {
             get
@@ -171,12 +200,14 @@ namespace Galabingus
             }
             set
             {
+                // Only do damage when there is no iFrame and not in godMode
                 if (!iFrame && !godMode)
                 {
                     float healthBefore = PlayerInstance.health;
                     float healthAfter = value;
                     PlayerInstance.health = (healthAfter - healthBefore) > healthBefore ? 0.20f + healthBefore : healthBefore + (healthAfter - healthBefore) * 0.60f;
 
+                    // Trigger iFrames when damage is done
                     if ((healthAfter - healthBefore) < 0)
                     {
                         iFrame = true;
@@ -186,16 +217,21 @@ namespace Galabingus
                         }
                     }
                     
+                    // Heal to max
                     if (health > 4.5f && ((healthAfter - healthBefore) >= healthBefore))
                     {
                         health = 5;
                     }
+
+                    // Play the hit sound effect
                     AudioManager.Instance.CallSound("Hit");
                 }
             }
         }
 
-
+        /// <summary>
+        ///  The white sprite for the player
+        /// </summary>
         public Texture2D WhiteSprite
         {
             get
@@ -209,7 +245,9 @@ namespace Galabingus
             }
         }
 
-
+        /// <summary>
+        ///  Velocity of the player
+        /// </summary>
         public Vector2 Velocity
         {
             get
@@ -218,6 +256,9 @@ namespace Galabingus
             }
         }
 
+        /// <summary>
+        ///  The ratio at which the player is translating on screen
+        /// </summary>
         public Vector2 TranslationRatio
         {
             get
@@ -229,7 +270,7 @@ namespace Galabingus
         /// <summary>
         ///  Position of the player
         /// </summary>
-        public Vector2 Position
+        public new Vector2 Position
         {
             get
             {
@@ -263,7 +304,7 @@ namespace Galabingus
         /// <summary>
         ///  Single Player sprite bounds
         /// </summary>
-        public Rectangle Transform
+        public new Rectangle Transform
         {
             get
             {
@@ -351,8 +392,8 @@ namespace Galabingus
             PlayerInstance.inputBufferTime = 0.003f;
             PlayerInstance.delayBufferTime = inputBufferTime / 2.0f;
             PlayerInstance.Scale = 3.0f;
-            //PlayerInstance.Scale = PostScaleRatio();
             PlayerInstance.Animation.AnimationDuration = 0.05f;
+
             // Ratio is calclated via the shape of the player sprite
             // against the width and height of the screen
             // With the third factor a vector of 1 ie the directional vector ie normalized velocity
@@ -391,8 +432,7 @@ namespace Galabingus
             triggeredIFrame = false;
             drawColor = Color.White;
 
-            //float previousFade = 0;
-
+            // Create a matiral node
             universalNode = new GameObjectMaterialNode(GameObject.Instance.UniversalShader,
 
                 setup =>
@@ -406,9 +446,7 @@ namespace Galabingus
                 properties => {
                     if (Player.PlayerInstance.inIFrame)
                     {
-                        //previousFade = GameObject.Instance.UniversalShader.Parameters["fade"].GetValueSingle();
                         drawColor = new Color(0.2f, 0.2f, 0.3f, (float)GameObject.ClockTime);
-                        //GameObject.Instance.UniversalShader.Parameters["fade"].SetValue(0.7f);
                     }
                     else
                     {
@@ -418,7 +456,7 @@ namespace Galabingus
 
                 reset =>
                 {
-                    //GameObject.Instance.UniversalShader.Parameters["fade"].SetValue(previousFade);
+                    // No reset
                 }
             );
             material = new GameObjectMaterial();
@@ -430,6 +468,7 @@ namespace Galabingus
         /// </summary>
         public void Update(GameTime gameTime)
         {
+            // Clamp the health
             if (health < 0.5f)
             {
                 health = 0;
@@ -438,12 +477,12 @@ namespace Galabingus
             {
                 health = 5;
             }
-            triggeredIFrame = false;
 
+            // Setup for update
+            triggeredIFrame = false;
             PlayerInstance.Collider.Resolved = true;
             PlayerInstance.inputBufferTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
             bigShotDuration = (float)gameTime.ElapsedGameTime.TotalSeconds * 15.0f;
-            //boostFrameRate = PlayerInstance.inputBufferTime;
             Vector2 translationAjdustedRatio = translationRatio;
             float bufferTime = inputBufferTime;
 
@@ -517,10 +556,9 @@ namespace Galabingus
                 }
             }
 
-            //Vector2 previousPosition = Position;
-
+            // First pass of Collison updates
+            // Update the animation for the player
             PlayerInstance.Transform = PlayerInstance.Animation.Play(gameTime);
-
             List<Collision> intercepts = PlayerInstance.Collider.UpdateTransform(
                 PlayerInstance.Sprite,                         // Player Sprite
                 PlayerInstance.Position,                       // Player position
@@ -532,10 +570,9 @@ namespace Galabingus
                 (ushort)CollisionGroup.Player,                 // Content
                 0
             );
-
-            //Vector2 previousVelocity;
             bool collides = false;
 
+            // Off-Screen Collision
             if (
                 ((PlayerInstance.Position.Y <= 0 || PlayerInstance.Position.X <= 0) ||
                 (PlayerInstance.Position.X + PlayerInstance.Transform.Width * Scale) >= GameObject.Instance.GraphicsDevice.Viewport.Width ||
@@ -568,19 +605,7 @@ namespace Galabingus
             {
                 collides = ((PlayerInstance.Position.Y <= 0 || PlayerInstance.Position.X <= 0) ||
                 (PlayerInstance.Position.X + PlayerInstance.Transform.Width * Scale) >= GameObject.Instance.GraphicsDevice.Viewport.Width ||
-                (PlayerInstance.Position.Y + PlayerInstance.Transform.Height * Scale) >= GameObject.Instance.GraphicsDevice.Viewport.Height)
-                ;
-            }
-
-            foreach (Collision collision in intercepts)
-            {
-                if (collision.other != null && this.Collider.Resolved && ((collision.other as Tile) is Tile))
-                {
-                    //previousVelocity = velocity;
-                    //acceleration = Vector2.Zero;
-                    //velocity = Vector2.Zero;
-                    //collides = true;
-                }
+                (PlayerInstance.Position.Y + PlayerInstance.Transform.Height * Scale) >= GameObject.Instance.GraphicsDevice.Viewport.Height);
             }
 
             Vector2 normPreVelocity = previousVelocity;
@@ -613,6 +638,8 @@ namespace Galabingus
                 // Slow de-accelerate
                 Position -= velocity;
 
+                // Velocity normilization
+                // WIth clamps
                 if (Math.Abs(normPreVelocity.X) < 0.0000001)
                 {
                     normPreVelocity.X = 0;
@@ -621,9 +648,7 @@ namespace Galabingus
                 {
                     normPreVelocity.Y = 0;
                 }
-
                 normPreVelocity = (normPreVelocity == Vector2.Zero ? normPreVelocity : Vector2.Normalize(normPreVelocity));
-
                 if (Math.Abs(normPreVelocity.X) > 0.99)
                 {
                     if (normPreVelocity.X > 0)
@@ -646,7 +671,6 @@ namespace Galabingus
                         normPreVelocity.Y = -1;
                     }
                 }
-
                 if (Math.Abs(normVelocity.X) < 0.0000001)
                 {
                     normVelocity.X = 0;
@@ -655,9 +679,7 @@ namespace Galabingus
                 {
                     normVelocity.Y = 0;
                 }
-
                 normVelocity = (normVelocity == Vector2.Zero ? normVelocity : Vector2.Normalize(normVelocity));
-
                 if (Math.Abs(normVelocity.X) > 0.99)
                 {
                     if (normVelocity.X > 0)
@@ -683,6 +705,8 @@ namespace Galabingus
             }
             else
             {
+                // Velocity normilization
+                // WIth clamps
                 if (Math.Abs(normPreVelocity.X) < 0.0000001)
                 {
                     normPreVelocity.X = 0;
@@ -691,9 +715,7 @@ namespace Galabingus
                 {
                     normPreVelocity.Y = 0;
                 }
-
                 normPreVelocity = (normPreVelocity == Vector2.Zero ? normPreVelocity : Vector2.Normalize(normPreVelocity));
-
                 if (Math.Abs(normPreVelocity.X) > 0.99)
                 {
                     if (normPreVelocity.X > 0)
@@ -716,7 +738,6 @@ namespace Galabingus
                         normPreVelocity.Y = -1;
                     }
                 }
-
                 if (Math.Abs(normVelocity.X) < 0.0000001)
                 {
                     normVelocity.X = 0;
@@ -725,9 +746,7 @@ namespace Galabingus
                 {
                     normVelocity.Y = 0;
                 }
-
                 normVelocity = (normVelocity == Vector2.Zero ? normVelocity : Vector2.Normalize(normVelocity));
-
                 if (Math.Abs(normVelocity.X) > 0.99)
                 {
                     if (normVelocity.X > 0)
@@ -751,7 +770,7 @@ namespace Galabingus
                     }
                 }
 
-                //if (normPreVelocity != normVelocity && normVelocity != Vector2.Zero && normPreVelocity != Vector2.Zero && previousCollision || !collides)
+                // Translate the player
                 {
                     if (!tSet)
                     {
@@ -775,24 +794,22 @@ namespace Galabingus
             }
             tSet = false;
 
-
+            // Set the previous velocity
             previousCollision = collides;
-
             if (Math.Abs(velocity.Length()) < 0.001f)
             {
                 translation = Vector2.Zero;
             }
-
-            //System.Diagnostics.Debug.WriteLine(previousCollision);
-
             previousVelocity = velocity;
-
+            
+            // Update timers total time
             totalShootTime += gameTime.ElapsedGameTime.TotalSeconds;
             totalBoostTime += gameTime.ElapsedGameTime.TotalSeconds;
             totalTime += gameTime.ElapsedGameTime.TotalSeconds;
             fadeTimeTotal += gameTime.ElapsedGameTime.TotalSeconds;
             bigShotTotalTime += gameTime.ElapsedGameTime.TotalSeconds;
 
+            // Update the player collider
             intercepts = PlayerInstance.Collider.UpdateTransform(
                 PlayerInstance.Sprite,                         // Player Sprite
                 PlayerInstance.Position,                       // Player position
@@ -805,8 +822,10 @@ namespace Galabingus
                 0
             );
 
+            // Update the current keyboard state
             currentKeyboardState = Keyboard.GetState();
 
+            // Handle the player translaiton states
             {
                 // Player Finite State Machine
                 switch (playerState)
@@ -875,16 +894,12 @@ namespace Galabingus
                             playerState = PlayerStates.None;
                             previousKeyboardState = Keyboard.GetState();
                         }
-
-                        //Debug.WriteLine();
-
                         if (previousKeyboardStateX.IsKeyDown(Keys.D) && previousPreviousKeyboardStateX.IsKeyDown(Keys.A) || previousPreviousKeyboardStateX.IsKeyDown(Keys.D) && previousKeyboardStateX.IsKeyDown(Keys.A))
                         {
                             previousPreviousKeyboardStateX = previousKeyboardStateX;
                             velocity.X = 0.0f;
                             if (!currentKeyboardState.IsKeyDown(Keys.W) && !currentKeyboardState.IsKeyDown(Keys.S))
                             {
-                                //velocity.Y = velocity.Y / 10.0f;
                                 acceleration.Y = acceleration.Y / 10f;
                                 acceleration.X = acceleration.X / 10f;
                             }
@@ -954,11 +969,9 @@ namespace Galabingus
                         if (previousKeyboardStateY.IsKeyDown(Keys.S) && previousPreviousKeyboardStateY.IsKeyDown(Keys.W) || previousPreviousKeyboardStateY.IsKeyDown(Keys.S) && previousKeyboardStateY.IsKeyDown(Keys.W))
                         {
                             previousPreviousKeyboardStateY = previousKeyboardStateY;
-                            //if (previousKeyboardStateY.X)
                             velocity.Y = 0.0f;
                             if (!currentKeyboardState.IsKeyDown(Keys.A) && !currentKeyboardState.IsKeyDown(Keys.D))
                             {
-                                //velocity.X = velocity.X / 10.0f;
                                 acceleration.X = acceleration.X / 10f;
                                 acceleration.Y = acceleration.Y / 10f;
                             }
@@ -1018,30 +1031,27 @@ namespace Galabingus
                                 yPause = false;
                             }
                         }
-
                         if (yPause)
                         {
                             previousPreviousKeyboardStateY = previousKeyboardStateY;
                         }
-
                         if (previousKeyboardState.IsKeyDown(Keys.LeftShift) || previousKeyboardState.IsKeyDown(Keys.RightShift))
                         {
                             boost = true;
                         }
-
                         break;
                 }
-                //shot = false;
             }
-
             bool bigShooting = false;
 
+            // Ready the big shot
             if (bigShot && (bigShotTotalTime >= bigShotDuration))
             {
                 realeaseHold = true;
                 AudioManager.Instance.CallSoundOnce("Charge");
             }
 
+            // Shoot a big shot
             if (realeaseHold && currentKeyboardState.IsKeyUp(Keys.Space))
             {
                 realeaseHold = false;
@@ -1049,7 +1059,8 @@ namespace Galabingus
                 BigShot();
                 AudioManager.Instance.StopSound("Charge");
             }
-
+            
+            // Maage shooting normally and in godmode
             if (!bigShot || godMode)
             {
                 realeaseHold = false;
@@ -1076,26 +1087,6 @@ namespace Galabingus
                 {
                     holdShoot = false;
                 }
-
-                /*
-                if (currentKeyboardState.IsKeyUp(Keys.Space) && previousKeyboardState.IsKeyDown(Keys.Space) && !(totalShootTime <= shootDuration * 0.3f))
-                {
-                    totalShootTime = 0;
-                }
-
-                if (previousKeyboardState.IsKeyDown(Keys.Space))
-                {
-                    holdShoot = true;
-                }
-                if ( (currentKeyboardState.IsKeyUp(Keys.Space) && previousKeyboardState.IsKeyDown(Keys.Space)) || holdShoot && (godMode || !(totalShootTime >= shootDuration * 0.5f)))
-                {
-                    Shoot();
-                }
-                if (currentKeyboardState.IsKeyUp(Keys.Space))
-                {
-                    holdShoot = false;
-                }
-                */
             }
             else if (previousKeyboardState.IsKeyDown(Keys.Space) && currentKeyboardState.IsKeyUp(Keys.Space) && !realeaseHold && !(bigShotTotalTime >= bigShotDuration) || previousKeyboardState.IsKeyUp(Keys.Space) && currentKeyboardState.IsKeyDown(Keys.Space))
             {
@@ -1105,6 +1096,7 @@ namespace Galabingus
                 }
             }
 
+            // Trigger the bigshot charge
             if (previousKeyboardState.IsKeyDown(Keys.Space) && currentKeyboardState.IsKeyDown(Keys.Space) && (bigShotTotalTime >= bigShotDuration))
             {
                 bigShot = true;
@@ -1114,19 +1106,11 @@ namespace Galabingus
                 bigShot = false;
             }
 
-            /*
-            foreach (Keys key in currentKeyboardState.GetPressedKeys())
-            {
-                Debug.WriteLine(key);
-            }
-            */
-
             // When the ellapsed time is the buffer time update the keyboard state
+            // Update the ghost
             if (totalTime >= bufferTime)
             {
-
                 previousKeyboardState = currentKeyboardState;
-
                 if (currentKeyboardState.IsKeyDown(Keys.A) || currentKeyboardState.IsKeyDown(Keys.D) || currentKeyboardState.IsKeyUp(Keys.A) || currentKeyboardState.IsKeyUp(Keys.D))
                 {
                     previousKeyboardStateX = currentKeyboardState;
@@ -1135,7 +1119,6 @@ namespace Galabingus
                 {
                     previousKeyboardStateY = currentKeyboardState;
                 }
-
                 if (boostOpacity <= 0.0f)
                 {
                     boostOpacity = 0.01f;
@@ -1156,13 +1139,11 @@ namespace Galabingus
                     }
                     ghosts = newGhost;
                 }
-
+                
+                // Create the ghost
                 if (currentKeyboardState.IsKeyUp(Keys.LeftShift) && currentKeyboardState.IsKeyUp(Keys.RightShift))
                 {
-                    //boostOpacity = 1f;
                     boost = false;
-                    //List<Ghost> newGhost = new List<Ghost>();
-                    //ghosts = newGhost;
                     if (totalBoostTime >= boostFrameRate * 0.3333333f)
                     {
                         Ghost ghostBoost = new Ghost();
@@ -1180,7 +1161,7 @@ namespace Galabingus
                     {
                         Ghost ghostBoost = new Ghost();
                         ghostBoost.ghostColor = new Color(new Color(0, 35, 85), 1.0f);
-                        ghostBoost.Position = Position;// + normVelocity * 0.1f * (float)Animation.EllapsedTime * new Vector2(speed.X, speed.Y).LengthSquared() * ((1 - boostSpeed) * -0.1f );
+                        ghostBoost.Position = Position;
                         boostSpeed *= (float)Animation.EllapsedTime;
                         boostOpacity -= 0.0005f;
                         ghostBoost.boostOpacity = boostOpacity;
@@ -1190,16 +1171,19 @@ namespace Galabingus
                 totalTime -= bufferTime;
             }
 
+            // Update the boost timer
             if (totalBoostTime >= boostFrameRate)
             {
                 totalBoostTime -= boostFrameRate;
             }
 
+            // Hold the player health at 5 in godmode
             if (godMode)
             {
                 Player.PlayerInstance.health = 5;
             }
 
+            // Adjust the paralax for the camera
             if (cameraLock)
             {
                 if (!Camera.Instance.Stopped)
@@ -1214,6 +1198,7 @@ namespace Galabingus
                 }
             }
 
+            // Update all timers
             if (fadeTimeTotal >= fadeDuration && iFrame)
             {
                 fadeTimeTotal -= fadeDuration;
@@ -1223,20 +1208,14 @@ namespace Galabingus
             {
                 fadeTimeTotal -= fadeDuration;
             }
-
             if (totalShootTime >= shootDuration)
             {
-                //holdShoot = false;
                 totalShootTime -= shootDuration;
             }
-
             if (bigShotTotalTime >= bigShotDuration)
             {
-                //holdShoot = false;
                 bigShotTotalTime -= bigShotDuration;
             }
-
-            //Debug.WriteLine();
         }
 
         /// <summary>
@@ -1264,6 +1243,7 @@ namespace Galabingus
         {
             material.Draw(draw =>
             {
+                // Draw the player text when the player is alive
                 if (health > 0)
                 {
                     textTest.UIText = "Player";
@@ -1275,150 +1255,182 @@ namespace Galabingus
                     textTest.UIText = "";
                 }
 
+                // When teh player is alive draw the player
                 if (Player.PlayerInstance.Health > 0)
                 {
-                    if (boost) //&& totalBoostTime >= boostFrameRate)
+                    // Draw the boost ghost trail
+                    if (boost)
                     {
                         foreach (Ghost ghost in ghosts)
                         {
-                            Color halfOColor = ghost.ghostColor;//new Color(ghost.ghostColor * 0.825f, 0.825f);
+                            Color halfOColor = ghost.ghostColor;
                             if (halfOColor.B <= 5)
                             {
                                 halfOColor = Color.Transparent;
                             }
                             GameObject.Instance.SpriteBatch.Draw(
-                                WhiteSprite,                     // The sprite-sheet for the player
-                                ghost.Position,    // The position for the player
-                                Transform,                       // The scale and bounding box for the animation
-                                halfOColor,                     // The color for the palyer
-                                0.0f,                            // There cannot be any rotation of the player
-                                Vector2.Zero,                    // Starting render position
-                                PlayerInstance.Scale,                      // The scale of the sprite
-                                SpriteEffects.None,              // Which direction the sprite faces
-                                0.0f                             // Layer depth of the player is 0.0
+                                WhiteSprite,
+                                ghost.Position,
+                                Transform,
+                                halfOColor,
+                                0.0f,
+                                Vector2.Zero,
+                                PlayerInstance.Scale,
+                                SpriteEffects.None,
+                                0.0f
                             );
                         }
                     }
 
+                    // Load the outline sprite with the standard content manager
                     Texture2D outline = GameObject.Instance.ContentManager.Load<Texture2D>("Player/player_outline_strip4");
 
+                    // Draw the outline when the palyer is big-shoting
                     if (realeaseHold)
                     {
                         GameObject.Instance.SpriteBatch.Draw(
-                            outline,                          // The sprite-sheet for the player
-                            Position - new Vector2(4*Scale,4*Scale),                        // The position for the player
-                            new Rectangle(Transform.X / Sprite.Width * outline.Width + Transform.X / Sprite.Width, 0, (int)(outline.Width / 4), (int)(outline.Height)),                       // The scale and bounding box for the animation
-                            new Color(Color.LightBlue,0.05f),                     // The color for the palyer
-                            0.0f,                            // There cannot be any rotation of the player
-                            Vector2.Zero,                    // Starting render position
-                            PlayerInstance.Scale,                      // The scale of the sprite
-                            SpriteEffects.None,              // Which direction the sprite faces
-                            0.0f                             // Layer depth of the player is 0.0
+                            outline,
+                            Position - new Vector2(4*Scale,4*Scale),
+                            new Rectangle(Transform.X / Sprite.Width * outline.Width + Transform.X / Sprite.Width, 0, (int)(outline.Width / 4), (int)(outline.Height)),
+                            new Color(Color.LightBlue,0.05f),
+                            0.0f,
+                            Vector2.Zero,
+                            PlayerInstance.Scale,
+                            SpriteEffects.None,
+                            0.0f
                         );
                     }
+
+                    // Draw the player sprite
                     GameObject.Instance.SpriteBatch.Draw(
-                        Sprite,                          // The sprite-sheet for the player
-                        Position,                        // The position for the player
-                        Transform,                       // The scale and bounding box for the animation
-                        drawColor,                     // The color for the palyer
-                        0.0f,                            // There cannot be any rotation of the player
-                        Vector2.Zero,                    // Starting render position
-                        PlayerInstance.Scale,                      // The scale of the sprite
-                        SpriteEffects.None,              // Which direction the sprite faces
-                        0.0f                             // Layer depth of the player is 0.0
+                        Sprite,
+                        Position,
+                        Transform,
+                        drawColor,
+                        0.0f,
+                        Vector2.Zero,
+                        PlayerInstance.Scale,
+                        SpriteEffects.None,
+                        0.0f
                     );
                 }
                 else if (godMode)
                 {
+                    // If the player is not in godmode then change the game state to PlayerDead
                     Collider.Resolved = false;
                     UIManager.Instance.GS = GameState.PlayerDead;
                 }
 
+                // Determine if the health bar is offscreen
                 bool largeHealthCondition = (new Vector2(-1, 20 + PlayerInstance.Transform.Height * Scale) + Position).Y + halfHeartSprite.Height * 0.5f > GameObject.Instance.GraphicsDevice.Viewport.Height;
 
+                // Draw the background heart based on teh health of the player
                 GameObject.Instance.SpriteBatch.Draw(
-                    heartSprite,                          // The sprite-sheet for the player
-                    largeHealthCondition ? new Vector2(-1, -20) + Position : new Vector2(-1, 20 + PlayerInstance.Transform.Height * Scale) + Position,                        // The position for the player
-                    new Rectangle(0, 0, halfHeartSprite.Width * 5, halfHeartSprite.Height),                       // The scale and bounding box for the animation
-                    new Color(Color.Gray, 0.9f),                     // The color for the palyer
-                    0.0f,                            // There cannot be any rotation of the player
-                    Vector2.Zero,                    // Starting render position
-                    0.6f,                      // The scale of the sprite
-                    SpriteEffects.None,              // Which direction the sprite faces
-                    0.0f                             // Layer depth of the player is 0.0
+                    heartSprite,
+                    largeHealthCondition ? new Vector2(-1, -20) + Position : new Vector2(-1, 20 + PlayerInstance.Transform.Height * Scale) + Position,
+                    new Rectangle(0, 0, halfHeartSprite.Width * 5, halfHeartSprite.Height),
+                    new Color(Color.Gray, 0.9f),
+                    0.0f,
+                    Vector2.Zero,
+                    0.6f,
+                    SpriteEffects.None,
+                    0.0f
                 );
 
+                // Draw the half hearts based on the health of the player
                 GameObject.Instance.SpriteBatch.Draw(
-                    halfHeartSprite,                          // The sprite-sheet for the player
-                    largeHealthCondition ? new Vector2(-1, -20) + Position : new Vector2(-1, 20 + PlayerInstance.Transform.Height * Scale) + Position,                        // The position for the player
-                    new Rectangle(0, 0, halfHeartSprite.Width * (int)Math.Clamp((int)Math.Round(playerInstance.Health, MidpointRounding.AwayFromZero), 0, 5), halfHeartSprite.Height),                       // The scale and bounding box for the animation
-                    new Color(Color.White, 0.9f),                     // The color for the palyer
-                    0.0f,                            // There cannot be any rotation of the player
-                    Vector2.Zero,                    // Starting render position
-                    0.6f,                      // The scale of the sprite
-                    SpriteEffects.None,              // Which direction the sprite faces
-                    0.0f                             // Layer depth of the player is 0.0
+                    halfHeartSprite,
+                    largeHealthCondition ? new Vector2(-1, -20) + Position : new Vector2(-1, 20 + PlayerInstance.Transform.Height * Scale) + Position,
+                    new Rectangle(0, 0, halfHeartSprite.Width * (int)Math.Clamp((int)Math.Round(playerInstance.Health, MidpointRounding.AwayFromZero), 0, 5), halfHeartSprite.Height),
+                    new Color(Color.White, 0.9f),
+                    0.0f,
+                    Vector2.Zero,
+                    0.6f,
+                    SpriteEffects.None,
+                    0.0f
                 );
 
+                // Daw the full hearts based on the health of the player
                 GameObject.Instance.SpriteBatch.Draw(
-                    fullHeartSprite,                          // The sprite-sheet for the player
-                    largeHealthCondition ? new Vector2(-1, -20) + Position : new Vector2(-1, 20 + PlayerInstance.Transform.Height * Scale) + Position,                        // The position for the player
-                    new Rectangle(0, 0, halfHeartSprite.Width * (int)Math.Clamp(Math.Floor(playerInstance.Health), 0, 5), halfHeartSprite.Height),                       // The scale and bounding box for the animation
-                    new Color(Color.White, 0.9f),                     // The color for the palyer
-                    0.0f,                            // There cannot be any rotation of the player
-                    Vector2.Zero,                    // Starting render position
-                    0.6f,                      // The scale of the sprite
-                    SpriteEffects.None,              // Which direction the sprite faces
-                    0.0f                             // Layer depth of the player is 0.0
+                    fullHeartSprite,
+                    largeHealthCondition ? new Vector2(-1, -20) + Position : new Vector2(-1, 20 + PlayerInstance.Transform.Height * Scale) + Position,
+                    new Rectangle(0, 0, halfHeartSprite.Width * (int)Math.Clamp(Math.Floor(playerInstance.Health), 0, 5), halfHeartSprite.Height),
+                    new Color(Color.White, 0.9f),
+                    0.0f,
+                    Vector2.Zero,
+                    0.6f, 
+                    SpriteEffects.None,
+                    0.0f 
                 );
             }
             );
         }
 
+        /// <summary>
+        ///  Draws A health bar
+        /// </summary>
+        /// <param name="health">Amount of health</param>
+        /// <param name="max">Maximum amoutn of health</param>
+        /// <param name="x">x position of the health bar</param>
+        /// <param name="y">y position of the health bar</param>
+        /// <param name="xSize">horizontal size of the health bar</param>
+        /// <param name="ySize">vertical size of the health bar</param>
+        /// <param name="backColor">Color behind the healt bar</param>
+        /// <param name="frontColor">Color of the health bar</param>
         public void CreateHealthBar(float health, float max, int x, int y, float xSize, float ySize, Color backColor, Color frontColor)
         {
             float healthRatio = health / max;
             xSize = xSize / max;
             Texture2D pixelWhite = GameObject.Instance.ContentManager.Load<Texture2D>("white_pixel_strip1");
 
+            // Use the Debug to draw the Health Bar
             GameObject.Instance.Debug += delegate (SpriteBatch spriteBatch)
             {
                 GameObject.Instance.SpriteBatch.Draw(
-                    pixelWhite,                          // The sprite-sheet for the player
-                    new Vector2(x, y),                        // The position for the player
-                    new Rectangle(0, 0, 1 * (int)max * (int)xSize, (int)(ySize * 1.3f)),                       // The scale and bounding box for the animation
-                    new Color(backColor, 0.9f),                     // The color for the palyer
-                    0.0f,                            // There cannot be any rotation of the player
-                    Vector2.Zero,                    // Starting render position
-                    1.0f,                      // The scale of the sprite
-                    SpriteEffects.None,              // Which direction the sprite faces
-                    0.0f                             // Layer depth of the player is 0.0
+                    pixelWhite,
+                    new Vector2(x, y),
+                    new Rectangle(0, 0, 1 * (int)max * (int)xSize, (int)(ySize * 1.3f)),
+                    new Color(backColor, 0.9f),
+                    0.0f,
+                    Vector2.Zero,
+                    1.0f,
+                    SpriteEffects.None,
+                    0.0f
                 );
                 GameObject.Instance.SpriteBatch.Draw(
-                    pixelWhite,                          // The sprite-sheet for the player
-                    new Vector2(x, y),                        // The position for the player
-                    new Rectangle(0, 0, 1 * (int)Math.Clamp((int)Math.Round(health, MidpointRounding.AwayFromZero), 0, max) * (int)xSize, (int)ySize),                       // The scale and bounding box for the animation
-                    new Color(frontColor, 0.9f),                     // The color for the palyer
-                    0.0f,                            // There cannot be any rotation of the player
-                    Vector2.Zero,                    // Starting render position
-                    1.0f,                      // The scale of the sprite
-                    SpriteEffects.None,              // Which direction the sprite faces
-                    0.0f                             // Layer depth of the player is 0.0
+                    pixelWhite,
+                    new Vector2(x, y),
+                    new Rectangle(0, 0, 1 * (int)Math.Clamp((int)Math.Round(health, MidpointRounding.AwayFromZero), 0, max) * (int)xSize, (int)ySize),
+                    new Color(frontColor, 0.9f),
+                    0.0f,
+                    Vector2.Zero,
+                    1.0f,
+                    SpriteEffects.None,
+                    0.0f
                 );
             };
         }
 
+        /// <summary>
+        ///  Enables godmode
+        /// </summary>
         public static void EnableGodMode()
         {
             Player.PlayerInstance.godMode = true;
         }
 
+        /// <summary>
+        ///  Disables god mdoe
+        /// </summary>
         public static void DisableGodMode()
         {
             Player.PlayerInstance.godMode = false;
         }
 
-        public void Reset()
+        /// <summary>
+        ///  Resets the player instacne
+        /// </summary>
+        public new void Reset()
         {
             playerInstance = null;
         }
