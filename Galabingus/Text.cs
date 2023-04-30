@@ -18,7 +18,11 @@ namespace Galabingus
     internal class Text : UIElement
     {
 
+        #region Events
+
         public event TextEvent UpdateText;
+
+        #endregion
 
         #region CTOR
 

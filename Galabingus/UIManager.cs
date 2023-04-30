@@ -79,10 +79,6 @@ namespace Galabingus
     {
         #region Fields
 
-        private bool reset;
-
-        private double fadeValue;
-
         //the instance of the UIManager
         private static UIManager instance = null;
 
@@ -147,10 +143,12 @@ namespace Galabingus
         bool displayMenu;
         List<UIElement> menuToDisplay;
 
-        private bool prevBossOnScreen;
-
         bool currentActive;
         bool previousActive;
+
+        private bool reset;
+
+        private bool prevBossOnScreen;
 
         float masterVolume;
 
@@ -380,16 +378,9 @@ namespace Galabingus
             button = AddButton("buttonOptions_base_strip1", 0.6f,
             new Vector2(width / 2 + 30, height / 2 + 200),
             event1, event2, menu);
+            button.DisplayMenu = optionsMenu;
 
             button.HoverTexture = cm.Load<Texture2D>("buttonOptions_hover_strip1");
-
-            AddText(
-                "arial_18",
-                "sorry, you just gotta get good",
-                new Vector2(width / 2, height / 2),
-                Color.White, textEvent1, optionsMenu);
-
-            button.DisplayMenu = optionsMenu;
 
             //credits button
             button = AddButton("buttonCredits_base_strip1", 0.6f,
@@ -409,11 +400,6 @@ namespace Galabingus
             AddBackground("galabinguslogo_strip1", 5,
                 new Vector2(width / 2, height / 4),
                 menu);
-
-            //Pause Text
-            AddText("arial_36", "Pause",
-                new Vector2(width / 2 - 200,
-                height / 2 - 200), Color.White, textEvent1, pause);
 
             AddBackground("pauseMenu_strip1", 2f,
                 new Vector2(width / 2, height / 2), pause);
@@ -440,6 +426,24 @@ namespace Galabingus
             event1, event2, pause);
 
             button.HoverTexture = cm.Load<Texture2D>("resumeButton_hover_strip1");
+
+            //options menu
+            AddBackground("OptionsMenu_strip1", 0.4f,
+                new Vector2(width / 2, height / 2 - 50),
+                optionsMenu);
+
+            AddSlider("SliderBack_strip1", "SliderKnob_strip1", 0.9f,
+                new Vector2(width / 2 + 95, height / 2 - 195),
+                AdjustVolume, optionsMenu);
+
+
+            AddToggle("ToggleOn_strip1", "ToggleOff_strip1", 0.4f,
+                new Vector2(width / 2 + 100, height / 2 - 100),
+                EnableGodMode, DisableGodMode, optionsMenu);
+
+            AddToggle("ToggleOn_strip1", "ToggleOff_strip1", 0.4f,
+                new Vector2(width / 2 + 100, height / 2 + 100),
+                EnableColliders, DisableColliders, optionsMenu);
 
             //GameOver
             AddBackground("deathTitle_strip1", 1f,
@@ -776,6 +780,33 @@ namespace Galabingus
             button.UITexture = button.BaseTexture;
         }
 
+        private void EnableGodMode(object sender)
+        {
+            Player.EnableGodMode();
+        }
+
+        private void DisableGodMode(object sender)
+        {
+            Player.DisableGodMode();
+        }
+
+        private void EnableColliders(object sender)
+        {
+            Collider.EnableCollisionDebug();
+        }
+
+        private void DisableColliders(object sender)
+        {
+            Collider.DisableCollisionDebug();
+        }
+
+        private void AdjustVolume(object sender)
+        {
+            Slider slider = (Slider)sender;
+
+            masterVolume = slider.ReturnPercentage;
+        }
+
         #endregion
 
         #region Element Creation
@@ -801,6 +832,31 @@ namespace Galabingus
             listToAdd.Add(button);
 
             return button;
+        }
+
+        /// <summary>
+        /// creates a UIElement and adds it to the list elements
+        /// </summary>
+        /// <param name="uiObject">the ui object / element</param>
+        /// <param name="gs">the gamestate the element exists in</param>
+        /// <param name="uiEvent">the data which it needs for its events</param>
+        /// <param name="types">the event types it can call</param>
+        private Toggle AddToggle
+            (string filenameOn, string filenameOff, float scale, Vector2 position, EventDelegate enabled, EventDelegate disabled, List<UIElement> listToAdd)
+        {
+            //create the button texture
+            Texture2D textureOn = cm.Load<Texture2D>(filenameOn);
+            Texture2D textureOff = cm.Load<Texture2D>(filenameOff);
+
+            //create the button
+            Toggle toggle = new Toggle(textureOff, textureOn, position, scale);
+
+            toggle.OnEnable += enabled;
+            toggle.OnDisable += disabled;
+
+            listToAdd.Add(toggle);
+
+            return toggle;
         }
 
         private Button AddButton
@@ -1002,7 +1058,7 @@ namespace Galabingus
             return textList;
         }
 
-        public Slider AddSlider(string back, string knotch, float scale, Vector2 position, List<UIElement> listToAdd)
+        public Slider AddSlider(string back, string knotch, float scale, Vector2 position, EventDelegate slideEvent, List<UIElement> listToAdd)
         {
             //create the menus texture
             Texture2D backTexture = cm.Load<Texture2D>(back);
@@ -1010,6 +1066,8 @@ namespace Galabingus
 
             //create the button
             Slider slider = new Slider(backTexture, knotchTexture, position, scale);
+
+            slider.OnSlide += slideEvent;
 
             listToAdd.Add(slider);
 
@@ -1055,6 +1113,12 @@ namespace Galabingus
 
                     slider.Update();
                 }
+                else if (element is Toggle)
+                {
+                    Toggle toggle = (Toggle)element;
+
+                    toggle.Update();
+                }
             }
         }
 
@@ -1092,6 +1156,12 @@ namespace Galabingus
                     Slider slider = (Slider)element;
 
                     slider.Draw(sb);
+                }
+                else if (element is Toggle)
+                {
+                    Toggle toggle = (Toggle)element;
+
+                    toggle.Draw(sb);
                 }
             }
 
@@ -1159,7 +1229,6 @@ namespace Galabingus
                         }
                         switchedButton = true;
                     }
-
                 }
             }
             if (switchedButton)
@@ -1176,55 +1245,5 @@ namespace Galabingus
 
         #endregion
 
-        #region FileIO Helpers
-
-        /// <summary>
-        /// reads in a level file and creates a list of a certain element within it
-        /// </summary>
-        /// <param name="type">the type of data you want returned</param>
-        /// <returns>a list of a certain type of data</returns>
-        public List<int[]> LevelReader(TileType type)
-        {
-            //a new stream reader from a level file
-            reader = new StreamReader("Content/level1.level");
-
-            if (!reader.EndOfStream)
-            {
-                //read the line, split it to a list of string
-                string line = reader.ReadLine();
-                string[] s_values = line.Split('|');
-                int[] i_values = new int[s_values.Length];
-
-                //parse the list of strings to a list of ints
-                for (int i = 0; i < s_values.Length; i++)
-                {
-                    i_values[i] = int.Parse(s_values[i]);
-                }
-
-                //add integer list to the overall list
-                objectData.Add(i_values);
-            }
-
-            //a list to return the desired values
-            List<int[]> returnList = new List<int[]>();
-
-            //determines what values of object data should be returned
-            foreach (int[] value in objectData)
-            {
-                if (value[0] == (int)type)
-                {
-                    returnList.Add(value);
-                }
-            }
-
-            //clears object data for the next time
-            objectData.Clear();
-
-            //returns the list of desired values
-            return returnList;
-        }
-
-            #endregion
-
-        }
     }
+}
