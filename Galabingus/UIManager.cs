@@ -12,6 +12,7 @@ using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Diagnostics;
 using System.Xml.Linq;
+using Microsoft.Xna.Framework.Media;
 
 namespace Galabingus
 {
@@ -587,6 +588,8 @@ namespace Galabingus
                     if (SingleKeyPress(Keys.Tab))
                     {
                         gs = GameState.Pause;
+                        MediaPlayer.Pause();
+                        AudioManager.Instance.CallSound("Pause");
                     }
 
                     //if boss health = 0
@@ -595,6 +598,8 @@ namespace Galabingus
                     {
                         gs = GameState.PlayerWins;
                         timedPassed = 0;
+                        MediaPlayer.Stop();
+                        AudioManager.Instance.CallSound("Victory");
                     }
 
                     prevBossOnScreen = EnemyManager.Instance.BossOnScreen;
@@ -605,6 +610,8 @@ namespace Galabingus
                     {
                         gs = GameState.PlayerDead;
                         timedPassed = 0;
+                        MediaPlayer.Stop();
+                        AudioManager.Instance.CallSound("Game Over");
                     }
 
 
@@ -628,6 +635,7 @@ namespace Galabingus
                     if (SingleKeyPress(Keys.Tab))
                     {
                         gs = GameState.Game;
+                        MediaPlayer.Resume();
                     }
 
                     break;
@@ -725,6 +733,7 @@ namespace Galabingus
         private void StartGame(object sender)
         {
             gs = GameState.Game;
+            AudioManager.Instance.CallMusic("Background Music");
         }
 
         private void ReturnMenu(object sender)
@@ -1207,6 +1216,7 @@ namespace Galabingus
                         if (Math.Abs(selectedButton - element.UIPosition.Y) < Math.Abs(selectedButton - closeButton))
                         {
                             closeButton = element.UIPosition.Y;
+                            AudioManager.Instance.CallSound("Menu Select");
                         }
                         switchedButton = true;
                     }
@@ -1215,6 +1225,7 @@ namespace Galabingus
                         if (Math.Abs(selectedButton - element.UIPosition.Y) < Math.Abs(selectedButton - closeButton))
                         {
                             closeButton = element.UIPosition.Y;
+                            AudioManager.Instance.CallSound("Menu Select");
                         }
                         switchedButton = true;
                     }

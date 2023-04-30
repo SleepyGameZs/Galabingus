@@ -26,7 +26,8 @@ namespace Galabingus
 
         public float Volume
         {
-            get { return volune; } 
+            get { return volune; }
+            set { volune = value; }
         }
 
         public SoundEffect SoundEffect

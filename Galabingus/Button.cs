@@ -81,6 +81,7 @@ namespace Galabingus
         {
             if (uiPosition.Y == UIManager.Instance.ButtonSelection && (UIManager.Instance.SingleKeyPress(Keys.Enter) || UIManager.Instance.SingleKeyPress(Keys.Space)))
             {
+                AudioManager.Instance.CallSound("Menu Confirm");
                 if (OnClick != null)
                     OnClick(this);
             }

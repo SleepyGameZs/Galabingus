@@ -175,7 +175,7 @@ namespace Galabingus
                 {
                     float healthBefore = PlayerInstance.health;
                     float healthAfter = value;
-                    //PlayerInstance.health = (healthAfter - healthBefore) > healthBefore ? 0.20f + healthBefore : healthBefore + (healthAfter - healthBefore) * 0.60f;
+                    PlayerInstance.health = (healthAfter - healthBefore) > healthBefore ? 0.20f + healthBefore : healthBefore + (healthAfter - healthBefore) * 0.60f;
 
                     if ((healthAfter - healthBefore) < 0)
                     {
@@ -185,13 +185,12 @@ namespace Galabingus
                             triggeredIFrame = true;
                         }
                     }
-                    /*
+                    
                     if (health > 4.5f && ((healthAfter - healthBefore) >= healthBefore))
                     {
                         health = 5;
                     }
-                    */
-                    PlayerInstance.health = value;
+                    AudioManager.Instance.CallSound("Hit");
                 }
             }
         }
@@ -1040,6 +1039,7 @@ namespace Galabingus
             if (bigShot && (bigShotTotalTime >= bigShotDuration))
             {
                 realeaseHold = true;
+                AudioManager.Instance.CallSoundOnce("Charge");
             }
 
             if (realeaseHold && currentKeyboardState.IsKeyUp(Keys.Space))
@@ -1047,6 +1047,7 @@ namespace Galabingus
                 realeaseHold = false;
                 bigShooting = true;
                 BigShot();
+                AudioManager.Instance.StopSound("Charge");
             }
 
             if (!bigShot || godMode)
