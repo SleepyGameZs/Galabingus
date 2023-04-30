@@ -73,7 +73,6 @@ namespace Galabingus
         BaseGameOver
     }
 
-
     #endregion
 
     sealed class UIManager
@@ -441,11 +440,86 @@ namespace Galabingus
 
             //----------------------------Create the Credits Background----------------------------//
 
+            AddBackground("CreditsMenu_strip1", 0.4f,
+                new Vector2(width / 2, height / 2 - 50),
+                creditsMenu);
+
+            //----------------------------Create the Credits Text----------------------------//
+
+            string font = "arial_12";
+            int leftAdjust = 195;
+            int lineCapacity = 48;
+            int spacing = 20;
+            Color color = Color.LightGray;
+
             AddText(
-                "arial_18",
-                "gamer",
-                new Vector2(width / 2, height / 2),
-                Color.White, null, creditsMenu);
+                "arial_18", "Art",
+                new Vector2(width / 2 - leftAdjust, height / 2 - 230),
+                color, null, creditsMenu);
+
+            AddText(
+                font, "Game Art - Zane Smith",
+                new Vector2(width / 2 - leftAdjust, height / 2 - 200),
+                lineCapacity, spacing, color, creditsMenu);
+
+            AddText(
+                font, "UI Art - Shawn Roller",
+                new Vector2(width / 2 - leftAdjust, height / 2 - 175),
+                lineCapacity, spacing, color, creditsMenu);
+
+            AddText(
+                font,
+                "Pixel Keys - https://joshuajennerdev.itch.io/pixel-keys-x16\r\n",
+                new Vector2(width / 2 - leftAdjust, height / 2 - 150),
+                lineCapacity, spacing, color, creditsMenu);
+
+            AddText(
+                "arial_18","Audio",
+                new Vector2(width / 2 - leftAdjust, height / 2 - 105),
+                color, null, creditsMenu);
+
+            AddText(
+                font,"Splitter - Undertale",
+                new Vector2(width / 2 - leftAdjust, height / 2 - 75),
+                lineCapacity, spacing, color, creditsMenu);
+
+            AddText(
+                font, "All Other Bullets - 1001 Sounds ",
+                new Vector2(width / 2 - leftAdjust, height / 2 - 50),
+                lineCapacity, spacing, color, creditsMenu);
+
+            AddText(
+                font, "Player Hit -  https://pixabay.com/users/edr-1177074/",
+                new Vector2(width / 2 - leftAdjust, height / 2 - 25),
+                lineCapacity, spacing, color, creditsMenu);
+
+            AddText(
+                font,
+                "Charging - https://pixabay.com/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=37395%22%3EPixabay",
+                new Vector2(width / 2 - leftAdjust, height / 2),
+                lineCapacity, spacing, color, creditsMenu);
+
+            AddText(
+                font, "Game Over and Pause GFX Sounds -  https://gfxsounds.com/free-sound-effects/",
+                new Vector2(width / 2 - leftAdjust, height / 2 + 65),
+                lineCapacity, spacing, color, creditsMenu);
+
+            AddText(
+                font,
+                "Victory - https://pixabay.com/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=6993%22%3EPixabay",
+                new Vector2(width / 2 - leftAdjust, height / 2 + 110),
+                lineCapacity, spacing, color, creditsMenu);
+
+            AddText(
+                font,
+                "Menu Confirm - https://pixabay.com/sound-effects/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=6104%22%3EPixabay",
+                new Vector2(width / 2 - leftAdjust, height / 2 + 175),
+                lineCapacity, spacing, color, creditsMenu);
+
+            AddText(
+                font,"Menu Selection - Mixkit.co no author",
+                new Vector2(width / 2 - leftAdjust, height / 2 + 253),
+                lineCapacity, spacing, color, creditsMenu);
 
             //----------------------------Create the Credits Back Button----------------------------//
 
@@ -1227,11 +1301,10 @@ namespace Galabingus
                         break;
                     }
                     //if you hit a space, make that the final point
-                    if (content[i] == ' ')
+                    if (i + 1 == lineCapacity)
                     {
                         finalPoint = i;
                     }
-
                 }
 
                 //create a substring up to the final point and add it to the list of strings
