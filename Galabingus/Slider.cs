@@ -30,6 +30,12 @@ namespace Galabingus
         float unitLength;
         float returnPercentage;
 
+        Vector2 knotchBase;
+        Vector2 knotchHover;
+
+        Vector2 backBase;
+        Vector2 backHover;
+
         int difference;
 
         bool hover;
@@ -70,6 +76,12 @@ namespace Galabingus
                     width
                 );
 
+            knotchBase = new Vector2(knotchPosition.Width, knotchPosition.Height);
+            knotchHover = new Vector2(knotchPosition.Width * 1.1f, knotchPosition.Height * 1.1f);
+
+            backBase = new Vector2(uiPosition.Width, uiPosition.Height);
+            backHover = new Vector2(uiPosition.Width * 1.1f, uiPosition.Height * 1.1f);
+
             hover = false;
 
         }
@@ -85,14 +97,14 @@ namespace Galabingus
             {
                 knotchPosition.X = knotchPosition.X + 20;
 
-                if (knotchPosition.X + unitLength >= uiPosition.X + (uiTexture.Width / scale) * 1.1)
+                if (knotchPosition.X + unitLength >= uiPosition.X + uiPosition.Width)
                 {
-                    knotchPosition.X = (int)(uiPosition.X + ((int)(uiTexture.Width / scale)) * 1.1) - (int)unitLength;
+                    knotchPosition.X = (int)(uiPosition.X + uiPosition.Width - unitLength);
                     returnPercentage = 1;
                 }
                 else
                 {
-                    returnPercentage = (currentMS.Position.X - prevMS.Position.X) / unitLength;
+                    returnPercentage = (knotchPosition.X - uiPosition.X) / (uiPosition.Width - unitLength);
                 }
 
                 if (OnSlide != null)
@@ -109,7 +121,7 @@ namespace Galabingus
                 }
                 else
                 {
-                    returnPercentage = knotchPosition.X - uiPosition.X / (uiPosition.Width - unitLength);
+                    returnPercentage = (knotchPosition.X - uiPosition.X) / (uiPosition.Width - unitLength);
                 }
 
                 if (OnSlide != null)
@@ -120,13 +132,13 @@ namespace Galabingus
             {
                 if(!hover)
                 {
-                    knotchPosition.Width = (int)(knotchPosition.Width * 1.1);
-                    knotchPosition.Height = (int)(knotchPosition.Height * 1.1);
+                    knotchPosition.Width = (int)knotchHover.X;
+                    knotchPosition.Height = (int)knotchHover.Y;
 
-                    uiPosition.Width = (int)(uiPosition.Width * 1.1);
-                    uiPosition.Height = (int)(uiPosition.Height * 1.1);
+                    uiPosition.Width = (int)backHover.X;
+                    uiPosition.Height = (int)backHover.Y;
 
-                    knotchPosition.X = knotchPosition.X + (int)((unitLength / 1.1) * returnPercentage);
+                    knotchPosition.X = uiPosition.X + (int)((uiPosition.Width - unitLength) * returnPercentage);
 
                     hover = true;
                 }
@@ -135,13 +147,13 @@ namespace Galabingus
             {
                 if (hover)
                 {
-                    knotchPosition.Width = (int)(knotchPosition.Width / 1.1);
-                    knotchPosition.Height = (int)(knotchPosition.Height / 1.1);
+                    knotchPosition.Width = (int)knotchBase.X;
+                    knotchPosition.Height = (int)knotchBase.Y;
 
-                    uiPosition.Width = (int)(uiPosition.Width / 1.1);
-                    uiPosition.Height = (int)(uiPosition.Height / 1.1);
+                    uiPosition.Width = (int)backBase.X;
+                    uiPosition.Height = (int)backBase.Y;
 
-                    knotchPosition.X = knotchPosition.X - (int)((difference / 1.1) * returnPercentage);
+                    knotchPosition.X = uiPosition.X + (int)((uiPosition.Width - (unitLength / 1.1)) * returnPercentage);
 
                     hover = false;
                 }

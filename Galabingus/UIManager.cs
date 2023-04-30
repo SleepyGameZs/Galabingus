@@ -134,24 +134,33 @@ namespace Galabingus
         List<UIElement> gameOver;
         List<UIElement> victory;
 
+        //the stack which holds the current set of menus
         Stack<List<UIElement>> currentMenu;
+
+        //the dictionary containing the base set of ui states
         Dictionary<GameState, List<UIElement>> gameStates;
+
+        //the current action being taken by the UI
+        //(0 - nothing, 1 - pop a layer, 2 - push a layer)
         int menuState;
 
         //for unique menus
         bool displayMenu;
         List<UIElement> menuToDisplay;
 
-        bool currentActive;
-        bool previousActive;
-
+        //represents of the game is being reset
         private bool reset;
 
+        //represents is the boss was previously on screen
         private bool prevBossOnScreen;
 
+        //a float between 0 and 1 representing the current volume
         float masterVolume;
 
+        //the time (in frames) it takes for the game to transition to the death state
         const int changeState = 80;
+
+        //the current amount of frames passed
         int timedPassed;
 
         #endregion
@@ -269,12 +278,13 @@ namespace Galabingus
             ds = new DebugState();
             cs = new UIControlState();
 
-            pgs = gs;
-
             //set the base game and debug states
             gs = GameState.Menu;
             ds = DebugState.DebugOn;
             cs = UIControlState.Mouse;
+
+            //set the previous gameState to the current
+            pgs = gs;
 
             //list of menu levels
             currentMenu = new Stack<List<UIElement>>();
@@ -305,7 +315,10 @@ namespace Galabingus
             width = gr.GraphicsDevice.Viewport.Width;
             height = gr.GraphicsDevice.Viewport.Height;
 
+            //set the boss being on screen to false to start
             prevBossOnScreen = false;
+
+            //set the menustate to base
             menuState = 0;
         }
 
@@ -332,11 +345,10 @@ namespace Galabingus
             Texture2D texture;
             Slider slider;
 
-            //different menus
+            //sub menus
             List<UIElement> howToPlayMenu = new List<UIElement>();
             List<UIElement> optionsMenu = new List<UIElement>();
             List<UIElement> creditsMenu = new List<UIElement>();
-
 
             //more dummy variables
             EventDelegate event1;
@@ -520,7 +532,6 @@ namespace Galabingus
             //set the keyboardstate
             currentKBS = Keyboard.GetState();
             currentMS = Mouse.GetState();
-            currentActive = keyboardIsActive;
 
 
             //if the back key is pressed and the current level isn't the base one
@@ -679,7 +690,6 @@ namespace Galabingus
             //set the previous KeyboardState to the current one for next frame
             previousKBS = currentKBS;
             previousMS = currentMS;
-            previousActive = currentActive;
             pgs = gs;
         }
 

@@ -28,6 +28,9 @@ namespace Galabingus
         Texture2D enabledTexture;
         Texture2D disabledTexture;
 
+        Vector2 sizeBase;
+        Vector2 sizeHover;
+
         #endregion
 
         #region CTOR
@@ -39,6 +42,9 @@ namespace Galabingus
 
             this.disabledTexture = disabledTexture;
             this.enabledTexture = enabledTexture;
+
+            sizeBase = new Vector2(uiPosition.Width, uiPosition.Height);
+            sizeHover = new Vector2(uiPosition.Width * 1.1f, uiPosition.Height * 1.1f);
         }
 
         #endregion
@@ -69,8 +75,8 @@ namespace Galabingus
             {
                 if (!hover)
                 {
-                    uiPosition.Width = (int)(uiPosition.Width * 1.1);
-                    uiPosition.Height = (int)(uiPosition.Height * 1.1);
+                    uiPosition.Width = (int)(sizeHover.X);
+                    uiPosition.Height = (int)(sizeHover.Y);
 
                     hover = true;
                 }
@@ -79,8 +85,8 @@ namespace Galabingus
             {
                 if(hover)
                 {
-                    uiPosition.Width = (int)(uiPosition.Width / 1.1);
-                    uiPosition.Height = (int)(uiPosition.Height / 1.1);
+                    uiPosition.Width = (int)(sizeBase.X);
+                    uiPosition.Height = (int)(sizeBase.Y);
 
                     hover = false;
                 }
