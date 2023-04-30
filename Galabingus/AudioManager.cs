@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -52,9 +53,9 @@ namespace Galabingus
             {
                 if (sounds[i].Name == name)
                 {
-                    //sounds[i].Volume = sounds[i].Volume * UIManager.Instance.MasterVolume;
                     sounds[i].CreateInstance();
-                    RunSound(sounds[i].Volume, sounds[i].SoundEffect, sounds[i].AudioInstance);
+                    sounds[i].AudioInstance.Volume = sounds[i].Volume * UIManager.Instance.MasterVolume;
+                    RunSound(sounds[i].AudioInstance.Volume, sounds[i].SoundEffect, sounds[i].AudioInstance);
                 }
             }
         }
@@ -65,19 +66,20 @@ namespace Galabingus
             {
                 if (sounds[i].Name == name)
                 {
-                    //sounds[i].Volume = sounds[i].Volume * UIManager.Instance.MasterVolume;
-                    RunSound(sounds[i].Volume, sounds[i].SoundEffect, sounds[i].AudioInstance);
+                    sounds[i].AudioInstance.Volume = sounds[i].Volume * UIManager.Instance.MasterVolume;
+                    RunSound(sounds[i].AudioInstance.Volume, sounds[i].SoundEffect, sounds[i].AudioInstance);
                 }
             }
         }
 
         public void CallMusic(string name)
         {
+            MediaPlayer.Volume = 1f;
             for(int i = 0;i < songCollection.Count; i++) 
             {
                 if (songCollection[i].Name == name && MediaPlayer.State != MediaState.Playing)
                 {
-                    MediaPlayer.Volume = UIManager.Instance.MasterVolume;
+                    MediaPlayer.Volume = MediaPlayer.Volume * UIManager.Instance.MasterVolume;
                     MediaPlayer.Play(songCollection[i]);
                 }
             }
