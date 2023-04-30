@@ -29,11 +29,20 @@ namespace Galabingus
         /// <summary>
         /// instantiates a basic button
         /// </summary>
-        /// <param name="position">its position rectangle</param>
+        /// <param name="font">the font to be used</param>
+        /// <param name="text">the text to be displayed</param>
+        /// <param name="position">the x y position</param>
         public Text
             (SpriteFont font, string text, Vector2 position)
             : base(font, text, position) { }
 
+        /// <summary>
+        /// instantiates a button with colored text
+        /// </summary>
+        /// <param name="font">the font to be used</param>
+        /// <param name="text">the text to be displayed</param>
+        /// <param name="position">the x y position</param>
+        /// <param name="clearColor">the color of the text</param>
         public Text
             (SpriteFont font, string text, Vector2 position, Color clearColor)
             : base(font, text, position)
@@ -45,12 +54,19 @@ namespace Galabingus
 
         #region Methods
 
+        /// <summary>
+        /// updates the texts content
+        /// </summary>
         public override void Update()
         {
             if(UpdateText != null)
                 UpdateText();
         }
 
+        /// <summary>
+        /// draws the text to screen
+        /// </summary>
+        /// <param name="sb">the spriteBatch of the game</param>
         public override void Draw(SpriteBatch sb)
         {
             sb.DrawString(

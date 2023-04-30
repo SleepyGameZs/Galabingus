@@ -34,6 +34,9 @@ namespace Galabingus
 
         #region Properties
 
+        /// <summary>
+        /// gets and sets the tint of the UIElement
+        /// </summary>
         public Color ClearColor { 
 
             get { return clearColor; } 
@@ -41,6 +44,9 @@ namespace Galabingus
 
         }
 
+        /// <summary>
+        /// gets and sets the current texture of the UIElement
+        /// </summary>
         public Texture2D UITexture { 
             
             get { return uiTexture; } 
@@ -48,11 +54,19 @@ namespace Galabingus
         
         }
 
+        /// <summary>
+        /// gets the current x y position of UIElement
+        /// </summary>
         public Vector2 UIPosition
         {
             get { return new Vector2(uiPosition.X, uiPosition.Y); }
         }
 
+        //Text Object specific stuff
+
+        /// <summary>
+        /// gets and sets the value of the text
+        /// </summary>
         public string UIText { 
 
             get { return uiText; } 
@@ -60,6 +74,9 @@ namespace Galabingus
         
         }
 
+        /// <summary>
+        /// gets and sets the x y position of the text object
+        /// </summary>
         public Vector2 UITextPosition { 
 
             get { return uiTextPosition; } 
@@ -72,7 +89,7 @@ namespace Galabingus
         #region Constructor
 
         /// <summary>
-        /// creates a basic UIObject
+        /// creates a basic UIElement
         /// </summary>
         /// <param name="uiTexture">the objects texture</param>
         /// <param name="position">the objects position</param>
@@ -95,9 +112,16 @@ namespace Galabingus
                     width
                 );
 
+            //sets the tint to white
             clearColor = Color.White;
         }
 
+        /// <summary>
+        /// creates a new basic text object
+        /// </summary>
+        /// <param name="uiFont"></param>
+        /// <param name="uiText"></param>
+        /// <param name="position"></param>
         public UIElement(SpriteFont uiFont, string uiText, Vector2 position)
         {
             this.uiFont = uiFont;
@@ -110,8 +134,15 @@ namespace Galabingus
 
         #region Methods
 
+        /// <summary>
+        /// Updates the UIElement when called
+        /// </summary>
         public abstract void Update();
 
+        /// <summary>
+        /// Draws the UIELement when called
+        /// </summary>
+        /// <param name="sb">the games spriteBatch</param>
         public abstract void Draw(SpriteBatch sb);
         #endregion
     }
