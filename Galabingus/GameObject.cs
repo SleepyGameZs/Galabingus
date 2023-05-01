@@ -1346,7 +1346,7 @@ namespace Galabingus
             GameObject.Instance.instance = instanceNumber;
             string path = GameObject.ObjectEnumsI[contentName];
             GameObject.Instance.index = contentName;
-            string start = "../../../Content";
+            string start = "Content";
             string[] files = Directory.GetFiles(start, path + ".*", SearchOption.AllDirectories);
             files[0] = files[0].Replace(start, "");
             files[0] = files[0].Replace("\\", "/");
@@ -1366,7 +1366,7 @@ namespace Galabingus
             GameObject.Instance.instance = instanceNumber;
             string path = GameObject.ObjectEnumsI[contentName];
             GameObject.Instance.index = contentName;
-            string start = "../../../Content";
+            string start = "Content";
             string[] files = Directory.GetFiles(start, path + ".*", SearchOption.AllDirectories);
             files[0] = files[0].Replace(start, "");
             files[0] = files[0].Replace("\\", "/");
@@ -1429,7 +1429,7 @@ namespace Galabingus
             CollisionGroupISet(contentName, instanceNumber, collisionGroup);
             this.collisionGroup = collisionGroup;
             string path = GameObject.ObjectEnumsI[contentName];
-            string start = "../../../Content";
+            string start = "Content";
             string[] files = Directory.GetFiles(start, path + ".*", SearchOption.AllDirectories);
             files[0] = files[0].Replace(start, "");
             files[0] = files[0].Replace("\\", "/");
@@ -1841,7 +1841,7 @@ namespace Galabingus
         public void LoadTileLevelFile(string fileName)
         {
             // Read the level file
-            StreamReader reader = new StreamReader("../../../" + fileName);
+            StreamReader reader = new StreamReader("" + fileName);
             int lineNumber = 0;
             int width = 0;
             int height = 0;
@@ -1910,7 +1910,7 @@ namespace Galabingus
         {
             // Read a level file
             List<int[]> enemies = new List<int[]>();
-            StreamReader reader = new StreamReader("../../../" + fileName);
+            StreamReader reader = new StreamReader("" + fileName);
             int lineNumber = 0;
             int width = 0;
             int height = 0;
