@@ -8,6 +8,9 @@ using System.Windows.Forms;
 
 namespace Galabingus_Map_Editor
 {
+    //Justin Tong
+    //4/30/2023
+    //The Map Editor Screen that makes an editable map win a 9 x 36 with a little under 40 usable tiles for the editor, with a function saving and loading
     public partial class MapEditorScreen : Form
     {
         private List<PictureBox> boxes = new List<PictureBox>();
@@ -39,7 +42,9 @@ namespace Galabingus_Map_Editor
         //Stores all the changes to the picture boxes for each page
         private List<ImageData> boxImages;
 
-        //private List<List<int>> pageData;
+        #region Constructors
+
+        //The constructor used for 
         public MapEditorScreen(bool load)
         {
             InitializeComponent();
@@ -57,6 +62,7 @@ namespace Galabingus_Map_Editor
             LoadFile();
         }
 
+        //The contructor used for creating a new and empty editor
         public MapEditorScreen(int pixelDensity)
         {
             InitializeComponent();
@@ -91,6 +97,7 @@ namespace Galabingus_Map_Editor
 
         }
 
+        //
         public MapEditorScreen()
         {
             InitializeComponent();
@@ -104,6 +111,15 @@ namespace Galabingus_Map_Editor
             MapDraw();
         }
 
+        #endregion
+        /// <summary>
+        /// Matches the image to the same image
+        /// </summary>
+        /// <param name="image">The image thats being referenced</param>
+        /// <returns>
+        /// Returns the ImageData of that image
+        /// or the first image
+        /// </returns>
         private ImageData MatchImageData(System.Drawing.Image image)
         {
             foreach(ImageData img in tileSet)
@@ -117,6 +133,11 @@ namespace Galabingus_Map_Editor
             return tileSet[0];
         }
 
+        /// <summary>
+        /// Matches the number inputed to the image with the ID number
+        /// </summary>
+        /// <param name="image">The number that represents an image</param>
+        /// <returns>returns the image based on the index, or just a empty one</returns>
         private ImageData MatchImageData(int image)
         {
             foreach (ImageData img in tileSet)
@@ -130,6 +151,12 @@ namespace Galabingus_Map_Editor
             return tileSet[0];
         }
 
+        #region Buttons
+
+        //Buttons
+        //The buttons that make up the tile selector and the Save and Load Buttons 
+
+        #region Selector Buttons
         //Button 1
         private void pictureBox1_Click(object sender, EventArgs e)
         {
@@ -199,7 +226,9 @@ namespace Galabingus_Map_Editor
             pictureBox11.Image = pictureBox10.Image;
             currentSelected = MatchImageData(pictureBox10.Image);
         }
-       
+
+        #endregion
+
         //Save Button
         private void button14_Click(object sender, EventArgs e)
         {
@@ -211,6 +240,8 @@ namespace Galabingus_Map_Editor
         {
             LoadFile();
         }
+
+        //The buttons that can change the page of the selectable
 
         //Left Change Selectable
         private void button13_Click(object sender, EventArgs e)
@@ -224,6 +255,13 @@ namespace Galabingus_Map_Editor
             ChangeSelectable(1);
         }
 
+        #endregion
+
+        /// <summary>
+        /// The method that allows the edit of the picture boxes in the editor
+        /// </summary>
+        /// <param name="tile">The picture box being clicked on</param>
+        /// <param name="click">Detects if the mouse is being clicked</param>
         private void ImageChanger(object tile, EventArgs click)
         {
             if (tile != null)
@@ -236,6 +274,9 @@ namespace Galabingus_Map_Editor
             }
         }
 
+        /// <summary>
+        /// Draws a blank map editor while adding the picture boxes to needed events
+        /// </summary>
         private void MapDraw()
         {
             /*
@@ -277,32 +318,51 @@ namespace Galabingus_Map_Editor
             mapGroup.MouseLeave += ResetMouse;
         }
 
+        /// <summary>
+        /// Clears the whole editor with only a blank editor remaining
+        /// </summary>
+        private void ClearEditor()
+        {
+            for (int x = 0; x < totalHeight * totalWidth; x++)
+            {
+                boxes[x].Image = null;
+            }
+        }
+
+        #region Drag Click
+        //The methods used to allow for dragging on the map editor 
+
+
+        /// <summary>
+        /// throws an Exception if te mouse has entered a tile box
+        /// </summary>
+        /// <exception cref="NotImplementedException"></exception>
         private void TileBox_MouseEnter(object sender, EventArgs e)
         {
             throw new NotImplementedException();
         }
 
-        private void ResetMouse(
-            object sender,
-            EventArgs e
-        )
+        /// <summary>
+        /// sets drag to false
+        /// </summary>
+        private void ResetMouse(object sender,EventArgs e)
         {
             drag = false;
         }
 
-        private void MouseReady(
-            object sender,
-            EventArgs e
-        )
+        /// <summary>
+        /// sets drag to true while changing the capture value of the picuture box
+        /// </summary>
+        private void MouseReady(object sender,EventArgs e)
         {
             drag = true;
             ((PictureBox)sender).Capture = false;
         }
 
-        private void MouseDrag(
-            object sender,
-            EventArgs e
-        )
+        /// <summary>
+        /// if drag is true will change the image of the tile 
+        /// </summary>
+        private void MouseDrag(object sender,EventArgs e)
         {
             if (drag)
             {
@@ -311,9 +371,14 @@ namespace Galabingus_Map_Editor
             }
         }
 
+        #endregion
+
+        /// <summary>
+        /// adds the used images to a list and adds the images that would be used in the selectable list
+        /// </summary>
         private void ImageAdd()
         {
-
+            #region Adding Imagees
             tileSet.Add(new ImageData("", -1, null));
 
             //Enemy Sprites
@@ -363,6 +428,8 @@ namespace Galabingus_Map_Editor
             tileSet.Add(new ImageData("tile 25", 34, Properties.Resources.tile_strip26_25));
             tileSet.Add(new ImageData("tile 26", 35, Properties.Resources.tile_strip26_26));
 
+            #endregion
+
             spritePageSelect = new List<Image[]>();
 
             for (int x = 0; x < 4; x++)
@@ -382,20 +449,11 @@ namespace Galabingus_Map_Editor
                 spritePageSelect.Add(imageArray);
             }
 
-            /*
-            for (int x = 0; x < totalEditorPageNum; x++)
-            {
-                List<int> NewImage = new List<int>();
-                for (int y = 0; y < totalHeight * totalWidth; y++)
-                {
-                    NewImage.Add(-1);
-                }
-                
-                pageData.Add(NewImage);
-            }
-            */
         }
 
+        /// <summary>
+        /// Adds the buttons to a list to be accessed 
+        /// </summary>
         private void ButtonStuff()
         {
             buttonList = new PictureBox[]
@@ -423,7 +481,9 @@ namespace Galabingus_Map_Editor
 
 
 
-
+        /// <summary>
+        /// Changes the size of the tiles based on the pixel density 
+        /// </summary>
         private void TileSizeDet()
         {
             totalWidth = totalWidth * totalDensity;
@@ -433,6 +493,10 @@ namespace Galabingus_Map_Editor
             tileSize = (int) tileSize / totalDensity;
         }
 
+        /// <summary>
+        /// Changes the current selectable tiles
+        /// </summary>
+        /// <param name="change"></param>
         private void ChangeSelectable(int change) 
         {
             
@@ -448,12 +512,15 @@ namespace Galabingus_Map_Editor
             }
         }
 
-       
 
-        
 
-       
 
+        #region Save/Load Methods
+
+        /// <summary>
+        /// The Method that saves the map data to a .level file in the a location of choice
+        /// Saves map data inlcuding changes done to the map, the current pixel density
+        /// </summary>
         public void Savefile()
         {
             SaveFileDialog filesSave = new SaveFileDialog();
@@ -519,6 +586,10 @@ namespace Galabingus_Map_Editor
             }
         }
         
+        /// <summary>
+        /// Loads only .level files
+        /// reads in the in the pixel density and the map data that includes all changes done to the map
+        /// </summary>
         public void LoadFile()
         {
             boxes = new List<PictureBox>();
@@ -678,14 +749,9 @@ namespace Galabingus_Map_Editor
             ChangeSelectable(0);
         }
 
+        #endregion
 
-        private void ClearEditor()
-        {
-            for (int x = 0; x < totalHeight * totalWidth; x++)
-            {
-                boxes[x].Image = null;
-            }
-        }
+        
 
        
     }

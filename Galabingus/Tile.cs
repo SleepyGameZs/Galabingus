@@ -4,31 +4,33 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Diagnostics;
 
+/* Tiles act as barriers for bullets and the players, blocking
+ * the player's movement and destroing specific types of bullets.
+ * Tiles scroll with the camera and make up both the level and the background */
+
 namespace Galabingus
 {
     internal class Tile : GameObject
     {
-        // -------------------------------------------------
-        // Fields
-        // -------------------------------------------------
+        #region Fields
 
+        // Game object identifiers for asset and instance
         private ushort contentName;
         private ushort instanceNumber;
-        private ushort spriteNumber;
+
+        // Size of the tile
         private Vector2 scale;
+
+        // If the tile is active
         private bool isActive;
 
-        // -------------------------------------------------
-        // Properties
-        // -------------------------------------------------
+        #endregion
 
+        #region Game Object Properties
 
-
-        public ushort SpriteNumber
-        {
-            get { return spriteNumber;  }
-        }
-
+        /// <summary>
+        /// Instance identifier for the object
+        /// </summary>
         public ushort InstanceNumber
         {
             get
@@ -38,7 +40,7 @@ namespace Galabingus
         }
 
         /// <summary>
-        ///  Position of the player
+        ///  Position of the tile
         /// </summary>
         public Vector2 Position
         {
@@ -55,7 +57,7 @@ namespace Galabingus
         }
 
         /// <summary>
-        ///  Player sprite
+        ///  Tile sprite
         /// </summary>
         public Texture2D Sprite
         {
@@ -72,7 +74,7 @@ namespace Galabingus
         }
 
         /// <summary>
-        ///  Single Player sprite bounds
+        ///  Tile sprite bounds
         /// </summary>
         public Rectangle Transform
         {
@@ -89,7 +91,7 @@ namespace Galabingus
         }
 
         /// <summary>
-        ///  Scale of the palyer sprite
+        ///  Scale of the tile sprite
         /// </summary>
         public float Scale
         {
@@ -105,21 +107,8 @@ namespace Galabingus
             }
         }
 
-        public Vector2 ScaleVector
-        {
-            get
-            {
-                return scale;
-            }
-
-            set
-            {
-                scale = value;
-            }
-        }
-
         /// <summary>
-        ///  Player animation
+        ///  Tile animation
         /// </summary>
         public Animation Animation
         {
@@ -136,7 +125,7 @@ namespace Galabingus
         }
 
         /// <summary>
-        ///  Player collider
+        ///  Tile collider
         /// </summary>
         public Collider Collider
         {
@@ -152,6 +141,9 @@ namespace Galabingus
             }
         }
 
+        /// <summary>
+        /// Effects run on the tile
+        /// </summary>
         public Effect Effect
         {
             get
@@ -166,6 +158,27 @@ namespace Galabingus
             }
         }
 
+        #endregion
+
+        #region Tile Properties
+        /// <summary>
+        /// Allows for the indvidual scalling of X and Y
+        /// </summary>
+        public Vector2 ScaleVector
+        {
+            get
+            {
+                return scale;
+            }
+            set
+            {
+                scale = value;
+            }
+        }
+
+        /// <summary>
+        /// If the tile is currently active 
+        /// </summary>
         public bool IsActive
         {
             get
@@ -178,19 +191,29 @@ namespace Galabingus
             }
         }
 
-        // -------------------------------------------------
-        // Contructors
-        // -------------------------------------------------
+        #endregion
 
+        #region Contructor
+
+        /// <summary>
+        /// Create tiles from a sprite sheet
+        /// </summary>
+        /// <param name="contentName"></param>
+        /// <param name="instanceNumber"></param>
+        /// <param name="sprite"></param>
         public Tile(ushort contentName, ushort instanceNumber, ushort sprite) : base(contentName, instanceNumber, CollisionGroup.Tile)
         {
+            // Game object parameter passing
             GameObject.Instance.Content = contentName;
             this.thisGameObject = this;
             this.contentName = contentName;
             this.instanceNumber = instanceNumber;
+
+            // Update transfrom based on sprite needed
             this.Transform = this.Animation.GetFrame(sprite);
+
+            // Update scale vector then active tile
             this.ScaleVector = PostScaleRatio(true);
-            this.spriteNumber = sprite;
             isActive = true;
         }
 
@@ -203,20 +226,28 @@ namespace Galabingus
         /// <param name="single"> If the tile is static </param>
         public Tile(ushort contentName, ushort instanceNumber, ushort sprite, bool single) : base(contentName, instanceNumber, CollisionGroup.Tile)
         {
+            // Game object parameter passing
             GameObject.Instance.Content = contentName;
             this.thisGameObject = this;
             this.contentName = contentName;
             this.instanceNumber = instanceNumber;
+
+            // Update transform based on first sprite
             this.Transform = this.Animation.GetFrame(0);
+
+            // Update scale vector then active tile
             this.ScaleVector = PostScaleRatio(true);
-            this.spriteNumber = sprite;
             isActive = true;
         }
 
-        // -------------------------------------------------
-        // Meathods 
-        // -------------------------------------------------
+        #endregion
 
+        #region Methods
+
+        /// <summary>
+        /// Determines tile movement based on the camera scroll
+        /// </summary>
+        /// <param name="gameTime"></param>
         public void Update(GameTime gameTime)
         {
             // Final position change, and whether or not to include camera movement
@@ -230,60 +261,74 @@ namespace Galabingus
             }
         }
 
+        /// <summary>
+        /// Updates the postion of the background
+        /// </summary>
+        /// <param name="gameTime"></param>
         public void UpdateBackground(GameTime gameTime)
         {
             this.Position = new Vector2(this.Position.X - Camera.Instance.OffSet.X, this.Position.Y - Camera.Instance.OffSet.Y);
         }
 
+        /// <summary>
+        /// Draws the tile
+        /// </summary>
         public void Draw()
         {
-            //this.Position = new Vector2(0, 0);
-            //Debug.WriteLine(Position.X);
-            //Debug.WriteLine(Position.Y);
-            //Debug.WriteLine(this.Position);
-            //GameObject.Instance.SpriteBatch.End();
-            //GameObject.Instance.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointWrap, effect: Effect);
-            //Effect.CurrentTechnique.Passes[0].Apply();
             GameObject.Instance.SpriteBatch.Draw(
-                this.Sprite,                          // The sprite-sheet for the player
-                this.Position,                        // The position for the player
-                this.Transform,                       // The scale and bounding box for the animation
-                Color.White,                     // The color for the palyer
-                0.0f,                            // There cannot be any rotation of the player
-                Vector2.Zero,                    // Starting render position
-                this.ScaleVector,                      // The scale of the sprite
-                SpriteEffects.None,              // Which direction the sprite faces
-                0.0f                             // Layer depth of the player is 0.0
+                this.Sprite,                           // The sprite-sheet for the tile
+                this.Position,                         // The position for the tile
+                this.Transform,                        // The scale and bounding box for the tile
+                Color.White,                           // The color for the tile
+                0.0f,                                  // No rotation
+                Vector2.Zero,                          // Draw from the top left
+                this.ScaleVector,                      // The scale of the tile
+                SpriteEffects.None,                    // No effects
+                0.0f                                   // No depth
             );
-            //GameObject.Instance.SpriteBatch.End();
-            //GameObject.Instance.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, effect: GameObject.Instance.UniversalShader);
         }
 
+        /// <summary>
+        ///  Draws the tile xTimes on horizontally and yTimes vertically
+        /// </summary>
+        /// <param name="xTimes">Number of times to draw the tile horizontally</param>
+        /// <param name="yTimes">Number of times to draw the tile vertically</param>
         public void Draw(float xTimes, float yTimes)
         {
+            // Stop the current draw call,
+            // Start a new one with the background shader
             GameObject.Instance.SpriteBatch.End();
             Effect.Parameters["bossEffect"].SetValue(GameObject.Instance.IsBossEffectActive);
             Effect.Parameters["bossShade"].SetValue(GameObject.Instance.TimeShade);
             GameObject.Instance.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, effect: Effect);
 
+            // Draw the tile
             GameObject.Instance.SpriteBatch.Draw(
-                this.Sprite,                      
+                // Sprite sheet of the tile
+                this.Sprite,
+                // Position to daw the tile
                 this.Position,                 
                 new Rectangle(
-                    this.Transform.X, 
+                    this.Transform.X,
                     this.Transform.Y, 
+                    // Repeate the image xTimes horizontally and yTimes vertically by streatching the draw rectangle
                     (int)Math.Round(this.Transform.Width * xTimes, MidpointRounding.AwayFromZero), 
                     (int)Math.Round(this.Transform.Height * yTimes, MidpointRounding.AwayFromZero)
                 ),                     
+                // Draw with a base color of white
                 Color.White,                 
-                0.0f,                        
-                Vector2.Zero,           
-                this.ScaleVector,
-                SpriteEffects.None, 
-                0.0f
+                0.0f,                   // No rotation                        
+                Vector2.Zero,           // Draw from the top left  
+                this.ScaleVector,       // Scale of the tile
+                SpriteEffects.None,     // No effects
+                0.0f                    // No depth                     
             );
+
+            // End the draw call for the backgound
+            // begin the draw call with the Universal Shader
             GameObject.Instance.SpriteBatch.End();
             GameObject.Instance.SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, effect: GameObject.Instance.UniversalShader);
         }
+        #endregion
     }
 }
