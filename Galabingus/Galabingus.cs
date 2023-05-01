@@ -11,13 +11,15 @@ using static System.Formats.Asn1.AsnWriter;
 using static System.Net.Mime.MediaTypeNames;
 
 // Wabungus Corpsungus Duplicatungus
-// 2023, 3, 13
+// 2023, 4, 30
 // Galabingus
-// Creates a GameObject Instance
 
 namespace Galabingus
 {
-
+    /// <summary>
+    ///  Seperator for what can colloide with what,
+    ///  Anything that is not on the same collision layer can collide
+    /// </summary>
     enum CollisionGroup
     {
         None,
@@ -64,11 +66,14 @@ namespace Galabingus
         // Tile / Enemy Position & Data
         private List<int[]> l_a4_obj_enemyData;
 
+        // Reset
         private delegate void ResetGameStates();
         private static ResetGameStates ResetState;
 
+        // Music
         private Song backgroundMusic;
 
+        // Intilizes the mouse state, graphics device and ContentManager root directory
         public Galabingus()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -76,23 +81,29 @@ namespace Galabingus
             IsMouseVisible = true;
         }
 
+        // Initlizes the size of the window, colliders update timer, and Reset delegate
         protected override void Initialize()
         {
+            // Apply the size of the windwo
             _graphics.PreferredBackBufferWidth = 1000;
             _graphics.PreferredBackBufferHeight = 920;
-            colliderTimer = 0;
             _graphics.ApplyChanges();
+            
+            // Set the collider update timer
+            colliderTimer = 0;
+
+            // Initlize the base
             base.Initialize();
+
+            // Reset Delatgate
             ResetState = delegate ()
             {
-                // Reset the player
-                //player = new Player(new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Height * 0.01375f, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.01375f), content.player_strip4);
-                ///player.Position = new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Width * 0.5f - Player.PlayerInstance.Transform.Width, GameObject.Instance.GraphicsDevice.Viewport.Height - Player.PlayerInstance.Transform.Height * 10);
-                //player.Health = 5;
-
+                // Create a sprite batch
                 _spriteBatch = new SpriteBatch(GraphicsDevice);
-
+                
+                // Load in the universal shaders
                 shaders = Content.Load<Effect>("shaders");
+                
                 // Initilize the GameObject Instance and Content Dynamic (Always goes first)
                 content = GameObject.Instance.Initialize(Content, GraphicsDevice, _spriteBatch, shaders);
 
@@ -100,9 +111,6 @@ namespace Galabingus
                 userInterface = UIManager.Instance;
                 userInterface.Initialize(_graphics, Content, _spriteBatch);
                 userInterface.LoadContent();
-
-                //gets the list of enemies from the file
-                //l_a4_obj_enemyData = userInterface.LevelReader(Type.Enemy);
 
                 // Set tile / enemy data
                 l_a4_obj_enemyData = new List<int[]>();
@@ -113,12 +121,7 @@ namespace Galabingus
                  * [2] -> X Position
                  * [3] -> Y Position
                  */
-
                 l_a4_obj_enemyData = GameObject.Instance.LoadEnemyLeveFile("GalabingusLevel.level");
-
-                //l_a4_obj_enemyData.Add(new int[] { 1, 6, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 0.5f), (int)(GameObject.Instance.GraphicsDevice.Viewport.Height * 1f), 1 });
-
-                //l_a4_obj_enemyData.Add(new int[] { 1, 1, 0, 0, 0 });
 
                 // Create a player
                 player = new Player(new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Height * 0.01375f, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.01375f), content.player_strip4);
@@ -136,32 +139,23 @@ namespace Galabingus
 
                 // Create Tile Manager
                 tileManager = TileManager.Instance;
-                tileManager.CreateTile(1);
-
                 GameObject.Instance.LoadTileLevelFile("GalabingusLevel.level");
-                //tileManager.CreateObject(GameObject.Instance.Content.tile_strip26, Vector2.Zero, 25);
-                //tileManager.CreateObject();
-
-                // Load the temporary background
-                //tempBackground = Content.Load<Texture2D>("spacebackground_strip1");
                 tileManager.CreateBackground();
-                //ushort asteroid = GameObject.Instance.Content.grayasteroid_strip1;
-                //tileManager.CreateObject(asteroid,new Vector2(50,50));
-                //tileManager.CreateBackground();
-                //tileManager.CreateObject(GameObject.Instance.Content.grayasteroid_strip1, new Vector2(Player.PlayerInstance.Transform.Width * 2 + 100, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.5f - Player.PlayerInstance.Transform.Height + 100));
-
-                // Sound
-                //AudioManager.Instance.AddSound("Fire", 3f, "Bullet Fire", Content);
-                //AudioManager.Instance.AddSound("Explosion", 0.5f, "Explosion", Content);
             };
 
         }
 
+        /// <summary>
+        ///  Loads in the level, player, enmies, ui and sound
+        /// </summary>
         protected override void LoadContent()
         {
+            // Create the sprite batch
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-
+            
+            // Load the universal shaders
             shaders = Content.Load<Effect>("shaders");
+
             // Initilize the GameObject Instance and Content Dynamic (Always goes first)
             content = GameObject.Instance.Initialize(Content, GraphicsDevice, _spriteBatch, shaders);
 
@@ -169,9 +163,6 @@ namespace Galabingus
             userInterface = UIManager.Instance;
             userInterface.Initialize(_graphics, Content, _spriteBatch);
             userInterface.LoadContent();
-
-            //gets the list of enemies from the file
-            //l_a4_obj_enemyData = userInterface.LevelReader(Type.Enemy);
 
             // Set tile / enemy data
             l_a4_obj_enemyData = new List<int[]>();
@@ -182,12 +173,7 @@ namespace Galabingus
              * [2] -> X Position
              * [3] -> Y Position
              */
-
             l_a4_obj_enemyData = GameObject.Instance.LoadEnemyLeveFile("GalabingusLevel.level");
-
-            //l_a4_obj_enemyData.Add(new int[] { 1, 6, (int)(GameObject.Instance.GraphicsDevice.Viewport.Width * 0.5f), (int)(GameObject.Instance.GraphicsDevice.Viewport.Height * -0.4f), 1 });
-
-            //l_a4_obj_enemyData.Add(new int[] { 1, 1, 0, 0, 0 });
 
             // Create a player
             player = new Player(new Vector2(GameObject.Instance.GraphicsDevice.Viewport.Height * 0.01375f, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.01375f), content.player_strip4);
@@ -206,22 +192,12 @@ namespace Galabingus
 
             // Create Tile Manager
             tileManager = TileManager.Instance;
-            tileManager.CreateTile(1);
-
             GameObject.Instance.LoadTileLevelFile("GalabingusLevel.level");
-            //tileManager.CreateObject(GameObject.Instance.Content.tile_strip26, Vector2.Zero, 25);
-            //tileManager.CreateObject();
-
-            // Load the temporary background
-            //tempBackground = Content.Load<Texture2D>("spacebackground_strip1");
             tileManager.CreateBackground();
-            //ushort asteroid = GameObject.Instance.Content.grayasteroid_strip1;
-            //tileManager.CreateObject(asteroid,new Vector2(50,50));
-            //tileManager.CreateBackground();
-            //tileManager.CreateObject(GameObject.Instance.Content.grayasteroid_strip1, new Vector2(Player.PlayerInstance.Transform.Width * 2 + 100, GameObject.Instance.GraphicsDevice.Viewport.Height * 0.5f - Player.PlayerInstance.Transform.Height + 100));
 
             #region Sound Loading
             #region Bullets
+
             AudioManager.Instance.AddSound("Fire", 0.1f, "Bullet Fire", Content);
             AudioManager.Instance.AddSound("Big Shot", 0.25f, "Big Shot", Content);
             AudioManager.Instance.AddSound("Enemy Fire", 0.75f, "Enemy Fire", Content);
@@ -233,44 +209,54 @@ namespace Galabingus
             AudioManager.Instance.AddSound("Purple Scatter", 1f, "Purple Scatter Shot1", Content);
             AudioManager.Instance.AddSound("Purple Break", 0.25f, "Purple Break", Content);
             AudioManager.Instance.AddSound("Explosion", 0.1f, "Explosion", Content);
+
             #endregion
 
             #region Player Sounds
+
             AudioManager.Instance.AddSound("Charge", 1f, "Charge", Content);
             AudioManager.Instance.AddSound("Hit", 1f, "Player Hit", Content);
+
             #endregion
 
             #region Menu Sounds
+
             AudioManager.Instance.AddSound("Menu Select", 0.25f, "Menu Select", Content);
             AudioManager.Instance.AddSound("Menu Confirm", 0.75f, "Menu Confirm", Content);
             AudioManager.Instance.AddSound("Victory", 1f, "Victory", Content);
             AudioManager.Instance.AddSound("Game Over", 1f, "Game Over", Content);
+
             #endregion
 
             #region Music
+
             backgroundMusic = Content.Load<Song>("Background Music");
             AudioManager.Instance.SongCollection.Add(backgroundMusic);
             MediaPlayer.Volume = 0.5f;
             MediaPlayer.IsRepeating = true;
+
             #endregion
             #endregion
         }
 
+        /// <summary>
+        ///  Updates all of Galabingus
+        /// </summary>
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed 
                 || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+            // Update the game when not reseting
             if (!UIManager.Instance.IsReset)
             {
+
+                // Determine the status of the Graphics Device and allow for colliders to create render targets
                 if (GraphicsDevice.GraphicsDeviceStatus == GraphicsDeviceStatus.Normal && colliderTimer == 0)
                 {
                     GameObject.Instance.HoldCollider = false;
-                    //colliderTimer = 2;
                 }
-
-                //Debug.WriteLine(GameObject.Instance.TimeShade);
 
                 //Update the UI
                 userInterface.Update();
@@ -279,12 +265,17 @@ namespace Galabingus
                 shaders.Parameters["shadeFadeTime"].SetValue(GameObject.Instance.TimeShade);
                 shaders.Parameters["redShade"].SetValue(1);
 
+                // Update the collider timer
                 colliderTimer--;
 
+                // Shift before is the transiotion state to trigger the fade
                 bool shiftBefore = transition;
                 transition = (userInterface.GS == GameState.PlayerDead || userInterface.GS == GameState.PlayerWins);
+                
+                // The UI is in the game state so update everything
                 if (userInterface.GS == GameState.Game)
                 {
+                    // Fade in
                     shaders.Parameters["fadeIn"].SetValue(true);
                     shaders.Parameters["fadeOut"].SetValue(false);
 
@@ -300,14 +291,17 @@ namespace Galabingus
                     // Update the Camera
                     camera.Update(gameTime);
 
+                    // Update the Tile Manager
                     tileManager.Update(gameTime);
                 }
                 else if (userInterface.GS == GameState.PlayerDead || userInterface.GS == GameState.PlayerWins)
                 {
+                    // Fade out
                     shaders.Parameters["fadeIn"].SetValue(false);
                     shaders.Parameters["fadeOut"].SetValue(true);
                 }
 
+                // There is a change in state for fade, so fade
                 if (transition != shiftBefore)
                 {
                     GameObject.Fade = 1;
@@ -315,6 +309,7 @@ namespace Galabingus
             }
             else
             {
+                // Reset everything
                 UIManager.Instance.IsReset = false;
                 GameObject.Instance.Reset();
                 player.Reset();
@@ -330,32 +325,40 @@ namespace Galabingus
                 userInterface = null;
                 l_a4_obj_enemyData = new List<int[]>();
                 
+                // Call the reset method to re initlize
                 Reset();
             }
 
+            // Update teh base
             base.Update(gameTime);
         }
 
+        /// <summary>
+        ///  Draw all of Galabingus
+        /// </summary>
         protected override void Draw(GameTime gameTime)
         {
+            // Draw everyhing unless we are reseting
             if (!UIManager.Instance.IsReset)
             {
-                //Change the clear color to transparent and use point rendering for pixel art
-                //GraphicsDevice.Clear(userInterface.ClearColor);
-
+                // Clear the screen to draw the next frame
                 GraphicsDevice.Clear(Color.Transparent);
 
+                // If we are in a game state that should draw with the universal shader, draw with the universal shader
                 if (!(userInterface.GS == GameState.Menu) && !(userInterface.GS == GameState.GameOver) && !(userInterface.GS == GameState.Victory))
                 {
+                    // ADjust fade time and begin the sprite batch
                     GameObject.Fade = GameObject.Fade * 0.96f;
                     shaders.Parameters["fade"].SetValue(GameObject.Fade);
                     _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, effect: shaders);
                 }
                 else
                 {
+                    // Draw regularly
                     _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap);
                 }
 
+                // AS long as the game state is not in the menu, draw everything
                 if (!(userInterface.GS == GameState.Menu))
                 {
                     if (TileManager.Instance.CurrentSpriteNumber == 0)
@@ -383,6 +386,7 @@ namespace Galabingus
                     }
                 }
 
+                // Draw debug stuff on top of everything
                 GameObject.Instance.DebugDraw(_spriteBatch);
 
                 //draw the screen
@@ -394,20 +398,24 @@ namespace Galabingus
                 _spriteBatch.End();
             }
 
+            // Call base draw
             base.Draw(gameTime);
         }
 
-
-
+        /// <summary>
+        ///  Triggers the Reset Delegate
+        /// </summary>
         public static void Reset()
         {
             ResetState();
         }
 
+        /// <summary>
+        ///  Determines if the mosue is visible
+        /// </summary>
         public void MouseVisibility(bool visibility)
         {
             IsMouseVisible = visibility;
         }
-
     }
 }
