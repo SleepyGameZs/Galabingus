@@ -454,71 +454,71 @@ namespace Galabingus
 
             AddText(
                 "arial_18", "Art",
-                new Vector2(width / 2 - leftAdjust, height / 2 - 230),
+                new Vector2(width / 2 - leftAdjust, height / 2 - 220),
                 color, null, creditsMenu);
 
             AddText(
                 font, "Game Art - Zane Smith",
-                new Vector2(width / 2 - leftAdjust, height / 2 - 200),
+                new Vector2(width / 2 - leftAdjust, height / 2 - 180),
                 lineCapacity, spacing, color, creditsMenu);
 
             AddText(
                 font, "UI Art - Shawn Roller",
-                new Vector2(width / 2 - leftAdjust, height / 2 - 175),
-                lineCapacity, spacing, color, creditsMenu);
-
-            AddText(
-                font,
-                "Pixel Keys - https://joshuajennerdev.itch.io/pixel-keys-x16\r\n",
                 new Vector2(width / 2 - leftAdjust, height / 2 - 150),
                 lineCapacity, spacing, color, creditsMenu);
 
             AddText(
+                font,
+                "Pixel Keys - joshuajennerdev at itch.io",
+                new Vector2(width / 2 - leftAdjust, height / 2 - 120),
+                lineCapacity, spacing, color, creditsMenu);
+
+            AddText(
                 "arial_18","Audio",
-                new Vector2(width / 2 - leftAdjust, height / 2 - 105),
+                new Vector2(width / 2 - leftAdjust, height / 2 - 60),
                 color, null, creditsMenu);
 
             AddText(
                 font,"Splitter - Undertale",
-                new Vector2(width / 2 - leftAdjust, height / 2 - 75),
-                lineCapacity, spacing, color, creditsMenu);
-
-            AddText(
-                font, "All Other Bullets - 1001 Sounds ",
-                new Vector2(width / 2 - leftAdjust, height / 2 - 50),
-                lineCapacity, spacing, color, creditsMenu);
-
-            AddText(
-                font, "Player Hit -  https://pixabay.com/users/edr-1177074/",
-                new Vector2(width / 2 - leftAdjust, height / 2 - 25),
-                lineCapacity, spacing, color, creditsMenu);
-
-            AddText(
-                font,
-                "Charging - https://pixabay.com/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=37395%22%3EPixabay",
                 new Vector2(width / 2 - leftAdjust, height / 2),
                 lineCapacity, spacing, color, creditsMenu);
 
             AddText(
-                font, "Game Over and Pause GFX Sounds -  https://gfxsounds.com/free-sound-effects/",
-                new Vector2(width / 2 - leftAdjust, height / 2 + 65),
+                font, "All Other Bullets - 1001 Sounds - Archive.Org",
+                new Vector2(width / 2 - leftAdjust, height / 2 + 30),
+                lineCapacity, spacing, color, creditsMenu);
+
+            AddText(
+                font, "Player Hit -  pixabay.com",
+                new Vector2(width / 2 - leftAdjust, height / 2 + 60),
                 lineCapacity, spacing, color, creditsMenu);
 
             AddText(
                 font,
-                "Victory - https://pixabay.com/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=6993%22%3EPixabay",
-                new Vector2(width / 2 - leftAdjust, height / 2 + 110),
+                "Charging - pixabay.com",
+                new Vector2(width / 2 - leftAdjust, height / 2 + 90),
+                lineCapacity, spacing, color, creditsMenu);
+
+            AddText(
+                font, "Game Over and Pause GFX Sounds -  gfxsounds.com",
+                new Vector2(width / 2 - leftAdjust, height / 2 + 120),
                 lineCapacity, spacing, color, creditsMenu);
 
             AddText(
                 font,
-                "Menu Confirm - https://pixabay.com/sound-effects/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=6104%22%3EPixabay",
-                new Vector2(width / 2 - leftAdjust, height / 2 + 175),
+                "Victory - pixabay.com",
+                new Vector2(width / 2 - leftAdjust, height / 2 + 150),
                 lineCapacity, spacing, color, creditsMenu);
 
             AddText(
-                font,"Menu Selection - Mixkit.co no author",
-                new Vector2(width / 2 - leftAdjust, height / 2 + 253),
+                font,
+                "Menu Confirm - pixabay.com",
+                new Vector2(width / 2 - leftAdjust, height / 2 + 180),
+                lineCapacity, spacing, color, creditsMenu);
+
+            AddText(
+                font,"Menu Selection - Mixkit.co - No author",
+                new Vector2(width / 2 - leftAdjust, height / 2 + 210),
                 lineCapacity, spacing, color, creditsMenu);
 
             //----------------------------Create the Credits Back Button----------------------------//
